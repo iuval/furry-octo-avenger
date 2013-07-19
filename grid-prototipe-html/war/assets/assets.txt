@@ -1,6 +1,0 @@
-d:
-d:data
-i:data/archer.png
-i:data/grass-texture.jpg
-i:data/hexa.png
-i:data/hexa2.png
