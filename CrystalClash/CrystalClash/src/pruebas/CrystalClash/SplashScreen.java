@@ -52,6 +52,7 @@ public class SplashScreen implements Screen {
 		crystal.setPosition(CrystalClash.WIDTH / 2 - crystal.getWidth() / 2, CrystalClash.HEIGHT / 2 - crystal.getHeight() / 2);
 		name.setPosition(CrystalClash.WIDTH / 2 - name.getWidth() / 2, 0);
 
+		float speed = CrystalClash.ANIMATION_SPEED;		
 		Tween.registerAccessor(Actor.class, new ActorAccessor());
 		Timeline.createSequence()
 				.beginParallel()
@@ -59,14 +60,14 @@ public class SplashScreen implements Screen {
 				.push(Tween.set(crystal, ActorAccessor.Y).target(crystal.getHeight()))
 				.push(Tween.set(name, ActorAccessor.ALPHA).target(0))
 				.push(Tween.set(name, ActorAccessor.Y).target(-name.getHeight()))
-				.push(Tween.to(crystal, ActorAccessor.ALPHA, 3).target(1))
-				.push(Tween.to(crystal, ActorAccessor.Y, 3).target(CrystalClash.HEIGHT / 2 - crystal.getHeight() / 2 + 40))
-				.push(Tween.to(name, ActorAccessor.ALPHA, 3).target(1))
-				.push(Tween.to(name, ActorAccessor.Y, 3).target(40)).end()
+				.push(Tween.to(crystal, ActorAccessor.ALPHA, speed).target(1))
+				.push(Tween.to(crystal, ActorAccessor.Y, speed).target(CrystalClash.HEIGHT / 2 - crystal.getHeight() / 2 + 40))
+				.push(Tween.to(name, ActorAccessor.ALPHA, speed).target(1))
+				.push(Tween.to(name, ActorAccessor.Y, speed).target(40)).end()
 				.beginParallel()
-				.push(Tween.to(background, ActorAccessor.ALPHA, 3).target(0))
-				.push(Tween.to(crystal, ActorAccessor.ALPHA, 3).target(0))
-				.push(Tween.to(name, ActorAccessor.ALPHA, 3).target(0)).end()
+				.push(Tween.to(background, ActorAccessor.ALPHA, speed).target(0))
+				.push(Tween.to(crystal, ActorAccessor.ALPHA, speed).target(0))
+				.push(Tween.to(name, ActorAccessor.ALPHA, speed).target(0)).end()
 				.setCallback(new TweenCallback() {
 					@Override
 					public void onEvent(int type, BaseTween<?> source) {

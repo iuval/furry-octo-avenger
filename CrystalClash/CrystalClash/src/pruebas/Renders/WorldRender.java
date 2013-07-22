@@ -58,7 +58,7 @@ public class WorldRender {
 		unitIterator = p1Units.iterator();
 		while (unitIterator.hasNext()) {
 			aux = unitIterator.next();
-			archer.setPosition(aux.value.x, aux.value.y);
+			archer.setPosition(aux.getSecond().x, aux.getSecond().y);
 			archer.draw(batch, 1);
 			//stage.addActor(archer);
 		}
@@ -66,7 +66,7 @@ public class WorldRender {
 		unitIterator = p2Units.iterator();
 		while (unitIterator.hasNext()) {
 			aux = unitIterator.next();
-			archer.setPosition(aux.value.x, aux.value.y);
+			archer.setPosition(aux.getSecond().x, aux.getSecond().y);
 			archer.draw(batch, 1);
 			//stage.addActor(archer);
 		}

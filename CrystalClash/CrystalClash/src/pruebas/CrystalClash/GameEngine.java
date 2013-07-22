@@ -14,41 +14,42 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 
 public class GameEngine implements Screen {
-	
+
 	private InputMultiplexer inputManager;
 	private SpriteBatch batch;
 	private Stage stage;
 	private OrthographicCamera camera;
 
 	private GameState state;
-	
+
 	private MenuMaster menu;
-	private MenuMasterRender menuRender;	
+	private MenuMasterRender menuRender;
 	private World world;
 	private WorldRender worldRender;
 
 	@Override
 	public void show() {
-		inputManager = new InputMultiplexer();		
+		inputManager = new InputMultiplexer();
 		batch = new SpriteBatch();
 		stage = new Stage();
 		camera = new OrthographicCamera();
 		camera.setToOrtho(false, CrystalClash.WIDTH, CrystalClash.HEIGHT);
-		
+
 		batch.setProjectionMatrix(camera.combined);
 		stage.setCamera(camera);
 
 		state = GameState.InMenu;
-		
+
 		menu = new MenuMaster();
-		menuRender = new MenuMasterRender(this, menu);		
+		menuRender = new MenuMasterRender(this, menu);
 		world = new World();
 		worldRender = new WorldRender(this, world);
-		
+
 		inputManager.addProcessor(stage);
 		inputManager.addProcessor(menu.getCurrentMenu().getRender());
+		Gdx.input.setCatchBackKey(true);
 		Gdx.input.setInputProcessor(inputManager);
-		//Gdx.input.setInputProcessor(stage);
+		// Gdx.input.setInputProcessor(stage);
 	}
 
 	@Override
@@ -87,8 +88,8 @@ public class GameEngine implements Screen {
 			break;
 		}
 	}
-	
-	public void setState(GameState state){
+
+	public void setState(GameState state) {
 		this.state = state;
 	}
 

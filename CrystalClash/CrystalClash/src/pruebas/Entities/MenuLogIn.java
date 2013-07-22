@@ -3,16 +3,19 @@ package pruebas.Entities;
 import pruebas.Renders.MenuLogInRender;
 import pruebas.Renders.MenuRender;
 
-public class MenuLogIn extends Menu{
+public class MenuLogIn extends Menu {
 
+	private MenuMaster menuMaster;
 	private String email;
 	private String nick;
 
-	public MenuLogIn() {
+	public MenuLogIn(MenuMaster menuMaster) {
 		email = "";
 		nick = "";
+		
+		this.menuMaster = menuMaster;
 	}
-	
+
 	@Override
 	public void update(float delta) {
 	}
@@ -30,14 +33,23 @@ public class MenuLogIn extends Menu{
 		return nick;
 	}
 
-	public void logIn(String email) {
+	public boolean authenticate(String email, String nick) {
 		this.email = email;
-		// TODO: LogIn con el Servidor (falta pass)	
+		this.nick = nick;
+		// TODO: LogIn con el Servidor (falta pass)
+
+		return true;
 	}
-	
-	public void singIn(String email, String nick) {
+
+	public boolean singIn(String email, String nick) {
 		this.email = email;
 		this.nick = nick;
 		// TODO: SingIn en el Servidor (nick pasa a ser pass)
+
+		return true;
+	}
+	
+	public void logIn(){
+		menuMaster.setCurrentMenu(new MenuMatches(new User(email, nick)));
 	}
 }

@@ -9,6 +9,7 @@ public class CrystalClash extends Game {
 	public static final String VERSION = "0.1";
 	public static final boolean DEBUG = false;
 
+	public static float ANIMATION_SPEED = 2;
 	public static float WIDTH = 1280;
 	public static float HEIGHT = 853;
 

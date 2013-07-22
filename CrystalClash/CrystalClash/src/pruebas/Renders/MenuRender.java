@@ -9,4 +9,8 @@ public abstract class MenuRender implements InputProcessor {
 	}
 	
 	public abstract void render(float dt, Stage stage);
+	
+	public abstract void enterAnimation();
+	
+	public abstract void exitAnimation();
 }
