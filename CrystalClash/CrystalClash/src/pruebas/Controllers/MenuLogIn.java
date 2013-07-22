@@ -1,19 +1,15 @@
-package pruebas.Entities;
+package pruebas.Controllers;
 
 import pruebas.Renders.MenuLogInRender;
 import pruebas.Renders.MenuRender;
 
 public class MenuLogIn extends Menu {
-
-	private MenuMaster menuMaster;
 	private String email;
 	private String nick;
 
-	public MenuLogIn(MenuMaster menuMaster) {
+	public MenuLogIn() {
 		email = "";
 		nick = "";
-		
-		this.menuMaster = menuMaster;
 	}
 
 	@Override
@@ -50,6 +46,6 @@ public class MenuLogIn extends Menu {
 	}
 	
 	public void logIn(){
-		menuMaster.setCurrentMenu(new MenuMatches(new User(email, nick)));
+		MenuMaster.changeMenuToGames();
 	}
 }

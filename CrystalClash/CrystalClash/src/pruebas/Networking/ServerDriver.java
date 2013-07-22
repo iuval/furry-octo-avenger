@@ -3,8 +3,8 @@ package pruebas.Networking;
 import java.util.HashMap;
 import java.util.Map;
 
-import pruebas.Entities.MenuLogIn;
-import pruebas.Entities.MenuMaster;
+import pruebas.Controllers.MenuLogIn;
+import pruebas.Controllers.MenuMaster;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Net.HttpMethods;

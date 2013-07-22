@@ -1,4 +1,4 @@
-package pruebas.Entities;
+package pruebas.Controllers;
 
 public class MenuMaster {
 	private static MenuMaster instance;
@@ -36,7 +36,7 @@ public class MenuMaster {
 
 	public static MenuLogIn getMenuLogIn(){
 		if (menuLogInInstance == null)
-			menuLogInInstance = new MenuLogIn(instance);
+			menuLogInInstance = new MenuLogIn();
 		return menuLogInInstance;
 	}
 	
@@ -44,12 +44,13 @@ public class MenuMaster {
 		currentMenu = getMenuLogIn();
 	}
 
-	public static MenuMatches getMenuGames(User user){
+	public static MenuMatches getMenuGames(){
 		if (menuMatchesInstance == null)
-			menuMatchesInstance = new MenuMatches(user);
+			menuMatchesInstance = new MenuMatches();
 		return menuMatchesInstance;
 	}
-	public static void changeMenuToGames(User user) {
-		currentMenu = getMenuGames(user);
+	
+	public static void changeMenuToGames() {
+		currentMenu = getMenuGames();
 	}
 }

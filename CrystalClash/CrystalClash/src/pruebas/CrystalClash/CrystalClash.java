@@ -1,5 +1,7 @@
 package pruebas.CrystalClash;
 
+import pruebas.Renders.SplashScreen;
+
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.graphics.Texture;
 

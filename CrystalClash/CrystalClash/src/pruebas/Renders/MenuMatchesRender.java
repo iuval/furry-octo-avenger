@@ -1,8 +1,9 @@
 package pruebas.Renders;
 
 import pruebas.Accessors.ActorAccessor;
+import pruebas.Controllers.GameController;
+import pruebas.Controllers.MenuMatches;
 import pruebas.CrystalClash.CrystalClash;
-import pruebas.Entities.MenuMatches;
 import aurelienribon.tweenengine.Timeline;
 import aurelienribon.tweenengine.Tween;
 import aurelienribon.tweenengine.TweenManager;
@@ -19,13 +20,13 @@ public class MenuMatchesRender extends MenuRender{
 	private static MenuMatchesRender instance;
 	private TweenManager tweenManager;
 
-	private MenuMatches menu;
+	private MenuMatches controller;
 
 	private BitmapFont font;
 	private Label lblHeading;
 	
 	public MenuMatchesRender(MenuMatches menu) {
-		this.menu = menu;
+		this.controller = menu;
 		tweenManager = new TweenManager();
 		
 		loadStuff();
@@ -62,7 +63,7 @@ public class MenuMatchesRender extends MenuRender{
 	private void loadStuff() {
 		font = new BitmapFont(Gdx.files.internal("data/Fonts/font.fnt"), false);
 
-		lblHeading = new Label("Welcome " + menu.getUser().getNick(), new LabelStyle(font, Color.WHITE));
+		lblHeading = new Label("Welcome " + GameController.getInstancia().getUser().getNick(), new LabelStyle(font, Color.WHITE));
 		lblHeading.setPosition(50, CrystalClash.HEIGHT - 50);
 
 		enterAnimation();

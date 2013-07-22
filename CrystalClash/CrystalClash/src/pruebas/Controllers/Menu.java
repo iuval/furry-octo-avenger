@@ -1,4 +1,4 @@
-package pruebas.Entities;
+package pruebas.Controllers;
 
 import pruebas.Renders.MenuRender;
 

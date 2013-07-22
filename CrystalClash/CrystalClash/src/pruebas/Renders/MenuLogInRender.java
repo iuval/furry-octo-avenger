@@ -1,8 +1,8 @@
 package pruebas.Renders;
 
 import pruebas.Accessors.ActorAccessor;
+import pruebas.Controllers.MenuLogIn;
 import pruebas.CrystalClash.CrystalClash;
-import pruebas.Entities.MenuLogIn;
 import pruebas.Enumerators.MenuLogInState;
 import pruebas.Enumerators.StringWriting;
 import aurelienribon.tweenengine.BaseTween;
@@ -30,11 +30,11 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextField.TextFieldStyle;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
 public class MenuLogInRender extends MenuRender {
-
+	
 	private static MenuLogInRender instance;
 	private TweenManager tweenManager;
 
-	private MenuLogIn menu;
+	private MenuLogIn controller;
 
 	private TextureAtlas atlas;
 	private Skin skin;
@@ -58,7 +58,7 @@ public class MenuLogInRender extends MenuRender {
 	public MenuLogInState state;
 
 	public MenuLogInRender(MenuLogIn menu) {
-		this.menu = menu;
+		this.controller = menu;
 		tweenManager = new TweenManager();
 		stringWriting = StringWriting.None;
 		state = MenuLogInState.Idle;
@@ -124,7 +124,7 @@ public class MenuLogInRender extends MenuRender {
 			.setCallback(new TweenCallback() {
 				@Override
 				public void onEvent(int type, BaseTween<?> source) {
-					menu.logIn();
+					controller.logIn();
 				}
 			}).start(tweenManager);
 	}
@@ -231,7 +231,7 @@ public class MenuLogInRender extends MenuRender {
 					break;
 				case LogIn:
 					if (!email.isEmpty() && !nick.isEmpty()) {
-						boolean ok = menu.authenticate(email, nick);
+						boolean ok = controller.authenticate(email, nick);
 						if (ok) {
 							exitAnimation();
 						} else {
@@ -241,7 +241,7 @@ public class MenuLogInRender extends MenuRender {
 					break;
 				case SingIn:
 					if (!email.isEmpty() && !nick.isEmpty()) {
-						boolean ok = menu.singIn(email, nick);
+						boolean ok = controller.singIn(email, nick);
 						if (ok) {
 							exitAnimation();
 						} else {
