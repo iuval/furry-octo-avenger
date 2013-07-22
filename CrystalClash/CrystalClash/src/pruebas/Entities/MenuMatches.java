@@ -4,9 +4,6 @@ import pruebas.Renders.MenuMatchesRender;
 import pruebas.Renders.MenuRender;
 
 public class MenuMatches extends Menu {
-
-	private MenuMaster menuMaster;
-	
 	private User user;
 	// Lista de partidas
 

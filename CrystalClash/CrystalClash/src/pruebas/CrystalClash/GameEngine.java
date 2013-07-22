@@ -40,7 +40,7 @@ public class GameEngine implements Screen {
 
 		state = GameState.InMenu;
 
-		menu = new MenuMaster();
+		menu = MenuMaster.getInstance();
 		menuRender = new MenuMasterRender(this, menu);
 		world = new World();
 		worldRender = new WorldRender(this, world);
