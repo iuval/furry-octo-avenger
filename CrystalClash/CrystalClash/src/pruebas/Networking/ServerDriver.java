@@ -3,9 +3,6 @@ package pruebas.Networking;
 import java.util.HashMap;
 import java.util.Map;
 
-import pruebas.Controllers.MenuLogIn;
-import pruebas.Controllers.MenuMaster;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Net.HttpMethods;
 import com.badlogic.gdx.Net.HttpRequest;
@@ -17,40 +14,31 @@ import com.badlogic.gdx.utils.JsonValue;
 
 public class ServerDriver {
 	private static String SERVER_URL = "http://fuzzy-adventure.herokuapp.com/";
+		
+	private final static String ACTION_LOG_IN = "log_in";
+	private final static String ACTION_SIGN_IN = "sign_in";
 
-	public static void SignIn(String email, String password){
-		Map<String, String> data = new HashMap<String, String>();
-		data.put("email", "email");
-		Post("sign_in",data);
-	}
-	
-	public static void LogIn(String email, String password){
+	public static HttpRequest SignIn(String email, String password) {
 		Map<String, String> data = new HashMap<String, String>();
 		data.put("email", email);
-		Post("log_in",data);
+		return getPost(ACTION_SIGN_IN, data);
 	}
 
-	private static void Post(String action, Map<String, String> data ) {
+	public static HttpRequest LogIn(String email, String password) {
+		Map<String, String> data = new HashMap<String, String>();
+		data.put("email", email);
+		return getPost(ACTION_LOG_IN, data);
+	}
+
+	private static HttpRequest getPost(String action, Map<String, String> data) {
 		HttpRequest httpPost = new HttpRequest(HttpMethods.POST);
 		httpPost.setUrl(SERVER_URL + action);
-		httpPost.setContent(HttpParametersUtils
-				.convertHttpParameters(data));
-
-		Gdx.net.sendHttpRequest(httpPost, new HttpResponseListener() {
-			public void handleHttpResponse(HttpResponse httpResponse) {
-				ProcessResponce(httpResponse.getResultAsString());
-			}
-
-			public void failed(Throwable t) {
-				String status = "failed";
-				System.out.println("failed");
-				// do stuff here based on the failed attempt
-			}
-		});
+		httpPost.setContent(HttpParametersUtils.convertHttpParameters(data));
+		return httpPost;
 	}
 
-	private static void ProcessResponce(String response) {
-		JsonValue root = new JsonReader().parse(response);
-	//	MenuMaster.getMenuLogIn().logInCallback(response);
+	public static JsonValue ProcessResponce(HttpResponse response) {
+		System.out.println(response.getResultAsString());
+		return new JsonReader().parse(response.getResultAsStream());
 	}
 }

@@ -1,5 +1,11 @@
 package pruebas.Controllers;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Net.HttpResponse;
+import com.badlogic.gdx.Net.HttpResponseListener;
+import com.badlogic.gdx.utils.JsonValue;
+
+import pruebas.Networking.ServerDriver;
 import pruebas.Renders.MenuLogInRender;
 import pruebas.Renders.MenuRender;
 
@@ -32,20 +38,40 @@ public class MenuLogIn extends Menu {
 	public boolean authenticate(String email, String nick) {
 		this.email = email;
 		this.nick = nick;
-		// TODO: LogIn con el Servidor (falta pass)
 
+		Gdx.net.sendHttpRequest(ServerDriver.LogIn(email, nick), new HttpResponseListener() {
+			public void handleHttpResponse(HttpResponse httpResponse) {
+				JsonValue values = ServerDriver.ProcessResponce(httpResponse);
+				((MenuLogInRender) getRender()).authenticateSuccess(values.getString("id"), values.getString("name"));
+			}
+
+			public void failed(Throwable t) {
+				((MenuLogInRender) getRender()).authenticateError("error");
+			}
+		});
+		
 		return true;
 	}
 
 	public boolean singIn(String email, String nick) {
 		this.email = email;
 		this.nick = nick;
-		// TODO: SingIn en el Servidor (nick pasa a ser pass)
 
+		Gdx.net.sendHttpRequest(ServerDriver.SignIn(email, nick), new HttpResponseListener() {
+			public void handleHttpResponse(HttpResponse httpResponse) {
+				JsonValue values = ServerDriver.ProcessResponce(httpResponse);
+				((MenuLogInRender) getRender()).authenticateSuccess(values.getString("id"), values.getString("name"));
+			}
+
+			public void failed(Throwable t) {
+				((MenuLogInRender) getRender()).authenticateError("error");
+			}
+		});
+		
 		return true;
 	}
-	
-	public void logIn(){
+
+	public void logIn() {
 		MenuMaster.changeMenuToGames();
 	}
 }

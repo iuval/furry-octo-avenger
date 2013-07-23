@@ -30,7 +30,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextField.TextFieldStyle;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
 public class MenuLogInRender extends MenuRender {
-	
+
 	private static MenuLogInRender instance;
 	private TweenManager tweenManager;
 
@@ -91,12 +91,13 @@ public class MenuLogInRender extends MenuRender {
 
 	@Override
 	public void enterAnimation() {
-		float speed = CrystalClash.ANIMATION_SPEED;	
+		float speed = CrystalClash.ANIMATION_SPEED;
 		Timeline.createParallel()
 				.push(Tween.set(characters, ActorAccessor.ALPHA).target(0))
 				.push(Tween.set(btnLogIn, ActorAccessor.ALPHA).target(0))
 				.push(Tween.set(btnSingIn, ActorAccessor.ALPHA).target(0))
-				.push(Tween.to(characters, ActorAccessor.ALPHA, speed).target(1))
+				.push(Tween.to(characters, ActorAccessor.ALPHA, speed)
+						.target(1))
 				.push(Tween.to(btnLogIn, ActorAccessor.ALPHA, speed).target(1))
 				.push(Tween.to(btnSingIn, ActorAccessor.ALPHA, speed).target(1))
 				.start(tweenManager);
@@ -111,22 +112,27 @@ public class MenuLogInRender extends MenuRender {
 		txtEmail.setText("");
 		txtEmail.setMessageText("");
 
-		float speed = CrystalClash.ANIMATION_SPEED;	
+		float speed = CrystalClash.ANIMATION_SPEED;
 		Timeline.createParallel()
-			.push(Tween.to(popupPanel, ActorAccessor.ALPHA, speed).target(0))
-			.push(Tween.to(lblHeading, ActorAccessor.ALPHA, speed).target(0))
-			.push(Tween.to(textFieldLogIn, ActorAccessor.ALPHA, speed).target(0))
-			.push(Tween.to(textFieldSingIn, ActorAccessor.ALPHA, speed).target(0))
-			.push(Tween.to(txtEmail, ActorAccessor.ALPHA, speed).target(0))
-			.push(Tween.to(txtNick, ActorAccessor.ALPHA, speed).target(0))
-			.push(Tween.to(btnConfirm, ActorAccessor.ALPHA, speed).target(0))
-			.push(Tween.to(btnBack, ActorAccessor.ALPHA, speed).target(0))
-			.setCallback(new TweenCallback() {
-				@Override
-				public void onEvent(int type, BaseTween<?> source) {
-					controller.logIn();
-				}
-			}).start(tweenManager);
+				.push(Tween.to(popupPanel, ActorAccessor.ALPHA, speed)
+						.target(0))
+				.push(Tween.to(lblHeading, ActorAccessor.ALPHA, speed)
+						.target(0))
+				.push(Tween.to(textFieldLogIn, ActorAccessor.ALPHA, speed)
+						.target(0))
+				.push(Tween.to(textFieldSingIn, ActorAccessor.ALPHA, speed)
+						.target(0))
+				.push(Tween.to(txtEmail, ActorAccessor.ALPHA, speed).target(0))
+				.push(Tween.to(txtNick, ActorAccessor.ALPHA, speed).target(0))
+				.push(Tween.to(btnConfirm, ActorAccessor.ALPHA, speed)
+						.target(0))
+				.push(Tween.to(btnBack, ActorAccessor.ALPHA, speed).target(0))
+				.setCallback(new TweenCallback() {
+					@Override
+					public void onEvent(int type, BaseTween<?> source) {
+						controller.logIn();
+					}
+				}).start(tweenManager);
 	}
 
 	private void loadStuff() {
@@ -134,17 +140,20 @@ public class MenuLogInRender extends MenuRender {
 		skin = new Skin(atlas);
 
 		font = new BitmapFont(Gdx.files.internal("data/Fonts/font.fnt"), false);
-		
-		charactersTexture = new Texture(Gdx.files.internal("data/Images/Menu/menu_login_lobby_characters.png"));
+
+		charactersTexture = new Texture(
+				Gdx.files
+						.internal("data/Images/Menu/menu_login_lobby_characters.png"));
 		characters = new Image(charactersTexture);
-		
+
 		TextButtonStyle outerStyle = new TextButtonStyle();
 		outerStyle.up = skin.getDrawable("outer_button_orange");
 		outerStyle.down = skin.getDrawable("outer_button_orange_pressed");
 		outerStyle.font = font;
-		
+
 		btnLogIn = new TextButton("Log In", outerStyle);
-		btnLogIn.setPosition(CrystalClash.WIDTH / 4 * 3 - btnLogIn.getWidth() / 2, CrystalClash.HEIGHT / 2 + 50);
+		btnLogIn.setPosition(CrystalClash.WIDTH / 4 * 3 - btnLogIn.getWidth()
+				/ 2, CrystalClash.HEIGHT / 2 + 50);
 		btnLogIn.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
@@ -154,7 +163,8 @@ public class MenuLogInRender extends MenuRender {
 		});
 
 		btnSingIn = new TextButton("Sing In", outerStyle);
-		btnSingIn.setPosition(CrystalClash.WIDTH / 4 * 3 - btnSingIn.getWidth() / 2, CrystalClash.HEIGHT / 2 - 50 - btnSingIn.getHeight());
+		btnSingIn.setPosition(CrystalClash.WIDTH / 4 * 3 - btnSingIn.getWidth()
+				/ 2, CrystalClash.HEIGHT / 2 - 50 - btnSingIn.getHeight());
 		btnSingIn.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
@@ -163,29 +173,38 @@ public class MenuLogInRender extends MenuRender {
 			}
 		});
 
-		popupPanelTexture = new Texture(Gdx.files.internal("data/Images/Menu/menu_login_popup.png"));
+		popupPanelTexture = new Texture(
+				Gdx.files.internal("data/Images/Menu/menu_login_popup.png"));
 		popupPanel = new Image(popupPanelTexture);
 		popupPanel.setSize(800, 500);
-		popupPanel.setPosition(CrystalClash.WIDTH / 2 - popupPanel.getWidth() / 2, (CrystalClash.HEIGHT / 2 - popupPanel.getHeight() / 2) + CrystalClash.HEIGHT);
+		popupPanel.setPosition(CrystalClash.WIDTH / 2 - popupPanel.getWidth()
+				/ 2, (CrystalClash.HEIGHT / 2 - popupPanel.getHeight() / 2)
+				+ CrystalClash.HEIGHT);
 
-		lblHeading = new Label("Welcome to Crystal Clash", new LabelStyle(font, Color.WHITE));
-		lblHeading.setPosition(popupPanel.getX() + popupPanel.getWidth() / 2 - lblHeading.getWidth() / 2, popupPanel.getTop() - 100);
+		lblHeading = new Label("Welcome to Crystal Clash", new LabelStyle(font,
+				Color.WHITE));
+		lblHeading.setPosition(popupPanel.getX() + popupPanel.getWidth() / 2
+				- lblHeading.getWidth() / 2, popupPanel.getTop() - 100);
 
-		textFieldTexture = new Texture(Gdx.files.internal("data/Images/text_field_background.png"));
+		textFieldTexture = new Texture(
+				Gdx.files.internal("data/Images/text_field_background.png"));
 		textFieldLogIn = new Image(textFieldTexture);
-		textFieldLogIn.setPosition(popupPanel.getX() + 50, popupPanel.getTop() - 200);
+		textFieldLogIn.setPosition(popupPanel.getX() + 50,
+				popupPanel.getTop() - 200);
 		textFieldLogIn.setSize(700, 50);
 		textFieldSingIn = new Image(textFieldTexture);
-		textFieldSingIn.setPosition(popupPanel.getX() + 50, popupPanel.getTop() - 300);
+		textFieldSingIn.setPosition(popupPanel.getX() + 50,
+				popupPanel.getTop() - 300);
 		textFieldSingIn.setSize(700, 50);
-		
+
 		// Skin textFieldSkin = new Skin();
 		// textFieldSkin.add("textFieldCursor", new
 		// Texture(Gdx.files.internal("data/Images/Menu/cursor_1.png")));
 
 		// TextFieldStyle textFieldStyle = new TextFieldStyle(font, Color.WHITE,
 		// null, textFieldSkin.getDrawable("textFieldCursor"), null);
-		TextFieldStyle textFieldStyle = new TextFieldStyle(font, Color.WHITE, null, null, null);
+		TextFieldStyle textFieldStyle = new TextFieldStyle(font, Color.WHITE,
+				null, null, null);
 		txtEmail = new TextField("", textFieldStyle);
 		txtEmail.setMessageText("Enter your Email...");
 		txtEmail.setMaxLength(30);
@@ -218,7 +237,7 @@ public class MenuLogInRender extends MenuRender {
 		style.up = skin.getDrawable("button_orange");
 		style.down = skin.getDrawable("button_orange_pressed");
 		style.font = font;
-		
+
 		btnConfirm = new TextButton("Confirm", style);
 		btnConfirm.setPosition(popupPanel.getX() + 50, popupPanel.getY() + 50);
 		btnConfirm.addListener(new ClickListener() {
@@ -231,12 +250,7 @@ public class MenuLogInRender extends MenuRender {
 					break;
 				case LogIn:
 					if (!email.isEmpty() && !nick.isEmpty()) {
-						boolean ok = controller.authenticate(email, nick);
-						if (ok) {
-							exitAnimation();
-						} else {
-							// TODO: Mostrar mensaje de error
-						}
+						controller.authenticate(email, nick);
 					}
 					break;
 				case SingIn:
@@ -256,7 +270,9 @@ public class MenuLogInRender extends MenuRender {
 		});
 
 		btnBack = new TextButton("Back", style);
-		btnBack.setPosition(popupPanel.getX() + popupPanel.getWidth() - btnBack.getWidth() - 50, popupPanel.getY() + 50);
+		btnBack.setPosition(
+				popupPanel.getX() + popupPanel.getWidth() - btnBack.getWidth()
+						- 50, popupPanel.getY() + 50);
 		btnBack.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
@@ -267,62 +283,105 @@ public class MenuLogInRender extends MenuRender {
 		enterAnimation();
 	}
 
+	public void authenticateSuccess(String userId, String name) {
+		exitAnimation();
+	}
+
+	public void authenticateError(String message) {
+		System.out.println(message);
+	}
+
 	// Solo para el btnBack (Mueve el panel hacia arriba y hace un fade-in de
 	// los otros botones
 	private void moveUp(MenuLogInState state) {
-		float speed = CrystalClash.ANIMATION_SPEED;	
+		float speed = CrystalClash.ANIMATION_SPEED;
 		Timeline.createParallel()
-				.push(Tween.to(popupPanel, ActorAccessor.ALPHA, speed).target(0))
-				.push(Tween.to(lblHeading, ActorAccessor.ALPHA, speed).target(0))
-				.push(Tween.to(textFieldLogIn, ActorAccessor.ALPHA, speed).target(0))
-				.push(Tween.to(textFieldSingIn, ActorAccessor.ALPHA, speed).target(0))
+				.push(Tween.to(popupPanel, ActorAccessor.ALPHA, speed)
+						.target(0))
+				.push(Tween.to(lblHeading, ActorAccessor.ALPHA, speed)
+						.target(0))
+				.push(Tween.to(textFieldLogIn, ActorAccessor.ALPHA, speed)
+						.target(0))
+				.push(Tween.to(textFieldSingIn, ActorAccessor.ALPHA, speed)
+						.target(0))
 				.push(Tween.to(txtEmail, ActorAccessor.ALPHA, speed).target(0))
 				.push(Tween.to(txtNick, ActorAccessor.ALPHA, speed).target(0))
-				.push(Tween.to(btnConfirm, ActorAccessor.ALPHA, speed).target(0))
+				.push(Tween.to(btnConfirm, ActorAccessor.ALPHA, speed)
+						.target(0))
 				.push(Tween.to(btnBack, ActorAccessor.ALPHA, speed).target(0))
-				.push(Tween.to(characters, ActorAccessor.ALPHA, speed).target(1))
+				.push(Tween.to(characters, ActorAccessor.ALPHA, speed)
+						.target(1))
 				.push(Tween.to(btnLogIn, ActorAccessor.ALPHA, speed).target(1))
 				.push(Tween.to(btnSingIn, ActorAccessor.ALPHA, speed).target(1))
-				.push(Tween.to(popupPanel, ActorAccessor.Y, speed).target(popupPanel.getY() + CrystalClash.HEIGHT))
-				.push(Tween.to(lblHeading, ActorAccessor.Y, speed).target(lblHeading.getY() + CrystalClash.HEIGHT))
-				.push(Tween.to(textFieldLogIn, ActorAccessor.Y, speed).target(textFieldLogIn.getY() + CrystalClash.HEIGHT))
-				.push(Tween.to(textFieldSingIn, ActorAccessor.Y, speed).target(textFieldSingIn.getY() + CrystalClash.HEIGHT))
-				.push(Tween.to(txtEmail, ActorAccessor.Y, speed).target(txtEmail.getY() + CrystalClash.HEIGHT))
-				.push(Tween.to(txtNick, ActorAccessor.Y, speed).target(txtNick.getY() + CrystalClash.HEIGHT))
-				.push(Tween.to(btnConfirm, ActorAccessor.Y, speed).target(btnConfirm.getY() + CrystalClash.HEIGHT))
-				.push(Tween.to(btnBack, ActorAccessor.Y, speed).target(btnBack.getY() + CrystalClash.HEIGHT))
+				.push(Tween.to(popupPanel, ActorAccessor.Y, speed).target(
+						popupPanel.getY() + CrystalClash.HEIGHT))
+				.push(Tween.to(lblHeading, ActorAccessor.Y, speed).target(
+						lblHeading.getY() + CrystalClash.HEIGHT))
+				.push(Tween.to(textFieldLogIn, ActorAccessor.Y, speed).target(
+						textFieldLogIn.getY() + CrystalClash.HEIGHT))
+				.push(Tween.to(textFieldSingIn, ActorAccessor.Y, speed).target(
+						textFieldSingIn.getY() + CrystalClash.HEIGHT))
+				.push(Tween.to(txtEmail, ActorAccessor.Y, speed).target(
+						txtEmail.getY() + CrystalClash.HEIGHT))
+				.push(Tween.to(txtNick, ActorAccessor.Y, speed).target(
+						txtNick.getY() + CrystalClash.HEIGHT))
+				.push(Tween.to(btnConfirm, ActorAccessor.Y, speed).target(
+						btnConfirm.getY() + CrystalClash.HEIGHT))
+				.push(Tween.to(btnBack, ActorAccessor.Y, speed).target(
+						btnBack.getY() + CrystalClash.HEIGHT))
 				.start(tweenManager);
 
 		this.state = state;
 	}
 
 	private void moveDown(MenuLogInState state) {
-		float speed = CrystalClash.ANIMATION_SPEED;	
+		float speed = CrystalClash.ANIMATION_SPEED;
 		Timeline.createParallel()
-				.push(Tween.to(popupPanel, ActorAccessor.Y, speed).target(CrystalClash.HEIGHT / 2 - popupPanel.getHeight() / 2))
-				.push(Tween.to(lblHeading, ActorAccessor.Y, speed).target(CrystalClash.HEIGHT / 2 - popupPanel.getHeight() / 2 + popupPanel.getHeight() - 100))
-				.push(Tween.to(textFieldLogIn, ActorAccessor.Y, speed).target(CrystalClash.HEIGHT / 2 - popupPanel.getHeight() / 2 + popupPanel.getHeight() - 200))
-				.push(Tween.to(textFieldSingIn, ActorAccessor.Y, speed).target(CrystalClash.HEIGHT / 2 - popupPanel.getHeight() / 2 + popupPanel.getHeight() - 300))
-				.push(Tween.to(txtEmail, ActorAccessor.Y, speed).target(CrystalClash.HEIGHT / 2 - popupPanel.getHeight() / 2 + popupPanel.getHeight() - 200))
-				.push(Tween.to(txtNick, ActorAccessor.Y, speed).target(CrystalClash.HEIGHT / 2 - popupPanel.getHeight() / 2 + popupPanel.getHeight() - 300))
-				.push(Tween.to(btnConfirm, ActorAccessor.Y, speed).target(CrystalClash.HEIGHT / 2 - popupPanel.getHeight() / 2 + 50))
-				.push(Tween.to(btnBack, ActorAccessor.Y, speed).target(CrystalClash.HEIGHT / 2 - popupPanel.getHeight() / 2 + 50))
-				.push(Tween.to(popupPanel, ActorAccessor.ALPHA, speed).target(1))
-				.push(Tween.to(lblHeading, ActorAccessor.ALPHA, speed).target(1))
-				.push(Tween.to(textFieldLogIn, ActorAccessor.ALPHA, speed).target(1))
-				.push(Tween.to(textFieldSingIn, ActorAccessor.ALPHA, speed).target(1))
+				.push(Tween.to(popupPanel, ActorAccessor.Y, speed).target(
+						CrystalClash.HEIGHT / 2 - popupPanel.getHeight() / 2))
+				.push(Tween.to(lblHeading, ActorAccessor.Y, speed).target(
+						CrystalClash.HEIGHT / 2 - popupPanel.getHeight() / 2
+								+ popupPanel.getHeight() - 100))
+				.push(Tween.to(textFieldLogIn, ActorAccessor.Y, speed).target(
+						CrystalClash.HEIGHT / 2 - popupPanel.getHeight() / 2
+								+ popupPanel.getHeight() - 200))
+				.push(Tween.to(textFieldSingIn, ActorAccessor.Y, speed).target(
+						CrystalClash.HEIGHT / 2 - popupPanel.getHeight() / 2
+								+ popupPanel.getHeight() - 300))
+				.push(Tween.to(txtEmail, ActorAccessor.Y, speed).target(
+						CrystalClash.HEIGHT / 2 - popupPanel.getHeight() / 2
+								+ popupPanel.getHeight() - 200))
+				.push(Tween.to(txtNick, ActorAccessor.Y, speed).target(
+						CrystalClash.HEIGHT / 2 - popupPanel.getHeight() / 2
+								+ popupPanel.getHeight() - 300))
+				.push(Tween.to(btnConfirm, ActorAccessor.Y, speed).target(
+						CrystalClash.HEIGHT / 2 - popupPanel.getHeight() / 2
+								+ 50))
+				.push(Tween.to(btnBack, ActorAccessor.Y, speed).target(
+						CrystalClash.HEIGHT / 2 - popupPanel.getHeight() / 2
+								+ 50))
+				.push(Tween.to(popupPanel, ActorAccessor.ALPHA, speed)
+						.target(1))
+				.push(Tween.to(lblHeading, ActorAccessor.ALPHA, speed)
+						.target(1))
+				.push(Tween.to(textFieldLogIn, ActorAccessor.ALPHA, speed)
+						.target(1))
+				.push(Tween.to(textFieldSingIn, ActorAccessor.ALPHA, speed)
+						.target(1))
 				.push(Tween.to(txtEmail, ActorAccessor.ALPHA, speed).target(1))
 				.push(Tween.to(txtNick, ActorAccessor.ALPHA, speed).target(1))
-				.push(Tween.to(btnConfirm, ActorAccessor.ALPHA, speed).target(1))
+				.push(Tween.to(btnConfirm, ActorAccessor.ALPHA, speed)
+						.target(1))
 				.push(Tween.to(btnBack, ActorAccessor.ALPHA, speed).target(1))
-				.push(Tween.to(characters, ActorAccessor.ALPHA, speed).target(0))
+				.push(Tween.to(characters, ActorAccessor.ALPHA, speed)
+						.target(0))
 				.push(Tween.to(btnLogIn, ActorAccessor.ALPHA, speed).target(0))
 				.push(Tween.to(btnSingIn, ActorAccessor.ALPHA, speed).target(0))
 				.start(tweenManager);
 
 		this.state = state;
 	}
-	
+
 	private void adjustToKeyboard(boolean up) {
 		// TODO: true mueve hacia arriba, false mueve hacia abajo
 	}
@@ -358,10 +417,10 @@ public class MenuLogInRender extends MenuRender {
 				break;
 			}
 		}
-		
-		if(keycode == Keys.BACK){
-	           adjustToKeyboard(false);
-	    }
+
+		if (keycode == Keys.BACK) {
+			adjustToKeyboard(false);
+		}
 		return true;
 	}
 
