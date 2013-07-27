@@ -1,10 +1,5 @@
 package pruebas.Controllers;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Net.HttpResponse;
-import com.badlogic.gdx.Net.HttpResponseListener;
-import com.badlogic.gdx.utils.JsonValue;
-
 import pruebas.Networking.ServerDriver;
 import pruebas.Renders.MenuLogInRender;
 import pruebas.Renders.MenuRender;

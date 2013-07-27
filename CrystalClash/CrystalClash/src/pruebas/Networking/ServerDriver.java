@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import pruebas.Controllers.MenuLogIn;
-import pruebas.Renders.MenuLogInRender;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Net.HttpMethods;
