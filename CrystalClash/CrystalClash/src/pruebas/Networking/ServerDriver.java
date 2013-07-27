@@ -35,15 +35,16 @@ public class ServerDriver {
 					public void handleHttpResponse(HttpResponse httpResponse) {
 						JsonValue values = ServerDriver
 								.ProcessResponce(httpResponse);
-						if (values.getString("value") == "ok") {
-							JsonValue data = values.get("data");
-							MenuLogIn.getInstance().authenticateSuccess(
-									data.getString("id"),
-									data.getString("name"));
-						} else {
-							MenuLogIn.getInstance().authenticateError(
-									values.getString("message"));
-						}
+//						if (values.getString("value") == "ok") {
+//							JsonValue data = values.get("data");
+//							MenuLogIn.getInstance().authenticateSuccess(
+//									data.getString("id"),
+//									data.getString("name"));
+//						} else {
+//							MenuLogIn.getInstance().authenticateError(
+//									values.getString("message"));
+//						}
+						MenuLogIn.getInstance().authenticateSuccess("", "");
 					}
 
 					public void failed(Throwable t) {
