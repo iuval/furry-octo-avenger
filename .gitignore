@@ -40,3 +40,6 @@ RemoteSystemsTempFiles/
 # */.loadpath
 # classpath
 # settings
+bin
+war
+gwt-unitCache
