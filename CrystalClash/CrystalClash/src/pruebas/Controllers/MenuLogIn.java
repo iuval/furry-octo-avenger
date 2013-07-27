@@ -10,6 +10,13 @@ import pruebas.Renders.MenuLogInRender;
 import pruebas.Renders.MenuRender;
 
 public class MenuLogIn extends Menu {
+	
+	private static MenuLogIn instance;
+	public static MenuLogIn getInstance(){
+		if(instance == null) instance = new MenuLogIn();
+		return instance;
+	}
+	
 	private String email;
 	private String nick;
 
@@ -39,35 +46,27 @@ public class MenuLogIn extends Menu {
 		this.email = email;
 		this.nick = nick;
 
-		Gdx.net.sendHttpRequest(ServerDriver.LogIn(email, nick), new HttpResponseListener() {
-			public void handleHttpResponse(HttpResponse httpResponse) {
-				JsonValue values = ServerDriver.ProcessResponce(httpResponse);
-				((MenuLogInRender) getRender()).authenticateSuccess(values.getString("id"), values.getString("name"));
-			}
+		ServerDriver.LogIn(email, nick);
 
-			public void failed(Throwable t) {
-				((MenuLogInRender) getRender()).authenticateError("error");
-			}
-		});
-		
 		return true;
+	}
+
+	public void authenticateSuccess(String userId, String name) {
+		((MenuLogInRender) getRender()).authenticateSuccess(userId, name);
+	}
+
+	public void authenticateError(String message) {
+		((MenuLogInRender) getRender()).authenticateError(message);
+	}
+
+	public void serverError(String message) {
+		System.out.println(message);
 	}
 
 	public boolean singIn(String email, String nick) {
 		this.email = email;
 		this.nick = nick;
 
-		Gdx.net.sendHttpRequest(ServerDriver.SignIn(email, nick), new HttpResponseListener() {
-			public void handleHttpResponse(HttpResponse httpResponse) {
-				JsonValue values = ServerDriver.ProcessResponce(httpResponse);
-				((MenuLogInRender) getRender()).authenticateSuccess(values.getString("id"), values.getString("name"));
-			}
-
-			public void failed(Throwable t) {
-				((MenuLogInRender) getRender()).authenticateError("error");
-			}
-		});
-		
 		return true;
 	}
 

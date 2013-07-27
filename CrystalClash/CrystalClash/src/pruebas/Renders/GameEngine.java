@@ -37,7 +37,7 @@ public class GameEngine implements Screen {
 		batch.setProjectionMatrix(camera.combined);
 		stage.setCamera(camera);
 
-		state = GameState.InMenu;
+		state = GameState.InGame;
 
 		menu = MenuMaster.getInstance();
 		menuRender = new MenuMasterRender(this, menu);
