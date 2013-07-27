@@ -1,10 +1,9 @@
-package pruebas.CrystalClash;
+package pruebas.Renders;
 
-import pruebas.Entities.MenuMaster;
+import pruebas.Controllers.MenuMaster;
+import pruebas.CrystalClash.CrystalClash;
 import pruebas.Entities.World;
 import pruebas.Enumerators.GameState;
-import pruebas.Renders.MenuMasterRender;
-import pruebas.Renders.WorldRender;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
@@ -38,9 +37,9 @@ public class GameEngine implements Screen {
 		batch.setProjectionMatrix(camera.combined);
 		stage.setCamera(camera);
 
-		state = GameState.InMenu;
+		state = GameState.InGame;
 
-		menu = new MenuMaster();
+		menu = MenuMaster.getInstance();
 		menuRender = new MenuMasterRender(this, menu);
 		world = new World();
 		worldRender = new WorldRender(this, world);

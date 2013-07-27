@@ -1,6 +1,7 @@
-package pruebas.CrystalClash;
+package pruebas.Renders;
 
 import pruebas.Accessors.ActorAccessor;
+import pruebas.CrystalClash.CrystalClash;
 import aurelienribon.tweenengine.BaseTween;
 import aurelienribon.tweenengine.Timeline;
 import aurelienribon.tweenengine.Tween;

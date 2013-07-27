@@ -1,8 +1,7 @@
 package pruebas.Renders;
 
 import pruebas.Accessors.ActorAccessor;
-import pruebas.CrystalClash.GameEngine;
-import pruebas.Entities.MenuMaster;
+import pruebas.Controllers.MenuMaster;
 
 import aurelienribon.tweenengine.Timeline;
 import aurelienribon.tweenengine.Tween;
