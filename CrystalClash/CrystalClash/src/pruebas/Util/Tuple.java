@@ -1,4 +1,4 @@
-package pruebasUtil;
+package pruebas.Util;
 
 public class Tuple<X, Y> {
 	private X first;

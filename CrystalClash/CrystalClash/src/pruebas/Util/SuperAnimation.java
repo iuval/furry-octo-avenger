@@ -1,4 +1,4 @@
-package pruebasUtil;
+package pruebas.Util;
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.utils.Array;
