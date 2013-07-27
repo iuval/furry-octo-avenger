@@ -5,7 +5,6 @@ import pruebas.Controllers.MenuLogIn;
 import pruebas.CrystalClash.CrystalClash;
 import pruebas.Enumerators.MenuLogInState;
 import pruebas.Enumerators.StringWriting;
-import pruebas.Util.SuperAnimation;
 import aurelienribon.tweenengine.BaseTween;
 import aurelienribon.tweenengine.Timeline;
 import aurelienribon.tweenengine.Tween;
@@ -17,9 +16,7 @@ import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
@@ -139,7 +136,7 @@ public class MenuLogInRender extends MenuRender {
 	}
 
 	private void loadStuff() {
-		atlas = new TextureAtlas("data/Buttons/buttons.pack");
+		atlas = new TextureAtlas("data/Images/Buttons/buttons.pack");
 		skin = new Skin(atlas);
 
 		font = new BitmapFont(Gdx.files.internal("data/Fonts/font.fnt"), false);
@@ -165,14 +162,14 @@ public class MenuLogInRender extends MenuRender {
 			}
 		});
 
-		btnSingIn = new TextButton("Sing In", outerStyle);
+		btnSingIn = new TextButton("Sign In", outerStyle);
 		btnSingIn.setPosition(CrystalClash.WIDTH / 4 * 3 - btnSingIn.getWidth()
 				/ 2, CrystalClash.HEIGHT / 2 - 50 - btnSingIn.getHeight());
 		btnSingIn.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
 				if (state == MenuLogInState.Idle)
-					moveDown(MenuLogInState.SingIn);
+					moveDown(MenuLogInState.SignIn);
 			}
 		});
 
@@ -241,8 +238,18 @@ public class MenuLogInRender extends MenuRender {
 		style.down = skin.getDrawable("button_orange_pressed");
 		style.font = font;
 
+		btnBack = new TextButton("Back", style);
+		btnBack.setPosition(popupPanel.getX() + 50, popupPanel.getY() + 50);
+		btnBack.addListener(new ClickListener() {
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+				moveUp(MenuLogInState.Idle);
+			}
+		});
+		
 		btnConfirm = new TextButton("Confirm", style);
-		btnConfirm.setPosition(popupPanel.getX() + 50, popupPanel.getY() + 50);
+		btnConfirm.setPosition(popupPanel.getX() + popupPanel.getWidth() - btnBack.getWidth()
+				- 50, popupPanel.getY() + 50);
 		btnConfirm.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
@@ -256,9 +263,9 @@ public class MenuLogInRender extends MenuRender {
 						controller.authenticate(email, nick);
 					}
 					break;
-				case SingIn:
+				case SignIn:
 					if (!email.isEmpty() && !nick.isEmpty()) {
-						boolean ok = controller.singIn(email, nick);
+						boolean ok = controller.signIn(email, nick);
 						if (ok) {
 							exitAnimation();
 						} else {
@@ -269,17 +276,6 @@ public class MenuLogInRender extends MenuRender {
 				default:
 					break;
 				}
-			}
-		});
-
-		btnBack = new TextButton("Back", style);
-		btnBack.setPosition(
-				popupPanel.getX() + popupPanel.getWidth() - btnBack.getWidth()
-						- 50, popupPanel.getY() + 50);
-		btnBack.addListener(new ClickListener() {
-			@Override
-			public void clicked(InputEvent event, float x, float y) {
-				moveUp(MenuLogInState.Idle);
 			}
 		});
 
