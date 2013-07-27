@@ -5,8 +5,8 @@ import java.util.Iterator;
 import pruebas.CrystalClash.CrystalClash;
 import pruebas.Entities.Unit;
 import pruebas.Entities.World;
-import pruebasUtil.SuperAnimation;
-import pruebasUtil.Tuple;
+import pruebas.Util.SuperAnimation;
+import pruebas.Util.Tuple;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
