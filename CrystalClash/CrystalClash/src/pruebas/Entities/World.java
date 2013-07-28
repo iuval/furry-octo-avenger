@@ -1,6 +1,6 @@
 package pruebas.Entities;
 
-import pruebasUtil.Tuple;
+import pruebas.Util.Tuple;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
