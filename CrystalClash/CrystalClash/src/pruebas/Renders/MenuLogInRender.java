@@ -2,10 +2,10 @@ package pruebas.Renders;
 
 import pruebas.Accessors.ActorAccessor;
 import pruebas.Controllers.MenuLogIn;
+import pruebas.Controllers.MenuMaster;
 import pruebas.CrystalClash.CrystalClash;
 import pruebas.Enumerators.MenuLogInState;
 import pruebas.Enumerators.StringWriting;
-import pruebas.Util.SuperAnimation;
 import aurelienribon.tweenengine.BaseTween;
 import aurelienribon.tweenengine.Timeline;
 import aurelienribon.tweenengine.Tween;
@@ -17,9 +17,7 @@ import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
@@ -160,8 +158,10 @@ public class MenuLogInRender extends MenuRender {
 		btnLogIn.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
-				if (state == MenuLogInState.Idle)
-					moveDown(MenuLogInState.LogIn);
+				//Para probar
+				MenuMaster.changeMenuToGames();
+//				if (state == MenuLogInState.Idle)
+//					moveDown(MenuLogInState.LogIn);
 			}
 		});
 

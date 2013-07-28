@@ -13,7 +13,7 @@ public class MenuMaster {
 	private static Menu currentMenu;
 
 	private static MenuLogIn menuLogInInstance;
-	private static MenuMatches menuMatchesInstance;
+	private static MenuGames menuMatchesInstance;
 
 	private MenuMaster() {
 	}
@@ -44,9 +44,9 @@ public class MenuMaster {
 		currentMenu = getMenuLogIn();
 	}
 
-	public static MenuMatches getMenuGames(){
+	public static MenuGames getMenuGames(){
 		if (menuMatchesInstance == null)
-			menuMatchesInstance = new MenuMatches();
+			menuMatchesInstance = new MenuGames();
 		return menuMatchesInstance;
 	}
 	

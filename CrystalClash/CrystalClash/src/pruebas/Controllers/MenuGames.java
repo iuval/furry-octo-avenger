@@ -1,9 +1,9 @@
 package pruebas.Controllers;
 
-import pruebas.Renders.MenuMatchesRender;
+import pruebas.Renders.MenuGamesRender;
 import pruebas.Renders.MenuRender;
 
-public class MenuMatches extends Menu {
+public class MenuGames extends Menu {
 
 	@Override
 	public void update(float delta) {
@@ -11,7 +11,7 @@ public class MenuMatches extends Menu {
 
 	@Override
 	public MenuRender getRender() {
-		return MenuMatchesRender.getInstance(this);
+		return MenuGamesRender.getInstance(this);
 	}
 
 }
