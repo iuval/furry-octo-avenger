@@ -58,7 +58,7 @@ public class MenuLogIn extends Menu {
 		System.out.println(message);
 	}
 
-	public boolean singIn(String email, String nick) {
+	public boolean signIn(String email, String nick) {
 		this.email = email;
 		this.nick = nick;
 		

@@ -40,7 +40,7 @@ public class WorldRender {
 		this.engine = engine;
 		this.world = world;
 		
-		backgroundTexture = new Texture(Gdx.files.internal("data/Images/InGame/terrain_distribution_huds.jpg"));
+		backgroundTexture = new Texture(Gdx.files.internal("data/Images/InGame/terrain.jpg"));
 		background = new Image(backgroundTexture);
 		background.setSize(CrystalClash.WIDTH, CrystalClash.HEIGHT);
 

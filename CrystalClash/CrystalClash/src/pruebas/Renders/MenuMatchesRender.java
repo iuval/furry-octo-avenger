@@ -63,9 +63,8 @@ public class MenuMatchesRender extends MenuRender {
 	private void loadStuff() {
 		font = new BitmapFont(Gdx.files.internal("data/Fonts/font.fnt"), false);
 
-		lblHeading = new Label("Welcome "
-				+ GameController.getInstancia().getUser().getNick(),
-				new LabelStyle(font, Color.WHITE));
+		//lblHeading = new Label("Welcome " + GameController.getInstancia().getUser().getNick(), new LabelStyle(font, Color.WHITE));
+		lblHeading = new Label("Welcome ", new LabelStyle(font, Color.WHITE));
 		lblHeading.setPosition(50, CrystalClash.HEIGHT - 50);
 
 		enterAnimation();
