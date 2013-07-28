@@ -17,10 +17,12 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.utils.JsonReader;
+import com.badlogic.gdx.utils.JsonValue;
 
 public class SplashScreen implements Screen {
 
-	//private SpriteBatch batch;
+	// private SpriteBatch batch;
 	private Stage stage;
 	private TweenManager tweenManager;
 	private OrthographicCamera camera;
@@ -32,44 +34,53 @@ public class SplashScreen implements Screen {
 	private Image background;
 	private Image crystal;
 	private Image name;
-	
+
 	@Override
 	public void show() {
-		//batch = new SpriteBatch();
+		// batch = new SpriteBatch();
 		stage = new Stage();
 		tweenManager = new TweenManager();
 		camera = new OrthographicCamera();
 		camera.setToOrtho(false, CrystalClash.WIDTH, CrystalClash.HEIGHT);
 
-		backgroundTexture = new Texture(Gdx.files.internal("data/Images/Splash/splash_background.jpg"));
-		crystalTexture = new Texture(Gdx.files.internal("data/Images/Splash/splash_crystal.png"));
-		nameTexture = new Texture(Gdx.files.internal("data/Images/Splash/splash_name.png"));
+		backgroundTexture = new Texture(
+				Gdx.files.internal("data/Images/Splash/splash_background.jpg"));
+		crystalTexture = new Texture(
+				Gdx.files.internal("data/Images/Splash/splash_crystal.png"));
+		nameTexture = new Texture(
+				Gdx.files.internal("data/Images/Splash/splash_name.png"));
 
 		background = new Image(backgroundTexture);
 		crystal = new Image(crystalTexture);
 		name = new Image(nameTexture);
 
 		background.setSize(CrystalClash.WIDTH, CrystalClash.HEIGHT);
-		crystal.setPosition(CrystalClash.WIDTH / 2 - crystal.getWidth() / 2, CrystalClash.HEIGHT / 2 - crystal.getHeight() / 2);
+		crystal.setPosition(CrystalClash.WIDTH / 2 - crystal.getWidth() / 2,
+				CrystalClash.HEIGHT / 2 - crystal.getHeight() / 2);
 		name.setPosition(CrystalClash.WIDTH / 2 - name.getWidth() / 2, 0);
 
-		float speed = CrystalClash.ANIMATION_SPEED;		
+		float speed = CrystalClash.ANIMATION_SPEED;
 		Tween.registerAccessor(Actor.class, new ActorAccessor());
 		Timeline.createSequence()
 				.beginParallel()
 				.push(Tween.set(crystal, ActorAccessor.ALPHA).target(0))
-				.push(Tween.set(crystal, ActorAccessor.Y).target(crystal.getHeight()))
+				.push(Tween.set(crystal, ActorAccessor.Y).target(
+						crystal.getHeight()))
 				.push(Tween.set(name, ActorAccessor.ALPHA).target(0))
-				.push(Tween.set(name, ActorAccessor.Y).target(-name.getHeight()))
+				.push(Tween.set(name, ActorAccessor.Y)
+						.target(-name.getHeight()))
 				.push(Tween.to(crystal, ActorAccessor.ALPHA, speed).target(1))
-				.push(Tween.to(crystal, ActorAccessor.Y, speed).target(CrystalClash.HEIGHT / 2 - crystal.getHeight() / 2 + 40))
+				.push(Tween.to(crystal, ActorAccessor.Y, speed).target(
+						CrystalClash.HEIGHT / 2 - crystal.getHeight() / 2 + 40))
 				.push(Tween.to(name, ActorAccessor.ALPHA, speed).target(1))
-				.push(Tween.to(name, ActorAccessor.Y, speed).target(40)).end()
+				.push(Tween.to(name, ActorAccessor.Y, speed).target(40))
+				.end()
 				.beginParallel()
-				.push(Tween.to(background, ActorAccessor.ALPHA, speed).target(0))
+				.push(Tween.to(background, ActorAccessor.ALPHA, speed)
+						.target(0))
 				.push(Tween.to(crystal, ActorAccessor.ALPHA, speed).target(0))
-				.push(Tween.to(name, ActorAccessor.ALPHA, speed).target(0)).end()
-				.setCallback(new TweenCallback() {
+				.push(Tween.to(name, ActorAccessor.ALPHA, speed).target(0))
+				.end().setCallback(new TweenCallback() {
 					@Override
 					public void onEvent(int type, BaseTween<?> source) {
 						((Game) Gdx.app.getApplicationListener())
@@ -81,21 +92,21 @@ public class SplashScreen implements Screen {
 		stage.addActor(background);
 		stage.addActor(crystal);
 		stage.addActor(name);
-		
+
 		tweenManager.update(Float.MIN_VALUE);
 	}
-	
+
 	@Override
 	public void render(float delta) {
 		Gdx.gl.glClearColor(0, 0, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-		
-		//batch.setProjectionMatrix(camera.combined);
-		//batch.begin();
-		//background.draw(batch, 1);
-		//crystal.draw(batch, 1);
-		//name.draw(batch, 1);
-		//batch.end();
+
+		// batch.setProjectionMatrix(camera.combined);
+		// batch.begin();
+		// background.draw(batch, 1);
+		// crystal.draw(batch, 1);
+		// name.draw(batch, 1);
+		// batch.end();
 
 		stage.act(delta);
 		stage.draw();
@@ -121,7 +132,7 @@ public class SplashScreen implements Screen {
 
 	@Override
 	public void dispose() {
-		//batch.dispose();
+		// batch.dispose();
 		stage.dispose();
 		backgroundTexture.dispose();
 		crystalTexture.dispose();

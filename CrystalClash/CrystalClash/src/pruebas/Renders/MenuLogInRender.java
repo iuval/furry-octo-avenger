@@ -5,7 +5,6 @@ import pruebas.Controllers.MenuLogIn;
 import pruebas.CrystalClash.CrystalClash;
 import pruebas.Enumerators.MenuLogInState;
 import pruebas.Enumerators.StringWriting;
-import pruebas.Util.SuperAnimation;
 import aurelienribon.tweenengine.BaseTween;
 import aurelienribon.tweenengine.Timeline;
 import aurelienribon.tweenengine.Tween;
@@ -17,9 +16,8 @@ import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.NinePatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
@@ -31,6 +29,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField.TextFieldStyle;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 
 public class MenuLogInRender extends MenuRender {
 
@@ -200,14 +199,17 @@ public class MenuLogInRender extends MenuRender {
 				popupPanel.getTop() - 300);
 		textFieldSingIn.setSize(700, 50);
 
-		// Skin textFieldSkin = new Skin();
-		// textFieldSkin.add("textFieldCursor", new
-		// Texture(Gdx.files.internal("data/Images/Menu/cursor_1.png")));
+		Skin textFieldSkin = new Skin();
+		textFieldSkin
+				.add("textFieldCursor",
+						new Texture(Gdx.files.internal("data/Images/Menu/cursor_1.png")));
 
+		TextFieldStyle textFieldStyle = new TextFieldStyle();
+		textFieldStyle.font = font;
+		textFieldStyle.fontColor = Color.WHITE;
+		textFieldStyle.cursor = textFieldSkin.getDrawable("textFieldCursor");
 		// TextFieldStyle textFieldStyle = new TextFieldStyle(font, Color.WHITE,
-		// null, textFieldSkin.getDrawable("textFieldCursor"), null);
-		TextFieldStyle textFieldStyle = new TextFieldStyle(font, Color.WHITE,
-				null, null, null);
+		// null, null, null);
 		txtEmail = new TextField("", textFieldStyle);
 		txtEmail.setMessageText("Enter your Email...");
 		txtEmail.setMaxLength(30);
@@ -258,12 +260,7 @@ public class MenuLogInRender extends MenuRender {
 					break;
 				case SingIn:
 					if (!email.isEmpty() && !nick.isEmpty()) {
-						boolean ok = controller.singIn(email, nick);
-						if (ok) {
-							exitAnimation();
-						} else {
-							// TODO: Mostrar mensaje de error
-						}
+						controller.singIn(email, nick);
 					}
 					break;
 				default:
@@ -293,7 +290,7 @@ public class MenuLogInRender extends MenuRender {
 	public void authenticateError(String message) {
 		System.out.println(message);
 	}
-
+	
 	// Solo para el btnBack (Mueve el panel hacia arriba y hace un fade-in de
 	// los otros botones
 	private void moveUp(MenuLogInState state) {
