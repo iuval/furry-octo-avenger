@@ -1,17 +1,18 @@
 package pruebas.Controllers;
 
-import pruebas.Networking.ServerDriver;
 import pruebas.Renders.MenuLogInRender;
 import pruebas.Renders.MenuRender;
 
 public class MenuLogIn extends Menu {
-	
+
 	private static MenuLogIn instance;
-	public static MenuLogIn getInstance(){
-		if(instance == null) instance = new MenuLogIn();
+
+	public static MenuLogIn getInstance() {
+		if (instance == null)
+			instance = new MenuLogIn();
 		return instance;
 	}
-	
+
 	private String email;
 	private String nick;
 
@@ -41,7 +42,7 @@ public class MenuLogIn extends Menu {
 		this.email = email;
 		this.nick = nick;
 
-		ServerDriver.LogIn(email, nick);
+		//ServerDriver.LogIn(email, nick);
 
 		return true;
 	}
