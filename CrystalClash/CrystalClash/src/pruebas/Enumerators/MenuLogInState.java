@@ -2,6 +2,6 @@ package pruebas.Enumerators;
 
 public enum MenuLogInState {
 	LogIn,
-	SingIn,
+	SignIn,
 	Idle
 }

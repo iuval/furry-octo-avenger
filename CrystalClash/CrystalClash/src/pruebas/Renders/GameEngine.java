@@ -48,6 +48,7 @@ public class GameEngine implements Screen {
 		inputManager.addProcessor(menu.getCurrentMenu().getRender());
 		Gdx.input.setCatchBackKey(true);
 		Gdx.input.setInputProcessor(inputManager);
+		Gdx.input.setCatchBackKey(true);
 		// Gdx.input.setInputProcessor(stage);
 	}
 
