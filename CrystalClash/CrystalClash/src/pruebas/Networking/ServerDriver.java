@@ -20,13 +20,33 @@ public class ServerDriver {
 	private final static String ACTION_LOG_IN = "log_in";
 	private final static String ACTION_SIGN_IN = "sign_in";
 
-	public static HttpRequest SignIn(String email, String password) {
+	public static void signIn(String email, String password) {
 		Map<String, String> data = new HashMap<String, String>();
 		data.put("email", email);
-		return getPost(ACTION_SIGN_IN, data);
+
+		Gdx.net.sendHttpRequest(getPost(ACTION_SIGN_IN, data),
+				new HttpResponseListener() {
+					public void handleHttpResponse(HttpResponse httpResponse) {
+						JsonValue values = ServerDriver
+								.ProcessResponce(httpResponse);
+						if (values.getString("value").equals("ok")) {
+							JsonValue data = values.get("data");
+							MenuLogIn.getInstance().authenticateSuccess(
+									data.getString("id"),
+									data.getString("name"));
+						} else {
+							MenuLogIn.getInstance().authenticateError(
+									values.getString("message"));
+						}
+					}
+
+					public void failed(Throwable t) {
+						MenuLogIn.getInstance().serverError("PANIC!");
+					}
+				});
 	}
-	
-	public static void LogIn(String email, String password) {
+
+	public static void logIn(final String email, String password) {
 		Map<String, String> data = new HashMap<String, String>();
 		data.put("email", email);
 
@@ -35,11 +55,10 @@ public class ServerDriver {
 					public void handleHttpResponse(HttpResponse httpResponse) {
 						JsonValue values = ServerDriver
 								.ProcessResponce(httpResponse);
-						if (values.getString("value") == "ok") {
+						if (values.getString("value").equals("ok")) {
 							JsonValue data = values.get("data");
 							MenuLogIn.getInstance().authenticateSuccess(
-									data.getString("id"),
-									data.getString("name"));
+									data.getString("id"), email);
 						} else {
 							MenuLogIn.getInstance().authenticateError(
 									values.getString("message"));
@@ -60,8 +79,9 @@ public class ServerDriver {
 	}
 
 	public static JsonValue ProcessResponce(HttpResponse response) {
-		System.out.println(response.getResultAsString());
-		return new JsonReader().parse(response.getResultAsStream());
+		String res = response.getResultAsString();
+		System.out.println(res);
+		return new JsonReader().parse(res);
 	}
 
 }

@@ -41,7 +41,7 @@ public class MenuLogIn extends Menu {
 		this.email = email;
 		this.nick = nick;
 
-		ServerDriver.LogIn(email, nick);
+		ServerDriver.logIn(email, nick);
 
 		return true;
 	}
@@ -61,6 +61,8 @@ public class MenuLogIn extends Menu {
 	public boolean singIn(String email, String nick) {
 		this.email = email;
 		this.nick = nick;
+		
+		ServerDriver.signIn(email, nick);
 
 		return true;
 	}
