@@ -1,8 +1,7 @@
 package pruebas.Renders;
 
 import pruebas.Accessors.ActorAccessor;
-import pruebas.Controllers.GameController;
-import pruebas.Controllers.MenuMatches;
+import pruebas.Controllers.MenuGames;
 import pruebas.CrystalClash.CrystalClash;
 import aurelienribon.tweenengine.Timeline;
 import aurelienribon.tweenengine.Tween;
@@ -20,19 +19,19 @@ public class MenuMatchesRender extends MenuRender {
 	private static MenuMatchesRender instance;
 	private TweenManager tweenManager;
 
-	private MenuMatches controller;
+	private MenuGames controller;
 
 	private BitmapFont font;
 	private Label lblHeading;
 
-	public MenuMatchesRender(MenuMatches menu) {
+	public MenuMatchesRender(MenuGames menu) {
 		this.controller = menu;
 		tweenManager = new TweenManager();
 
 		loadStuff();
 	}
 
-	public static MenuMatchesRender getInstance(MenuMatches menu) {
+	public static MenuMatchesRender getInstance(MenuGames menu) {
 		if (instance == null)
 			instance = new MenuMatchesRender(menu);
 
