@@ -128,7 +128,7 @@ public class MenuGamesRender extends MenuRender {
 		};
 
 		TextureAtlas listItemButtonAtlas = new TextureAtlas(
-				"data/Buttons/buttons.pack");
+				"data/Images/Buttons/buttons.pack");
 		Skin listItemSkin = new Skin(listItemButtonAtlas);
 		listItemSkin
 				.add("font",

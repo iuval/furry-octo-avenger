@@ -251,13 +251,7 @@ public class MenuLogInRender extends MenuRender {
 					break;
 				case LogIn:
 					if (!email.isEmpty() && !nick.isEmpty()) {
-						boolean ok = controller.authenticate(email, nick);
-						if (ok) {
-							Gdx.input.setOnscreenKeyboardVisible(false);
-							exitAnimation();
-						} else {
-							// TODO: Mostrar mensaje de error
-						}
+						controller.authenticate(email, nick);
 					}
 					break;
 				case SignIn:
