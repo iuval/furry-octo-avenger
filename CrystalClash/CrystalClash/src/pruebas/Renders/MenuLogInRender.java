@@ -29,7 +29,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField.TextFieldStyle;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 
 public class MenuLogInRender extends MenuRender {
 
@@ -185,15 +184,16 @@ public class MenuLogInRender extends MenuRender {
 		Skin textFieldSkin = new Skin();
 		textFieldSkin
 				.add("textFieldCursor",
-						new Texture(Gdx.files.internal("data/Images/Menu/cursor_1.png")));
+						new Texture(Gdx.files
+								.internal("data/Images/Menu/cursor_1.png")));
 
 		TextFieldStyle textFieldStyle = new TextFieldStyle();
 		textFieldStyle.font = font;
 		textFieldStyle.fontColor = Color.WHITE;
 		textFieldStyle.cursor = textFieldSkin.getDrawable("textFieldCursor");
 		// TextFieldStyle textFieldStyle = new TextFieldStyle(font, Color.WHITE,
-		// null, null, null);
-		txtEmail = new TextField("", textFieldStyle);
+		// null, textFieldSkin.getDrawable("textFieldCursor"), null);
+		txtEmail = new TextField("iuvalgoldansky@gmail.com", textFieldStyle);
 		txtEmail.setMessageText("Enter your Email...");
 		txtEmail.setMaxLength(30);
 		txtEmail.setSize(700, 50);
@@ -207,7 +207,7 @@ public class MenuLogInRender extends MenuRender {
 			}
 		});
 
-		txtNick = new TextField("", textFieldStyle);
+		txtNick = new TextField("pepe", textFieldStyle);
 		txtNick.setMessageText("Enter your Nick...");
 		txtNick.setMaxLength(30);
 		txtNick.setSize(700, 50);
@@ -296,7 +296,7 @@ public class MenuLogInRender extends MenuRender {
 	public void authenticateError(String message) {
 		System.out.println(message);
 	}
-	
+
 	// Solo para el btnBack (Mueve el panel hacia arriba y hace un fade-in de
 	// los otros botones
 	private void moveUp(MenuLogInState state) {
