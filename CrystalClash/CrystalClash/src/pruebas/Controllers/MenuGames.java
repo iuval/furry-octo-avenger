@@ -1,5 +1,6 @@
 package pruebas.Controllers;
 
+import pruebas.Networking.ServerDriver;
 import pruebas.Renders.MenuGamesRender;
 import pruebas.Renders.MenuRender;
 
@@ -20,6 +21,11 @@ public class MenuGames extends Menu {
 	@Override
 	public MenuRender getRender() {
 		return MenuGamesRender.getInstance(this);
+	}
+
+	public void enableRandom() {
+		ServerDriver.enableRandom(GameController.getInstancia().getUser()
+				.getId());
 	}
 
 	public void listGamesSuccess(String[][] games) {

@@ -94,7 +94,7 @@ public class MenuGamesRender extends MenuRender {
 
 		list = new VerticalGroup();
 		list.setWidth(CrystalClash.WIDTH);
-		
+
 		// put the table inside a scrollpane
 		scrollPane = new ScrollPane(list);
 		scrollPane
@@ -118,6 +118,15 @@ public class MenuGamesRender extends MenuRender {
 		buttonNewRandom.setBounds(0, 0, 250, list.getWidth());
 		buttonNewRandom.align(Align.center);
 		list.addActorAfter(menuImage, buttonNewRandom);
+		buttonNewRandom.addListener(new InputListener() {
+			@Override
+			public boolean touchDown(InputEvent event, float x, float y,
+					int pointer, int button) {
+				((TextButton) event.getListenerActor()).setText("Buscando...");
+				controller.enableRandom();
+				return true;
+			}
+		});
 
 		TextButton buttonNewInvite = new TextButton("Invite friend",
 				listItemSkin.get("buttonStyle", TextButtonStyle.class));
