@@ -12,11 +12,14 @@ import aurelienribon.tweenengine.TweenManager;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
@@ -33,6 +36,9 @@ public class MenuGamesRender extends MenuRender {
 	private MenuGames controller;
 	private ScrollPane scrollPane;
 	private Table table;
+	private Group gamesGroup;
+	private Group buttonsGroup;
+	private Image gamesImage;
 
 	private BitmapFont font;
 	private Label lblHeading;
@@ -79,27 +85,32 @@ public class MenuGamesRender extends MenuRender {
 		lblHeading = new Label("Welcome "
 				+ GameController.getInstancia().getUser().getNick(),
 				new LabelStyle(font, Color.WHITE));
-		lblHeading = new Label("Welcome", new LabelStyle(font, Color.WHITE));
 		lblHeading.setPosition(50, CrystalClash.HEIGHT - 50);
 
 		// item list table
 		table = new Table();
 		table.setFillParent(true);
-		table.align(Align.bottom).padBottom(20).padTop(20);
+		table.align(Align.top).padBottom(20).padTop(20);
 		table.defaults().space(10);
 
 		// put the table inside a scrollpane
 		scrollPane = new ScrollPane(table);
-		scrollPane.setBounds(20, 0, Gdx.graphics.getWidth() - 20,
-				Gdx.graphics.getHeight() - 20);
+		scrollPane
+				.setBounds(0, 0, CrystalClash.WIDTH, CrystalClash.HEIGHT - 80);
 		scrollPane.setScrollingDisabled(true, false);
-		scrollPane.setOverscroll(false, false);
+		scrollPane.setOverscroll(false, true);
 		scrollPane.invalidate();
 
-		enterAnimation();
+		gamesImage = new Image(new Texture(
+				Gdx.files.internal("data/Images/Menu/games_header.png")));
+		table.row().fillX();
+		table.add(gamesImage);
+
 		ServerDriver.ListGames(GameController.getInstancia().getUser().getId());
+		enterAnimation();
 	}
 
+	// SERVER DRIVER CALLBACKS --------------------------------------------
 	public void listGamesSuccess(String[][] games) {
 
 		// Listeners
@@ -134,6 +145,11 @@ public class MenuGamesRender extends MenuRender {
 				.add("font",
 						new BitmapFont(Gdx.files
 								.internal("data/Fonts/font.fnt"), false));
+		listItemSkin
+				.add("background",
+						new Texture(
+								Gdx.files
+										.internal("data/Images/Menu/games_item_background.png")));
 
 		TextButtonStyle outerStyle = new TextButtonStyle();
 		outerStyle.font = listItemSkin.getFont("font");
@@ -147,13 +163,21 @@ public class MenuGamesRender extends MenuRender {
 			listingItem = new GameListItem(games[i][0], games[i][1],
 					games[i][2], games[i][3], listItemSkin, surrenderListener,
 					playListener);
-			table.row();
+			table.row().fillX();
 			table.add(listingItem);
 		}
 
 	}
 
 	public void listGamesError(String message) {
+		System.out.println(message);
+	}
+
+	public void enableRandomSuccess() {
+
+	}
+
+	public void enableRandomError(String message) {
 		System.out.println(message);
 	}
 

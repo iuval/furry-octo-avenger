@@ -29,4 +29,12 @@ public class MenuGames extends Menu {
 	public void listGamesError(String message) {
 		((MenuGamesRender) getRender()).listGamesError(message);
 	}
+
+	public void enableRandomSuccess() {
+		((MenuGamesRender) getRender()).enableRandomSuccess();
+	}
+
+	public void enableRandomError(String message) {
+		((MenuGamesRender) getRender()).enableRandomError(message);
+	}
 }

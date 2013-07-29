@@ -5,6 +5,7 @@ import java.util.Map;
 
 import pruebas.Controllers.MenuGames;
 import pruebas.Controllers.MenuLogIn;
+import pruebas.Controllers.MenuMaster;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Net.HttpMethods;
@@ -21,6 +22,7 @@ public class ServerDriver {
 	private final static String ACTION_LOG_IN = "log_in";
 	private final static String ACTION_SIGN_IN = "sign_in";
 	private final static String ACTION_LIST_GAMES = "list_games";
+	private final static String ACTION_ENABLE_RANDOM = "enable_random";
 
 	public static void signIn(String email, String password) {
 		Map<String, String> data = new HashMap<String, String>();
@@ -96,6 +98,29 @@ public class ServerDriver {
 							MenuGames.getInstance().listGamesSuccess(games);
 						} else {
 							MenuGames.getInstance().listGamesError(
+									values.getString("message"));
+						}
+					}
+
+					public void failed(Throwable t) {
+						MenuLogIn.getInstance().serverError("PANIC!");
+					}
+				});
+	}
+
+	public static void enableRandom(String id) {
+		Map<String, String> data = new HashMap<String, String>();
+		data.put("id", id);
+
+		Gdx.net.sendHttpRequest(getPost(ACTION_ENABLE_RANDOM, data),
+				new HttpResponseListener() {
+					public void handleHttpResponse(HttpResponse httpResponse) {
+						JsonValue values = ServerDriver
+								.ProcessResponce(httpResponse);
+						if (values.getString("value").equals("ok")) {
+							MenuGames.getInstance().enableRandomSuccess();
+						} else {
+							MenuGames.getInstance().enableRandomError(
 									values.getString("message"));
 						}
 					}
