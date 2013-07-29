@@ -12,17 +12,20 @@ import aurelienribon.tweenengine.TweenManager;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
+import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
 import com.badlogic.gdx.scenes.scene2d.utils.Align;
 
 public class MenuGamesRender extends MenuRender {
@@ -32,10 +35,16 @@ public class MenuGamesRender extends MenuRender {
 
 	private MenuGames controller;
 	private ScrollPane scrollPane;
-	private Table table;
+	private Image gamesImage;
+
+	VerticalGroup list;
 
 	private BitmapFont font;
 	private Label lblHeading;
+
+	private InputListener surrenderListener;
+	private InputListener playListener;
+	private Skin listItemSkin;
 
 	public MenuGamesRender(MenuGames menu) {
 		this.controller = menu;
@@ -74,36 +83,75 @@ public class MenuGamesRender extends MenuRender {
 	}
 
 	private void loadStuff() {
+		initSkin();
+
 		font = new BitmapFont(Gdx.files.internal("data/Fonts/font.fnt"), false);
 
 		lblHeading = new Label("Welcome "
 				+ GameController.getInstancia().getUser().getNick(),
 				new LabelStyle(font, Color.WHITE));
-		lblHeading = new Label("Welcome", new LabelStyle(font, Color.WHITE));
 		lblHeading.setPosition(50, CrystalClash.HEIGHT - 50);
 
-		// item list table
-		table = new Table();
-		table.setFillParent(true);
-		table.align(Align.bottom).padBottom(20).padTop(20);
-		table.defaults().space(10);
+		list = new VerticalGroup();
+		list.setWidth(CrystalClash.WIDTH);
 
 		// put the table inside a scrollpane
-		scrollPane = new ScrollPane(table);
-		scrollPane.setBounds(20, 0, Gdx.graphics.getWidth() - 20,
-				Gdx.graphics.getHeight() - 20);
+		scrollPane = new ScrollPane(list);
+		scrollPane
+				.setBounds(0, 0, CrystalClash.WIDTH, CrystalClash.HEIGHT - 80);
 		scrollPane.setScrollingDisabled(true, false);
-		scrollPane.setOverscroll(false, false);
+		scrollPane.setOverscroll(false, true);
+		scrollPane.setSmoothScrolling(true);
 		scrollPane.invalidate();
 
-		enterAnimation();
+		gamesImage = new Image(new Texture(
+				Gdx.files.internal("data/Images/Menu/games_header.png")));
+
+		list.addActor(gamesImage);
+
+		Image menuImage = new Image(new Texture(
+				Gdx.files.internal("data/Images/Menu/new_games_header.png")));
+		list.addActor(menuImage);
+
+		TextButton buttonNewRandom = new TextButton("New random game",
+				listItemSkin.get("buttonStyle", TextButtonStyle.class));
+		buttonNewRandom.setBounds(0, 0, 250, list.getWidth());
+		buttonNewRandom.align(Align.center);
+		list.addActorAfter(menuImage, buttonNewRandom);
+		buttonNewRandom.addListener(new InputListener() {
+			@Override
+			public boolean touchDown(InputEvent event, float x, float y,
+					int pointer, int button) {
+				((TextButton) event.getListenerActor()).setText("Buscando...");
+				controller.enableRandom();
+				return true;
+			}
+		});
+
+		TextButton buttonNewInvite = new TextButton("Invite friend",
+				listItemSkin.get("buttonStyle", TextButtonStyle.class));
+		buttonNewInvite.setBounds(0, 0, 250, list.getWidth());
+		buttonNewInvite.align(Align.center);
+		list.addActorAfter(menuImage, buttonNewInvite);
+
 		ServerDriver.ListGames(GameController.getInstancia().getUser().getId());
+		enterAnimation();
 	}
 
+	// SERVER DRIVER CALLBACKS --------------------------------------------
 	public void listGamesSuccess(String[][] games) {
+		GameListItem listingItem;
+		for (int i = 0, len = games.length; i < len; i++) {
+			listingItem = new GameListItem(games[i][0], games[i][1],
+					games[i][2], games[i][3], listItemSkin, surrenderListener,
+					playListener);
+			list.addActorAfter(gamesImage, listingItem);
+		}
+	}
 
+	private void initSkin() {
 		// Listeners
-		InputListener surrenderListener = new InputListener() {
+		surrenderListener = new InputListener() {
 			@Override
 			public boolean touchDown(InputEvent event, float x, float y,
 					int pointer, int button) {
@@ -115,7 +163,7 @@ public class MenuGamesRender extends MenuRender {
 			}
 		};
 
-		InputListener playListener = new InputListener() {
+		playListener = new InputListener() {
 			@Override
 			public boolean touchDown(InputEvent event, float x, float y,
 					int pointer, int button) {
@@ -129,11 +177,16 @@ public class MenuGamesRender extends MenuRender {
 
 		TextureAtlas listItemButtonAtlas = new TextureAtlas(
 				"data/Images/Buttons/buttons.pack");
-		Skin listItemSkin = new Skin(listItemButtonAtlas);
+		listItemSkin = new Skin(listItemButtonAtlas);
 		listItemSkin
 				.add("font",
 						new BitmapFont(Gdx.files
 								.internal("data/Fonts/font.fnt"), false));
+		listItemSkin
+				.add("background",
+						new Texture(
+								Gdx.files
+										.internal("data/Images/Menu/games_item_background.png")));
 
 		TextButtonStyle outerStyle = new TextButtonStyle();
 		outerStyle.font = listItemSkin.getFont("font");
@@ -141,19 +194,17 @@ public class MenuGamesRender extends MenuRender {
 		outerStyle.down = listItemSkin
 				.getDrawable("outer_button_orange_pressed");
 		listItemSkin.add("buttonStyle", outerStyle);
-
-		GameListItem listingItem;
-		for (int i = 0, len = games.length; i < len; i++) {
-			listingItem = new GameListItem(games[i][0], games[i][1],
-					games[i][2], games[i][3], listItemSkin, surrenderListener,
-					playListener);
-			table.row();
-			table.add(listingItem);
-		}
-
 	}
 
 	public void listGamesError(String message) {
+		System.out.println(message);
+	}
+
+	public void enableRandomSuccess() {
+
+	}
+
+	public void enableRandomError(String message) {
 		System.out.println(message);
 	}
 
