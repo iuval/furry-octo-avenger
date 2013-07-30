@@ -2,18 +2,22 @@ package pruebas.Controllers;
 
 import pruebas.Networking.ServerDriver;
 import pruebas.Renders.MenuGamesRender;
-import pruebas.Renders.MenuMatchesRender;
 import pruebas.Renders.MenuRender;
 
 public class MenuGames extends Menu {
 
+	public static MenuGames getInstance() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
 	@Override
 	public void update(float delta) {
 	}
 
 	@Override
 	public MenuRender getRender() {
-		return MenuMatchesRender.getInstance(this);
+		return MenuGamesRender.getInstance(this);
 	}
 
 	public void enableRandom() {
