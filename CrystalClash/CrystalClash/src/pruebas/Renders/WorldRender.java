@@ -4,72 +4,76 @@ import java.util.Iterator;
 
 import pruebas.CrystalClash.CrystalClash;
 import pruebas.Entities.Unit;
-import pruebas.Entities.World;
-import pruebas.Util.SuperAnimation;
 import pruebas.Util.Tuple;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.utils.Array;
 
-public class WorldRender {
+public class WorldRender implements InputProcessor {
 
 	private GameEngine engine;
-	
+	private CellRender cellRender;
+
 	private Texture backgroundTexture;
 	private Image background;
 
 	private Texture archerTexture;
 	private Image archer;
 
-	private World world;
+	private WorldController world;
 	private Array<Tuple<Unit, Vector2>> p1Units;
 	private Array<Tuple<Unit, Vector2>> p2Units;
 	private Iterator<Tuple<Unit, Vector2>> unitIterator;
 	private Tuple<Unit, Vector2> aux;
 
+	// private SuperAnimation animation;
 
-	private SuperAnimation animation;
-	
-	public WorldRender(GameEngine engine, World world) {
+	public WorldRender(GameEngine engine, WorldController world) {
 		this.engine = engine;
 		this.world = world;
-		
-		backgroundTexture = new Texture(Gdx.files.internal("data/Images/InGame/terrain.jpg"));
+
+		cellRender = new CellRender();
+		cellRender.load();
+
+		backgroundTexture = new Texture(
+				Gdx.files.internal("data/Images/InGame/terrain.jpg"));
 		background = new Image(backgroundTexture);
 		background.setSize(CrystalClash.WIDTH, CrystalClash.HEIGHT);
 
-		archerTexture = new Texture(Gdx.files.internal("data/Images/Units/fire_archer_f.png"));
-		archer = new Image(archerTexture);
-		archer.setSize(150, 150);
-
-		int FRAME_COLS = 6;
-		int FRAME_ROWS = 1;
-		Texture walkSheet = new Texture(
-				Gdx.files.internal("data/Units/fire_archer_attack_sheet.png"));
-		TextureRegion[][] tmp = TextureRegion.split(walkSheet,
-				walkSheet.getWidth() / FRAME_COLS, walkSheet.getHeight()
-						/ FRAME_ROWS);
-		TextureRegion[] walkFrames = new TextureRegion[FRAME_COLS * FRAME_ROWS];
-		float[] times = new float[FRAME_COLS * FRAME_ROWS];
-		times[0] = 0.15f;
-		times[1] = 0.15f;
-		times[2] = 0.5f;
-		times[3] = 0.15f;
-		times[4] = 0.15f;
-		times[5] = 0.15f;
-		int index = 0;
-		for (int i = 0; i < FRAME_ROWS; i++) {
-			for (int j = 0; j < FRAME_COLS; j++) {
-				walkFrames[index++] = tmp[i][j];
-			}
-		}
-		animation = new SuperAnimation(times, walkFrames);
+		// archerTexture = new Texture(
+		// Gdx.files.internal("data/Images/Units/fire_archer_f.png"));
+		// archer = new Image(archerTexture);
+		// archer.setSize(150, 150);
+		//
+		// int FRAME_COLS = 6;
+		// int FRAME_ROWS = 1;
+		// Texture walkSheet = new Texture(
+		// Gdx.files.internal("data/Units/fire_archer_attack_sheet.png"));
+		// TextureRegion[][] tmp = TextureRegion.split(walkSheet,
+		// walkSheet.getWidth() / FRAME_COLS, walkSheet.getHeight()
+		// / FRAME_ROWS);
+		// TextureRegion[] walkFrames = new TextureRegion[FRAME_COLS *
+		// FRAME_ROWS];
+		// float[] times = new float[FRAME_COLS * FRAME_ROWS];
+		// times[0] = 0.15f;
+		// times[1] = 0.15f;
+		// times[2] = 0.5f;
+		// times[3] = 0.15f;
+		// times[4] = 0.15f;
+		// times[5] = 0.15f;
+		// int index = 0;
+		// for (int i = 0; i < FRAME_ROWS; i++) {
+		// for (int j = 0; j < FRAME_COLS; j++) {
+		// walkFrames[index++] = tmp[i][j];
+		// }
+		// }
+		// animation = new SuperAnimation(times, walkFrames);
 
 	}
 
@@ -79,32 +83,93 @@ public class WorldRender {
 
 		p1Units = world.getP1Units();
 		p2Units = world.getP2Units();
-		
+
 		background.draw(batch, 1);
-		//stage.addActor(background);
-		
-		unitIterator = p1Units.iterator();
-		while (unitIterator.hasNext()) {
-			aux = unitIterator.next();
-			archer.setPosition(aux.getSecond().x, aux.getSecond().y);
-			archer.draw(batch, 1);
-			//stage.addActor(archer);
+		for (int i = 0; i < world.cellGrid.length; i++) {
+			for (int j = 0; j < world.cellGrid[i].length; j++) {
+				batch.draw(cellRender.getCellTexture(world.cellGrid[i][j]),
+						world.cellGrid[i][j].getX(),
+						world.cellGrid[i][j].getY());
+			}
 		}
 
-		unitIterator = p2Units.iterator();
-		while (unitIterator.hasNext()) {
-			aux = unitIterator.next();
-			archer.setPosition(aux.getSecond().x, aux.getSecond().y);
-			archer.draw(batch, 1);
-			//stage.addActor(archer);
-		}
+		// unitIterator = p1Units.iterator();
+		// while (unitIterator.hasNext()) {
+		// aux = unitIterator.next();
+		// archer.setPosition(aux.getSecond().x, aux.getSecond().y);
+		// archer.draw(batch, 1);
+		// // stage.addActor(archer);
+		// }
+		//
+		// unitIterator = p2Units.iterator();
+		// while (unitIterator.hasNext()) {
+		// aux = unitIterator.next();
+		// archer.setPosition(aux.getSecond().x, aux.getSecond().y);
+		// archer.draw(batch, 1);
+		// // stage.addActor(archer);
+		// }
 
-		TextureRegion currentFrame = animation.getKeyFrame(dt, true); // #16
-		batch.draw(currentFrame, 50, 50); // #17
+		// TextureRegion currentFrame = animation.getKeyFrame(dt, true); // #16
+		// batch.draw(currentFrame, 50, 50); // #17
+
+		// batch.draw(cellRender.able_to_attack, 100, 100);
 	}
-	
-	public void dispose(){
+
+	public void dispose() {
 		backgroundTexture.dispose();
 		archerTexture.dispose();
+	}
+
+	private void load() {
+		cellRender.load();
+	}
+
+	@Override
+	public boolean keyDown(int keycode) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean keyUp(int keycode) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean keyTyped(char character) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+		Vector2 vec = engine.getRealPosition(screenX, screenY);
+		world.tap(vec.x, vec.y);
+		return false;
+	}
+
+	@Override
+	public boolean touchUp(int screenX, int screenY, int pointer, int button) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean touchDragged(int screenX, int screenY, int pointer) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean mouseMoved(int screenX, int screenY) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean scrolled(int amount) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 }

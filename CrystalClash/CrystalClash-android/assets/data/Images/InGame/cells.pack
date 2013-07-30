@@ -1,0 +1,47 @@
+
+cells.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+able_to_attack
+  rotate: false
+  xy: 0, 109
+  size: 162, 109
+  orig: 162, 109
+  offset: 0, 0
+  index: -1
+able_to_move
+  rotate: false
+  xy: 0, 0
+  size: 162, 109
+  orig: 162, 109
+  offset: 0, 0
+  index: -1
+attack_target_center
+  rotate: false
+  xy: 162, 109
+  size: 162, 109
+  orig: 162, 109
+  offset: 0, 0
+  index: -1
+attack_target_radius
+  rotate: false
+  xy: 162, 0
+  size: 162, 109
+  orig: 162, 109
+  offset: 0, 0
+  index: -1
+move_target
+  rotate: false
+  xy: 324, 109
+  size: 162, 109
+  orig: 162, 109
+  offset: 0, 0
+  index: -1
+none
+  rotate: false
+  xy: 324, 0
+  size: 162, 109
+  orig: 162, 109
+  offset: 0, 0
+  index: -1

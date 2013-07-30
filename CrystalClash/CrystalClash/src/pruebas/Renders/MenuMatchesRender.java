@@ -1,6 +1,10 @@
 package pruebas.Renders;
 
 import pruebas.Accessors.ActorAccessor;
+<<<<<<< HEAD
+=======
+import pruebas.Controllers.GameController;
+>>>>>>> 757ec89... aguregue las claces que desaparecieron y creo que arregle el gitignore
 import pruebas.Controllers.MenuGames;
 import pruebas.CrystalClash.CrystalClash;
 import aurelienribon.tweenengine.Timeline;

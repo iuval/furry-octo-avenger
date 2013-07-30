@@ -1,8 +1,8 @@
 package pruebas.Renders;
 
 import pruebas.Controllers.MenuMaster;
+import pruebas.Controllers.WorldController;
 import pruebas.CrystalClash.CrystalClash;
-import pruebas.Entities.World;
 import pruebas.Enumerators.GameState;
 
 import com.badlogic.gdx.Gdx;
@@ -10,6 +10,8 @@ import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 
 public class GameEngine implements Screen {
@@ -23,7 +25,7 @@ public class GameEngine implements Screen {
 
 	private MenuMaster menu;
 	private MenuMasterRender menuRender;
-	private World world;
+	private WorldController world;
 	private WorldRender worldRender;
 
 	@Override
@@ -37,15 +39,16 @@ public class GameEngine implements Screen {
 		batch.setProjectionMatrix(camera.combined);
 		stage.setCamera(camera);
 
-		state = GameState.InMenu;
+		state = GameState.InGame;
 
 		menu = MenuMaster.getInstance();
 		menuRender = new MenuMasterRender(this, menu);
-		world = new World();
+		world = new WorldController();
 		worldRender = new WorldRender(this, world);
 
 		inputManager.addProcessor(stage);
 		inputManager.addProcessor(menu.getCurrentMenu().getRender());
+		inputManager.addProcessor(worldRender);
 		Gdx.input.setCatchBackKey(true);
 		Gdx.input.setInputProcessor(inputManager);
 		Gdx.input.setCatchBackKey(true);
@@ -115,5 +118,11 @@ public class GameEngine implements Screen {
 		stage.dispose();
 		menuRender.dispose();
 		worldRender.dispose();
+	}
+
+	public Vector2 getRealPosition(float x, float y) {
+		Vector3 vec = new Vector3(x, y, 0);
+		camera.unproject(vec);
+		return new Vector2(vec.x, vec.y);
 	}
 }

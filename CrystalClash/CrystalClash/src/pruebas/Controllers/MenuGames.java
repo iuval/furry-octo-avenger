@@ -2,17 +2,10 @@ package pruebas.Controllers;
 
 import pruebas.Networking.ServerDriver;
 import pruebas.Renders.MenuGamesRender;
+import pruebas.Renders.MenuMatchesRender;
 import pruebas.Renders.MenuRender;
 
 public class MenuGames extends Menu {
-
-	private static MenuGames instance;
-
-	public static MenuGames getInstance() {
-		if (instance == null)
-			instance = new MenuGames();
-		return instance;
-	}
 
 	@Override
 	public void update(float delta) {
@@ -20,7 +13,7 @@ public class MenuGames extends Menu {
 
 	@Override
 	public MenuRender getRender() {
-		return MenuGamesRender.getInstance(this);
+		return MenuMatchesRender.getInstance(this);
 	}
 
 	public void enableRandom() {
