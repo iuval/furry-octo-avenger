@@ -44,7 +44,7 @@ public class GameEngine implements Screen {
 		world = new WorldController();
 		worldRender = new WorldRender(this, world);
 
-		setState(GameState.InGame);
+		setState(GameState.InMenu);
 
 		Gdx.input.setCatchBackKey(true);
 		Gdx.input.setInputProcessor(inputManager);
@@ -97,6 +97,7 @@ public class GameEngine implements Screen {
 			inputManager.addProcessor(worldRender);
 			break;
 		case InMenu:
+			inputManager.addProcessor(stage);
 			inputManager.addProcessor(menu.getCurrentMenu().getRender());
 			break;
 		default:

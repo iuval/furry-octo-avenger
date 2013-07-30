@@ -6,11 +6,14 @@ import pruebas.Renders.MenuRender;
 
 public class MenuGames extends Menu {
 
+	public static MenuGames instance;
+
 	public static MenuGames getInstance() {
-		// TODO Auto-generated method stub
-		return null;
+		if (instance == null)
+			instance = new MenuGames();
+		return instance;
 	}
-	
+
 	@Override
 	public void update(float delta) {
 	}
