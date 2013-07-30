@@ -6,7 +6,7 @@ import pruebas.Renders.MenuRender;
 
 public class MenuGames extends Menu {
 
-	private static MenuGames instance;
+	public static MenuGames instance;
 
 	public static MenuGames getInstance() {
 		if (instance == null)

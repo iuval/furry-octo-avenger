@@ -39,12 +39,13 @@ public class GameListItem extends Group {
 
 		Label labelName = new Label(playerName + " - " + turn, skin, "font",
 				Color.WHITE);
-		labelName.setPosition(getX() + buttonSurrender.getWidth() + 50, getY());
-		labelName.setWidth(100);
+
+		labelName.setPosition(getX() + 250, getY());
+		labelName.setWidth(w - 500);
 		labelName.setAlignment(Align.center);
 		addActor(labelName);
 
-		if (state == "play") {
+		if (state.equals("play")) {
 			TextButton buttonPlay = new TextButton("Play", skin.get(
 					"buttonStyle", TextButtonStyle.class));
 			buttonPlay.setBounds(w - 250, getY(), h, 150);
