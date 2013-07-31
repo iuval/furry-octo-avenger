@@ -1,12 +1,12 @@
 package pruebas.Entities;
 
-public abstract class Unit {
+public class Unit {
 
 	private int lifePoints;
 	private int damage;
 	private int velicity;
 	private int range;
-	
-	public Unit(){
+
+	public Unit() {
 	}
 }

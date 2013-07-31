@@ -13,6 +13,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.utils.Array;
 
@@ -33,6 +34,8 @@ public class WorldRender implements InputProcessor {
 	private Iterator<Tuple<Unit, Vector2>> unitIterator;
 	private Tuple<Unit, Vector2> aux;
 
+	SelectUnitsRender firstTurn;
+
 	// private SuperAnimation animation;
 
 	public WorldRender(GameEngine engine, WorldController world) {
@@ -52,33 +55,11 @@ public class WorldRender implements InputProcessor {
 		// archer = new Image(archerTexture);
 		// archer.setSize(150, 150);
 		//
-		// int FRAME_COLS = 6;
-		// int FRAME_ROWS = 1;
-		// Texture walkSheet = new Texture(
-		// Gdx.files.internal("data/Units/fire_archer_attack_sheet.png"));
-		// TextureRegion[][] tmp = TextureRegion.split(walkSheet,
-		// walkSheet.getWidth() / FRAME_COLS, walkSheet.getHeight()
-		// / FRAME_ROWS);
-		// TextureRegion[] walkFrames = new TextureRegion[FRAME_COLS *
-		// FRAME_ROWS];
-		// float[] times = new float[FRAME_COLS * FRAME_ROWS];
-		// times[0] = 0.15f;
-		// times[1] = 0.15f;
-		// times[2] = 0.5f;
-		// times[3] = 0.15f;
-		// times[4] = 0.15f;
-		// times[5] = 0.15f;
-		// int index = 0;
-		// for (int i = 0; i < FRAME_ROWS; i++) {
-		// for (int j = 0; j < FRAME_COLS; j++) {
-		// walkFrames[index++] = tmp[i][j];
-		// }
-		// }
-		// animation = new SuperAnimation(times, walkFrames);
-
+		//
+		firstTurn = new SelectUnitsRender(engine);
 	}
 
-	public void render(float dt, SpriteBatch batch) {
+	public void render(float dt, SpriteBatch batch, Stage stage) {
 		Gdx.gl.glClearColor(0, 0, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
@@ -93,7 +74,7 @@ public class WorldRender implements InputProcessor {
 						world.cellGrid[i][j].getY());
 			}
 		}
-
+		firstTurn.render(dt, batch, stage);
 		// unitIterator = p1Units.iterator();
 		// while (unitIterator.hasNext()) {
 		// aux = unitIterator.next();
