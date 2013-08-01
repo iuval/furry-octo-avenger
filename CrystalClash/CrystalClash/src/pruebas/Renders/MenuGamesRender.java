@@ -27,6 +27,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
 import com.badlogic.gdx.scenes.scene2d.utils.Align;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
 public class MenuGamesRender extends MenuRender {
 
@@ -41,6 +42,7 @@ public class MenuGamesRender extends MenuRender {
 
 	private BitmapFont font;
 	private Label lblHeading;
+	private TextButton btnLogOut;
 
 	private InputListener surrenderListener;
 	private InputListener playListener;
@@ -63,6 +65,7 @@ public class MenuGamesRender extends MenuRender {
 	@Override
 	public void render(float dt, Stage stage) {
 		stage.addActor(lblHeading);
+		stage.addActor(btnLogOut);
 		stage.addActor(scrollPane);
 		tweenManager.update(dt);
 	}
@@ -91,6 +94,18 @@ public class MenuGamesRender extends MenuRender {
 				+ GameController.getInstancia().getUser().getNick(),
 				new LabelStyle(font, Color.WHITE));
 		lblHeading.setPosition(50, CrystalClash.HEIGHT - 50);
+		
+		btnLogOut = new TextButton("Log Out",
+				listItemSkin.get("buttonLogOutStyle", TextButtonStyle.class));
+		btnLogOut.setPosition(CrystalClash.WIDTH - btnLogOut.getWidth() - 50, CrystalClash.HEIGHT - btnLogOut.getHeight() - 10);
+		btnLogOut.addListener(new ClickListener() {
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+				System.out.println("LogOut");
+				// TODO: Agregar Funcionalidad
+				controller.logOut();
+			}
+		});
 
 		list = new VerticalGroup();
 		list.setWidth(CrystalClash.WIDTH);
@@ -194,6 +209,13 @@ public class MenuGamesRender extends MenuRender {
 		outerStyle.down = listItemSkin
 				.getDrawable("outer_button_orange_pressed");
 		listItemSkin.add("buttonStyle", outerStyle);
+		
+		TextButtonStyle innerStyle = new TextButtonStyle();
+		innerStyle.font = listItemSkin.getFont("font");
+		innerStyle.up = listItemSkin.getDrawable("button_orange");
+		innerStyle.down = listItemSkin
+				.getDrawable("button_orange_pressed");
+		listItemSkin.add("buttonLogOutStyle", innerStyle);
 	}
 
 	public void listGamesError(String message) {
