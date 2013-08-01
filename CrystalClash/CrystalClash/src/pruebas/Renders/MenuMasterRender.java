@@ -2,6 +2,7 @@ package pruebas.Renders;
 
 import pruebas.Accessors.ActorAccessor;
 import pruebas.Controllers.MenuMaster;
+import pruebas.Enumerators.GameState;
 
 import aurelienribon.tweenengine.Timeline;
 import aurelienribon.tweenengine.Tween;
@@ -18,14 +19,12 @@ public class MenuMasterRender {
 
 	private TweenManager tweenManager;
 	
-	private GameEngine engine;
 	private MenuMaster menu;
 
 	private Texture backgroundTexture;
 	private Image background;
 	
-	public MenuMasterRender(GameEngine engine, MenuMaster menu) {
-		this.engine = engine;
+	public MenuMasterRender(MenuMaster menu) {
 		this.menu = menu;
 		
 		tweenManager = new TweenManager();
