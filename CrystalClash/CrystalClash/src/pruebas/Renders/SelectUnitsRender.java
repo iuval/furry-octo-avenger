@@ -1,151 +1,84 @@
 package pruebas.Renders;
 
-import pruebas.Accessors.ActorAccessor;
+import pruebas.Controllers.WorldController;
 import pruebas.CrystalClash.CrystalClash;
-import pruebas.Renders.shared.UnitRender;
-import pruebas.Renders.shared.UnitTableItem;
-import aurelienribon.tweenengine.Timeline;
-import aurelienribon.tweenengine.Tween;
-import aurelienribon.tweenengine.TweenManager;
+import pruebas.Entities.Unit;
+import pruebas.Renders.helpers.ui.UnitList;
+import pruebas.Renders.helpers.ui.UnitListItem;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.Group;
-import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.InputListener;
-import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Image;
-import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
-import com.badlogic.gdx.scenes.scene2d.utils.Align;
-import com.badlogic.gdx.scenes.scene2d.utils.DragAndDrop;
-import com.badlogic.gdx.scenes.scene2d.utils.DragAndDrop.Payload;
-import com.badlogic.gdx.scenes.scene2d.utils.DragAndDrop.Source;
-import com.badlogic.gdx.scenes.scene2d.utils.DragListener;
 
-public class SelectUnitsRender {
-	private GameEngine engine;
-	private DragAndDrop dragAndDrop;
-	private TweenManager tweenManager;
-	private Group unitTableGroup;
-	private Skin listItemSkin;
-	private Table table;
-	private ScrollPane scrollPane;
+public class SelectUnitsRender extends GameRender {
 
-	private UnitRender selectedUnit;
+	private UnitRender selectedUnit = null;
+	private UnitList list;
 
-	public SelectUnitsRender(GameEngine e) {
-		engine = e;
-		tweenManager = new TweenManager();
-		load();
+	public SelectUnitsRender(GameEngine e, WorldController world) {
+		super(e, world);
+		world.assignFirstTurnAvailablePlaces(1);
+		list = new UnitList();
+		list.setPosition(CrystalClash.WIDTH / 2, 80);
+		list.setSize(CrystalClash.WIDTH / 2, CrystalClash.HEIGHT - 160);
+		init();
 	}
 
-	public void load() {
-		unitTableGroup = new VerticalGroup();
-		unitTableGroup.setBounds(0, 0, CrystalClash.WIDTH, CrystalClash.HEIGHT);
-
-		Texture popupPanelTexture = new Texture(
-				Gdx.files.internal("data/Images/Menu/menu_login_popup.png"));
-		Image popupPanel = new Image(popupPanelTexture);
-		popupPanel.setBounds(0, 0, CrystalClash.WIDTH / 2, CrystalClash.HEIGHT);
-		unitTableGroup.addActor(popupPanel);
-
-		table = new Table();
-		table.align(Align.top).padBottom(20).padTop(20);
-
-		// put the table inside a scrollpane
-		scrollPane = new ScrollPane(table);
-		// unitTableGroup.addActor(scrollPane);
-		scrollPane.setBounds(CrystalClash.WIDTH / 2, 0, CrystalClash.WIDTH / 2,
-				CrystalClash.HEIGHT);
-		scrollPane.setScrollingDisabled(true, false);
-		scrollPane.setOverscroll(false, true);
-		scrollPane.setSmoothScrolling(true);
-		scrollPane.invalidate();
-
+	public void init() {
+		BitmapFont unitForn = new BitmapFont(
+				Gdx.files.internal("data/Fonts/font.fnt"), false);
 		TextureAtlas listItemButtonAtlas = new TextureAtlas(
 				"data/Units/units_icons.pack");
-		listItemSkin = new Skin(listItemButtonAtlas);
-		listItemSkin
-				.add("font",
-						new BitmapFont(Gdx.files
-								.internal("data/Fonts/font.fnt"), false));
-		listItemSkin
-				.add("background",
-						new Texture(
-								Gdx.files
-										.internal("data/Images/Menu/games_item_background.png")));
+		for (int i = 0; i < 5; i++) {
 
-		InputListener input = new InputListener() {
-			@Override
-			public boolean touchDown(InputEvent event, float x, float y,
-					int pointer, int button) {
-				String unitName = ((UnitTableItem) event.getListenerActor()).unitName;
-				selectedUnit = UnitRender.getUnitRender(unitName);
-				selectedUnit.setZIndex(50);
-				selectedUnit.setPosition(event.getStageX() - UnitRender.WIDTH
-						/ 2, event.getStageY() - UnitRender.HEIGHT / 2);
-				selectedUnit.addListener((new DragListener() {
-					public void touchDragged(InputEvent event, float x,
-							float y, int pointer) {
-						// example code below for origin and position
-						selectedUnit.setOrigin(Gdx.input.getX(),
-								Gdx.input.getY());
-						selectedUnit.setPosition(x, y);
-						System.out.println("touchdragged" + x + ", " + y);
-						scrollPane.setVisible(false);
-					}
-
-				}));
-
-				return true;
-			}
-		};
-		for (int i = 0; i < 20; i++) {
-			UnitTableItem item = new UnitTableItem("fire_archer", listItemSkin);
-			item.addListener(input);
-			table.row();
-			table.add(item);
+			UnitListItem item = new UnitListItem("fire_archer",
+					listItemButtonAtlas.findRegion("fire_archer"), unitForn);
+			list.addUnitItem(item);
 		}
-		// enterAnimation();
 	}
 
-	public void enterAnimation() {
-		float speed = CrystalClash.ANIMATION_SPEED;
-		Timeline.createParallel()
-				.push(Tween.to(unitTableGroup, ActorAccessor.Y, speed).target(
-						-CrystalClash.HEIGHT / 2)).start(tweenManager);
-
-		tweenManager.update(Float.MIN_VALUE);
-	}
-
-	public void render(float dt, SpriteBatch batch, Stage stage) {
-		stage.addActor(scrollPane);
-		scrollPane.act(dt);
-		// stage.addActor(scrollPane);
-		// tweenManager.update(dt);
+	public void render(float dt, SpriteBatch batch) {
 		if (selectedUnit != null) {
-			stage.addActor(selectedUnit);
-			selectedUnit.act(dt);
+			selectedUnit.draw(batch, dt);
 		}
+		list.draw(batch, dt);
 	}
 
-	private void setUpDragAndDrop() {
-		dragAndDrop = new DragAndDrop();
-		dragAndDrop.addSource(new Source(selectedUnit) {
-			public Payload dragStart(InputEvent event, float x, float y,
-					int pointer) {
-				Payload payload = new Payload();
-				payload.setDragActor(selectedUnit);
-				return payload;
+	public boolean touchDown(float x, float y, int pointer, int button) {
+		if (selectedUnit == null) {
+			if (list.hit(x, y)) {
+				UnitListItem item = list.getItemAt(x, y);
+				if (item != null) {
+
+					Unit u = new Unit(item.getUnitName());
+					selectedUnit = u.getRender();
+					selectedUnit.unit.setPosition(x, y);
+				}
 			}
-		});
-
+		}
+		return true;
 	}
+
+	public boolean touchUp(float x, float y, int pointer, int button) {
+		if (selectedUnit != null) {
+			world.placeUnit(x, y);
+			selectedUnit = null;
+		}
+		return true;
+	}
+
+	public boolean touchDragged(float x, float y, int pointer) {
+		if (selectedUnit != null) {
+			selectedUnit.unit.setPosition(x, y);
+		}
+		return true;
+	}
+
+	@Override
+	public boolean pan(float x, float y, float deltaX, float deltaY) {
+
+		return false;
+	}
+
 }

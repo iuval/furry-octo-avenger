@@ -1,67 +1,22 @@
-package pruebas.Renders.shared;
+package pruebas.Renders.helpers;
 
-import pruebas.Entities.Unit;
+import pruebas.Renders.UnitRender;
 import pruebas.Util.SuperAnimation;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.scenes.scene2d.Actor;
 
-public class UnitRender extends Actor {
-	public enum ANIM {
-		idle, fight, walk
-	}
-
-	public Unit unit;
-
+public class UnitHelper {
 	public static final float WIDTH = 135;
 	public static final float HEIGHT = 150;
-
-	public SuperAnimation idleAnim;
-	public SuperAnimation fightAnim;
-	public SuperAnimation walkAnim;
-	public SuperAnimation currnetAnim;
-
-	public UnitRender() {
-		unit = new Unit();
-	}
-
-	public void setAnimation(ANIM anim) {
-		switch (anim) {
-		case idle: {
-			currnetAnim = idleAnim;
-		}
-			break;
-		case fight: {
-			currnetAnim = fightAnim;
-		}
-			break;
-		case walk: {
-			currnetAnim = walkAnim;
-		}
-			break;
-		}
-	}
-
-	@Override
-	public void act(float delta) {
-		currnetAnim.update(delta, true);
-	}
-
-	@Override
-	public void draw(SpriteBatch batch, float parentAlpha) {
-		batch.draw(currnetAnim.current, getX(), getY());
-
-	}
 
 	public static UnitRender getUnitRender(String unitName) {
 		UnitRender render = new UnitRender();
 		if (unitName.equals("fire_archer")) {
 
 			render.idleAnim = getUnitSuperAnimation(unitName, "idle");
-			render.setAnimation(ANIM.idle);
+			render.setAnimation(UnitRender.ANIM.idle);
 		}
 		return render;
 	}
@@ -92,15 +47,15 @@ public class UnitRender extends Actor {
 		times[12] = 0.71667f;
 		times[13] = 0.79167f;
 		times[14] = 0.86667f;
-		times[15] = 0.10f;
-		times[16] = 0.101667f;
-		times[17] = 0.105833f;
-		times[18] = 0.108333f;
-		times[19] = 0.113333f;
-		times[20] = 0.115f;
-		times[21] = 0.118333f;
-		times[22] = 0.126667f;
-		times[23] = 0.128333f;
+		times[15] = 1.0f;
+		times[16] = 1.01667f;
+		times[17] = 1.05833f;
+		times[18] = 1.08333f;
+		times[19] = 1.13333f;
+		times[20] = 1.15f;
+		times[21] = 1.18333f;
+		times[22] = 1.26667f;
+		times[23] = 1.28333f;
 
 		int index = 0;
 		for (int i = 0; i < FRAME_ROWS; i++) {

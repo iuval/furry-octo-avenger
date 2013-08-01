@@ -5,7 +5,7 @@ import pruebas.Controllers.GameController;
 import pruebas.Controllers.MenuGames;
 import pruebas.CrystalClash.CrystalClash;
 import pruebas.Networking.ServerDriver;
-import pruebas.Renders.shared.GameListItem;
+import pruebas.Renders.helpers.ui.GameListItem;
 import aurelienribon.tweenengine.Timeline;
 import aurelienribon.tweenengine.Tween;
 import aurelienribon.tweenengine.TweenManager;

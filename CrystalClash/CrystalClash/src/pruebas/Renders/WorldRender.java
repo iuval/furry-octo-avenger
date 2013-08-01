@@ -5,6 +5,7 @@ import java.util.Iterator;
 import pruebas.Controllers.WorldController;
 import pruebas.CrystalClash.CrystalClash;
 import pruebas.Entities.Unit;
+import pruebas.Renders.helpers.CellHelper;
 import pruebas.Util.Tuple;
 
 import com.badlogic.gdx.Gdx;
@@ -12,15 +13,16 @@ import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.input.GestureDetector.GestureListener;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.utils.Array;
 
-public class WorldRender implements InputProcessor {
+public class WorldRender implements InputProcessor  {
 
 	private GameEngine engine;
-	private CellRender cellRender;
+	public static CellHelper cellHelper;
 
 	private Texture backgroundTexture;
 	private Image background;
@@ -29,12 +31,12 @@ public class WorldRender implements InputProcessor {
 	private Image archer;
 
 	private WorldController world;
-	private Array<Tuple<Unit, Vector2>> p1Units;
-	private Array<Tuple<Unit, Vector2>> p2Units;
+	private Array<Unit> p1Units;
+	private Array<Unit> p2Units;
 	private Iterator<Tuple<Unit, Vector2>> unitIterator;
 	private Tuple<Unit, Vector2> aux;
 
-	SelectUnitsRender firstTurn;
+	GameRender gameRender;
 
 	// private SuperAnimation animation;
 
@@ -42,8 +44,8 @@ public class WorldRender implements InputProcessor {
 		this.engine = engine;
 		this.world = world;
 
-		cellRender = new CellRender();
-		cellRender.load();
+		cellHelper = new CellHelper();
+		cellHelper.load();
 
 		backgroundTexture = new Texture(
 				Gdx.files.internal("data/Images/InGame/terrain.jpg"));
@@ -56,7 +58,7 @@ public class WorldRender implements InputProcessor {
 		// archer.setSize(150, 150);
 		//
 		//
-		firstTurn = new SelectUnitsRender(engine);
+		gameRender = new SelectUnitsRender(engine, world);
 	}
 
 	public void render(float dt, SpriteBatch batch, Stage stage) {
@@ -67,14 +69,12 @@ public class WorldRender implements InputProcessor {
 		p2Units = world.getP2Units();
 
 		background.draw(batch, 1);
-		for (int i = 0; i < world.cellGrid.length; i++) {
-			for (int j = 0; j < world.cellGrid[i].length; j++) {
-				batch.draw(cellRender.getCellTexture(world.cellGrid[i][j]),
-						world.cellGrid[i][j].getX(),
-						world.cellGrid[i][j].getY());
+		for (int i = world.cellGrid.length - 1; i >= 0; i--) {
+			for (int j = world.cellGrid[i].length - 1; j >= 0; j--) {
+				world.cellGrid[i][j].getRender().draw(dt, batch);
 			}
 		}
-		firstTurn.render(dt, batch, stage);
+		gameRender.render(dt, batch);
 		// unitIterator = p1Units.iterator();
 		// while (unitIterator.hasNext()) {
 		// aux = unitIterator.next();
@@ -103,7 +103,7 @@ public class WorldRender implements InputProcessor {
 	}
 
 	private void load() {
-		cellRender.load();
+		cellHelper.load();
 	}
 
 	@Override
@@ -127,19 +127,21 @@ public class WorldRender implements InputProcessor {
 	@Override
 	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
 		Vector2 vec = engine.getRealPosition(screenX, screenY);
-		world.tap(vec.x, vec.y);
+		gameRender.touchDown(vec.x, vec.y, pointer, button);
 		return false;
 	}
 
 	@Override
 	public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-		// TODO Auto-generated method stub
+		Vector2 vec = engine.getRealPosition(screenX, screenY);
+		gameRender.touchUp(vec.x, vec.y, pointer, button);
 		return false;
 	}
 
 	@Override
 	public boolean touchDragged(int screenX, int screenY, int pointer) {
-		// TODO Auto-generated method stub
+		Vector2 vec = engine.getRealPosition(screenX, screenY);
+		gameRender.touchDragged(vec.x, vec.y, pointer);
 		return false;
 	}
 
@@ -154,4 +156,5 @@ public class WorldRender implements InputProcessor {
 		// TODO Auto-generated method stub
 		return false;
 	}
+
 }
