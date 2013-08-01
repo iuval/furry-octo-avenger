@@ -43,4 +43,8 @@ public class MenuGames extends Menu {
 	public void enableRandomError(String message) {
 		((MenuGamesRender) getRender()).enableRandomError(message);
 	}
+	
+	public void logOut() {
+		MenuMaster.changeMenuToLogIn();
+	}
 }

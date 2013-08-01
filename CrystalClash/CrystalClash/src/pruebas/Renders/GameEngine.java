@@ -40,16 +40,11 @@ public class GameEngine implements Screen {
 		stage.setCamera(camera);
 
 		menu = MenuMaster.getInstance();
-		menuRender = new MenuMasterRender(this, menu);
+		menuRender = new MenuMasterRender(menu);
 		world = new WorldController();
 		worldRender = new WorldRender(this, world);
 
 		setState(GameState.InMenu);
-
-		Gdx.input.setCatchBackKey(true);
-		Gdx.input.setInputProcessor(inputManager);
-		Gdx.input.setCatchBackKey(true);
-		// Gdx.input.setInputProcessor(stage);
 	}
 
 	@Override
@@ -103,6 +98,9 @@ public class GameEngine implements Screen {
 		default:
 			break;
 		}
+
+		Gdx.input.setCatchBackKey(true);
+		Gdx.input.setInputProcessor(inputManager);
 	}
 
 	@Override

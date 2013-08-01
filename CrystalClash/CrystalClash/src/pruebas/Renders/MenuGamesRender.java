@@ -4,7 +4,6 @@ import pruebas.Accessors.ActorAccessor;
 import pruebas.Controllers.GameController;
 import pruebas.Controllers.MenuGames;
 import pruebas.CrystalClash.CrystalClash;
-import pruebas.Enumerators.MenuLogInState;
 import pruebas.Networking.ServerDriver;
 import pruebas.Renders.shared.GameListItem;
 import aurelienribon.tweenengine.Timeline;
@@ -104,6 +103,7 @@ public class MenuGamesRender extends MenuRender {
 			public void clicked(InputEvent event, float x, float y) {
 				System.out.println("LogOut");
 				// TODO: Agregar Funcionalidad
+				controller.logOut();
 			}
 		});
 

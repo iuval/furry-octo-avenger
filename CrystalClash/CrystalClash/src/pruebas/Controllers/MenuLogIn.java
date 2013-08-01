@@ -2,6 +2,7 @@ package pruebas.Controllers;
 
 import pruebas.Entities.User;
 import pruebas.Networking.ServerDriver;
+import pruebas.Renders.GameEngine;
 import pruebas.Renders.MenuLogInRender;
 import pruebas.Renders.MenuRender;
 
@@ -74,5 +75,9 @@ public class MenuLogIn extends Menu {
 
 	public void logIn() {
 		MenuMaster.changeMenuToGames();
+	}
+	
+	public void resetRender(){
+		((MenuLogInRender) getRender()).reset();
 	}
 }

@@ -1,5 +1,7 @@
 package pruebas.Controllers;
 
+import pruebas.Renders.GameEngine;
+
 public class MenuMaster {
 	private static MenuMaster instance;
 
@@ -41,7 +43,9 @@ public class MenuMaster {
 	}
 	
 	public static void changeMenuToLogIn() {
-		currentMenu = getMenuLogIn();
+		MenuLogIn aux = getMenuLogIn();
+		aux.resetRender();
+		currentMenu = aux;
 	}
 
 	public static MenuGames getMenuGames(){
