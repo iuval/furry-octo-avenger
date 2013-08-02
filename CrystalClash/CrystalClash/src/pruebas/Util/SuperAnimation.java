@@ -13,6 +13,8 @@ import com.badlogic.gdx.utils.Array;
  * @author --
  */
 public class SuperAnimation {
+	public TextureRegion current;
+
 	public static final int NORMAL = 0;
 	public static final int LOOP = 1;
 
@@ -78,6 +80,15 @@ public class SuperAnimation {
 		this.playMode = NORMAL;
 	}
 
+	public void update(float stateTime, boolean looping) {
+		// we set the play mode by overriding the previous mode based on looping
+		// parameter value
+		playMode = looping ? LOOP : NORMAL;
+
+		totalTime += stateTime;
+		current = getKeyFrame();
+	}
+
 	/**
 	 * Returns a {@link TextureRegion} based on the so called state time. This
 	 * is the amount of seconds an object has spent in the state this Animation
@@ -124,7 +135,7 @@ public class SuperAnimation {
 	public int getKeyFrameIndex() {
 		if (keyFrames.length == 1)
 			return 0;
-		
+
 		if (totalTime >= keyDurations[frameNumber]) {
 			frameNumber++;
 			totalTime = 0;

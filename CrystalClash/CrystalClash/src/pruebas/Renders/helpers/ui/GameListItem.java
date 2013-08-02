@@ -1,4 +1,4 @@
-package pruebas.Renders.shared;
+package pruebas.Renders.helpers.ui;
 
 import pruebas.CrystalClash.CrystalClash;
 

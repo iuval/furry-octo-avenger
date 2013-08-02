@@ -44,7 +44,7 @@ public class GameEngine implements Screen {
 		world = new WorldController();
 		worldRender = new WorldRender(this, world);
 
-		setState(GameState.InMenu);
+		setState(GameState.InGame);
 	}
 
 	@Override
@@ -71,8 +71,10 @@ public class GameEngine implements Screen {
 		switch (state) {
 		case InGame:
 			batch.begin();
-			worldRender.render(dt, batch);
+			worldRender.render(dt, batch, stage);
 			batch.end();
+			stage.act(dt);
+			stage.draw();
 			break;
 		case InMenu:
 			menuRender.render(dt, stage);
@@ -89,6 +91,7 @@ public class GameEngine implements Screen {
 		inputManager.clear();
 		switch (state) {
 		case InGame:
+			inputManager.addProcessor(stage);
 			inputManager.addProcessor(worldRender);
 			break;
 		case InMenu:
