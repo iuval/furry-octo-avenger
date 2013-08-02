@@ -1,0 +1,84 @@
+package pruebas.Renders;
+
+import pruebas.Controllers.WorldController;
+import pruebas.CrystalClash.CrystalClash;
+import pruebas.Entities.Unit;
+import pruebas.Renders.helpers.ui.UnitList;
+import pruebas.Renders.helpers.ui.UnitListItem;
+
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+
+public class SelectUnitsRender extends GameRender {
+
+	private UnitRender selectedUnit = null;
+	private UnitList list;
+
+	public SelectUnitsRender(GameEngine e, WorldController world) {
+		super(e, world);
+		world.assignFirstTurnAvailablePlaces(1);
+		list = new UnitList();
+		list.setPosition(CrystalClash.WIDTH / 2, 80);
+		list.setSize(CrystalClash.WIDTH / 2, CrystalClash.HEIGHT - 160);
+		init();
+	}
+
+	public void init() {
+		BitmapFont unitForn = new BitmapFont(
+				Gdx.files.internal("data/Fonts/font.fnt"), false);
+		TextureAtlas listItemButtonAtlas = new TextureAtlas(
+				"data/Units/units_icons.pack");
+		for (int i = 0; i < 5; i++) {
+
+			UnitListItem item = new UnitListItem("fire_archer",
+					listItemButtonAtlas.findRegion("fire_archer"), unitForn);
+			list.addUnitItem(item);
+		}
+	}
+
+	public void render(float dt, SpriteBatch batch) {
+		if (selectedUnit != null) {
+			selectedUnit.draw(batch, dt);
+		}
+		list.draw(batch, dt);
+	}
+
+	public boolean touchDown(float x, float y, int pointer, int button) {
+		if (selectedUnit == null) {
+			if (list.hit(x, y)) {
+				UnitListItem item = list.getItemAt(x, y);
+				if (item != null) {
+
+					Unit u = new Unit(item.getUnitName());
+					selectedUnit = u.getRender();
+					selectedUnit.unit.setPosition(x, y);
+				}
+			}
+		}
+		return true;
+	}
+
+	public boolean touchUp(float x, float y, int pointer, int button) {
+		if (selectedUnit != null) {
+			world.placeUnit(x, y);
+			selectedUnit = null;
+		}
+		return true;
+	}
+
+	public boolean touchDragged(float x, float y, int pointer) {
+		if (selectedUnit != null) {
+			selectedUnit.unit.setPosition(x, y);
+		}
+		return true;
+	}
+
+	@Override
+	public boolean pan(float x, float y, float deltaX, float deltaY) {
+
+		return false;
+	}
+
+}
