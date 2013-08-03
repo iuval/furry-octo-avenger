@@ -6,6 +6,7 @@ import pruebas.Controllers.WorldController;
 import pruebas.CrystalClash.CrystalClash;
 import pruebas.Entities.Unit;
 import pruebas.Renders.helpers.CellHelper;
+import pruebas.Renders.helpers.UnitHelper;
 import pruebas.Util.Tuple;
 
 import com.badlogic.gdx.Gdx;
@@ -13,13 +14,12 @@ import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.input.GestureDetector.GestureListener;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.utils.Array;
 
-public class WorldRender implements InputProcessor  {
+public class WorldRender implements InputProcessor {
 
 	private GameEngine engine;
 	public static CellHelper cellHelper;
@@ -47,6 +47,8 @@ public class WorldRender implements InputProcessor  {
 		cellHelper = new CellHelper();
 		cellHelper.load();
 
+		UnitHelper.init();
+
 		backgroundTexture = new Texture(
 				Gdx.files.internal("data/Images/InGame/terrain.jpg"));
 		background = new Image(backgroundTexture);
@@ -69,11 +71,12 @@ public class WorldRender implements InputProcessor  {
 		p2Units = world.getP2Units();
 
 		background.draw(batch, 1);
-		for (int i = world.cellGrid.length - 1; i >= 0; i--) {
+		for (int i = 0; i < world.cellGrid.length; i++) {
 			for (int j = world.cellGrid[i].length - 1; j >= 0; j--) {
 				world.cellGrid[i][j].getRender().draw(dt, batch);
 			}
 		}
+
 		gameRender.render(dt, batch);
 		// unitIterator = p1Units.iterator();
 		// while (unitIterator.hasNext()) {

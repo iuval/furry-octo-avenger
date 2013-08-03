@@ -37,8 +37,17 @@ public class UnitRender {
 		}
 	}
 
-	public void draw(SpriteBatch batch, float delta) {
-		currnetAnim.update(delta, true);
-		batch.draw(currnetAnim.current, unit.getX(), unit.getY());
+	public void draw(SpriteBatch batch, float dt) {
+		currnetAnim.update(dt, true);
+		currnetAnim.draw(batch, dt, unit.getX(), unit.getY());
+	}
+
+	public UnitRender clone() {
+		UnitRender ren = new UnitRender();
+		ren.idleAnim = idleAnim.clone();
+		ren.fightAnim = fightAnim.clone();
+		ren.walkAnim = walkAnim.clone();
+		ren.setAnimation(ANIM.idle);
+		return ren;
 	}
 }

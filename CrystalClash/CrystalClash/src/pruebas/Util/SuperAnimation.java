@@ -1,5 +1,6 @@
 package pruebas.Util;
 
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.utils.Array;
 
@@ -13,10 +14,13 @@ import com.badlogic.gdx.utils.Array;
  * @author --
  */
 public class SuperAnimation {
-	public TextureRegion current;
+	private TextureRegion current;
 
 	public static final int NORMAL = 0;
 	public static final int LOOP = 1;
+
+	public int handle_x = 0;
+	public int handle_y = 0;
 
 	final TextureRegion[] keyFrames;
 	final float[] keyDurations;
@@ -102,7 +106,7 @@ public class SuperAnimation {
 	 * @return the TextureRegion representing the frame of animation for the
 	 *         given state time.
 	 */
-	public TextureRegion getKeyFrame(float stateTime, boolean looping) {
+	private TextureRegion getKeyFrame(float stateTime, boolean looping) {
 		// we set the play mode by overriding the previous mode based on looping
 		// parameter value
 		playMode = looping ? LOOP : NORMAL;
@@ -121,7 +125,7 @@ public class SuperAnimation {
 	 * @return the TextureRegion representing the frame of animation for the
 	 *         given state time.
 	 */
-	public TextureRegion getKeyFrame() {
+	private TextureRegion getKeyFrame() {
 		int frameNumber = getKeyFrameIndex();
 		return keyFrames[frameNumber];
 	}
@@ -132,7 +136,7 @@ public class SuperAnimation {
 	 * @param stateTime
 	 * @return current frame number
 	 */
-	public int getKeyFrameIndex() {
+	private int getKeyFrameIndex() {
 		if (keyFrames.length == 1)
 			return 0;
 
@@ -176,5 +180,19 @@ public class SuperAnimation {
 	 */
 	public boolean isAnimationFinished(float stateTime) {
 		return keyFrames.length - 1 < frameNumber;
+	}
+
+	public void draw(SpriteBatch batch, float dt, float x, float y) {
+		batch.draw(current, x - handle_x, y - handle_y);
+	}
+
+	/**
+	 * All SuperAnimations clones share the frames and duration instances
+	 */
+	public SuperAnimation clone() {
+		SuperAnimation anim = new SuperAnimation(keyDurations, keyFrames);
+		anim.handle_x = handle_x;
+		anim.handle_y = handle_y;
+		return anim;
 	}
 }
