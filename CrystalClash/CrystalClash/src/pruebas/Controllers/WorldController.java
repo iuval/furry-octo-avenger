@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 import pruebas.Entities.Cell;
 import pruebas.Entities.Unit;
-import pruebas.Renders.UnitRender;
 import pruebas.Renders.helpers.CellHelper;
 
 import com.badlogic.gdx.utils.Array;
@@ -143,11 +142,10 @@ public class WorldController {
 			cell.setState(Cell.State.MOVE_TARGET);
 	}
 
-	public void placeUnit(float x, float y) {
+	public void placeUnit(float x, float y, Unit unit, int player) {
 		Cell cell = cellAt(x, y);
 		if (cell != null && cell.getState() == Cell.State.ABLE_TO_PLACE) {
-			Unit fireArcher = new Unit("fire_archer");
-			cell.placeUnit(fireArcher, 1);
+			cell.placeUnit(unit, player);
 		}
 	}
 
