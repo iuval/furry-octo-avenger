@@ -35,7 +35,7 @@ public class Cell extends GameObject {
 			unit.setPosition(getX() + 10f, getY() + 50f);
 		} else {
 			unitsPlayer2 = unit;
-			unit.setPosition(getX() + 121.5f, getY() + 50f);
+			unit.setPosition(getX() + 71f, getY() + 50f);
 		}
 	}
 

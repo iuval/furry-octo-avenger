@@ -1,5 +1,7 @@
 package pruebas.Util;
 
+import pruebas.Renders.UnitRender.FACING;
+
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.utils.Array;
@@ -84,13 +86,17 @@ public class SuperAnimation {
 		this.playMode = NORMAL;
 	}
 
-	public void update(float stateTime, boolean looping) {
+	public void update(float stateTime, boolean looping, FACING at) {
 		// we set the play mode by overriding the previous mode based on looping
 		// parameter value
 		playMode = looping ? LOOP : NORMAL;
 
 		totalTime += stateTime;
 		current = getKeyFrame();
+
+		if (at == FACING.left && !current.isFlipX()) {
+			current.flip(true, false);
+		}
 	}
 
 	/**

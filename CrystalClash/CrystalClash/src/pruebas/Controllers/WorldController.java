@@ -14,16 +14,7 @@ public class WorldController {
 	private final float gridX = 70.0F;
 	private final float gridY = 20.0F;
 
-	private Array<Unit> p1Units = new Array<Unit>();
-	private Array<Unit> p2Units = new Array<Unit>();
-
 	public WorldController() {
-		// this.p1Units.add(new Tuple<Unit, Vector2>(new Archer(), new Vector2(
-		// 40.0F, 95.0F)));
-		// this.p1Units.add(new Tuple<Unit, Vector2>(new Archer(), new Vector2(
-		// 285.0F, 315.0F)));
-		// this.p1Units.add(new Tuple<Unit, Vector2>(new Archer(), new Vector2(
-		// 410.0F, 40.0F)));
 		Initialize();
 		createMap();
 	}
@@ -90,18 +81,11 @@ public class WorldController {
 	protected void Initialize() {
 		this.cellGrid = ((Cell[][]) java.lang.reflect.Array.newInstance(
 				Cell.class, new int[] { 9, 6 }));
-		p1Units = new Array<Unit>();
-		p2Units = new Array<Unit>();
 	}
 
 	public void addUnit(int player, Unit unit, int x, int y) {
 		Cell cell = cellAt(x, y);
 		cell.placeUnit(unit, player);
-		// if (player == 1) {
-		// this.p1Units.add(new Tuple<Unit, Vector2>(unit, position));
-		// } else {
-		// this.p2Units.add(new Tuple<Unit, Vector2>(unit, position));
-		// }
 	}
 
 	public Cell cellAt(float x, float y) {
@@ -122,14 +106,6 @@ public class WorldController {
 			return null;
 
 		return this.cellGrid[cellX][cellY];
-	}
-
-	public Array<Unit> getP1Units() {
-		return this.p1Units;
-	}
-
-	public Array<Unit> getP2Units() {
-		return this.p2Units;
 	}
 
 	public boolean inMap(int x, int y) {
@@ -171,7 +147,21 @@ public class WorldController {
 			cellGrid[2][3].setState(Cell.State.ABLE_TO_PLACE);
 			cellGrid[2][4].setState(Cell.State.ABLE_TO_PLACE);
 		} else {
-
+			cellGrid[6][4].setState(Cell.State.ABLE_TO_PLACE);
+			cellGrid[6][3].setState(Cell.State.ABLE_TO_PLACE);
+			cellGrid[6][2].setState(Cell.State.ABLE_TO_PLACE);
+			cellGrid[6][1].setState(Cell.State.ABLE_TO_PLACE);
+			cellGrid[7][5].setState(Cell.State.ABLE_TO_PLACE);
+			cellGrid[7][4].setState(Cell.State.ABLE_TO_PLACE);
+			cellGrid[7][3].setState(Cell.State.ABLE_TO_PLACE);
+			cellGrid[7][2].setState(Cell.State.ABLE_TO_PLACE);
+			cellGrid[7][1].setState(Cell.State.ABLE_TO_PLACE);
+			cellGrid[8][5].setState(Cell.State.ABLE_TO_PLACE);
+			cellGrid[8][4].setState(Cell.State.ABLE_TO_PLACE);
+			cellGrid[8][3].setState(Cell.State.ABLE_TO_PLACE);
+			cellGrid[8][2].setState(Cell.State.ABLE_TO_PLACE);
+			cellGrid[8][1].setState(Cell.State.ABLE_TO_PLACE);
+			cellGrid[8][0].setState(Cell.State.ABLE_TO_PLACE);
 		}
 	}
 

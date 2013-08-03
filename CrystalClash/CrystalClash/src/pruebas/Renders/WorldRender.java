@@ -31,11 +31,6 @@ public class WorldRender implements InputProcessor {
 	private Image archer;
 
 	private WorldController world;
-	private Array<Unit> p1Units;
-	private Array<Unit> p2Units;
-	private Iterator<Tuple<Unit, Vector2>> unitIterator;
-	private Tuple<Unit, Vector2> aux;
-
 	GameRender gameRender;
 
 	// private SuperAnimation animation;
@@ -54,20 +49,23 @@ public class WorldRender implements InputProcessor {
 		background = new Image(backgroundTexture);
 		background.setSize(CrystalClash.WIDTH, CrystalClash.HEIGHT);
 
-		gameRender = new SelectUnitsRender(engine, world);
+		gameRender = new SelectUnitsRender(engine, world, 2);
 	}
 
 	public void render(float dt, SpriteBatch batch, Stage stage) {
 		Gdx.gl.glClearColor(0, 0, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-		p1Units = world.getP1Units();
-		p2Units = world.getP2Units();
-
 		background.draw(batch, 1);
 		for (int i = 0; i < world.cellGrid.length; i++) {
 			for (int j = world.cellGrid[i].length - 1; j >= 0; j--) {
 				world.cellGrid[i][j].getRender().draw(dt, batch);
+			}
+		}
+
+		for (int i = 0; i < world.cellGrid.length; i++) {
+			for (int j = world.cellGrid[i].length - 1; j >= 0; j--) {
+				world.cellGrid[i][j].getRender().drawUnits(dt, batch);
 			}
 		}
 
