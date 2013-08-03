@@ -1,7 +1,6 @@
 package pruebas.Entities;
 
 import pruebas.Renders.CellRender;
-import pruebas.Renders.helpers.CellHelper;
 
 public class Cell extends GameObject {
 	public enum State {
@@ -33,10 +32,10 @@ public class Cell extends GameObject {
 	public void placeUnit(Unit unit, int player) {
 		if (player == 1) {
 			unitsPlayer1 = unit;
-			unit.setPosition(getX(), getY());
+			unit.setPosition(getX() + 10f, getY() + 50f);
 		} else {
 			unitsPlayer2 = unit;
-			unit.setPosition(getX() + CellHelper.CELL_WIDTH / 2, getY());
+			unit.setPosition(getX() + 71f, getY() + 50f);
 		}
 	}
 
