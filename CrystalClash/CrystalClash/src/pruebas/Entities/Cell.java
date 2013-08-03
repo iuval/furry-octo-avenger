@@ -47,4 +47,12 @@ public class Cell extends GameObject {
 			return unitsPlayer2;
 		}
 	}
+
+	public void removeUnit(int player) {
+		if (player == 1) {
+			unitsPlayer1 = null;
+		} else {
+			unitsPlayer2 = null;
+		}
+	}
 }

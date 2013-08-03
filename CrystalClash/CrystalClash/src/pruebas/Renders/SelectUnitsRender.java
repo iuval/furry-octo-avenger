@@ -2,6 +2,7 @@ package pruebas.Renders;
 
 import pruebas.Controllers.WorldController;
 import pruebas.CrystalClash.CrystalClash;
+import pruebas.Entities.Cell;
 import pruebas.Entities.Unit;
 import pruebas.Renders.helpers.ui.UnitList;
 import pruebas.Renders.helpers.ui.UnitListItem;
@@ -13,7 +14,7 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 
 public class SelectUnitsRender extends GameRender {
 
-	private UnitRender selectedUnit = null;
+	private Unit selectedUnit = null;
 	private UnitList list;
 
 	public SelectUnitsRender(GameEngine e, WorldController world) {
@@ -40,7 +41,7 @@ public class SelectUnitsRender extends GameRender {
 
 	public void render(float dt, SpriteBatch batch) {
 		if (selectedUnit != null) {
-			selectedUnit.draw(batch, dt);
+			selectedUnit.getRender().draw(batch, dt);
 		}
 		list.draw(batch, dt);
 	}
@@ -50,10 +51,15 @@ public class SelectUnitsRender extends GameRender {
 			if (list.hit(x, y)) {
 				UnitListItem item = list.getItemAt(x, y);
 				if (item != null) {
-
 					Unit u = new Unit(item.getUnitName());
-					selectedUnit = u.getRender();
-					selectedUnit.unit.setPosition(x, y);
+					selectedUnit = u;
+					selectedUnit.setPosition(x, y);
+				}
+			} else {
+				Cell cell = world.cellAt(x, y);
+				if (cell != null) {
+					selectedUnit = cell.getUnit(1);
+					cell.removeUnit(1);
 				}
 			}
 		}
@@ -62,7 +68,7 @@ public class SelectUnitsRender extends GameRender {
 
 	public boolean touchUp(float x, float y, int pointer, int button) {
 		if (selectedUnit != null) {
-			world.placeUnit(x, y);
+			world.placeUnit(x, y, selectedUnit, 1);
 			selectedUnit = null;
 		}
 		return true;
@@ -70,7 +76,7 @@ public class SelectUnitsRender extends GameRender {
 
 	public boolean touchDragged(float x, float y, int pointer) {
 		if (selectedUnit != null) {
-			selectedUnit.unit.setPosition(x, y);
+			selectedUnit.setPosition(x, y);
 		}
 		return true;
 	}
