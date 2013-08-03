@@ -70,12 +70,12 @@ public class WorldRender implements InputProcessor {
 		for (int i = 0; i < world.cellGrid.length; i++) {
 			for (int j = world.cellGrid[i].length - 1; j >= 0; j--) {
 				world.cellGrid[i][j].getRender().draw(dt, batch);
-				world.cellGrid[i][j].getRender().drawUnits(dt, batch);
 			}
 		}
 
 		for (int i = 0; i < world.cellGrid.length; i++) {
 			for (int j = world.cellGrid[i].length - 1; j >= 0; j--) {
+				world.cellGrid[i][j].getRender().drawUnits(dt, batch);
 			}
 		}
 
