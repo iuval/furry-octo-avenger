@@ -31,12 +31,22 @@ public class SelectUnitsRender extends GameRender {
 				Gdx.files.internal("data/Fonts/font.fnt"), false);
 		TextureAtlas listItemButtonAtlas = new TextureAtlas(
 				"data/Units/units_icons.pack");
-		for (int i = 0; i < 5; i++) {
+		UnitListItem item_fire_archer = new UnitListItem("fire_archer",
+				listItemButtonAtlas.findRegion("fire_archer"), unitForn);
+		list.addUnitItem(item_fire_archer);
 
-			UnitListItem item = new UnitListItem("fire_archer",
-					listItemButtonAtlas.findRegion("fire_archer"), unitForn);
-			list.addUnitItem(item);
-		}
+		UnitListItem item_earth_tank = new UnitListItem("earth_tank",
+				listItemButtonAtlas.findRegion("fire_archer"), unitForn);
+		list.addUnitItem(item_earth_tank);
+
+		UnitListItem item_wind_assassin = new UnitListItem("wind_assassin",
+				listItemButtonAtlas.findRegion("fire_archer"), unitForn);
+		list.addUnitItem(item_wind_assassin);
+
+		UnitListItem item_darkness_mage = new UnitListItem("darkness_mage",
+				listItemButtonAtlas.findRegion("fire_archer"), unitForn);
+		list.addUnitItem(item_darkness_mage);
+
 	}
 
 	public void render(float dt, SpriteBatch batch) {

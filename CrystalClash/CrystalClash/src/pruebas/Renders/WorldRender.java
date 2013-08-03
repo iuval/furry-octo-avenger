@@ -54,12 +54,6 @@ public class WorldRender implements InputProcessor {
 		background = new Image(backgroundTexture);
 		background.setSize(CrystalClash.WIDTH, CrystalClash.HEIGHT);
 
-		// archerTexture = new Texture(
-		// Gdx.files.internal("data/Images/Units/fire_archer_f.png"));
-		// archer = new Image(archerTexture);
-		// archer.setSize(150, 150);
-		//
-		//
 		gameRender = new SelectUnitsRender(engine, world);
 	}
 
@@ -78,35 +72,11 @@ public class WorldRender implements InputProcessor {
 		}
 
 		gameRender.render(dt, batch);
-		// unitIterator = p1Units.iterator();
-		// while (unitIterator.hasNext()) {
-		// aux = unitIterator.next();
-		// archer.setPosition(aux.getSecond().x, aux.getSecond().y);
-		// archer.draw(batch, 1);
-		// // stage.addActor(archer);
-		// }
-		//
-		// unitIterator = p2Units.iterator();
-		// while (unitIterator.hasNext()) {
-		// aux = unitIterator.next();
-		// archer.setPosition(aux.getSecond().x, aux.getSecond().y);
-		// archer.draw(batch, 1);
-		// // stage.addActor(archer);
-		// }
-
-		// TextureRegion currentFrame = animation.getKeyFrame(dt, true); // #16
-		// batch.draw(currentFrame, 50, 50); // #17
-
-		// batch.draw(cellRender.able_to_attack, 100, 100);
 	}
 
 	public void dispose() {
 		backgroundTexture.dispose();
 		archerTexture.dispose();
-	}
-
-	private void load() {
-		cellHelper.load();
 	}
 
 	@Override
