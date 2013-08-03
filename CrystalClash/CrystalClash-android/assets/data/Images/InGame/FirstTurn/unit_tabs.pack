@@ -1,0 +1,130 @@
+
+unit_tabs.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+darkness_background
+  rotate: false
+  xy: 0, 0
+  size: 640, 854
+  orig: 640, 854
+  offset: 0, 0
+  index: -1
+darkness_tab
+  rotate: false
+  xy: 640, 653
+  size: 120, 201
+  orig: 120, 201
+  offset: 0, 0
+  index: -1
+darkness_tab_selected
+  rotate: false
+  xy: 640, 452
+  size: 120, 201
+  orig: 120, 201
+  offset: 0, 0
+  index: -1
+earth_tab
+  rotate: false
+  xy: 760, 653
+  size: 120, 201
+  orig: 120, 201
+  offset: 0, 0
+  index: -1
+earth_tab_selected
+  rotate: false
+  xy: 640, 251
+  size: 120, 201
+  orig: 120, 201
+  offset: 0, 0
+  index: -1
+fire_tab
+  rotate: false
+  xy: 760, 452
+  size: 120, 201
+  orig: 120, 201
+  offset: 0, 0
+  index: -1
+fire_tab_selected
+  rotate: false
+  xy: 880, 653
+  size: 120, 201
+  orig: 120, 201
+  offset: 0, 0
+  index: -1
+water_tab
+  rotate: false
+  xy: 640, 50
+  size: 120, 201
+  orig: 120, 201
+  offset: 0, 0
+  index: -1
+water_tab_selected
+  rotate: false
+  xy: 760, 251
+  size: 120, 201
+  orig: 120, 201
+  offset: 0, 0
+  index: -1
+wind_tab
+  rotate: false
+  xy: 880, 453
+  size: 120, 200
+  orig: 120, 200
+  offset: 0, 0
+  index: -1
+wind_tab_selected
+  rotate: false
+  xy: 760, 51
+  size: 120, 200
+  orig: 120, 200
+  offset: 0, 0
+  index: -1
+
+unit_tabs2.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+earth_background
+  rotate: false
+  xy: 0, 0
+  size: 640, 854
+  orig: 640, 854
+  offset: 0, 0
+  index: -1
+
+unit_tabs3.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+fire_background
+  rotate: false
+  xy: 0, 0
+  size: 640, 854
+  orig: 640, 854
+  offset: 0, 0
+  index: -1
+
+unit_tabs4.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+water_background
+  rotate: false
+  xy: 0, 0
+  size: 640, 854
+  orig: 640, 854
+  offset: 0, 0
+  index: -1
+
+unit_tabs5.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+wind_background
+  rotate: false
+  xy: 0, 0
+  size: 640, 854
+  orig: 640, 854
+  offset: 0, 0
+  index: -1
