@@ -4,7 +4,6 @@ import pruebas.Renders.UnitRender;
 import pruebas.Renders.helpers.UnitHelper;
 
 public class Unit extends GameObject {
-
 	private int lifePoints;
 	private int damage;
 	private int velicity;

@@ -15,6 +15,9 @@ public class CellRender {
 	public void draw(float dt, SpriteBatch batch) {
 		batch.draw(WorldRender.cellHelper.getCellTexture(cell), cell.getX(),
 				cell.getY());
+	}
+
+	public void drawUnits(float dt, SpriteBatch batch) {
 		Unit u = cell.getUnit(1);
 		if (u != null) {
 			u.getRender().draw(batch, dt);
