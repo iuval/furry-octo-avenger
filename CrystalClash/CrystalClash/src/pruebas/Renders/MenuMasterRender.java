@@ -42,9 +42,6 @@ public class MenuMasterRender {
 	}
 	
 	public void render(float dt, Stage stage) {
-		Gdx.gl.glClearColor(0, 0, 0, 1);
-		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-		
 		stage.addActor(background);
 		menu.getCurrentMenu().getRender().render(dt, stage);
 		tweenManager.update(dt);
