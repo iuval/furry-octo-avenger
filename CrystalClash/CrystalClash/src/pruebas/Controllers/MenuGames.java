@@ -43,8 +43,20 @@ public class MenuGames extends Menu {
 	public void enableRandomError(String message) {
 		((MenuGamesRender) getRender()).enableRandomError(message);
 	}
-	
+
 	public void logOut() {
 		MenuMaster.changeMenuToLogIn();
+	}
+
+	public void postGameTurnSuccess(String data) {
+		if (data.equals("none")) {
+			((MenuGamesRender) getRender()).openGameFirstTurn();
+		} else {
+			((MenuGamesRender) getRender()).openGame();
+		}
+	}
+
+	public void postGameTurnError(String message) {
+		// ((MenuGamesRender) getRender()).listGamesError(message);
 	}
 }

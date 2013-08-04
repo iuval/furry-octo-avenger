@@ -94,15 +94,15 @@ public class MenuGamesRender extends MenuRender {
 				+ GameController.getInstancia().getUser().getNick(),
 				new LabelStyle(font, Color.WHITE));
 		lblHeading.setPosition(50, CrystalClash.HEIGHT - 50);
-		
-		btnLogOut = new TextButton("Log Out",
-				listItemSkin.get("buttonLogOutStyle", TextButtonStyle.class));
-		btnLogOut.setPosition(CrystalClash.WIDTH - btnLogOut.getWidth() - 50, CrystalClash.HEIGHT - btnLogOut.getHeight() - 10);
+
+		btnLogOut = new TextButton("Log Out", listItemSkin.get(
+				"buttonLogOutStyle", TextButtonStyle.class));
+		btnLogOut.setPosition(CrystalClash.WIDTH - btnLogOut.getWidth() - 50,
+				CrystalClash.HEIGHT - btnLogOut.getHeight() - 10);
 		btnLogOut.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
 				System.out.println("LogOut");
-				// TODO: Agregar Funcionalidad
 				controller.logOut();
 			}
 		});
@@ -209,12 +209,11 @@ public class MenuGamesRender extends MenuRender {
 		outerStyle.down = listItemSkin
 				.getDrawable("outer_button_orange_pressed");
 		listItemSkin.add("buttonStyle", outerStyle);
-		
+
 		TextButtonStyle innerStyle = new TextButtonStyle();
 		innerStyle.font = listItemSkin.getFont("font");
 		innerStyle.up = listItemSkin.getDrawable("button_orange");
-		innerStyle.down = listItemSkin
-				.getDrawable("button_orange_pressed");
+		innerStyle.down = listItemSkin.getDrawable("button_orange_pressed");
 		listItemSkin.add("buttonLogOutStyle", innerStyle);
 	}
 
@@ -269,5 +268,15 @@ public class MenuGamesRender extends MenuRender {
 	@Override
 	public boolean scrolled(int amount) {
 		return false;
+	}
+
+	public void openGameFirstTurn() {
+		// TODO Auto-generated method stub
+
+	}
+
+	public void openGame() {
+		// TODO Auto-generated method stub
+
 	}
 }
