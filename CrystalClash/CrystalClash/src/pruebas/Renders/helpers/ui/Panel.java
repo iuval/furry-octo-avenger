@@ -4,15 +4,15 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 public class Panel extends Component {
-	private TextureRegion region;
+	protected TextureRegion background;
 
-	public void setTextureRegion(TextureRegion region) {
-		this.region = region;
+	public Panel(TextureRegion region) {
+		this.background = region;
 	}
 
 	public void draw(float dt, SpriteBatch batch) {
-		if (region != null) {
-			batch.draw(region, getX(), getY(), getW(), getH());
+		if (background != null) {
+			batch.draw(background, getX(), getY(), getW(), getH());
 		}
 	}
 }

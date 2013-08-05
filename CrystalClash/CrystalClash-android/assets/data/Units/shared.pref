@@ -1,0 +1,4 @@
+data
+  max_life: 850
+  max_attack: 190
+  max_speed: 4

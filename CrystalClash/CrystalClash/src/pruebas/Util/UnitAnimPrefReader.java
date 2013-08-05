@@ -9,7 +9,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 
-public class UnitPrefReader {
+public class UnitAnimPrefReader {
 
 	/**
 	 * Loads the specified pref file using {@link FileType#Internal}, using the
