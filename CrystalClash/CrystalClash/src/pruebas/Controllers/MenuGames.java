@@ -1,6 +1,7 @@
 package pruebas.Controllers;
 
 import pruebas.Networking.ServerDriver;
+import pruebas.Renders.GameEngine;
 import pruebas.Renders.MenuGamesRender;
 import pruebas.Renders.MenuRender;
 
@@ -43,8 +44,25 @@ public class MenuGames extends Menu {
 	public void enableRandomError(String message) {
 		((MenuGamesRender) getRender()).enableRandomError(message);
 	}
-	
+
 	public void logOut() {
 		MenuMaster.changeMenuToLogIn();
+	}
+
+	public void getGameTurn(String gameId) {
+		ServerDriver.getGameTurn(GameController.getInstancia().getUser()
+				.getId(), gameId);
+	}
+
+	public void gameTurnSuccess(String data) {
+
+	}
+
+	public void getGameTurnSuccess(String data) {
+		GameEngine.getInstance().openGame(data);
+	}
+
+	public void postGameTurnError(String message) {
+		// ((MenuGamesRender) getRender()).listGamesError(message);
 	}
 }

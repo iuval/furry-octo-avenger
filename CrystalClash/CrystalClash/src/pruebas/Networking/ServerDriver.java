@@ -5,7 +5,6 @@ import java.util.Map;
 
 import pruebas.Controllers.MenuGames;
 import pruebas.Controllers.MenuLogIn;
-import pruebas.Controllers.MenuMaster;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Net.HttpMethods;
@@ -23,6 +22,7 @@ public class ServerDriver {
 	private final static String ACTION_SIGN_IN = "sign_in";
 	private final static String ACTION_LIST_GAMES = "list_games";
 	private final static String ACTION_ENABLE_RANDOM = "enable_random";
+	private final static String ACTION_GAME_TURN = "game_turn";
 
 	public static void signIn(String email, String password) {
 		Map<String, String> data = new HashMap<String, String>();
@@ -75,11 +75,8 @@ public class ServerDriver {
 				});
 	}
 
-	public static void ListGames(String id) {
-		Map<String, String> data = new HashMap<String, String>();
-		data.put("id", id);
-
-		Gdx.net.sendHttpRequest(getPost(ACTION_LIST_GAMES, data),
+	public static void getListGames(String id) {
+		Gdx.net.sendHttpRequest(getGet(ACTION_LIST_GAMES + "/p/" + id),
 				new HttpResponseListener() {
 					public void handleHttpResponse(HttpResponse httpResponse) {
 						JsonValue values = ServerDriver
@@ -131,11 +128,63 @@ public class ServerDriver {
 				});
 	}
 
-	private static HttpRequest getPost(String action, Map<String, String> data) {
+	public static void gameTurn(String playerId, String gameId, String turnData) {
+		Map<String, String> data = new HashMap<String, String>();
+		data.put("player_id", playerId);
+		data.put("game_id", gameId);
+		data.put("data", turnData);
+
+		Gdx.net.sendHttpRequest(getPost(ACTION_GAME_TURN, data),
+				new HttpResponseListener() {
+					public void handleHttpResponse(HttpResponse httpResponse) {
+						JsonValue values = ServerDriver
+								.ProcessResponce(httpResponse);
+						if (values.getString("value").equals("ok")) {
+							MenuGames.getInstance().gameTurnSuccess(
+									values.getString("data"));
+						} else {
+							MenuGames.getInstance().enableRandomError(
+									values.getString("message"));
+						}
+					}
+
+					public void failed(Throwable t) {
+						MenuLogIn.getInstance().serverError("PANIC!");
+					}
+				});
+	}
+
+	public static void getGameTurn(String playerId, String gameId) {
+		Gdx.net.sendHttpRequest(getGet(ACTION_GAME_TURN + "/p/" + playerId
+				+ "/g/" + gameId), new HttpResponseListener() {
+			public void handleHttpResponse(HttpResponse httpResponse) {
+				JsonValue values = ServerDriver.ProcessResponce(httpResponse);
+				if (values.getString("value").equals("ok")) {
+					MenuGames.getInstance().getGameTurnSuccess(
+							values.getString("data"));
+				} else {
+					MenuGames.getInstance().enableRandomError(
+							values.getString("message"));
+				}
+			}
+
+			public void failed(Throwable t) {
+				MenuLogIn.getInstance().serverError("PANIC!");
+			}
+		});
+	}
+
+	private static HttpRequest getPost(String url, Map<String, String> data) {
 		HttpRequest httpPost = new HttpRequest(HttpMethods.POST);
-		httpPost.setUrl(SERVER_URL + action);
+		httpPost.setUrl(SERVER_URL + url);
 		httpPost.setContent(HttpParametersUtils.convertHttpParameters(data));
 		return httpPost;
+	}
+
+	private static HttpRequest getGet(String url) {
+		HttpRequest httpGet = new HttpRequest(HttpMethods.GET);
+		httpGet.setUrl(SERVER_URL + url);
+		return httpGet;
 	}
 
 	public static JsonValue ProcessResponce(HttpResponse response) {

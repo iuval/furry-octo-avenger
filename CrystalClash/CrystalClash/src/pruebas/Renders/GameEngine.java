@@ -16,11 +16,18 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 
 public class GameEngine implements Screen {
+	private static GameEngine instance;
+
+	public static GameEngine getInstance() {
+		if (instance == null)
+			instance = new GameEngine();
+		return instance;
+	}
 
 	private InputMultiplexer inputManager;
 	private SpriteBatch batch;
 	private Stage stage;
-	private OrthographicCamera camera;
+	private static OrthographicCamera camera;
 
 	private GameState state;
 
@@ -42,10 +49,9 @@ public class GameEngine implements Screen {
 
 		menu = MenuMaster.getInstance();
 		menuRender = new MenuMasterRender(menu);
-		world = new WorldController();
-		worldRender = new WorldRender(this, world);
 
-		setState(GameState.InGame);
+		// setState(GameState.InMenu);
+		openGame("none");
 	}
 
 	@Override
@@ -70,7 +76,7 @@ public class GameEngine implements Screen {
 	private void renderGame(float dt) {
 		Gdx.gl.glClearColor(0, 0, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-		
+
 		switch (state) {
 		case InGame:
 			batch.begin();
@@ -89,7 +95,7 @@ public class GameEngine implements Screen {
 		}
 	}
 
-	public void setState(GameState state) {
+	private void setState(GameState state) {
 		this.state = state;
 		inputManager.clear();
 		switch (state) {
@@ -107,6 +113,14 @@ public class GameEngine implements Screen {
 
 		Gdx.input.setCatchBackKey(true);
 		Gdx.input.setInputProcessor(inputManager);
+	}
+
+	public void openGame(String data) {
+		if (world == null) {
+			world = new WorldController();
+			worldRender = new WorldRender(world, data);
+		}
+		setState(GameState.InGame);
 	}
 
 	@Override
@@ -133,7 +147,7 @@ public class GameEngine implements Screen {
 		worldRender.dispose();
 	}
 
-	public Vector2 getRealPosition(float x, float y) {
+	public static Vector2 getRealPosition(float x, float y) {
 		Vector3 vec = new Vector3(x, y, 0);
 		camera.unproject(vec);
 		return new Vector2(vec.x, vec.y);
