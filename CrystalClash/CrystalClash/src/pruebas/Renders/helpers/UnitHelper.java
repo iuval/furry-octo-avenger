@@ -4,8 +4,8 @@ import java.util.Hashtable;
 
 import pruebas.Renders.UnitRender;
 import pruebas.Util.SuperAnimation;
-import pruebas.Util.UnitPrefReader;
-import pruebas.Util.UnitPrefReader.UnitPrefReaderData;
+import pruebas.Util.UnitAnimPrefReader;
+import pruebas.Util.UnitAnimPrefReader.UnitPrefReaderData;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
@@ -45,7 +45,7 @@ public class UnitHelper {
 		String base_file_name = String.format("data/Units/%s/%s", unitName,
 				action);
 
-		UnitPrefReaderData data = UnitPrefReader.load(base_file_name + ".pref");
+		UnitPrefReaderData data = UnitAnimPrefReader.load(base_file_name + ".pref");
 
 		Texture sheet = new Texture(Gdx.files.internal(base_file_name + ".png"));
 		TextureRegion[][] tmp = TextureRegion.split(sheet, sheet.getWidth()

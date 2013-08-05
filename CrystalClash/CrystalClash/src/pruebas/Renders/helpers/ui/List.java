@@ -1,13 +1,18 @@
 package pruebas.Renders.helpers.ui;
 
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+
 public class List extends Container {
+
+	public List(TextureRegion bg) {
+		super(bg);
+	}
 
 	public void addUnitItem(Panel panel) {
 		if (panel != null) {
 			add(panel);
-			panel.setSize(74, getW() - 40);
-			panel.setPosition(getX() + 20, getY() + getH() - paddingTop
-					- components.size * 74);
+			panel.setPosition(getX() + 40, getY() + getH() - paddingTop
+					- components.size * panel.getH());
 		}
 	}
 

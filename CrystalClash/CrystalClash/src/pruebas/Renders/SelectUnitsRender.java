@@ -1,5 +1,6 @@
 package pruebas.Renders;
 
+import pruebas.Controllers.GameController;
 import pruebas.Controllers.WorldController;
 import pruebas.CrystalClash.CrystalClash;
 import pruebas.Entities.Cell;
@@ -9,11 +10,13 @@ import pruebas.Renders.helpers.ui.List;
 import pruebas.Renders.helpers.ui.TabContainer;
 import pruebas.Renders.helpers.ui.ToggleButton;
 import pruebas.Renders.helpers.ui.UnitListItem;
+import pruebas.Util.UnitStatsPrefReader;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 
 public class SelectUnitsRender extends GameRender {
@@ -31,22 +34,22 @@ public class SelectUnitsRender extends GameRender {
 	}
 
 	public void init() {
+
+		GameController.getInstancia().loadUnitsStats();
+
 		TextureAtlas atlas = new TextureAtlas(
 				"data/Images/InGame/FirstTurn/unit_select.pack");
 		Skin skin = new Skin(atlas);
-		BitmapFont unitFort = new BitmapFont(
-				Gdx.files.internal("data/Fonts/font.fnt"), false);
-		TextureAtlas listItemButtonAtlas = new TextureAtlas(
+		TextureAtlas portraitsAtlas = new TextureAtlas(
 				"data/Units/unit_portraits.pack");
 
-		tabs = new TabContainer();
+		tabs = new TabContainer(null);
 		tabs.setPosition(0, 0);
 		tabs.setSize(CrystalClash.HEIGHT, CrystalClash.WIDTH / 2);
 
 		// Fire
-		List listFire = new List();
+		List listFire = new List(skin.getRegion("fire_background"));
 		listFire.setPaddingTop(160);
-		listFire.setTextureRegion(skin.getRegion("fire_background"));
 		ToggleButton headerFire = new ToggleButton();
 		headerFire.setTextureRegion(skin.getRegion("fire_tab"),
 				skin.getRegion("fire_tab_selected"));
@@ -54,14 +57,12 @@ public class SelectUnitsRender extends GameRender {
 
 		// Fire items
 		UnitListItem item_fire_archer = new UnitListItem("fire_archer",
-				listItemButtonAtlas.findRegion("portrait_fire_archer"),
-				unitFort);
+				portraitsAtlas.findRegion("portrait_fire_archer"), skin);
 		listFire.addUnitItem(item_fire_archer);
 
 		// Wind
-		List listWind = new List();
+		List listWind = new List(skin.getRegion("wind_background"));
 		listWind.setPaddingTop(160);
-		listWind.setTextureRegion(skin.getRegion("wind_background"));
 		ToggleButton headerWind = new ToggleButton();
 		headerWind.setTextureRegion(skin.getRegion("wind_tab"),
 				skin.getRegion("wind_tab_selected"));
@@ -69,14 +70,12 @@ public class SelectUnitsRender extends GameRender {
 
 		// Wind items
 		UnitListItem item_wind_assassin = new UnitListItem("wind_assassin",
-				listItemButtonAtlas.findRegion("portrait_wind_assassin"),
-				unitFort);
+				portraitsAtlas.findRegion("portrait_wind_assassin"), skin);
 		listWind.addUnitItem(item_wind_assassin);
 
 		// Earth
-		List listEarth = new List();
+		List listEarth = new List(skin.getRegion("earth_background"));
 		listEarth.setPaddingTop(160);
-		listEarth.setTextureRegion(skin.getRegion("earth_background"));
 		ToggleButton headerEarth = new ToggleButton();
 		headerEarth.setTextureRegion(skin.getRegion("earth_tab"),
 				skin.getRegion("earth_tab_selected"));
@@ -84,13 +83,12 @@ public class SelectUnitsRender extends GameRender {
 
 		// Earth items
 		UnitListItem item_earth_tank = new UnitListItem("earth_tank",
-				listItemButtonAtlas.findRegion("portrait_earth_tank"), unitFort);
+				portraitsAtlas.findRegion("portrait_earth_tank"), skin);
 		listEarth.addUnitItem(item_earth_tank);
 
 		// Water
-		List listWater = new List();
+		List listWater = new List(skin.getRegion("water_background"));
 		listWater.setPaddingTop(160);
-		listWater.setTextureRegion(skin.getRegion("water_background"));
 		ToggleButton headerWater = new ToggleButton();
 		headerWater.setTextureRegion(skin.getRegion("water_tab"),
 				skin.getRegion("water_tab_selected"));
@@ -99,9 +97,8 @@ public class SelectUnitsRender extends GameRender {
 		// Water items
 
 		// Darkness
-		List listDarkness = new List();
+		List listDarkness = new List(skin.getRegion("darkness_background"));
 		listDarkness.setPaddingTop(160);
-		listDarkness.setTextureRegion(skin.getRegion("darkness_background"));
 		ToggleButton headerDarkness = new ToggleButton();
 		headerDarkness.setTextureRegion(skin.getRegion("darkness_tab"),
 				skin.getRegion("darkness_tab_selected"));
@@ -109,8 +106,7 @@ public class SelectUnitsRender extends GameRender {
 
 		// Wind items
 		UnitListItem item_darkness_mage = new UnitListItem("darkness_mage",
-				listItemButtonAtlas.findRegion("portrait_darkness_mage"),
-				unitFort);
+				portraitsAtlas.findRegion("portrait_darkness_mage"), skin);
 		listDarkness.addUnitItem(item_darkness_mage);
 
 	}
