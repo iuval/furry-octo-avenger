@@ -1,6 +1,7 @@
 package pruebas.Renders.helpers.ui;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.utils.Array;
 
 public class TabContainer extends Panel {
@@ -11,7 +12,8 @@ public class TabContainer extends Panel {
 	private float headerH = 201;
 	private float headerSep = 6.5f;
 
-	public TabContainer() {
+	public TabContainer(TextureRegion bg) {
+		super(bg);
 		currentInxes = 0;
 		tabHeaders = new Array<ToggleButton>();
 		tabPanels = new Array<Panel>();

@@ -1,13 +1,15 @@
 package pruebas.Renders.helpers.ui;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.utils.Array;
 
 public class Container extends Panel {
 	protected Array<Panel> components;
 	protected float paddingTop;
 
-	public Container() {
+	public Container(TextureRegion bg) {
+		super(bg);
 		components = new Array<Panel>();
 	}
 
