@@ -22,8 +22,8 @@ public class SelectUnitsRender extends GameRender {
 	private Unit selectedUnit = null;
 	private TabContainer tabs;
 
-	public SelectUnitsRender(GameEngine e, WorldController world, int player) {
-		super(e, world);
+	public SelectUnitsRender(WorldController world, int player) {
+		super(world);
 		this.player = player;
 		world.assignFirstTurnAvailablePlaces(player);
 
@@ -32,12 +32,12 @@ public class SelectUnitsRender extends GameRender {
 
 	public void init() {
 		TextureAtlas atlas = new TextureAtlas(
-				"data/Images/InGame/FirstTurn/unit_tabs.pack");
+				"data/Images/InGame/FirstTurn/unit_select.pack");
 		Skin skin = new Skin(atlas);
-		BitmapFont unitForn = new BitmapFont(
+		BitmapFont unitFort = new BitmapFont(
 				Gdx.files.internal("data/Fonts/font.fnt"), false);
 		TextureAtlas listItemButtonAtlas = new TextureAtlas(
-				"data/Units/units_icons.pack");
+				"data/Units/unit_portraits.pack");
 
 		tabs = new TabContainer();
 		tabs.setPosition(0, 0);
@@ -54,7 +54,8 @@ public class SelectUnitsRender extends GameRender {
 
 		// Fire items
 		UnitListItem item_fire_archer = new UnitListItem("fire_archer",
-				listItemButtonAtlas.findRegion("fire_archer"), unitForn);
+				listItemButtonAtlas.findRegion("portrait_fire_archer"),
+				unitFort);
 		listFire.addUnitItem(item_fire_archer);
 
 		// Wind
@@ -68,7 +69,8 @@ public class SelectUnitsRender extends GameRender {
 
 		// Wind items
 		UnitListItem item_wind_assassin = new UnitListItem("wind_assassin",
-				listItemButtonAtlas.findRegion("fire_archer"), unitForn);
+				listItemButtonAtlas.findRegion("portrait_wind_assassin"),
+				unitFort);
 		listWind.addUnitItem(item_wind_assassin);
 
 		// Earth
@@ -82,7 +84,7 @@ public class SelectUnitsRender extends GameRender {
 
 		// Earth items
 		UnitListItem item_earth_tank = new UnitListItem("earth_tank",
-				listItemButtonAtlas.findRegion("fire_archer"), unitForn);
+				listItemButtonAtlas.findRegion("portrait_earth_tank"), unitFort);
 		listEarth.addUnitItem(item_earth_tank);
 
 		// Water
@@ -107,7 +109,8 @@ public class SelectUnitsRender extends GameRender {
 
 		// Wind items
 		UnitListItem item_darkness_mage = new UnitListItem("darkness_mage",
-				listItemButtonAtlas.findRegion("fire_archer"), unitForn);
+				listItemButtonAtlas.findRegion("portrait_darkness_mage"),
+				unitFort);
 		listDarkness.addUnitItem(item_darkness_mage);
 
 	}

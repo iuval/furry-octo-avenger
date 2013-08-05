@@ -29,7 +29,6 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
 public class WorldRender implements InputProcessor {
 
-	private GameEngine engine;
 	private TweenManager tweenManager;
 	public static CellHelper cellHelper;
 
@@ -51,17 +50,20 @@ public class WorldRender implements InputProcessor {
 
 	// private SuperAnimation animation;
 
-	public WorldRender(GameEngine engine, WorldController world) {
-		this.engine = engine;
+	public WorldRender(WorldController world, String data) {
 		this.world = world;
 
 		tweenManager = new TweenManager();
-		
+
 		cellHelper = new CellHelper();
 		cellHelper.load();
 
 		UnitHelper.init();
-		gameRender = new SelectUnitsRender(engine, world, 2);
+		if (data.equals("none")) {
+			gameRender = new SelectUnitsRender(world, 2);
+		} else {
+
+		}
 		loadStuff();
 	}
 
@@ -84,7 +86,6 @@ public class WorldRender implements InputProcessor {
 		moreOptions.draw(batch, 1);
 		optionsBar.draw(batch, 1);
 
-		
 		stage.addActor(btnMoreOptions);
 		stage.addActor(grpMoreOptions);
 		stage.addActor(sendBar);
@@ -183,30 +184,45 @@ public class WorldRender implements InputProcessor {
 	}
 
 	private void showMoreOptions() {
-		float speed = 0.2f; //CrystalClash.ANIMATION_SPEED;
+		float speed = 0.2f; // CrystalClash.ANIMATION_SPEED;
 		Timeline.createParallel()
 				.beginParallel()
-				.push(Tween.to(moreOptions, ActorAccessor.X, speed).target(0 - moreOptions.getWidth()))
-				.push(Tween.to(btnMoreOptions, ActorAccessor.X, speed).target(0 - btnMoreOptions.getWidth()))
-				.end().beginParallel().beginSequence()
-				.push(Tween.to(optionsBar, ActorAccessor.X, speed).target(sendBar.getWidth() - 70 + 15))
-				.push(Tween.to(optionsBar, ActorAccessor.X, 0.05f).target(sendBar.getWidth() - 70)).end()
+				.push(Tween.to(moreOptions, ActorAccessor.X, speed).target(
+						0 - moreOptions.getWidth()))
+				.push(Tween.to(btnMoreOptions, ActorAccessor.X, speed).target(
+						0 - btnMoreOptions.getWidth()))
+				.end()
+				.beginParallel()
 				.beginSequence()
-				.push(Tween.to(grpMoreOptions, ActorAccessor.X, speed).target(sendBar.getWidth() - 70 + 75 + 15))
-				.push(Tween.to(grpMoreOptions, ActorAccessor.X, 0.05f).target(sendBar.getWidth() - 70 + 75)).end()
-				.end().start(tweenManager);
+				.push(Tween.to(optionsBar, ActorAccessor.X, speed).target(
+						sendBar.getWidth() - 70 + 15))
+				.push(Tween.to(optionsBar, ActorAccessor.X, 0.05f).target(
+						sendBar.getWidth() - 70))
+				.end()
+				.beginSequence()
+				.push(Tween.to(grpMoreOptions, ActorAccessor.X, speed).target(
+						sendBar.getWidth() - 70 + 75 + 15))
+				.push(Tween.to(grpMoreOptions, ActorAccessor.X, 0.05f).target(
+						sendBar.getWidth() - 70 + 75)).end().end()
+				.start(tweenManager);
 	}
-	
+
 	private void hideMoreOptions() {
-		float speed = 0.2f; //CrystalClash.ANIMATION_SPEED;
+		float speed = 0.2f; // CrystalClash.ANIMATION_SPEED;
 		Timeline.createParallel()
 				.beginParallel()
-				.push(Tween.to(moreOptions, ActorAccessor.X, speed).target(sendBar.getWidth() - 35))
-				.push(Tween.to(btnMoreOptions, ActorAccessor.X, speed).target(sendBar.getWidth() - 35 + moreOptions.getWidth() - btnMoreOptions.getWidth()))
-				.end().beginParallel()
-				.push(Tween.to(optionsBar, ActorAccessor.X, speed).target(0 - optionsBar.getWidth()))
-				.push(Tween.to(grpMoreOptions, ActorAccessor.X, speed).target(0 - grpMoreOptions.getWidth()))
-				.end().start(tweenManager);
+				.push(Tween.to(moreOptions, ActorAccessor.X, speed).target(
+						sendBar.getWidth() - 35))
+				.push(Tween.to(btnMoreOptions, ActorAccessor.X, speed).target(
+						sendBar.getWidth() - 35 + moreOptions.getWidth()
+								- btnMoreOptions.getWidth()))
+				.end()
+				.beginParallel()
+				.push(Tween.to(optionsBar, ActorAccessor.X, speed).target(
+						0 - optionsBar.getWidth()))
+				.push(Tween.to(grpMoreOptions, ActorAccessor.X, speed).target(
+						0 - grpMoreOptions.getWidth())).end()
+				.start(tweenManager);
 	}
 
 	public void dispose() {
@@ -234,21 +250,21 @@ public class WorldRender implements InputProcessor {
 	@Override
 	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
 		hideMoreOptions();
-		Vector2 vec = engine.getRealPosition(screenX, screenY);
+		Vector2 vec = GameEngine.getRealPosition(screenX, screenY);
 		gameRender.touchDown(vec.x, vec.y, pointer, button);
 		return false;
 	}
 
 	@Override
 	public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-		Vector2 vec = engine.getRealPosition(screenX, screenY);
+		Vector2 vec = GameEngine.getRealPosition(screenX, screenY);
 		gameRender.touchUp(vec.x, vec.y, pointer, button);
 		return false;
 	}
 
 	@Override
 	public boolean touchDragged(int screenX, int screenY, int pointer) {
-		Vector2 vec = engine.getRealPosition(screenX, screenY);
+		Vector2 vec = GameEngine.getRealPosition(screenX, screenY);
 		gameRender.touchDragged(vec.x, vec.y, pointer);
 		return false;
 	}

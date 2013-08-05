@@ -5,11 +5,9 @@ import pruebas.Controllers.WorldController;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 public abstract class GameRender {
-	protected GameEngine engine;
 	protected WorldController world;
 
-	public GameRender(GameEngine e, WorldController world) {
-		engine = e;
+	public GameRender(WorldController world) {
 		this.world = world;
 	}
 

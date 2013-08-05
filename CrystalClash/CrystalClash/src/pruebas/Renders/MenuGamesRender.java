@@ -149,7 +149,8 @@ public class MenuGamesRender extends MenuRender {
 		buttonNewInvite.align(Align.center);
 		list.addActorAfter(menuImage, buttonNewInvite);
 
-		ServerDriver.ListGames(GameController.getInstancia().getUser().getId());
+		ServerDriver.getListGames(GameController.getInstancia().getUser()
+				.getId());
 		enterAnimation();
 	}
 
@@ -182,11 +183,9 @@ public class MenuGamesRender extends MenuRender {
 			@Override
 			public boolean touchDown(InputEvent event, float x, float y,
 					int pointer, int button) {
-				System.out
-						.println("play: "
-								+ ((GameListItem) event.getListenerActor()
-										.getParent()).gameId);
-				return super.touchDown(event, x, y, pointer, button);
+				controller.getGameTurn(((GameListItem) event.getListenerActor()
+						.getParent()).gameId);
+				return true;
 			}
 		};
 
