@@ -35,8 +35,8 @@ public class TabContainer extends Panel {
 		header.setH(headerH);
 		header.setY(getY() + getH() - headerH);
 		if (tabHeaders.size > 0) {
-			header.setX(getX() + tabHeaders.get(tabHeaders.size - 1).x
-					+ headerW + headerSep);
+			header.setX(tabHeaders.get(tabHeaders.size - 1).x + headerW
+					+ headerSep);
 		} else {
 			header.setX(getX() + headerSep);
 			header.toggle();
