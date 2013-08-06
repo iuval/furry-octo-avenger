@@ -162,5 +162,4 @@ public class WorldController {
 			cellGrid[8][0].setState(Cell.State.ABLE_TO_PLACE);
 		}
 	}
-	
 }
