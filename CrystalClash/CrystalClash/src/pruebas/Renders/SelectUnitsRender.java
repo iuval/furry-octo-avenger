@@ -40,7 +40,11 @@ public class SelectUnitsRender extends GameRender {
 				"data/Units/unit_portraits.pack");
 
 		tabs = new TabContainer(null);
-		tabs.setPosition(0, 0);
+		if (player == 1) {
+			tabs.setPosition(CrystalClash.WIDTH / 2, 0);
+		} else {
+			tabs.setPosition(0, 0);
+		}
 		tabs.setSize(CrystalClash.HEIGHT, CrystalClash.WIDTH / 2);
 
 		// Fire
