@@ -6,8 +6,6 @@ import pruebas.Entities.Cell;
 import pruebas.Entities.Unit;
 import pruebas.Renders.helpers.CellHelper;
 
-import com.badlogic.gdx.utils.Array;
-
 public class WorldController {
 	public Cell[][] cellGrid;
 	private final float deltaX = 122.0F;
@@ -164,5 +162,5 @@ public class WorldController {
 			cellGrid[8][0].setState(Cell.State.ABLE_TO_PLACE);
 		}
 	}
-
+	
 }
