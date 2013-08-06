@@ -193,7 +193,7 @@ public class MenuLogInRender extends MenuRender {
 		textFieldStyle.cursor = textFieldSkin.getDrawable("textFieldCursor");
 		// TextFieldStyle textFieldStyle = new TextFieldStyle(font, Color.WHITE,
 		// null, textFieldSkin.getDrawable("textFieldCursor"), null);
-		txtEmail = new TextField("iuvalgoldansky@gmail.com", textFieldStyle);
+		txtEmail = new TextField("1@1.com", textFieldStyle);
 		txtEmail.setMessageText("Enter your Email...");
 		txtEmail.setMaxLength(30);
 		txtEmail.setSize(700, 50);
@@ -335,22 +335,23 @@ public class MenuLogInRender extends MenuRender {
 		skin.dispose();
 		font.dispose();
 	}
-	
-	public void reset(){
+
+	public void reset() {
 		instance = new MenuLogInRender(controller);
-		
-		// TODO: Hay que setear de nuevo el InputController porque sino no puedo escribir
-		
-		//No se porque haciendo esto se caga :S
-//		enterAnimation();
-//
-//		txtEmail.setText("iuvalgoldansky@gmail.com");
-//		txtEmail.setMessageText("Enter your Email...");
-//		txtNick.setText("pepe");
-//		txtNick.setMessageText("Enter your Nick...");
-//
-//		group2.setY((CrystalClash.HEIGHT / 2 - group2.getHeight() / 2)
-//						+ CrystalClash.HEIGHT);
+
+		// TODO: Hay que setear de nuevo el InputController porque sino no puedo
+		// escribir
+
+		// No se porque haciendo esto se caga :S
+		// enterAnimation();
+		//
+		// txtEmail.setText("iuvalgoldansky@gmail.com");
+		// txtEmail.setMessageText("Enter your Email...");
+		// txtNick.setText("pepe");
+		// txtNick.setMessageText("Enter your Nick...");
+		//
+		// group2.setY((CrystalClash.HEIGHT / 2 - group2.getHeight() / 2)
+		// + CrystalClash.HEIGHT);
 	}
 
 	// INPUT PROCESSOR--------------------------------------------

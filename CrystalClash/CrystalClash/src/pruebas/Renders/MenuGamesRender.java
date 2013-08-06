@@ -268,14 +268,4 @@ public class MenuGamesRender extends MenuRender {
 	public boolean scrolled(int amount) {
 		return false;
 	}
-
-	public void openGameFirstTurn() {
-		// TODO Auto-generated method stub
-
-	}
-
-	public void openGame() {
-		// TODO Auto-generated method stub
-
-	}
 }

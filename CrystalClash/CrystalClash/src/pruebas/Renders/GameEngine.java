@@ -47,11 +47,10 @@ public class GameEngine implements Screen {
 		batch.setProjectionMatrix(camera.combined);
 		stage.setCamera(camera);
 
-		menu = MenuMaster.getInstance();
-		menuRender = new MenuMasterRender(menu);
+		Gdx.input.setCatchBackKey(true);
+		Gdx.input.setInputProcessor(inputManager);
 
-		// setState(GameState.InMenu);
-		openGame("none");
+		openMenu();
 	}
 
 	@Override
@@ -98,6 +97,7 @@ public class GameEngine implements Screen {
 	private void setState(GameState state) {
 		this.state = state;
 		inputManager.clear();
+		stage.clear();
 		switch (state) {
 		case InGame:
 			inputManager.addProcessor(stage);
@@ -110,9 +110,6 @@ public class GameEngine implements Screen {
 		default:
 			break;
 		}
-
-		Gdx.input.setCatchBackKey(true);
-		Gdx.input.setInputProcessor(inputManager);
 	}
 
 	public void openGame(String data) {
@@ -121,6 +118,17 @@ public class GameEngine implements Screen {
 			worldRender = new WorldRender(world, data);
 		}
 		setState(GameState.InGame);
+	}
+
+	public void openMenu() {
+		if (menu == null) {
+			menu = MenuMaster.getInstance();
+			menuRender = new MenuMasterRender(menu);
+		}
+		if (worldRender != null) {
+			worldRender.dispose();
+		}
+		setState(GameState.InMenu);
 	}
 
 	@Override
