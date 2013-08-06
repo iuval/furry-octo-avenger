@@ -47,6 +47,14 @@ public class TabContainer extends Panel {
 		return tabPanels.get(currentInxes);
 	}
 
+	public void next() {
+		currentInxes = (++currentInxes) % tabPanels.size;
+	}
+
+	public void prev() {
+		currentInxes = (--currentInxes) % tabPanels.size;
+	}
+
 	@Override
 	public void draw(float dt, SpriteBatch batch) {
 		super.draw(dt, batch);

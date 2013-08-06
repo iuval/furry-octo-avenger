@@ -82,7 +82,7 @@ public class SplashScreen implements Screen {
 					@Override
 					public void onEvent(int type, BaseTween<?> source) {
 						((Game) Gdx.app.getApplicationListener())
-								.setScreen(new GameEngine());
+								.setScreen(GameEngine.getInstance());
 					}
 				}).start(tweenManager);
 

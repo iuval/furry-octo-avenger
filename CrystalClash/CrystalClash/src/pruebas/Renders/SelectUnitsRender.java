@@ -10,13 +10,9 @@ import pruebas.Renders.helpers.ui.List;
 import pruebas.Renders.helpers.ui.TabContainer;
 import pruebas.Renders.helpers.ui.ToggleButton;
 import pruebas.Renders.helpers.ui.UnitListItem;
-import pruebas.Util.UnitStatsPrefReader;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 
 public class SelectUnitsRender extends GameRender {

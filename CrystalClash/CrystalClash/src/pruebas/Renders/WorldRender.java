@@ -48,8 +48,6 @@ public class WorldRender implements InputProcessor {
 	private WorldController world;
 	GameRender gameRender;
 
-	// private SuperAnimation animation;
-
 	public WorldRender(WorldController world, String data) {
 		this.world = world;
 
@@ -160,7 +158,7 @@ public class WorldRender implements InputProcessor {
 		btnBack.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
-				// TODO: back to menu
+				GameEngine.getInstance().openMenu();
 			}
 		});
 
