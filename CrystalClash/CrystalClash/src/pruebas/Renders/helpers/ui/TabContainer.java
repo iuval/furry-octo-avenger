@@ -7,14 +7,14 @@ import com.badlogic.gdx.utils.Array;
 public class TabContainer extends Panel {
 	private Array<Panel> tabPanels;
 	private Array<ToggleButton> tabHeaders;
-	private int currentInxes;
+	private int currentIndex;
 	private float headerW = 120;
 	private float headerH = 201;
 	private float headerSep = 6.5f;
 
 	public TabContainer(TextureRegion bg) {
 		super(bg);
-		currentInxes = 0;
+		currentIndex = 0;
 		tabHeaders = new Array<ToggleButton>();
 		tabPanels = new Array<Panel>();
 	}
@@ -44,21 +44,21 @@ public class TabContainer extends Panel {
 	}
 
 	public Panel getCurrentPanel() {
-		return tabPanels.get(currentInxes);
+		return tabPanels.get(currentIndex);
 	}
 
 	public void next() {
-		currentInxes = (++currentInxes) % tabPanels.size;
+		currentIndex = ++currentIndex % tabPanels.size;
 	}
 
 	public void prev() {
-		currentInxes = (--currentInxes) % tabPanels.size;
+		currentIndex = --currentIndex % tabPanels.size;
 	}
 
 	@Override
 	public void draw(float dt, SpriteBatch batch) {
 		super.draw(dt, batch);
-		tabPanels.get(currentInxes).draw(dt, batch);
+		tabPanels.get(currentIndex).draw(dt, batch);
 		for (int i = 0; i < tabHeaders.size; i++) {
 			tabHeaders.get(i).draw(dt, batch);
 		}
@@ -68,10 +68,10 @@ public class TabContainer extends Panel {
 	public boolean hit(float x, float y) {
 		if (super.hit(x, y)) {
 			for (int i = 0; i < tabHeaders.size; i++) {
-				if (i != currentInxes && tabHeaders.get(i).hit(x, y)) {
+				if (i != currentIndex && tabHeaders.get(i).hit(x, y)) {
 					tabHeaders.get(i).toggle();
-					tabHeaders.get(currentInxes).toggle();
-					currentInxes = i;
+					tabHeaders.get(currentIndex).toggle();
+					currentIndex = i;
 					return true;
 				}
 			}
