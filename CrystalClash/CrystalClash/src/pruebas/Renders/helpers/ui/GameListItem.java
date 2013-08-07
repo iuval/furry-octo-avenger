@@ -1,7 +1,5 @@
 package pruebas.Renders.helpers.ui;
 
-import pruebas.CrystalClash.CrystalClash;
-
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.EventListener;
 import com.badlogic.gdx.scenes.scene2d.Group;
@@ -20,41 +18,39 @@ public class GameListItem extends Group {
 			EventListener playListener) {
 		this.gameId = gameId;
 
-		float w = CrystalClash.WIDTH;
-		float h = 250;
-		setBounds(getX(), getY(), w, h);
+		float w = 1189;
+		float h = 187;
+		setBounds(52, getY(), w, h);
 
-		// background image
-		Image background = new Image(skin.getDrawable("background"));
-		background.setBounds(getX(), getY(), w, h);
-		addActor(background);
+		if (state.equals("play")) {
+			TextButton buttonPlay = new TextButton(playerName, skin.get(
+					"playStyle", TextButtonStyle.class));
+			buttonPlay.setBounds(0, 0, w, h);
+			buttonPlay.align(Align.center);
+			addActor(buttonPlay);
+			buttonPlay.addListener(playListener);
+		} else {
+			// background image
+			Image background = new Image(skin.getDrawable("play_down"));
+			background.setBounds(getX(), getY(), w, h);
+			addActor(background);
+		}
+
+		Label labelTurn = new Label(turn, skin, "font", Color.WHITE);
+		labelTurn.setPosition(14, 14);
+		labelTurn.setSize(160, 160);
+		labelTurn.setAlignment(Align.center);
+		addActor(labelTurn);
 
 		// surrender icon
-		TextButton buttonSurrender = new TextButton("Surrender", skin.get(
-				"buttonStyle", TextButtonStyle.class));
-		buttonSurrender.setBounds(getX(), getY(), h, 150);
+		TextButton buttonSurrender = new TextButton("", skin.get(
+				"surrenderStyle", TextButtonStyle.class));
+		buttonSurrender.setBounds(961, 19, 210, 148);
 		buttonSurrender.align(Align.center);
 		addActor(buttonSurrender);
 		buttonSurrender.addListener(surrenderListener);
 
-		Label labelName = new Label(playerName + " - " + turn, skin, "font",
-				Color.WHITE);
-
-		labelName.setPosition(getX() + 250, getY());
-		labelName.setWidth(w - 500);
-		labelName.setAlignment(Align.center);
-		addActor(labelName);
-
-		if (state.equals("play")) {
-			TextButton buttonPlay = new TextButton("Play", skin.get(
-					"buttonStyle", TextButtonStyle.class));
-			buttonPlay.setBounds(w - 250, getY(), h, 150);
-			buttonPlay.align(Align.center);
-			addActor(buttonPlay);
-			buttonPlay.addListener(playListener);
-		}
 		// set the group size to background size
-		setBounds(getX(), getY(), background.getWidth(), background.getHeight());
+		setBounds(getX(), getY(), w, h);
 	}
-
 }

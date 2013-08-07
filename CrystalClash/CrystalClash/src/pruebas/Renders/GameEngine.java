@@ -114,8 +114,8 @@ public class GameEngine implements Screen {
 
 	public void openGame(String data) {
 		if (worldRender == null) {
-			world = new WorldController();
-			worldRender = new WorldRender(world, data);
+			world = new WorldController(data);
+			worldRender = world.getRender();
 		}
 		//TODO: borrar el menu cuando entras al juego
 //		if (menuRender != null) {
