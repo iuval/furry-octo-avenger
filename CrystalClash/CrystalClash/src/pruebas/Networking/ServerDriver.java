@@ -128,10 +128,12 @@ public class ServerDriver {
 				});
 	}
 
-	public static void gameTurn(String playerId, String gameId, String turnData) {
+	public static void gameTurn(String playerId, String gameId, int player,
+			String turnData) {
 		Map<String, String> data = new HashMap<String, String>();
 		data.put("player_id", playerId);
 		data.put("game_id", gameId);
+		data.put("player", player + "");
 		data.put("data", turnData);
 
 		Gdx.net.sendHttpRequest(getPost(ACTION_GAME_TURN, data),
@@ -187,10 +189,13 @@ public class ServerDriver {
 		return httpGet;
 	}
 
-	public static JsonValue ProcessResponce(HttpResponse response) {
-		String res = response.getResultAsString();
-		System.out.println(res);
-		return new JsonReader().parse(res);
+	public static JsonValue ProcessResponce(String response) {
+		System.out.println(response);
+		return new JsonReader().parse(response);
 	}
 
+	public static JsonValue ProcessResponce(HttpResponse response) {
+		String res = response.getResultAsString();
+		return ProcessResponce(res);
+	}
 }

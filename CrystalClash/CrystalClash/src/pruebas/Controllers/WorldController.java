@@ -4,17 +4,60 @@ import java.util.ArrayList;
 
 import pruebas.Entities.Cell;
 import pruebas.Entities.Unit;
+import pruebas.Entities.helpers.PlaceUnitAction;
+import pruebas.Entities.helpers.UnitAction;
+import pruebas.Networking.ServerDriver;
+import pruebas.Renders.WorldRender;
 import pruebas.Renders.helpers.CellHelper;
 
+import com.badlogic.gdx.utils.JsonValue;
+
 public class WorldController {
+
+	private WorldRender render;
+
 	public Cell[][] cellGrid;
 	private final float deltaX = 122.0F;
 	private final float gridX = 70.0F;
 	private final float gridY = 20.0F;
 
-	public WorldController() {
-		Initialize();
-		createMap();
+	public int player;
+	private String gameId;
+	private boolean firstTurn;
+
+	public WorldController(String data) {
+		// TODO: Data reader
+		player = 1;
+		init();
+
+		render = new WorldRender(this);
+		if (firstTurn) {
+			render.initFirstTurn();
+		} else {
+			render.initNormalTurn();
+		}
+	}
+
+	private void readData(String strData) {
+		JsonValue values = ServerDriver.ProcessResponce(strData);
+		player = values.getInt("player");
+		if (values.getString("data").equals("none")) {
+			firstTurn = true;
+		} else {
+			JsonValue data = values.get("data");
+			JsonValue child;
+			JsonValue temp;
+			String action;
+			for (int i = 0; i < data.size; i++) {
+				child = data.get(i);
+
+				UnitAction unitA;
+				action = child.getString("action");
+				if (action.equals("place")) {
+					unitA = new PlaceUnitAction();
+				}
+			}
+		}
 	}
 
 	private void createMap() {
@@ -76,12 +119,14 @@ public class WorldController {
 		}
 	}
 
-	protected void Initialize() {
+	protected void init() {
 		this.cellGrid = ((Cell[][]) java.lang.reflect.Array.newInstance(
 				Cell.class, new int[] { 9, 6 }));
+
+		createMap();
 	}
 
-	public void addUnit(int player, Unit unit, int x, int y) {
+	public void addUnit(Unit unit, int x, int y) {
 		Cell cell = cellAt(x, y);
 		cell.placeUnit(unit, player);
 	}
@@ -116,7 +161,7 @@ public class WorldController {
 			cell.setState(Cell.State.MOVE_TARGET);
 	}
 
-	public void placeUnit(float x, float y, Unit unit, int player) {
+	public void placeUnit(float x, float y, Unit unit) {
 		Cell cell = cellAt(x, y);
 		if (cell != null && cell.getState() == Cell.State.ABLE_TO_PLACE) {
 			cell.placeUnit(unit, player);
@@ -126,7 +171,7 @@ public class WorldController {
 	public void update(float paramFloat) {
 	}
 
-	public void assignFirstTurnAvailablePlaces(int player) {
+	public void assignFirstTurnAvailablePlaces() {
 		if (player == 1) {
 			cellGrid[0][5].setState(Cell.State.ABLE_TO_PLACE);
 			cellGrid[0][4].setState(Cell.State.ABLE_TO_PLACE);
@@ -161,5 +206,37 @@ public class WorldController {
 			cellGrid[8][1].setState(Cell.State.ABLE_TO_PLACE);
 			cellGrid[8][0].setState(Cell.State.ABLE_TO_PLACE);
 		}
+	}
+
+	public void sendTurn() {
+		StringBuilder builder = new StringBuilder();
+
+		builder.append("{");
+
+		Cell cell;
+		UnitAction action;
+		for (int h = 0; h < 6; h++) {
+			for (int v = 0; v < 9; v++) {
+				cell = cellGrid[v][h];
+				action = cell.getAction(player);
+				if (action != null) {
+					String data = cell.getAction(player).getData();
+					System.out.println(data);
+					builder.append(data);
+					builder.append(",");
+				}
+			}
+		}
+		// Delete the last comma
+		builder.deleteCharAt(builder.length() - 1);
+
+		builder.append("}");
+
+		System.out.println(builder.toString());
+		// ServerDriver.gameTurn(playerId, gameId, player, builder.toString());
+	}
+
+	public WorldRender getRender() {
+		return render;
 	}
 }
