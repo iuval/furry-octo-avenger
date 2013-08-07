@@ -48,7 +48,7 @@ public class WorldRender implements InputProcessor {
 	private WorldController world;
 	GameRender gameRender;
 
-	public WorldRender(WorldController world, String data) {
+	public WorldRender(WorldController world) {
 		this.world = world;
 
 		tweenManager = new TweenManager();
@@ -57,12 +57,15 @@ public class WorldRender implements InputProcessor {
 		cellHelper.load();
 
 		UnitHelper.init();
-		if (data.equals("none")) {
-			gameRender = new SelectUnitsRender(world, 2);
-		} else {
-
-		}
 		loadStuff();
+	}
+
+	public void initFirstTurn() {
+		gameRender = new SelectUnitsRender(world);
+	}
+
+	public void initNormalTurn() {
+		gameRender = new SelectUnitsRender(world);
 	}
 
 	public void render(float dt, SpriteBatch batch, Stage stage) {
@@ -122,7 +125,7 @@ public class WorldRender implements InputProcessor {
 		btnSend.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
-				// TODO: Mandar al server los datos
+				world.sendTurn();
 			}
 		});
 

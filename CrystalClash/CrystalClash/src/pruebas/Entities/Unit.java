@@ -9,6 +9,8 @@ public class Unit extends GameObject {
 	private int damage;
 	private int velicity;
 	private int range;
+	private String unitName;
+
 	private UnitRender render;
 
 	public Unit(String unitName) {
@@ -16,9 +18,14 @@ public class Unit extends GameObject {
 			this.render = UnitHelper.getUnitRender(unitName);
 			this.render.unit = this;
 		}
+		this.unitName = unitName;
 	}
 
 	public UnitRender getRender() {
 		return render;
+	}
+
+	public String getName() {
+		return unitName;
 	}
 }

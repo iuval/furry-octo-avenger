@@ -1,5 +1,7 @@
 package pruebas.Entities;
 
+import pruebas.Entities.helpers.PlaceUnitAction;
+import pruebas.Entities.helpers.UnitAction;
 import pruebas.Renders.CellRender;
 
 public class Cell extends GameObject {
@@ -9,6 +11,8 @@ public class Cell extends GameObject {
 
 	private Unit unitsPlayer1;
 	private Unit unitsPlayer2;
+	private UnitAction actionPlayer1;
+	private UnitAction actionPlayer2;
 	private State state = State.NONE;
 	public int[][] neigbours;
 	private CellRender render;
@@ -33,9 +37,15 @@ public class Cell extends GameObject {
 		if (player == 1) {
 			unitsPlayer1 = unit;
 			unit.setPosition(getX() + 10f, getY() + 50f);
+			actionPlayer1 = new PlaceUnitAction();
+			((PlaceUnitAction) actionPlayer1).origin = this;
+			((PlaceUnitAction) actionPlayer1).unitName = unit.getName();
 		} else {
 			unitsPlayer2 = unit;
 			unit.setPosition(getX() + 71f, getY() + 50f);
+			actionPlayer2 = new PlaceUnitAction();
+			((PlaceUnitAction) actionPlayer2).origin = this;
+			((PlaceUnitAction) actionPlayer2).unitName = unit.getName();
 		}
 	}
 
@@ -52,6 +62,22 @@ public class Cell extends GameObject {
 			unitsPlayer1 = null;
 		} else {
 			unitsPlayer2 = null;
+		}
+	}
+
+	public UnitAction getAction(int player) {
+		if (player == 1) {
+			return actionPlayer1;
+		} else {
+			return actionPlayer2;
+		}
+	}
+
+	public void setAction(UnitAction action, int player) {
+		if (player == 1) {
+			actionPlayer1 = action;
+		} else {
+			actionPlayer2 = action;
 		}
 	}
 }

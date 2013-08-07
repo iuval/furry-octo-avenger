@@ -17,14 +17,12 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 
 public class SelectUnitsRender extends GameRender {
 
-	private int player;
 	private Unit selectedUnit = null;
 	private TabContainer tabs;
 
-	public SelectUnitsRender(WorldController world, int player) {
+	public SelectUnitsRender(WorldController world) {
 		super(world);
-		this.player = player;
-		world.assignFirstTurnAvailablePlaces(player);
+		world.assignFirstTurnAvailablePlaces();
 
 		init();
 	}
@@ -40,7 +38,7 @@ public class SelectUnitsRender extends GameRender {
 				"data/Units/unit_portraits.pack");
 
 		tabs = new TabContainer(null);
-		if (player == 1) {
+		if (world.player == 1) {
 			tabs.setPosition(CrystalClash.WIDTH / 2, 0);
 		} else {
 			tabs.setPosition(0, 0);
@@ -125,7 +123,7 @@ public class SelectUnitsRender extends GameRender {
 						.getCurrentPanel()).getItemAt(x, y);
 				if (item != null) {
 					Unit u = new Unit(item.getUnitName());
-					if (player == 2)
+					if (world.player == 2)
 						u.getRender().setFacing(FACING.left);
 					selectedUnit = u;
 					selectedUnit.setPosition(x, y);
@@ -133,8 +131,8 @@ public class SelectUnitsRender extends GameRender {
 			} else {
 				Cell cell = world.cellAt(x, y);
 				if (cell != null) {
-					selectedUnit = cell.getUnit(player);
-					cell.removeUnit(player);
+					selectedUnit = cell.getUnit(world.player);
+					cell.removeUnit(world.player);
 				}
 			}
 		}
@@ -143,7 +141,7 @@ public class SelectUnitsRender extends GameRender {
 
 	public boolean touchUp(float x, float y, int pointer, int button) {
 		if (selectedUnit != null) {
-			world.placeUnit(x, y, selectedUnit, player);
+			world.placeUnit(x, y, selectedUnit);
 			selectedUnit = null;
 		}
 		return true;
