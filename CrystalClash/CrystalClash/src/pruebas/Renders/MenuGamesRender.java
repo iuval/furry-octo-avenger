@@ -47,6 +47,7 @@ public class MenuGamesRender extends MenuRender {
 	private InputListener surrenderListener;
 	private InputListener playListener;
 	private Skin listItemSkin;
+	private TextButton buttonNewRandom;
 
 	public MenuGamesRender(MenuGames menu) {
 		this.controller = menu;
@@ -95,8 +96,8 @@ public class MenuGamesRender extends MenuRender {
 				new LabelStyle(font, Color.WHITE));
 		lblHeading.setPosition(50, CrystalClash.HEIGHT - 50);
 
-		btnLogOut = new TextButton("Log Out", listItemSkin.get(
-				"buttonLogOutStyle", TextButtonStyle.class));
+		btnLogOut = new TextButton("Log Out", listItemSkin.get("buttonStyle",
+				TextButtonStyle.class));
 		btnLogOut.setPosition(CrystalClash.WIDTH - btnLogOut.getWidth() - 50,
 				CrystalClash.HEIGHT - btnLogOut.getHeight() - 10);
 		btnLogOut.addListener(new ClickListener() {
@@ -128,24 +129,22 @@ public class MenuGamesRender extends MenuRender {
 				Gdx.files.internal("data/Images/Menu/new_games_header.png")));
 		list.addActor(menuImage);
 
-		TextButton buttonNewRandom = new TextButton("New random game",
-				listItemSkin.get("buttonStyle", TextButtonStyle.class));
-		buttonNewRandom.setBounds(0, 0, 250, list.getWidth());
+		buttonNewRandom = new TextButton("New random game", listItemSkin.get(
+				"buttonStyle", TextButtonStyle.class));
+		buttonNewRandom.setBounds(0, 0, list.getWidth(), 160);
 		buttonNewRandom.align(Align.center);
 		list.addActorAfter(menuImage, buttonNewRandom);
-		buttonNewRandom.addListener(new InputListener() {
+		buttonNewRandom.addListener(new ClickListener() {
 			@Override
-			public boolean touchDown(InputEvent event, float x, float y,
-					int pointer, int button) {
-				((TextButton) event.getListenerActor()).setText("Buscando...");
+			public void clicked(InputEvent event, float x, float y) {
+				((TextButton) event.getListenerActor()).setText("Loading...");
 				controller.enableRandom();
-				return true;
 			}
 		});
 
 		TextButton buttonNewInvite = new TextButton("Invite friend",
 				listItemSkin.get("buttonStyle", TextButtonStyle.class));
-		buttonNewInvite.setBounds(0, 0, 250, list.getWidth());
+		buttonNewInvite.setBounds(0, 0, list.getWidth(), 160);
 		buttonNewInvite.align(Align.center);
 		list.addActorAfter(menuImage, buttonNewInvite);
 
@@ -167,25 +166,21 @@ public class MenuGamesRender extends MenuRender {
 
 	private void initSkin() {
 		// Listeners
-		surrenderListener = new InputListener() {
+		surrenderListener = new ClickListener() {
 			@Override
-			public boolean touchDown(InputEvent event, float x, float y,
-					int pointer, int button) {
+			public void clicked(InputEvent event, float x, float y) {
 				System.out
 						.println("surrender: "
 								+ ((GameListItem) event.getListenerActor()
 										.getParent()).gameId);
-				return super.touchDown(event, x, y, pointer, button);
 			}
 		};
 
-		playListener = new InputListener() {
+		playListener = new ClickListener() {
 			@Override
-			public boolean touchDown(InputEvent event, float x, float y,
-					int pointer, int button) {
+			public void clicked(InputEvent event, float x, float y) {
 				controller.getGameTurn(((GameListItem) event.getListenerActor()
 						.getParent()).gameId);
-				return true;
 			}
 		};
 
@@ -197,23 +192,40 @@ public class MenuGamesRender extends MenuRender {
 						new BitmapFont(Gdx.files
 								.internal("data/Fonts/font.fnt"), false));
 		listItemSkin
-				.add("background",
+				.add("play_up",
 						new Texture(
 								Gdx.files
-										.internal("data/Images/Menu/games_item_background.png")));
+										.internal("data/Images/Menu/games_list_item_green.png")));
+		listItemSkin.add(
+				"play_down",
+				new Texture(Gdx.files
+						.internal("data/Images/Menu/games_list_item_red.png")));
+		listItemSkin.add(
+				"surrender_up",
+				new Texture(Gdx.files
+						.internal("data/Images/Menu/button_surrender.png")));
+		listItemSkin
+				.add("surrender_down",
+						new Texture(
+								Gdx.files
+										.internal("data/Images/Menu/button_surrender_pressed.png")));
+		TextButtonStyle playStyle = new TextButtonStyle();
+		playStyle.font = listItemSkin.getFont("font");
+		playStyle.up = listItemSkin.getDrawable("play_up");
+		playStyle.down = listItemSkin.getDrawable("play_down");
+		listItemSkin.add("playStyle", playStyle);
 
-		TextButtonStyle outerStyle = new TextButtonStyle();
-		outerStyle.font = listItemSkin.getFont("font");
-		outerStyle.up = listItemSkin.getDrawable("outer_button_orange");
-		outerStyle.down = listItemSkin
-				.getDrawable("outer_button_orange_pressed");
-		listItemSkin.add("buttonStyle", outerStyle);
+		TextButtonStyle surrenderStyle = new TextButtonStyle();
+		surrenderStyle.font = listItemSkin.getFont("font");
+		surrenderStyle.up = listItemSkin.getDrawable("surrender_up");
+		surrenderStyle.down = listItemSkin.getDrawable("surrender_down");
+		listItemSkin.add("surrenderStyle", surrenderStyle);
 
 		TextButtonStyle innerStyle = new TextButtonStyle();
 		innerStyle.font = listItemSkin.getFont("font");
 		innerStyle.up = listItemSkin.getDrawable("button_orange");
 		innerStyle.down = listItemSkin.getDrawable("button_orange_pressed");
-		listItemSkin.add("buttonLogOutStyle", innerStyle);
+		listItemSkin.add("buttonStyle", innerStyle);
 	}
 
 	public void listGamesError(String message) {
@@ -221,7 +233,7 @@ public class MenuGamesRender extends MenuRender {
 	}
 
 	public void enableRandomSuccess() {
-
+		buttonNewRandom.setText("New random game");
 	}
 
 	public void enableRandomError(String message) {
