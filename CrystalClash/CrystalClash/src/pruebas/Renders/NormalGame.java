@@ -13,8 +13,8 @@ import aurelienribon.tweenengine.Tween;
 import aurelienribon.tweenengine.TweenCallback;
 import aurelienribon.tweenengine.TweenManager;
 
-import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -24,8 +24,10 @@ import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
@@ -38,17 +40,21 @@ public class NormalGame extends GameRender {
 	private Unit testUnit3;
 	private Unit testUnit4;
 	private Unit selectedUnit;
+	
+	private BitmapFont font;
+	
 	private Image selectorArrow;
+	private float arrowX;
+	private float arrowY;
+	
 	private Image actionsBar;
-
 	private TextButton btnAttack;
 	private TextButton btnMove;
 	private TextButton btnDefense;
 	private Group grpActionBar;
+	private Label lblMoves;
+	private Label lblAttack;
 	private boolean actionsBarVisible;
-	
-	private float arrowX;
-	private float arrowY;
 	
 	public NormalGame(WorldController world) {
 		super(world);
@@ -100,8 +106,8 @@ public class NormalGame extends GameRender {
 		TextureRegion aux = skin.getRegion("actions_bar");
 		actionsBar = new Image(aux);
 		
-		BitmapFont font = new BitmapFont(
-				Gdx.files.internal("data/Fonts/font.fnt"), false);
+		font = new BitmapFont(Gdx.files.internal("data/Fonts/font.fnt"), false);
+		
 		TextButtonStyle attackStyle = new TextButtonStyle(
 				skin.getDrawable("action_attack_button"),
 				skin.getDrawable("action_attack_button_pressed"), null, font);
@@ -138,10 +144,18 @@ public class NormalGame extends GameRender {
 			}
 		});
 		
+		lblAttack = new Label("150", new LabelStyle(font, Color.WHITE));
+		lblAttack.setPosition(btnAttack.getX() + (btnAttack.getWidth() / 2 - lblAttack.getWidth() / 2), btnAttack.getY() + 3);
+		
+		lblMoves = new Label("5", new LabelStyle(font, Color.WHITE));
+		lblMoves.setPosition(btnMove.getX() + (btnMove.getWidth() / 2 - lblMoves.getWidth() / 2), btnMove.getY() + 3);
+		
 		grpActionBar = new Group();
 		grpActionBar.addActor(actionsBar);
 		grpActionBar.addActor(btnAttack);
+		grpActionBar.addActor(lblAttack);
 		grpActionBar.addActor(btnMove);
+		grpActionBar.addActor(lblMoves);
 		grpActionBar.addActor(btnDefense);
 
 		grpActionBar.setSize(actionsBar.getWidth(), actionsBar.getHeight());
@@ -233,6 +247,10 @@ public class NormalGame extends GameRender {
 			if(u != null){
 				if (selectedUnit != u) {
 					selectedUnit = u;
+					
+					lblAttack.setText(GameController.getInstancia().getUnitAttack(selectedUnit.getName()) + "");
+					lblMoves.setText(GameController.getInstancia().getUnitSpeed(selectedUnit.getName()) + "");
+					
 					moveArrow(selectedUnit);
 					showActionsBar();
 					System.out.println(selectedUnit.getName());
