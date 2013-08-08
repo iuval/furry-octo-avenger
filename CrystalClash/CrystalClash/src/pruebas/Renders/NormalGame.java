@@ -5,13 +5,15 @@ import pruebas.Controllers.GameController;
 import pruebas.Controllers.WorldController;
 import pruebas.CrystalClash.CrystalClash;
 import pruebas.Entities.Cell;
-import pruebas.Entities.GridPos;
 import pruebas.Entities.Unit;
 import pruebas.Renders.UnitRender.FACING;
+import aurelienribon.tweenengine.BaseTween;
 import aurelienribon.tweenengine.Timeline;
 import aurelienribon.tweenengine.Tween;
+import aurelienribon.tweenengine.TweenCallback;
 import aurelienribon.tweenengine.TweenManager;
 
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -45,11 +47,17 @@ public class NormalGame extends GameRender {
 	private Group grpActionBar;
 	private boolean actionsBarVisible;
 	
+	private float arrowX;
+	private float arrowY;
+	
 	public NormalGame(WorldController world) {
 		super(world);
 		
 		tweenManager = new TweenManager();
 		actionsBarVisible = false;
+		arrowX = 0;
+		arrowY = 0;
+		
 		init();
 	}
 
@@ -83,6 +91,7 @@ public class NormalGame extends GameRender {
 		
 		Texture arrow = new Texture(Gdx.files.internal("data/Images/InGame/selector_arrow.png"));
 		selectorArrow = new Image(arrow);
+		selectorArrow.setPosition(arrowX, arrowY);
 		
 		TextureAtlas atlas = new TextureAtlas(
 				"data/Images/InGame/options_bar.pack");
@@ -139,12 +148,33 @@ public class NormalGame extends GameRender {
 		grpActionBar.setPosition(CrystalClash.WIDTH / 2 - grpActionBar.getWidth() / 2, CrystalClash.HEIGHT + 50);
 	}
 	
+	private void moveArrow(Unit u){
+		if(u != null){
+			arrowX = u.getX();
+			arrowY = u.getY() + 120;
+		} else {
+			arrowX = 0;
+			arrowY = 0;
+		}
+		
+		float speed = 1f; // CrystalClash.ANIMATION_SPEED;
+		Timeline.createParallel()
+				.push(Tween.to(selectorArrow, ActorAccessor.X, speed).target(arrowX))
+				.push(Tween.to(selectorArrow, ActorAccessor.Y, speed).target(arrowY))
+				.setCallback(new TweenCallback() {
+					@Override
+					public void onEvent(int type, BaseTween<?> source) {
+						//selectorArrow.setPosition(arrowX, arrowY);
+						//arrowAnimation();
+					}
+				}).start(tweenManager);
+	}
+	
 	private void arrowAnimation(){
 		float speed = 1f; // CrystalClash.ANIMATION_SPEED;
 		Timeline.createSequence()
-				.push(Tween.set(selectorArrow, ActorAccessor.Y).target(selectedUnit.getY() + 120))
-				.push(Tween.to(selectorArrow, ActorAccessor.Y, speed).target(selectedUnit.getY() + 110))
-				.push(Tween.to(selectorArrow, ActorAccessor.Y, speed).target(selectedUnit.getY() + 120))
+				.push(Tween.to(selectorArrow, ActorAccessor.Y, speed).target(arrowY - 10))
+				.push(Tween.to(selectorArrow, ActorAccessor.Y, speed).target(arrowY))
 				.repeat(Tween.INFINITY, 0)
 				.start(tweenManager);
 	}
@@ -186,9 +216,7 @@ public class NormalGame extends GameRender {
 
 	@Override
 	public void render(float dt, SpriteBatch batch, Stage stage) {
-		if(selectedUnit != null){
-			selectorArrow.draw(batch, 1);
-		}
+		selectorArrow.draw(batch, 1);
 
 		stage.addActor(grpActionBar);
 		grpActionBar.act(dt);
@@ -203,16 +231,17 @@ public class NormalGame extends GameRender {
 			if(u != null){
 				if (selectedUnit != u) {
 					selectedUnit = u;
-					selectorArrow.setPosition(selectedUnit.getX(), selectedUnit.getY() + 120);
-					arrowAnimation();
+					moveArrow(selectedUnit);
 					showActionsBar();
 					System.out.println(selectedUnit.getName());
 				}else{
 					selectedUnit = null;
+					moveArrow(selectedUnit);
 					hideActionsBar();
 				}
 			}else{
 				selectedUnit = null;
+				moveArrow(selectedUnit);
 				hideActionsBar();
 			}
 		}
