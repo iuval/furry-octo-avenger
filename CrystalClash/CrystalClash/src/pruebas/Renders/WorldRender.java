@@ -44,6 +44,7 @@ public class WorldRender implements InputProcessor {
 	private TextButton btnBack;
 	private TextButton btnClear;
 	private Group grpMoreOptions;
+	private boolean hideMoreOptions;
 
 	private WorldController world;
 	GameRender gameRender;
@@ -55,6 +56,8 @@ public class WorldRender implements InputProcessor {
 
 		cellHelper = new CellHelper();
 		cellHelper.load();
+
+		hideMoreOptions = false;
 
 		UnitHelper.init();
 		loadStuff();
@@ -138,6 +141,7 @@ public class WorldRender implements InputProcessor {
 		btnMoreOptions.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
+				hideMoreOptions = true;
 				showMoreOptions();
 			}
 		});
@@ -250,9 +254,15 @@ public class WorldRender implements InputProcessor {
 
 	@Override
 	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-		hideMoreOptions();
 		Vector2 vec = GameEngine.getRealPosition(screenX, screenY);
+
+		if (hideMoreOptions
+				&& (vec.x > optionsBar.getX() + optionsBar.getWidth() || 
+						vec.y > btnSurrender.getTop() + 25)){
+			hideMoreOptions();
+		}
 		gameRender.touchDown(vec.x, vec.y, pointer, button);
+		
 		return false;
 	}
 
