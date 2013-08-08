@@ -13,6 +13,7 @@ import pruebas.Renders.helpers.ui.UnitListItem;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 
 public class SelectUnitsRender extends GameRender {
@@ -109,7 +110,7 @@ public class SelectUnitsRender extends GameRender {
 
 	}
 
-	public void render(float dt, SpriteBatch batch) {
+	public void render(float dt, SpriteBatch batch, Stage stage) {
 		tabs.draw(dt, batch);
 		if (selectedUnit != null) {
 			selectedUnit.getRender().draw(batch, dt);

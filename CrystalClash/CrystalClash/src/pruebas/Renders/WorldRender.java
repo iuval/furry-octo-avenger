@@ -65,7 +65,7 @@ public class WorldRender implements InputProcessor {
 	}
 
 	public void initNormalTurn() {
-		gameRender = new SelectUnitsRender(world);
+		gameRender = new NormalGame(world);
 	}
 
 	public void render(float dt, SpriteBatch batch, Stage stage) {
@@ -82,7 +82,7 @@ public class WorldRender implements InputProcessor {
 			}
 		}
 
-		gameRender.render(dt, batch);
+		gameRender.render(dt, batch, stage);
 
 		moreOptions.draw(batch, 1);
 		optionsBar.draw(batch, 1);

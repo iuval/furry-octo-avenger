@@ -3,6 +3,7 @@ package pruebas.Renders;
 import pruebas.Controllers.WorldController;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.scenes.scene2d.Stage;
 
 public abstract class GameRender {
 	protected WorldController world;
@@ -11,7 +12,7 @@ public abstract class GameRender {
 		this.world = world;
 	}
 
-	public abstract void render(float dt, SpriteBatch batch);
+	public abstract void render(float dt, SpriteBatch batch, Stage stage);
 
 	public abstract boolean touchDown(float x, float y, int pointer, int button);
 
