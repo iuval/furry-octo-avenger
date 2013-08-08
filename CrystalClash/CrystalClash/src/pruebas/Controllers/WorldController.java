@@ -4,6 +4,9 @@ import java.util.ArrayList;
 
 import pruebas.Entities.Cell;
 import pruebas.Entities.Unit;
+import pruebas.Entities.helpers.AttackUnitAction;
+import pruebas.Entities.helpers.DefendUnitAction;
+import pruebas.Entities.helpers.MoveUnitAction;
 import pruebas.Entities.helpers.PlaceUnitAction;
 import pruebas.Entities.helpers.UnitAction;
 import pruebas.Networking.ServerDriver;
@@ -48,14 +51,29 @@ public class WorldController {
 			JsonValue child;
 			JsonValue temp;
 			String action;
+			int x, y;
 			for (int i = 0; i < data.size; i++) {
 				child = data.get(i);
+
+				temp = child.get("cell");
+				x = temp.getInt("x");
+				y = temp.getInt("y");
 
 				UnitAction unitA;
 				action = child.getString("action");
 				if (action.equals("place")) {
 					unitA = new PlaceUnitAction();
+					
+					
+				} else if (action.equals("attack")) {
+					unitA = new AttackUnitAction();
+				} else if (action.equals("move")) {
+					unitA = new MoveUnitAction();
+				} else {
+					unitA = new DefendUnitAction();
 				}
+
+				unitA.origin = cellGrid[x][y];
 			}
 		}
 	}
