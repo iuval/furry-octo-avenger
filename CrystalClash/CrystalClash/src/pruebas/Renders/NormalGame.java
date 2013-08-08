@@ -157,6 +157,7 @@ public class NormalGame extends GameRender {
 			arrowY = 0;
 		}
 		
+		tweenManager.killAll();
 		float speed = 1f; // CrystalClash.ANIMATION_SPEED;
 		Timeline.createParallel()
 				.push(Tween.to(selectorArrow, ActorAccessor.X, speed).target(arrowX))
