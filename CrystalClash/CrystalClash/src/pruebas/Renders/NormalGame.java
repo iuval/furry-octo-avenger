@@ -164,8 +164,8 @@ public class NormalGame extends GameRender {
 				.setCallback(new TweenCallback() {
 					@Override
 					public void onEvent(int type, BaseTween<?> source) {
-						//selectorArrow.setPosition(arrowX, arrowY);
-						//arrowAnimation();
+						selectorArrow.setPosition(arrowX, arrowY);
+						arrowAnimation();
 					}
 				}).start(tweenManager);
 	}
@@ -173,6 +173,7 @@ public class NormalGame extends GameRender {
 	private void arrowAnimation(){
 		float speed = 1f; // CrystalClash.ANIMATION_SPEED;
 		Timeline.createSequence()
+				.push(Tween.set(selectorArrow, ActorAccessor.Y).target(arrowY))
 				.push(Tween.to(selectorArrow, ActorAccessor.Y, speed).target(arrowY - 10))
 				.push(Tween.to(selectorArrow, ActorAccessor.Y, speed).target(arrowY))
 				.repeat(Tween.INFINITY, 0)
