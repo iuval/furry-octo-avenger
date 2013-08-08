@@ -171,6 +171,14 @@ public class WorldController {
 	public void update(float paramFloat) {
 	}
 
+	//-------------Para poder poner una unidad para probar
+	public void setCellEnable(float x, float y){
+		Cell cell = cellAt(x, y);
+		if (cell != null){
+			cell.setState(Cell.State.ABLE_TO_PLACE);
+		}
+	}
+	
 	public void assignFirstTurnAvailablePlaces() {
 		if (player == 1) {
 			cellGrid[0][5].setState(Cell.State.ABLE_TO_PLACE);
