@@ -259,9 +259,10 @@ public class WorldController {
 		builder.append("}");
 
 		System.out.println(builder.toString());
-		// ServerDriver.gameTurn(playerId, gameId, player, builder.toString());
+		ServerDriver.gameTurn(GameController.getInstancia().getUser().getId(),
+				gameId, player, builder.toString());
 	}
-
+	
 	public WorldRender getRender() {
 		return render;
 	}
