@@ -29,9 +29,13 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.utils.Array;
 
 public class NormalGame extends GameRender {
-
+	public enum Action {
+		NONE, ATTACK, MOVE, DEFENSE
+	}
+	
 	private TweenManager tweenManager;
 
 	private Unit selectedUnit;
@@ -51,22 +55,60 @@ public class NormalGame extends GameRender {
 	private Label lblAttack;
 	private boolean actionsBarVisible;
 
+	private Action actionType;
+	private Array<Cell> path;
+	
 	public NormalGame(WorldController world) {
 		super(world);
 
 		tweenManager = new TweenManager();
-		actionsBarVisible = false;
+
+		selectedUnit = null;
+		
 		arrowX = 0;
 		arrowY = 0;
 
+		actionsBarVisible = false;
+
+		actionType = Action.NONE;
+		path = new Array<Cell>();
+		
 		init();
 	}
 
 	public void init() {
 		GameController.getInstancia().loadUnitsStats();
 
-		Texture arrow = new Texture(
-				Gdx.files.internal("data/Images/InGame/selector_arrow.png"));
+		testUnit1 = new Unit("fire_archer");
+		if (world.player == 2)
+			testUnit1.getRender().setFacing(FACING.left);
+		
+		testUnit2 = new Unit("earth_tank");
+		if (world.player == 2)
+			testUnit2.getRender().setFacing(FACING.left);
+		
+		testUnit3 = new Unit("darkness_mage");
+		if (world.player == 2)
+			testUnit3.getRender().setFacing(FACING.left);
+		
+		testUnit4 = new Unit("wind_assassin");
+		if (world.player == 2)
+			testUnit4.getRender().setFacing(FACING.left);
+		
+		world.setCellState(165, 675, Cell.State.ABLE_TO_PLACE);
+		world.placeUnit(165, 690, testUnit1);
+		world.setCellState(165, 675, Cell.State.NONE);
+		world.setCellState(635, 675, Cell.State.ABLE_TO_PLACE);
+		world.placeUnit(635, 675, testUnit2);
+		world.setCellState(635, 675, Cell.State.NONE);
+		world.setCellState(1140, 675, Cell.State.ABLE_TO_PLACE);
+		world.placeUnit(1140, 675, testUnit3);
+		world.setCellState(1140, 675, Cell.State.NONE);
+		world.setCellState(550, 450, Cell.State.ABLE_TO_PLACE);
+		world.placeUnit(550, 450, testUnit4);
+		world.setCellState(550, 450, Cell.State.NONE);
+		
+		Texture arrow = new Texture(Gdx.files.internal("data/Images/InGame/selector_arrow.png"));
 		selectorArrow = new Image(arrow);
 		selectorArrow.setPosition(arrowX, arrowY);
 
@@ -113,7 +155,7 @@ public class NormalGame extends GameRender {
 		btnMove.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
-				// TODO: Pintar AbleToMove
+				showAbleToMoveCells();	
 			}
 		});
 
@@ -209,13 +251,54 @@ public class NormalGame extends GameRender {
 		t.start(tweenManager);
 		actionsBarVisible = true;
 	}
-
-	private void hideActionsBar() {
+	
+	private void hideActionsBar(){
 		actionsBarVisible = false;
 		float speed = 0.5f; // CrystalClash.ANIMATION_SPEED;
 		Timeline.createSequence()
 				.push(Tween.to(grpActionBar, ActorAccessor.Y, speed).target(
 						CrystalClash.HEIGHT + 50)).start(tweenManager);
+	}
+	
+	private void showAbleToMoveCells(){
+		actionType = Action.MOVE;
+		
+		//for (int i = 0; i < path.size; i++) {
+		//	world.setCellState(path.get(i).getX(), path.get(i).getY(), Cell.State.MOVE_TARGET);
+		//}
+		
+		Cell top = path.peek();
+		int[][] cells = top.neigbours;
+		for (int i = 0; i < top.neigbours.length; i++) {
+			world.setCellStateByGridPos(cells[i][0], cells[i][1], Cell.State.ABLE_TO_MOVE);
+		}
+	}
+	
+	private void clearCells(){
+		switch(actionType){
+		case ATTACK:
+			break;
+		case DEFENSE:
+			break;
+		case MOVE:
+			//for (int i = 0; i < path.size; i++) {
+			//	world.setCellState(path.get(i).getX(), path.get(i).getY(), Cell.State.NONE);
+			//}
+			
+			Cell top = path.peek();
+			int[][] cells = top.neigbours;
+			for (int i = 0; i < top.neigbours.length; i++) {
+				world.setCellStateByGridPos(cells[i][0], cells[i][1], Cell.State.NONE);
+			}
+			
+			break;
+		case NONE:
+			break;
+		default:
+			break;
+		}
+		
+		actionType = Action.NONE;
 	}
 
 	@Override
@@ -231,28 +314,46 @@ public class NormalGame extends GameRender {
 	public boolean touchDown(float x, float y, int pointer, int button) {
 		Cell cell = world.cellAt(x, y);
 		if (cell != null) {
-			Unit u = cell.getUnit(world.player);
-			if (u != null) {
-				if (selectedUnit != u) {
-					selectedUnit = u;
+			switch (actionType) {
+			case ATTACK:
+				break;
+			case DEFENSE:
+				break;
+			case MOVE:
+				if (cell.getState() != Cell.State.ABLE_TO_MOVE
+						|| cell.getState() != Cell.State.MOVE_TARGET) {
+					clearCells();
+				} else {
+					// TODO: Agregar al camino
+				}
+				break;
+			case NONE:
+				Unit u = cell.getUnit(world.player);
+				if (u != null) {
+					if (selectedUnit != u) {
+						path.clear();
+						selectedUnit = u;
+						path.add(cell);
+					
+						lblAttack.setText(GameController.getInstancia().getUnitAttack(selectedUnit.getName()) + "");
+						lblMoves.setText(GameController.getInstancia().getUnitSpeed(selectedUnit.getName()) + "");
 
-					lblAttack.setText(GameController.getInstancia()
-							.getUnitAttack(selectedUnit.getName()) + "");
-					lblMoves.setText(GameController.getInstancia()
-							.getUnitSpeed(selectedUnit.getName()) + "");
-
-					moveArrow(selectedUnit);
-					showActionsBar();
-					System.out.println(selectedUnit.getName());
+						moveArrow(selectedUnit);
+						showActionsBar();
+						System.out.println(selectedUnit.getName());
+					} else {
+						selectedUnit = null;
+						moveArrow(selectedUnit);
+						hideActionsBar();
+					}
 				} else {
 					selectedUnit = null;
 					moveArrow(selectedUnit);
 					hideActionsBar();
 				}
-			} else {
-				selectedUnit = null;
-				moveArrow(selectedUnit);
-				hideActionsBar();
+				break;
+			default:
+				break;
 			}
 		}
 		return true;

@@ -22,11 +22,11 @@ public class GridPos {
 		this.Y = y;
 	}
 
-	public float getX() {
+	public int getX() {
 		return X;
 	}
 
-	public float getY() {
+	public int getY() {
 		return Y;
 	}
 }
