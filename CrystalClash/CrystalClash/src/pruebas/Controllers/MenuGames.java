@@ -58,8 +58,8 @@ public class MenuGames extends Menu {
 
 	}
 
-	public void getGameTurnSuccess(String data) {
-		GameEngine.getInstance().openGame(data);
+	public void getGameTurnSuccess(int player, String data) {
+		GameEngine.getInstance().openGame(player, data);
 	}
 
 	public void postGameTurnError(String message) {

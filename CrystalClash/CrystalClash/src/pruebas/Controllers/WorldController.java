@@ -28,12 +28,14 @@ public class WorldController {
 	private String gameId;
 	private boolean firstTurn;
 
-	public WorldController(String data) {
+	public WorldController(int player, String data) {
 		// TODO: Data reader
-		player = 1;
+		this.player = player;
 		init();
 
 		render = new WorldRender(this);
+
+		readData(data);
 		if (firstTurn) {
 			render.initFirstTurn();
 		} else {
@@ -43,8 +45,7 @@ public class WorldController {
 
 	private void readData(String strData) {
 		JsonValue values = ServerDriver.ProcessResponce(strData);
-		player = values.getInt("player");
-		if (values.getString("data").equals("none")) {
+		if (values.isString() && values.toString().equals("none")) {
 			firstTurn = true;
 		} else {
 			JsonValue data = values.get("data");
@@ -63,8 +64,7 @@ public class WorldController {
 				action = child.getString("action");
 				if (action.equals("place")) {
 					unitA = new PlaceUnitAction();
-					
-					
+
 				} else if (action.equals("attack")) {
 					unitA = new AttackUnitAction();
 				} else if (action.equals("move")) {
@@ -189,14 +189,14 @@ public class WorldController {
 	public void update(float paramFloat) {
 	}
 
-	//-------------Para poder poner una unidad para probar
-	public void setCellEnable(float x, float y){
+	// -------------Para poder poner una unidad para probar
+	public void setCellEnable(float x, float y) {
 		Cell cell = cellAt(x, y);
-		if (cell != null){
+		if (cell != null) {
 			cell.setState(Cell.State.ABLE_TO_PLACE);
 		}
 	}
-	
+
 	public void assignFirstTurnAvailablePlaces() {
 		if (player == 1) {
 			cellGrid[0][5].setState(Cell.State.ABLE_TO_PLACE);

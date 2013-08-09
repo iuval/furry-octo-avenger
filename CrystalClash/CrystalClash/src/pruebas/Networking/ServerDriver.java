@@ -162,8 +162,9 @@ public class ServerDriver {
 			public void handleHttpResponse(HttpResponse httpResponse) {
 				JsonValue values = ServerDriver.ProcessResponce(httpResponse);
 				if (values.getString("value").equals("ok")) {
+					JsonValue data = values.get("data");
 					MenuGames.getInstance().getGameTurnSuccess(
-							values.getString("data"));
+							data.getInt("player"), data.getString("data"));
 				} else {
 					MenuGames.getInstance().enableRandomError(
 							values.getString("message"));
