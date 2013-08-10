@@ -37,12 +37,12 @@ public class WorldController {
 
 		render = new WorldRender(this);
 
-		readData(data);
-		if (firstTurn) {
-			render.initFirstTurn();
-		} else {
-			render.initNormalTurn();
-		}
+		//readData(data);
+		//if (firstTurn) {
+		//	render.initFirstTurn();
+		//} else {
+			render.initTurnAnimations();
+		//}
 	}
 
 	private void readData(JsonValue values) {
