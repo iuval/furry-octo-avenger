@@ -164,7 +164,7 @@ public class ServerDriver {
 				if (values.getString("value").equals("ok")) {
 					JsonValue data = values.get("data");
 					MenuGames.getInstance().getGameTurnSuccess(
-							data.getInt("game_id"), data.getInt("player"), data.getString("data"));
+							data.getString("game_id"), data.getInt("player"), data.getString("data"));
 				} else {
 					MenuGames.getInstance().enableRandomError(
 							values.getString("message"));

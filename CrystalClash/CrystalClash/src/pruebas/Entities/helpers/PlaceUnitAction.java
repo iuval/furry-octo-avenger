@@ -10,7 +10,7 @@ public class PlaceUnitAction extends UnitAction {
 	@Override
 	public String getData() {
 		StringBuilder builder = new StringBuilder();
-		builder.append("\"place\": {");
+		builder.append("\"action\": {");
 
 		addOrigin(builder);
 

@@ -8,7 +8,7 @@ public class DefendUnitAction extends UnitAction {
 	@Override
 	public String getData() {
 		StringBuilder builder = new StringBuilder();
-		builder.append("\"defend\": {");
+		builder.append("\"action\": {");
 
 		addOrigin(builder);
 

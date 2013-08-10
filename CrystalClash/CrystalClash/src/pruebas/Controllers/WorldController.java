@@ -28,9 +28,10 @@ public class WorldController {
 	private String gameId;
 	private boolean firstTurn;
 
-	public WorldController(int player, String data) {
+	public WorldController(String gameId, int player, String data) {
 		// TODO: Data reader
 		this.player = player;
+		this.gameId = gameId;
 		init();
 
 		render = new WorldRender(this);
@@ -48,13 +49,13 @@ public class WorldController {
 		if (values.isString() && values.toString().equals("none")) {
 			firstTurn = true;
 		} else {
-			JsonValue data = values.get("data");
+			int other_player = player == 1 ? 2 : 1;
 			JsonValue child;
 			JsonValue temp;
 			String action;
 			int x, y;
-			for (int i = 0; i < data.size; i++) {
-				child = data.get(i);
+			for (int i = 0; i < values.size; i++) {
+				child = values.get(i);
 
 				temp = child.get("cell");
 				x = temp.getInt("x");
@@ -64,7 +65,9 @@ public class WorldController {
 				action = child.getString("action");
 				if (action.equals("place")) {
 					unitA = new PlaceUnitAction();
-
+					cellGrid[x][y].setUnit(
+							new Unit(child.getString("unit_name")),
+							other_player);
 				} else if (action.equals("attack")) {
 					unitA = new AttackUnitAction();
 				} else if (action.equals("move")) {
@@ -74,6 +77,7 @@ public class WorldController {
 				}
 
 				unitA.origin = cellGrid[x][y];
+				cellGrid[x][y].setAction(unitA, other_player);
 			}
 		}
 	}
@@ -189,14 +193,6 @@ public class WorldController {
 	public void update(float paramFloat) {
 	}
 
-	// -------------Para poder poner una unidad para probar
-	public void setCellEnable(float x, float y) {
-		Cell cell = cellAt(x, y);
-		if (cell != null) {
-			cell.setState(Cell.State.ABLE_TO_PLACE);
-		}
-	}
-
 	public void assignFirstTurnAvailablePlaces() {
 		if (player == 1) {
 			cellGrid[0][5].setState(Cell.State.ABLE_TO_PLACE);
@@ -262,7 +258,7 @@ public class WorldController {
 		ServerDriver.gameTurn(GameController.getInstancia().getUser().getId(),
 				gameId, player, builder.toString());
 	}
-	
+
 	public WorldRender getRender() {
 		return render;
 	}

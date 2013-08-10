@@ -13,7 +13,7 @@ public class AttackUnitAction extends UnitAction {
 	@Override
 	public String getData() {
 		StringBuilder builder = new StringBuilder();
-		builder.append("\"attack\": {");
+		builder.append("\"action\": {");
 
 		addOrigin(builder);
 

@@ -112,16 +112,16 @@ public class GameEngine implements Screen {
 		}
 	}
 
-	public void openGame(int player, String data) {
+	public void openGame(String gameId, int player, String data) {
 		if (worldRender == null) {
-			world = new WorldController(player, data);
+			world = new WorldController(gameId, player, data);
 			worldRender = world.getRender();
 		}
-		//TODO: borrar el menu cuando entras al juego
-//		if (menuRender != null) {
-//			menuRender.dispose();
-//			menuRender = null;
-//		}
+		// TODO: borrar el menu cuando entras al juego
+		// if (menuRender != null) {
+		// menuRender.dispose();
+		// menuRender = null;
+		// }
 		setState(GameState.InGame);
 	}
 
