@@ -30,4 +30,9 @@ public class AttackUnitAction extends UnitAction {
 		builder.append("}");
 		return builder.toString();
 	}
+
+	@Override
+	public UnitActionType getActionType() {
+		return UnitActionType.ATTACK;
+	}
 }

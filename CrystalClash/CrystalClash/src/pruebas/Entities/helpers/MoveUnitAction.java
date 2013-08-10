@@ -39,4 +39,9 @@ public class MoveUnitAction extends UnitAction {
 		builder.append("}");
 		return builder.toString();
 	}
+
+	@Override
+	public UnitActionType getActionType() {
+		return UnitActionType.MOVE;
+	}
 }
