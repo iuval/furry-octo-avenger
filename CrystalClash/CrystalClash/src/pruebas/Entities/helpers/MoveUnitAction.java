@@ -16,7 +16,7 @@ public class MoveUnitAction extends UnitAction {
 	@Override
 	public String getData() {
 		StringBuilder builder = new StringBuilder();
-		builder.append("\"move\": {");
+		builder.append("\"action\": {");
 
 		addOrigin(builder);
 
