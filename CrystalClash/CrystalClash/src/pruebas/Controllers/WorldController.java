@@ -28,10 +28,11 @@ public class WorldController {
 	private String gameId;
 	private boolean firstTurn;
 
-	public WorldController(String gameId, int player, String data) {
+	public WorldController(JsonValue data) {
 		// TODO: Data reader
-		this.player = player;
-		this.gameId = gameId;
+
+		this.player = data.getInt("player");
+		this.gameId = data.getString("game_id");
 		init();
 
 		render = new WorldRender(this);
@@ -44,41 +45,46 @@ public class WorldController {
 		}
 	}
 
-	private void readData(String strData) {
-		JsonValue values = ServerDriver.ProcessResponce(strData);
-		if (values.isString() && values.toString().equals("none")) {
+	private void readData(JsonValue values) {
+		if (values.getString("data") != null
+				&& values.getString("data").equals("none")) {
 			firstTurn = true;
 		} else {
-			int other_player = player == 1 ? 2 : 1;
-			JsonValue child;
-			JsonValue temp;
-			String action;
-			int x, y;
-			for (int i = 0; i < values.size; i++) {
-				child = values.get(i);
+			values = ServerDriver.ProcessResponce(values.getString("data"));
+			readPlayerData(values.get("data1"), 1);
+			readPlayerData(values.get("data2"), 2);
+		}
+	}
 
-				temp = child.get("cell");
-				x = temp.getInt("x");
-				y = temp.getInt("y");
+	private void readPlayerData(JsonValue values, int player) {
+		JsonValue child;
+		JsonValue temp;
+		String action;
+		int x, y;
 
-				UnitAction unitA;
-				action = child.getString("action");
-				if (action.equals("place")) {
-					unitA = new PlaceUnitAction();
-					cellGrid[x][y].setUnit(
-							new Unit(child.getString("unit_name")),
-							other_player);
-				} else if (action.equals("attack")) {
-					unitA = new AttackUnitAction();
-				} else if (action.equals("move")) {
-					unitA = new MoveUnitAction();
-				} else {
-					unitA = new DefendUnitAction();
-				}
+		for (int i = 0; i < values.size; i++) {
+			child = values.get(i);
 
-				unitA.origin = cellGrid[x][y];
-				cellGrid[x][y].setAction(unitA, other_player);
+			temp = child.get("cell");
+			x = temp.getInt("x");
+			y = temp.getInt("y");
+
+			UnitAction unitA;
+			action = child.getString("action");
+			if (action.equals("place")) {
+				unitA = new PlaceUnitAction();
+				cellGrid[x][y].setUnit(new Unit(child.getString("unit_name")),
+						player);
+			} else if (action.equals("attack")) {
+				unitA = new AttackUnitAction();
+			} else if (action.equals("move")) {
+				unitA = new MoveUnitAction();
+			} else {
+				unitA = new DefendUnitAction();
 			}
+
+			unitA.origin = cellGrid[x][y];
+			cellGrid[x][y].setAction(unitA, player);
 		}
 	}
 
