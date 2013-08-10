@@ -3,6 +3,7 @@ package pruebas.Entities;
 import pruebas.Entities.helpers.PlaceUnitAction;
 import pruebas.Entities.helpers.UnitAction;
 import pruebas.Renders.CellRender;
+import pruebas.Renders.UnitRender.FACING;
 
 public class Cell extends GameObject {
 	public enum State {
@@ -34,18 +35,26 @@ public class Cell extends GameObject {
 	}
 
 	public void placeUnit(Unit unit, int player) {
+		setUnit(unit, player);
 		if (player == 1) {
-			unitsPlayer1 = unit;
-			unit.setPosition(getX() + 10f, getY() + 50f);
 			actionPlayer1 = new PlaceUnitAction();
 			((PlaceUnitAction) actionPlayer1).origin = this;
 			((PlaceUnitAction) actionPlayer1).unitName = unit.getName();
 		} else {
-			unitsPlayer2 = unit;
-			unit.setPosition(getX() + 71f, getY() + 50f);
 			actionPlayer2 = new PlaceUnitAction();
 			((PlaceUnitAction) actionPlayer2).origin = this;
 			((PlaceUnitAction) actionPlayer2).unitName = unit.getName();
+		}
+	}
+
+	public void setUnit(Unit unit, int player) {
+		if (player == 1) {
+			unitsPlayer1 = unit;
+			unit.setPosition(getX() + 10f, getY() + 50f);
+		} else {
+			unitsPlayer2 = unit;
+			unit.setPosition(getX() + 71f, getY() + 50f);
+			unit.getRender().setFacing(FACING.left);
 		}
 	}
 

@@ -4,6 +4,9 @@ import java.util.ArrayList;
 
 import pruebas.Entities.Cell;
 import pruebas.Entities.Unit;
+import pruebas.Entities.helpers.AttackUnitAction;
+import pruebas.Entities.helpers.DefendUnitAction;
+import pruebas.Entities.helpers.MoveUnitAction;
 import pruebas.Entities.helpers.PlaceUnitAction;
 import pruebas.Entities.helpers.UnitAction;
 import pruebas.Networking.ServerDriver;
@@ -25,12 +28,15 @@ public class WorldController {
 	private String gameId;
 	private boolean firstTurn;
 
-	public WorldController(String data) {
+	public WorldController(String gameId, int player, String data) {
 		// TODO: Data reader
-		player = 1;
+		this.player = player;
+		this.gameId = gameId;
 		init();
 
 		render = new WorldRender(this);
+
+		readData(data);
 		if (firstTurn) {
 			render.initFirstTurn();
 		} else {
@@ -40,22 +46,38 @@ public class WorldController {
 
 	private void readData(String strData) {
 		JsonValue values = ServerDriver.ProcessResponce(strData);
-		player = values.getInt("player");
-		if (values.getString("data").equals("none")) {
+		if (values.isString() && values.toString().equals("none")) {
 			firstTurn = true;
 		} else {
-			JsonValue data = values.get("data");
+			int other_player = player == 1 ? 2 : 1;
 			JsonValue child;
 			JsonValue temp;
 			String action;
-			for (int i = 0; i < data.size; i++) {
-				child = data.get(i);
+			int x, y;
+			for (int i = 0; i < values.size; i++) {
+				child = values.get(i);
+
+				temp = child.get("cell");
+				x = temp.getInt("x");
+				y = temp.getInt("y");
 
 				UnitAction unitA;
 				action = child.getString("action");
 				if (action.equals("place")) {
 					unitA = new PlaceUnitAction();
+					cellGrid[x][y].setUnit(
+							new Unit(child.getString("unit_name")),
+							other_player);
+				} else if (action.equals("attack")) {
+					unitA = new AttackUnitAction();
+				} else if (action.equals("move")) {
+					unitA = new MoveUnitAction();
+				} else {
+					unitA = new DefendUnitAction();
 				}
+
+				unitA.origin = cellGrid[x][y];
+				cellGrid[x][y].setAction(unitA, other_player);
 			}
 		}
 	}
@@ -171,14 +193,6 @@ public class WorldController {
 	public void update(float paramFloat) {
 	}
 
-	//-------------Para poder poner una unidad para probar
-	public void setCellEnable(float x, float y){
-		Cell cell = cellAt(x, y);
-		if (cell != null){
-			cell.setState(Cell.State.ABLE_TO_PLACE);
-		}
-	}
-	
 	public void assignFirstTurnAvailablePlaces() {
 		if (player == 1) {
 			cellGrid[0][5].setState(Cell.State.ABLE_TO_PLACE);
@@ -241,7 +255,8 @@ public class WorldController {
 		builder.append("}");
 
 		System.out.println(builder.toString());
-		// ServerDriver.gameTurn(playerId, gameId, player, builder.toString());
+		ServerDriver.gameTurn(GameController.getInstancia().getUser().getId(),
+				gameId, player, builder.toString());
 	}
 
 	public WorldRender getRender() {
