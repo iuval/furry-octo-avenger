@@ -23,4 +23,9 @@ public class PlaceUnitAction extends UnitAction {
 
 		return builder.toString();
 	}
+
+	@Override
+	public UnitActionType getActionType() {
+		return UnitActionType.PLACE;
+	}
 }

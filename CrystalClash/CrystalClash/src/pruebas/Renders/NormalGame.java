@@ -5,7 +5,14 @@ import pruebas.Controllers.GameController;
 import pruebas.Controllers.WorldController;
 import pruebas.CrystalClash.CrystalClash;
 import pruebas.Entities.Cell;
+import pruebas.Entities.GridPos;
 import pruebas.Entities.Unit;
+import pruebas.Entities.helpers.AttackUnitAction;
+import pruebas.Entities.helpers.DefendUnitAction;
+import pruebas.Entities.helpers.MoveUnitAction;
+import pruebas.Entities.helpers.UnitAction;
+import pruebas.Entities.helpers.UnitAction.UnitActionType;
+import pruebas.Renders.UnitRender.FACING;
 import aurelienribon.tweenengine.BaseTween;
 import aurelienribon.tweenengine.Timeline;
 import aurelienribon.tweenengine.Tween;
@@ -29,17 +36,17 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import com.badlogic.gdx.utils.Array;
 
 public class NormalGame extends GameRender {
-	public enum Action {
-		NONE, ATTACK, MOVE, DEFENSE
-	}
-	
 	private TweenManager tweenManager;
-
+	
+	private Unit testUnit1;
+	private Unit testUnit2;
+	private Unit testUnit3;
+	private Unit testUnit4;
 	private Unit selectedUnit;
-
+	private Cell selectedCell;
+	
 	private BitmapFont font;
 
 	private Image selectorArrow;
@@ -55,8 +62,10 @@ public class NormalGame extends GameRender {
 	private Label lblAttack;
 	private boolean actionsBarVisible;
 
-	private Action actionType;
-	private Array<Cell> path;
+	private UnitActionType actionType;
+	private int maxMoves;
+	
+	private UnitAction unitAction;
 	
 	public NormalGame(WorldController world) {
 		super(world);
@@ -64,14 +73,15 @@ public class NormalGame extends GameRender {
 		tweenManager = new TweenManager();
 
 		selectedUnit = null;
+		selectedCell = null;
 		
 		arrowX = 0;
 		arrowY = 0;
 
 		actionsBarVisible = false;
 
-		actionType = Action.NONE;
-		path = new Array<Cell>();
+		actionType = UnitActionType.NONE;
+		maxMoves = 0;
 		
 		init();
 	}
@@ -130,6 +140,7 @@ public class NormalGame extends GameRender {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
 				// TODO: Pintar AbleToAttack
+				unitAction = new AttackUnitAction();
 			}
 		});
 
@@ -143,6 +154,7 @@ public class NormalGame extends GameRender {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
 				// TODO: Pintar Escudito
+				unitAction = new DefendUnitAction();
 			}
 		});
 
@@ -155,6 +167,10 @@ public class NormalGame extends GameRender {
 		btnMove.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
+				unitAction = new MoveUnitAction();
+				unitAction.origin = selectedCell;
+				((MoveUnitAction) unitAction).moves.add(selectedCell);
+				
 				showAbleToMoveCells();	
 			}
 		});
@@ -216,15 +232,8 @@ public class NormalGame extends GameRender {
 				.push(Tween.to(selectorArrow, ActorAccessor.Y, speed).target(
 						arrowY)).repeat(Tween.INFINITY, 0).start(tweenManager);
 	}
-
-	private void showActionsBar() {
-		// GridPos g = selectedUnit.getGridPosition();
-		// if(3 <= g.getX() && g.getX() < 6)
-		// grpActionBar.setX(CrystalClash.WIDTH / 4 - grpActionBar.getWidth() /
-		// 2);
-		// else
-		// grpActionBar.setX(CrystalClash.WIDTH / 2 - grpActionBar.getWidth() /
-		// 2);
+	
+	private void showActionsBar(){
 		float speed = 0.5f; // CrystalClash.ANIMATION_SPEED;
 		Timeline t = Timeline.createSequence();
 		if (450 < selectedUnit.getX() && selectedUnit.getX() < 825) {
@@ -262,49 +271,86 @@ public class NormalGame extends GameRender {
 	
 	private void showAbleToMoveCells(){
 		clearCells();
-		actionType = Action.MOVE;
+		actionType = UnitActionType.MOVE;
 		
-		Cell top = path.peek();
-		int[][] cells = top.neigbours;
-		for (int i = 0; i < top.neigbours.length; i++) {
-			world.setCellStateByGridPos(cells[i][0], cells[i][1], Cell.State.ABLE_TO_MOVE);
+		if(((MoveUnitAction) unitAction).moves.size <= maxMoves){
+			Cell top = ((MoveUnitAction) unitAction).moves.peek();
+			int[][] cells = top.neigbours;
+			for (int i = 0; i < top.neigbours.length; i++) {
+				world.setCellStateByGridPos(cells[i][0], cells[i][1], Cell.State.ABLE_TO_MOVE);
+			}
 		}
-		
-		for (int i = 0; i < path.size; i++) {
-			world.setCellState(path.get(i).getX(), path.get(i).getY(), Cell.State.MOVE_TARGET);
+
+		for (int i = 0; i < ((MoveUnitAction) unitAction).moves.size; i++) {
+			GridPos g = ((MoveUnitAction) unitAction).moves.get(i).getGridPosition();
+			world.setCellStateByGridPos(g.getX(), g.getY(), Cell.State.MOVE_TARGET);
 		}
 	}
 	
 	private void clearCells(){
 		switch(actionType){
+		case PLACE:
+			break;
 		case ATTACK:
 			break;
 		case DEFENSE:
 			break;
 		case MOVE:
-			for (int i = 0; i < path.size; i++) {
-				world.setCellState(path.get(i).getX(), path.get(i).getY(), Cell.State.NONE);
+			for (int i = 0; i < ((MoveUnitAction) unitAction).moves.size; i++) {
+				GridPos g = ((MoveUnitAction) unitAction).moves.get(i).getGridPosition();
+				world.setCellStateByGridPos(g.getX(), g.getY(), Cell.State.NONE);
 			}
 			
 			Cell top = null;
-			if(path.size < 2)
-				top = path.peek();
-			else
-				top = path.get(path.size - 2); //Necesito el pen-ultimo
-			
+			top = ((MoveUnitAction) unitAction).moves.peek();
 			int[][] cells = top.neigbours;
 			for (int i = 0; i < top.neigbours.length; i++) {
 				world.setCellStateByGridPos(cells[i][0], cells[i][1], Cell.State.NONE);
 			}
 			
+			if (((MoveUnitAction) unitAction).moves.size >= 2) {
+				top = ((MoveUnitAction) unitAction).moves.get(((MoveUnitAction) unitAction).moves.size - 2);  //Necesito el pen-ultimo si estoy armando el camino
+				cells = top.neigbours;
+				for (int i = 0; i < top.neigbours.length; i++) {
+					world.setCellStateByGridPos(cells[i][0], cells[i][1],
+							Cell.State.NONE);
+				}
+			}
 			break;
 		case NONE:
 			break;
 		default:
 			break;
 		}
+		actionType = UnitActionType.NONE;
+	}
+	
+	private void clearSelection(){
+		selectedUnit = null;
+		selectedCell = null;
+		moveArrow(selectedUnit);
+		hideActionsBar();
+	}
+	
+	private void showAction(UnitAction action){
+		unitAction = action;
+		switch(action.getActionType()){
+		case ATTACK:
+			break;
+		case DEFENSE:
+			break;
+		case MOVE:
+			lblMoves.setText(maxMoves + 1 - ((MoveUnitAction) unitAction).moves.size + ""); 
+			showAbleToMoveCells();
+			break;
+		case NONE:
+			break;
+		case PLACE:
+			break;
+		default:
+			break;
+		}
 		
-		actionType = Action.NONE;
 	}
 
 	@Override
@@ -321,43 +367,55 @@ public class NormalGame extends GameRender {
 		Cell cell = world.cellAt(x, y);
 		if (cell != null) {
 			switch (actionType) {
+			case PLACE:
+				break;
 			case ATTACK:
 				break;
 			case DEFENSE:
 				break;
 			case MOVE:
-				if (cell.getState() != Cell.State.ABLE_TO_MOVE
-						|| cell.getState() != Cell.State.MOVE_TARGET) {
-					clearCells();
-				} else {
-					// TODO: Agregar al camino
-					path.add(cell);
+				if (cell.getState() == Cell.State.ABLE_TO_MOVE) {
+					lblMoves.setText(maxMoves - ((MoveUnitAction) unitAction).moves.size + "");
+					((MoveUnitAction) unitAction).moves.add(cell);
 					showAbleToMoveCells();
+				} else if (cell.getState() == Cell.State.MOVE_TARGET) {
+					clearCells();
+					int index = ((MoveUnitAction) unitAction).moves.indexOf(cell, true);
+					if(index != -1){
+						((MoveUnitAction) unitAction).moves.truncate(index + 1);
+					}
+					
+					lblMoves.setText(maxMoves + 1 - ((MoveUnitAction) unitAction).moves.size + "");
+					showAbleToMoveCells();
+				} else {
+					GridPos g = selectedCell.getGridPosition();
+					world.cellGrid[g.getX()][g.getY()].setAction(unitAction, world.player);
+					clearCells();
+					clearSelection();
 				}
 				break;
 			case NONE:
 				Unit u = cell.getUnit(world.player);
 				if (u != null) {
+					clearSelection();
 					if (selectedUnit != u) {
 						selectedUnit = u;
-						path.clear();
-						path.add(cell);
-					
+						selectedCell = cell;
+
 						lblAttack.setText(GameController.getInstancia().getUnitAttack(selectedUnit.getName()) + "");
-						lblMoves.setText(GameController.getInstancia().getUnitSpeed(selectedUnit.getName()) + "");
+						maxMoves = GameController.getInstancia().getUnitSpeed(selectedUnit.getName());
+						lblMoves.setText(maxMoves + "");
 
 						moveArrow(selectedUnit);
 						showActionsBar();
+						
+						if(cell.getAction(world.player) != null)
+							showAction(cell.getAction(world.player));
+						
 						System.out.println(selectedUnit.getName());
-					} else {
-						selectedUnit = null;
-						moveArrow(selectedUnit);
-						hideActionsBar();
 					}
 				} else {
-					selectedUnit = null;
-					moveArrow(selectedUnit);
-					hideActionsBar();
+					clearSelection();
 				}
 				break;
 			default:

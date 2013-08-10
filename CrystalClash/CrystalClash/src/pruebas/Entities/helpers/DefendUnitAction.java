@@ -17,4 +17,9 @@ public class DefendUnitAction extends UnitAction {
 		builder.append("}");
 		return builder.toString();
 	}
+
+	@Override
+	public UnitActionType getActionType() {
+		return UnitActionType.DEFENSE;
+	}
 }
