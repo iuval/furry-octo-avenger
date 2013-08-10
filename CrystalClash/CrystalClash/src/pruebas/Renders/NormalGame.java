@@ -261,16 +261,17 @@ public class NormalGame extends GameRender {
 	}
 	
 	private void showAbleToMoveCells(){
+		clearCells();
 		actionType = Action.MOVE;
-		
-		//for (int i = 0; i < path.size; i++) {
-		//	world.setCellState(path.get(i).getX(), path.get(i).getY(), Cell.State.MOVE_TARGET);
-		//}
 		
 		Cell top = path.peek();
 		int[][] cells = top.neigbours;
 		for (int i = 0; i < top.neigbours.length; i++) {
 			world.setCellStateByGridPos(cells[i][0], cells[i][1], Cell.State.ABLE_TO_MOVE);
+		}
+		
+		for (int i = 0; i < path.size; i++) {
+			world.setCellState(path.get(i).getX(), path.get(i).getY(), Cell.State.MOVE_TARGET);
 		}
 	}
 	
@@ -281,11 +282,16 @@ public class NormalGame extends GameRender {
 		case DEFENSE:
 			break;
 		case MOVE:
-			//for (int i = 0; i < path.size; i++) {
-			//	world.setCellState(path.get(i).getX(), path.get(i).getY(), Cell.State.NONE);
-			//}
+			for (int i = 0; i < path.size; i++) {
+				world.setCellState(path.get(i).getX(), path.get(i).getY(), Cell.State.NONE);
+			}
 			
-			Cell top = path.peek();
+			Cell top = null;
+			if(path.size < 2)
+				top = path.peek();
+			else
+				top = path.get(path.size - 2); //Necesito el pen-ultimo
+			
 			int[][] cells = top.neigbours;
 			for (int i = 0; i < top.neigbours.length; i++) {
 				world.setCellStateByGridPos(cells[i][0], cells[i][1], Cell.State.NONE);
@@ -325,14 +331,16 @@ public class NormalGame extends GameRender {
 					clearCells();
 				} else {
 					// TODO: Agregar al camino
+					path.add(cell);
+					showAbleToMoveCells();
 				}
 				break;
 			case NONE:
 				Unit u = cell.getUnit(world.player);
 				if (u != null) {
 					if (selectedUnit != u) {
-						path.clear();
 						selectedUnit = u;
+						path.clear();
 						path.add(cell);
 					
 						lblAttack.setText(GameController.getInstancia().getUnitAttack(selectedUnit.getName()) + "");
