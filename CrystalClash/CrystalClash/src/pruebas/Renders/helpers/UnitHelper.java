@@ -35,7 +35,7 @@ public class UnitHelper {
 		UnitRender render = new UnitRender();
 		render.idleAnim = getUnitSuperAnimation(unitName, "idle");
 		// render.idleAnim = getUnitSuperAnimation(unitName, "attack");
-		// render.idleAnim = getUnitSuperAnimation(unitName, "run");
+		// render.walkAnim = getUnitSuperAnimation(unitName, "run");
 
 		return render;
 	}

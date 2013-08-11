@@ -70,6 +70,10 @@ public class WorldRender implements InputProcessor {
 	public void initNormalTurn() {
 		gameRender = new NormalGame(world);
 	}
+	
+	public void initTurnAnimations() {
+		gameRender = new TurnAnimations(world);
+	}
 
 	public void render(float dt, SpriteBatch batch, Stage stage) {
 		background.draw(batch, 1);

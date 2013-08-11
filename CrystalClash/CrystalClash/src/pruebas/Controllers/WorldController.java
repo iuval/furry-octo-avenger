@@ -41,7 +41,7 @@ public class WorldController {
 		if (firstTurn) {
 			render.initFirstTurn();
 		} else {
-			render.initNormalTurn();
+			render.initTurnAnimations();
 		}
 	}
 
@@ -72,17 +72,29 @@ public class WorldController {
 			action = child.getString("action");
 			if (action.equals("place")) {
 				unitA = new PlaceUnitAction();
-				cellGrid[x][y].setUnit(new Unit(child.getString("unit_name")),
-						player);
 				((PlaceUnitAction) unitA).unitName = child
 						.getString("unit_name");
 			} else if (action.equals("attack")) {
 				unitA = new AttackUnitAction();
 			} else if (action.equals("move")) {
 				unitA = new MoveUnitAction();
+				JsonValue cells = child.get("target");
+				JsonValue pair = null;
+				for(int c = 0; c < cells.size ; c++)
+				{
+					pair = cells.get(c);
+					int cellX = pair.getInt("x");
+					int cellY = pair.getInt("y");
+					
+					((MoveUnitAction) unitA).moves.add(cellGrid[cellX][cellY]);
+				}
+				
 			} else {
 				unitA = new DefendUnitAction();
 			}
+			
+			cellGrid[x][y].setUnit(new Unit("fire_archer"),
+					player);
 
 			unitA.origin = cellGrid[x][y];
 			cellGrid[x][y].setAction(unitA, player);
