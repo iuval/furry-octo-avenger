@@ -96,7 +96,6 @@ public class WorldController {
 			cellGrid[x][y].setUnit(new Unit("darkness_mage"),
 					player);
 
-			unitA.origin = cellGrid[x][y];
 			cellGrid[x][y].setAction(unitA, player);
 		}
 	}
@@ -271,17 +270,10 @@ public class WorldController {
 		builder.append("{");
 
 		Cell cell;
-		UnitAction action;
 		for (int h = 0; h < 6; h++) {
 			for (int v = 0; v < 9; v++) {
 				cell = cellGrid[v][h];
-				action = cell.getAction(player);
-				if (action != null) {
-					String data = cell.getAction(player).getData();
-					System.out.println(data);
-					builder.append(data);
-					builder.append(",");
-				}
+				cell.addDataToJson(builder, player);
 			}
 		}
 		// Delete the last comma
@@ -289,7 +281,7 @@ public class WorldController {
 
 		builder.append("}");
 
-		System.out.println(builder.toString());
+		System.out.println("Sending-> " + builder.toString());
 		ServerDriver.gameTurn(GameController.getInstancia().getUser().getId(),
 				gameId, player, builder.toString());
 	}

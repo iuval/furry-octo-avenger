@@ -8,20 +8,8 @@ public class PlaceUnitAction extends UnitAction {
 	}
 
 	@Override
-	public String getData() {
-		StringBuilder builder = new StringBuilder();
-		builder.append("\"action\": {");
-
-		addOrigin(builder);
-
-		builder.append(", \"action\": \"place\"");
-		builder.append(", \"unit_name\": \"");
-		builder.append(unitName);
-		builder.append("\"");
-
-		builder.append("}");
-
-		return builder.toString();
+	public void addDataToJson(StringBuilder builder) {
+		builder.append(",\"action\":\"place\"");
 	}
 
 	@Override

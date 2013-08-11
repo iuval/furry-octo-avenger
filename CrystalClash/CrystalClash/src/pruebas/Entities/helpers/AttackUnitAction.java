@@ -11,24 +11,13 @@ public class AttackUnitAction extends UnitAction {
 	}
 
 	@Override
-	public String getData() {
-		StringBuilder builder = new StringBuilder();
-		builder.append("\"action\": {");
-
-		addOrigin(builder);
-
-		builder.append(", \"action\": \"attack\"");
-
-		builder.append(", \"target\": {");
+	public void addDataToJson(StringBuilder builder) {
 		GridPos pos = target.getGridPosition();
-		builder.append("\"x\": ");
-		builder.append(pos.getX());
-		builder.append(",\"y\": ");
-		builder.append(pos.getY());
-		builder.append("}");
-
-		builder.append("}");
-		return builder.toString();
+		builder.append(",\"action\":\"attack\"")
+		.append(",\"target\":{")
+			.append("\"x\":").append(pos.getX())
+			.append(",\"y\":").append(pos.getY())
+			.append("}");
 	}
 
 	@Override

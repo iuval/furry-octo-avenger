@@ -43,11 +43,9 @@ public class Cell extends GameObject {
 		setUnit(unit, player);
 		if (player == 1) {
 			actionPlayer1 = new PlaceUnitAction();
-			((PlaceUnitAction) actionPlayer1).origin = this;
 			((PlaceUnitAction) actionPlayer1).unitName = unit.getName();
 		} else {
 			actionPlayer2 = new PlaceUnitAction();
-			((PlaceUnitAction) actionPlayer2).origin = this;
 			((PlaceUnitAction) actionPlayer2).unitName = unit.getName();
 		}
 	}
@@ -93,5 +91,38 @@ public class Cell extends GameObject {
 		} else {
 			actionPlayer2 = action;
 		}
+	}
+
+	public void addDataToJson(StringBuilder builder, int player) {
+		if (player == 1 && unitsPlayer1 != null) {
+			builder.append("\"unit\":{");
+			addUnitStatsToJson(builder, unitsPlayer1);
+			if (actionPlayer1 != null) {
+				actionPlayer1.addDataToJson(builder);
+			} else {
+				builder.append(",\"action\":\"none\"");
+			}
+			builder.append("},");
+		} else if (player == 2 && unitsPlayer2 != null) {
+			builder.append("\"unit\":{");
+			addUnitStatsToJson(builder, unitsPlayer2);
+			if (actionPlayer2 != null) {
+				actionPlayer2.addDataToJson(builder);
+			} else {
+				builder.append(",\"action\":\"none\"");
+			}
+			builder.append("},");
+		}
+	}
+
+	private void addUnitStatsToJson(StringBuilder builder, Unit unit) {
+		GridPos pos = getGridPosition();
+		builder.append("\"unit_name\":\"").append(unit.getName())
+			   .append("\",\"unit_hp\":").append(unit.getHP())
+			   .append(",\"cell\":{")
+					.append("\"x\":").append(pos.getX())
+					.append(",\"y\":").append(pos.getY())
+			   .append("}");
+			
 	}
 }
