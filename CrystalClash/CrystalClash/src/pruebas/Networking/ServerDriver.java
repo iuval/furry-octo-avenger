@@ -5,6 +5,7 @@ import java.util.Map;
 
 import pruebas.Controllers.MenuGames;
 import pruebas.Controllers.MenuLogIn;
+import pruebas.Util.TestHelper;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Net.HttpMethods;
@@ -24,7 +25,7 @@ public class ServerDriver {
 	private final static String ACTION_ENABLE_RANDOM = "enable_random";
 	private final static String ACTION_GAME_TURN = "game_turn";
 
-	public static void signIn(String email, String password) {
+	public static void signIn(final String email, String password) {
 		Map<String, String> data = new HashMap<String, String>();
 		data.put("email", email);
 
@@ -36,8 +37,7 @@ public class ServerDriver {
 						if (values.getString("value").equals("ok")) {
 							JsonValue data = values.get("data");
 							MenuLogIn.getInstance().authenticateSuccess(
-									data.getString("id"),
-									data.getString("name"));
+									data.getString("id"), email);
 						} else {
 							MenuLogIn.getInstance().authenticateError(
 									values.getString("message"));
@@ -160,11 +160,13 @@ public class ServerDriver {
 		Gdx.net.sendHttpRequest(getGet(ACTION_GAME_TURN + "/p/" + playerId
 				+ "/g/" + gameId), new HttpResponseListener() {
 			public void handleHttpResponse(HttpResponse httpResponse) {
-				JsonValue values = ServerDriver.ProcessResponce(httpResponse);
+				 JsonValue values =
+				 ServerDriver.ProcessResponce(httpResponse);
+				// JsonValue values = ServerDriver.ProcessResponce(TestHelper
+				// .getSecondTurnJson(1));
 				if (values.getString("value").equals("ok")) {
-					JsonValue data = values.get("data");
 					MenuGames.getInstance().getGameTurnSuccess(
-							data.getString("game_id"), data.getInt("player"), data.getString("data"));
+							values.get("data"));
 				} else {
 					MenuGames.getInstance().enableRandomError(
 							values.getString("message"));
@@ -190,13 +192,13 @@ public class ServerDriver {
 		return httpGet;
 	}
 
-	public static JsonValue ProcessResponce(String response) {
+	public static JsonValue parseJson(String response) {
 		System.out.println(response);
 		return new JsonReader().parse(response);
 	}
 
 	public static JsonValue ProcessResponce(HttpResponse response) {
 		String res = response.getResultAsString();
-		return ProcessResponce(res);
+		return parseJson(res);
 	}
 }
