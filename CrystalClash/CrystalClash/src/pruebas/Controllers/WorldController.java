@@ -219,6 +219,10 @@ public class WorldController {
 			cell.setState(state);
 		}
 	}
+	
+	public Cell cellAtByGrid(int x, int y){
+		return cellGrid[x][y];
+	}
 
 	public void setCellStateByGridPos(int x, int y, Cell.State state) {
 		cellGrid[x][y].setState(state);
