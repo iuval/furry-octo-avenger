@@ -160,10 +160,10 @@ public class ServerDriver {
 		Gdx.net.sendHttpRequest(getGet(ACTION_GAME_TURN + "/p/" + playerId
 				+ "/g/" + gameId), new HttpResponseListener() {
 			public void handleHttpResponse(HttpResponse httpResponse) {
-				// JsonValue values =
-				// ServerDriver.ProcessResponce(httpResponse);
-				JsonValue values = ServerDriver.ProcessResponce(TestHelper
-						.getSecondTurnJson(1));
+				 JsonValue values =
+				 ServerDriver.ProcessResponce(httpResponse);
+				// JsonValue values = ServerDriver.ProcessResponce(TestHelper
+				// .getSecondTurnJson(1));
 				if (values.getString("value").equals("ok")) {
 					MenuGames.getInstance().getGameTurnSuccess(
 							values.get("data"));
@@ -192,13 +192,13 @@ public class ServerDriver {
 		return httpGet;
 	}
 
-	public static JsonValue ProcessResponce(String response) {
+	public static JsonValue parseJson(String response) {
 		System.out.println(response);
 		return new JsonReader().parse(response);
 	}
 
 	public static JsonValue ProcessResponce(HttpResponse response) {
 		String res = response.getResultAsString();
-		return ProcessResponce(res);
+		return parseJson(res);
 	}
 }

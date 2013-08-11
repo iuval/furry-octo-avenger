@@ -46,11 +46,10 @@ public class WorldController {
 	}
 
 	private void readData(JsonValue values) {
-		if (values.getString("data") != null
-				&& values.getString("data").equals("none")) {
+		if (values.get("data") != null
+				&& values.get("data").asString().equals("none")) {
 			firstTurn = true;
 		} else {
-			values = ServerDriver.ProcessResponce(values.getString("data"));
 			readPlayerData(values.get("data1"), 1);
 			readPlayerData(values.get("data2"), 2);
 		}
@@ -61,7 +60,7 @@ public class WorldController {
 		JsonValue temp;
 		String action;
 		int x, y;
-
+		values = ServerDriver.parseJson(values.asString());
 		for (int i = 0; i < values.size; i++) {
 			child = values.get(i);
 
@@ -75,6 +74,8 @@ public class WorldController {
 				unitA = new PlaceUnitAction();
 				cellGrid[x][y].setUnit(new Unit(child.getString("unit_name")),
 						player);
+				((PlaceUnitAction) unitA).unitName = child
+						.getString("unit_name");
 			} else if (action.equals("attack")) {
 				unitA = new AttackUnitAction();
 			} else if (action.equals("move")) {
@@ -198,19 +199,19 @@ public class WorldController {
 
 	public void update(float paramFloat) {
 	}
-	
-	//-------------Para poder poner una unidad para probar
-	public void setCellState(float x, float y, Cell.State state){
+
+	// -------------Para poder poner una unidad para probar
+	public void setCellState(float x, float y, Cell.State state) {
 		Cell cell = cellAt(x, y);
-		if (cell != null){
+		if (cell != null) {
 			cell.setState(state);
 		}
 	}
-	
-	public void setCellStateByGridPos(int x, int y, Cell.State state){
-			cellGrid[x][y].setState(state);
+
+	public void setCellStateByGridPos(int x, int y, Cell.State state) {
+		cellGrid[x][y].setState(state);
 	}
-	
+
 	public void assignFirstTurnAvailablePlaces() {
 		if (player == 1) {
 			cellGrid[0][5].setState(Cell.State.ABLE_TO_PLACE);

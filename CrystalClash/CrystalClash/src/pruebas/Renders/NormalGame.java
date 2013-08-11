@@ -40,10 +40,10 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 public class NormalGame extends GameRender {
 	private TweenManager tweenManager;
 	
-	private Unit testUnit1;
-	private Unit testUnit2;
-	private Unit testUnit3;
-	private Unit testUnit4;
+//	private Unit testUnit1;
+//	private Unit testUnit2;
+//	private Unit testUnit3;
+//	private Unit testUnit4;
 	private Unit selectedUnit;
 	private Cell selectedCell;
 	
@@ -89,34 +89,34 @@ public class NormalGame extends GameRender {
 	public void init() {
 		GameController.getInstancia().loadUnitsStats();
 
-		testUnit1 = new Unit("fire_archer");
-		if (world.player == 2)
-			testUnit1.getRender().setFacing(FACING.left);
-		
-		testUnit2 = new Unit("earth_tank");
-		if (world.player == 2)
-			testUnit2.getRender().setFacing(FACING.left);
-		
-		testUnit3 = new Unit("darkness_mage");
-		if (world.player == 2)
-			testUnit3.getRender().setFacing(FACING.left);
-		
-		testUnit4 = new Unit("wind_assassin");
-		if (world.player == 2)
-			testUnit4.getRender().setFacing(FACING.left);
-		
-		world.setCellState(165, 675, Cell.State.ABLE_TO_PLACE);
-		world.placeUnit(165, 690, testUnit1);
-		world.setCellState(165, 675, Cell.State.NONE);
-		world.setCellState(635, 675, Cell.State.ABLE_TO_PLACE);
-		world.placeUnit(635, 675, testUnit2);
-		world.setCellState(635, 675, Cell.State.NONE);
-		world.setCellState(1140, 675, Cell.State.ABLE_TO_PLACE);
-		world.placeUnit(1140, 675, testUnit3);
-		world.setCellState(1140, 675, Cell.State.NONE);
-		world.setCellState(550, 450, Cell.State.ABLE_TO_PLACE);
-		world.placeUnit(550, 450, testUnit4);
-		world.setCellState(550, 450, Cell.State.NONE);
+		// testUnit1 = new Unit("fire_archer");
+		// if (world.player == 2)
+		// testUnit1.getRender().setFacing(FACING.left);
+		//
+		// testUnit2 = new Unit("earth_tank");
+		// if (world.player == 2)
+		// testUnit2.getRender().setFacing(FACING.left);
+		//
+		// testUnit3 = new Unit("darkness_mage");
+		// if (world.player == 2)
+		// testUnit3.getRender().setFacing(FACING.left);
+		//
+		// testUnit4 = new Unit("wind_assassin");
+		// if (world.player == 2)
+		// testUnit4.getRender().setFacing(FACING.left);
+		//
+		// world.setCellState(165, 675, Cell.State.ABLE_TO_PLACE);
+		// world.placeUnit(165, 690, testUnit1);
+		// world.setCellState(165, 675, Cell.State.NONE);
+		// world.setCellState(635, 675, Cell.State.ABLE_TO_PLACE);
+		// world.placeUnit(635, 675, testUnit2);
+		// world.setCellState(635, 675, Cell.State.NONE);
+		// world.setCellState(1140, 675, Cell.State.ABLE_TO_PLACE);
+		// world.placeUnit(1140, 675, testUnit3);
+		// world.setCellState(1140, 675, Cell.State.NONE);
+		// world.setCellState(550, 450, Cell.State.ABLE_TO_PLACE);
+		// world.placeUnit(550, 450, testUnit4);
+		// world.setCellState(550, 450, Cell.State.NONE);
 		
 		Texture arrow = new Texture(Gdx.files.internal("data/Images/InGame/selector_arrow.png"));
 		selectorArrow = new Image(arrow);
