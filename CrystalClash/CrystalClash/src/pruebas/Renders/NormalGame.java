@@ -10,9 +10,9 @@ import pruebas.Entities.Unit;
 import pruebas.Entities.helpers.AttackUnitAction;
 import pruebas.Entities.helpers.DefendUnitAction;
 import pruebas.Entities.helpers.MoveUnitAction;
+import pruebas.Entities.helpers.PlaceUnitAction;
 import pruebas.Entities.helpers.UnitAction;
 import pruebas.Entities.helpers.UnitAction.UnitActionType;
-import pruebas.Renders.UnitRender.FACING;
 import aurelienribon.tweenengine.BaseTween;
 import aurelienribon.tweenengine.Timeline;
 import aurelienribon.tweenengine.Tween;
@@ -57,10 +57,12 @@ public class NormalGame extends GameRender {
 	private TextButton btnAttack;
 	private TextButton btnMove;
 	private TextButton btnDefense;
+	private TextButton btnUndo;
 	private Group grpActionBar;
 	private Label lblMoves;
 	private Label lblAttack;
 	private boolean actionsBarVisible;
+	private boolean undoVisible;
 
 	private UnitActionType actionType;
 	private int maxMoves;
@@ -77,7 +79,7 @@ public class NormalGame extends GameRender {
 		
 		arrowX = 0;
 		arrowY = 0;
-
+		undoVisible = false;
 		actionsBarVisible = false;
 
 		actionType = UnitActionType.NONE;
@@ -140,6 +142,7 @@ public class NormalGame extends GameRender {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
 				// TODO: Pintar AbleToAttack
+				btnUndo.setPosition(btnAttack.getX(), btnDefense.getY());
 				unitAction = new AttackUnitAction();
 			}
 		});
@@ -154,6 +157,7 @@ public class NormalGame extends GameRender {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
 				// TODO: Pintar Escudito
+				btnUndo.setPosition(btnDefense.getX(), btnDefense.getY());
 				unitAction = new DefendUnitAction();
 			}
 		});
@@ -167,11 +171,27 @@ public class NormalGame extends GameRender {
 		btnMove.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
+				btnUndo.setPosition(btnMove.getX(), btnDefense.getY());
+				
 				unitAction = new MoveUnitAction();
 				unitAction.origin = selectedCell;
 				((MoveUnitAction) unitAction).moves.add(selectedCell);
 				
 				showAbleToMoveCells();	
+			}
+		});
+		
+		TextButtonStyle undoStyle = new TextButtonStyle(
+				skin.getDrawable("action_cancel_button"),
+				skin.getDrawable("action_cancel_button_pressed"), null, font);
+		btnUndo = new TextButton("", undoStyle);
+		btnUndo.setPosition(0, 300);	//Afuera de la ventana
+		btnUndo.addListener(new ClickListener() {
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+				undoAction();
+				undoVisible = false;
+				updateActionsBar();
 			}
 		});
 
@@ -334,25 +354,57 @@ public class NormalGame extends GameRender {
 	
 	private void showAction(UnitAction action){
 		unitAction = action;
-		switch(action.getActionType()){
+		switch(unitAction.getActionType()){
 		case ATTACK:
 			break;
 		case DEFENSE:
 			break;
 		case MOVE:
+			undoVisible = true;
 			lblMoves.setText(maxMoves + 1 - ((MoveUnitAction) unitAction).moves.size + ""); 
 			showAbleToMoveCells();
 			break;
 		case NONE:
 			break;
 		case PLACE:
+			undoVisible = false;
 			break;
 		default:
 			break;
 		}
-		
 	}
 
+	private void undoAction(){
+		clearCells();
+		lblMoves.setText(maxMoves + "");
+		
+		unitAction = new PlaceUnitAction();
+		((PlaceUnitAction) unitAction).unitName = selectedCell.getUnit(world.player).getName();
+		
+		GridPos g = selectedCell.getGridPosition();
+		world.cellGrid[g.getX()][g.getY()].setAction(unitAction, world.player);
+		
+		actionType = UnitActionType.NONE;
+	}
+	
+	private void updateActionsBar() {
+		if (undoVisible) {
+			grpActionBar.removeActor(btnAttack);
+			grpActionBar.removeActor(lblAttack);
+			grpActionBar.removeActor(btnMove);
+			grpActionBar.removeActor(lblMoves);
+			grpActionBar.removeActor(btnDefense);
+			grpActionBar.addActor(btnUndo);
+		}else{
+			grpActionBar.addActor(btnAttack);
+			grpActionBar.addActor(lblAttack);
+			grpActionBar.addActor(btnMove);
+			grpActionBar.addActor(lblMoves);
+			grpActionBar.addActor(btnDefense);
+			grpActionBar.removeActor(btnUndo);
+		}
+	}
+	
 	@Override
 	public void render(float dt, SpriteBatch batch, Stage stage) {
 		selectorArrow.draw(batch, 1);
@@ -406,11 +458,12 @@ public class NormalGame extends GameRender {
 						maxMoves = GameController.getInstancia().getUnitSpeed(selectedUnit.getName());
 						lblMoves.setText(maxMoves + "");
 
-						moveArrow(selectedUnit);
-						showActionsBar();
-						
 						if(cell.getAction(world.player) != null)
 							showAction(cell.getAction(world.player));
+						
+						updateActionsBar();
+						moveArrow(selectedUnit);
+						showActionsBar();
 						
 						System.out.println(selectedUnit.getName());
 					}
