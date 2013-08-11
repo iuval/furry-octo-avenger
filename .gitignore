@@ -196,3 +196,15 @@ variablesAndContainers.dat
 default_catalog.xml
 system_catalog.xml
 version.ini
+
+/.metadata/.plugins/com.google.gwt.eclipse.core/clientBundleResources
+/.metadata/.plugins/com.google.gwt.eclipse.core/searchIndex
+/.metadata/.plugins/com.google.gwt.eclipse.core/uiBinderReferences
+/.metadata/.plugins/org.eclipse.core.runtime/.settings/com.android.ide.eclipse.ddms.prefs
+/.metadata/.plugins/org.eclipse.core.runtime/.settings/org.eclipse.cdt.ui.prefs
+/.metadata/.plugins/org.eclipse.core.runtime/.settings/org.eclipse.search.prefs
+/.metadata/.plugins/org.eclipse.core.runtime/.settings/org.eclipse.team.ui.prefs
+/.metadata/.plugins/org.eclipse.core.runtime/.settings/org.eclipse.ui.editors.prefs
+/.metadata/.plugins/org.eclipse.core.runtime/.settings/org.eclipse.ui.workbench.prefs
+/.metadata/.plugins/org.eclipse.core.runtime/.settings/org.eclipse.wst.sse.ui.prefs
+/.metadata/.plugins/org.eclipse.pde.core/.cache/clean-cache.properties
