@@ -14,6 +14,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.utils.JsonValue;
 
 public class GameEngine implements Screen {
 	private static GameEngine instance;
@@ -112,9 +113,9 @@ public class GameEngine implements Screen {
 		}
 	}
 
-	public void openGame(String gameId, int player, String data) {
+	public void openGame(JsonValue data) {
 		if (worldRender == null) {
-			world = new WorldController(gameId, player, data);
+			world = new WorldController(data);
 			worldRender = world.getRender();
 		}
 		// TODO: borrar el menu cuando entras al juego

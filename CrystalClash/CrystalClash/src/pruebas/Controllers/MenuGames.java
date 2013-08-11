@@ -5,6 +5,8 @@ import pruebas.Renders.GameEngine;
 import pruebas.Renders.MenuGamesRender;
 import pruebas.Renders.MenuRender;
 
+import com.badlogic.gdx.utils.JsonValue;
+
 public class MenuGames extends Menu {
 
 	public static MenuGames instance;
@@ -58,8 +60,8 @@ public class MenuGames extends Menu {
 		GameEngine.getInstance().openMenu();
 	}
 
-	public void getGameTurnSuccess(String gameId, int player, String data) {
-		GameEngine.getInstance().openGame(gameId, player, data);
+	public void getGameTurnSuccess(JsonValue data) {
+		GameEngine.getInstance().openGame(data);
 	}
 
 	public void postGameTurnError(String message) {
