@@ -1,6 +1,6 @@
 package pruebas.Renders;
 
-import java.util.ArrayList;
+import javax.swing.plaf.basic.BasicInternalFrameTitlePane.MoveAction;
 
 import pruebas.Accessors.ActorAccessor;
 import pruebas.Accessors.UnitAccessor;
@@ -9,23 +9,21 @@ import pruebas.Controllers.WorldController;
 import pruebas.Entities.Cell;
 import pruebas.Entities.Unit;
 import pruebas.Entities.helpers.MoveUnitAction;
-import pruebas.Renders.UnitRender.ANIM;
-import pruebas.Renders.UnitRender.FACING;
-import aurelienribon.tweenengine.BaseTween;
+import pruebas.Entities.helpers.UnitAction;
 import aurelienribon.tweenengine.Timeline;
 import aurelienribon.tweenengine.Tween;
-import aurelienribon.tweenengine.TweenCallback;
 import aurelienribon.tweenengine.TweenManager;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.utils.Array;
 
 public class TurnAnimations extends GameRender {
 
 	private TweenManager tweenManager;
 
-	private ArrayList<MoveUnitAction> movesPlayer1;
-	private ArrayList<MoveUnitAction> movesPlayer2;
+	private Array<MoveUnitAction> alliedMoves;
+	private Array<MoveUnitAction> enemyMoves;
 
 	public TurnAnimations(WorldController world) {
 		super(world);
@@ -35,65 +33,132 @@ public class TurnAnimations extends GameRender {
 		init();
 	}
 
-	private void loadDummyData() {
-		Unit testUnit1 = new Unit("fire_archer");
-		if (world.player == 2)
-			testUnit1.getRender().setFacing(FACING.left);
+	// private void loadDummyData() {
+	// Unit testUnit1 = new Unit("fire_archer");
+	// if (world.player == 2)
+	// testUnit1.getRender().setFacing(FACING.left);
+	//
+	// world.cellGrid[5][2].placeUnit(testUnit1, world.player);
+	//
+	// // -------------------------------------------------------------------
+	//
+	// movesPlayer1 = new ArrayList<MoveUnitAction>();
+	//
+	// MoveUnitAction moveUnit1 = new MoveUnitAction();
+	// moveUnit1.origin = world.cellGrid[5][2];
+	// moveUnit1.moves.add(world.cellGrid[5][3]);
+	// moveUnit1.moves.add(world.cellGrid[6][2]);
+	// moveUnit1.moves.add(world.cellGrid[6][1]);
+	// moveUnit1.moves.add(world.cellGrid[5][1]);
+	// moveUnit1.moves.add(world.cellGrid[4][1]);
+	// moveUnit1.moves.add(world.cellGrid[4][2]);
+	// moveUnit1.moves.add(world.cellGrid[5][3]);
+	// moveUnit1.moves.add(world.cellGrid[5][2]);
+	// movesPlayer1.add(moveUnit1);
+	// }
 
-		world.cellGrid[5][2].placeUnit(testUnit1, world.player);
+	private void moveUnits() {
+		Timeline t = Timeline.createSequence();
+		t.beginParallel();
+		
+		MoveUnitAction action = null;
+		for (int m = 0; m < alliedMoves.size; m++) {
+			action = alliedMoves.get(m);
+			t.beginSequence();
+			for (int i = 0; i + 1 < action.moves.size; i++) {
+				t.beginParallel()
+						.push(Tween.to(action.origin.getUnit(1),
+								ActorAccessor.X, 1).target(
+								action.moves.get(i + 1).getX()
+										+ Cell.unitPlayer1X))
+						.push(Tween.to(action.origin.getUnit(1),
+								ActorAccessor.Y, 1).target(
+								action.moves.get(i + 1).getY()
+										+ Cell.unitPlayer1Y)).end();
 
-		// -------------------------------------------------------------------
+			}
+			t.end();
+		}
+		t.end();
+		
+		t.beginParallel();
+		for (int m = 0; m < enemyMoves.size; m++) {
+			action = enemyMoves.get(m);
+			t.beginSequence();
+			for (int i = 0; i + 1 < action.moves.size; i++) {
+				t.beginParallel()
+						.push(Tween.to(action.origin.getUnit(2),
+								ActorAccessor.X, 1).target(
+								action.moves.get(i + 1).getX()
+										+ Cell.unitPlayer1X))
+						.push(Tween.to(action.origin.getUnit(2),
+								ActorAccessor.Y, 1).target(
+								action.moves.get(i + 1).getY()
+										+ Cell.unitPlayer1Y)).end();
 
-		movesPlayer1 = new ArrayList<MoveUnitAction>();
-
-		MoveUnitAction moveUnit1 = new MoveUnitAction();
-		moveUnit1.origin = world.cellGrid[5][2];
-		moveUnit1.moves.add(world.cellGrid[5][3]);
-		moveUnit1.moves.add(world.cellGrid[6][2]);
-		moveUnit1.moves.add(world.cellGrid[6][1]);
-		moveUnit1.moves.add(world.cellGrid[5][1]);
-		moveUnit1.moves.add(world.cellGrid[4][1]);
-		moveUnit1.moves.add(world.cellGrid[4][2]);
-		moveUnit1.moves.add(world.cellGrid[5][3]);
-		moveUnit1.moves.add(world.cellGrid[5][2]);
-		movesPlayer1.add(moveUnit1);
+			}
+			t.end();
+		}
+		t.end();
+		
+		t.start(tweenManager);
 	}
 
-	private void createTweens() {
-		MoveUnitAction moveUnit1 = movesPlayer1.get(0);
+	private void readActions() {
+		for (int row = 0; row < world.cellGrid.length; row++) {
+			for (int col = 0; col < world.cellGrid[0].length; col++) {
 
-		// moveUnit1.origin.getUnit(1).getRender().setAnimation(ANIM.walk);
+				UnitAction alliedAction = world.cellGrid[row][col].getAction(1);
 
-		Timeline t = Timeline.createSequence();
-		t.beginParallel()
-				.push(Tween.to(moveUnit1.origin.getUnit(1), ActorAccessor.X, 1)
-						.target(moveUnit1.moves.get(0).getX()
-								+ Cell.unitPlayer1X))
-				.push(Tween.to(moveUnit1.origin.getUnit(1), ActorAccessor.Y, 1)
-						.target(moveUnit1.moves.get(0).getY()
-								+ Cell.unitPlayer1Y))
-				.end();
+				if (alliedAction != null) {
+					switch (alliedAction.getActionType()) {
+					case ATTACK:
+						break;
+					case DEFENSE:
+						break;
+					case MOVE:
+						alliedMoves.add((MoveUnitAction) alliedAction);
+						break;
+					case NONE:
+						break;
+					case PLACE:
+						break;
+					default:
+						break;
+					}
+				}
 
-		for (int i = 0; i + 1 < moveUnit1.moves.size; i++) {
-			t.beginParallel()
-					.push(Tween.to(moveUnit1.origin.getUnit(1),
-							ActorAccessor.X, 1).target(
-							moveUnit1.moves.get(i + 1).getX()
-									+ Cell.unitPlayer1X))
-					.push(Tween.to(moveUnit1.origin.getUnit(1),
-							ActorAccessor.Y, 1).target(
-							moveUnit1.moves.get(i + 1).getY()
-									+ Cell.unitPlayer1Y)).end();
+				UnitAction enemyAction = world.cellGrid[row][col].getAction(2);
 
+				if (enemyAction != null) {
+					switch (enemyAction.getActionType()) {
+					case ATTACK:
+						break;
+					case DEFENSE:
+						break;
+					case MOVE:
+						enemyMoves.add((MoveUnitAction) enemyAction);
+						break;
+					case NONE:
+						break;
+					case PLACE:
+						break;
+					default:
+						break;
+					}
+				}
+			}
 		}
-		t.start(tweenManager);
 	}
 
 	public void init() {
 		GameController.getInstancia().loadUnitsStats();
 		Tween.registerAccessor(Unit.class, new UnitAccessor());
 
-		loadDummyData();
+		alliedMoves = new Array<MoveUnitAction>();
+		enemyMoves = new Array<MoveUnitAction>();
+		
+		readActions();
 	}
 
 	@Override
@@ -104,7 +169,7 @@ public class TurnAnimations extends GameRender {
 	@Override
 	public boolean touchDown(float x, float y, int pointer, int button) {
 
-		createTweens();
+		moveUnits();
 
 		return false;
 	}
