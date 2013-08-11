@@ -9,7 +9,12 @@ public class Cell extends GameObject {
 	public enum State {
 		NONE, ABLE_TO_ATTACK, ABLE_TO_MOVE, ABLE_TO_PLACE, ATTACK_TARGET_CENTER, ATTACK_TARGET_RADIUS, MOVE_TARGET
 	}
-
+	
+	public static final float unitPlayer1X = 10f;
+	public static final float unitPlayer1Y = 50f;
+	public static final float unitPlayer2X = 71f;
+	public static final float unitPlayer2Y = 50f;
+	
 	private Unit unitsPlayer1;
 	private Unit unitsPlayer2;
 	private UnitAction actionPlayer1;
@@ -50,10 +55,10 @@ public class Cell extends GameObject {
 	public void setUnit(Unit unit, int player) {
 		if (player == 1) {
 			unitsPlayer1 = unit;
-			unit.setPosition(getX() + 10f, getY() + 50f);
+			unit.setPosition(getX() + Cell.unitPlayer1X, getY() + Cell.unitPlayer1Y);
 		} else {
 			unitsPlayer2 = unit;
-			unit.setPosition(getX() + 71f, getY() + 50f);
+			unit.setPosition(getX() + Cell.unitPlayer2X, getY() + Cell.unitPlayer2Y);
 			unit.getRender().setFacing(FACING.left);
 		}
 	}
