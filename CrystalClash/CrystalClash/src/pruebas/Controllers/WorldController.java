@@ -93,7 +93,7 @@ public class WorldController {
 				unitA = new DefendUnitAction();
 			}
 			
-			cellGrid[x][y].setUnit(new Unit("darkness_mage"),
+			cellGrid[x][y].setUnit(new Unit(child.getString("unit_name")),
 					player);
 
 			cellGrid[x][y].setAction(unitA, player);
