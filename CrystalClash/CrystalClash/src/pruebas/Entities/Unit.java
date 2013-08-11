@@ -10,6 +10,8 @@ public class Unit extends GameObject {
 	private int velicity;
 	private int range;
 	private String unitName;
+	
+	
 
 	private UnitRender render;
 
