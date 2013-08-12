@@ -34,8 +34,10 @@ public class UnitHelper {
 	private static UnitRender loadRender(String unitName) {
 		UnitRender render = new UnitRender();
 		render.idleAnim = getUnitSuperAnimation(unitName, "idle");
+		render.idleAnim.randomCurrentFrame();
+		
 		// render.idleAnim = getUnitSuperAnimation(unitName, "attack");
-		// render.walkAnim = getUnitSuperAnimation(unitName, "run");
+		render.walkAnim = getUnitSuperAnimation(unitName, "run");
 
 		return render;
 	}
@@ -58,8 +60,8 @@ public class UnitHelper {
 				frames[index++] = tmp[i][j];
 			}
 		}
-
-		SuperAnimation anim = new SuperAnimation(data.image_times, frames);
+		
+		SuperAnimation anim = new SuperAnimation(data.total_time, data.image_times, frames);
 		anim.handle_x = data.handle_x;
 		anim.handle_y = data.handle_x;
 		return anim;
