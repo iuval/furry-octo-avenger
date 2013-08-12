@@ -31,8 +31,8 @@ public class WorldController {
 	public WorldController(JsonValue data) {
 		// TODO: Data reader
 
-		this.player = data.getInt("player");
-		this.gameId = data.getString("game_id");
+		this.player = 1;// data.getInt("player");
+		this.gameId = "";// data.getString("game_id");
 		init();
 
 		render = new WorldRender(this);

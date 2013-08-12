@@ -6,12 +6,12 @@ import pruebas.Renders.helpers.UnitHelper;
 public class Unit extends GameObject {
 
 	private int hitPoints;
+	private int totalHitPoints;
+
 	private int damage;
 	private int velicity;
 	private int range;
 	private String unitName;
-	
-	
 
 	private UnitRender render;
 
@@ -33,5 +33,20 @@ public class Unit extends GameObject {
 
 	public int getHP() {
 		return hitPoints;
+	}
+
+	public int getTotalHP() {
+		return totalHitPoints;
+	}
+
+	public void setHP(int hp) {
+		totalHitPoints = hp;
+		hitPoints = hp;
+		getRender().updateHp();
+	}
+
+	public void damage(float damage) {
+		hitPoints -= damage;
+		getRender().updateHp();
 	}
 }
