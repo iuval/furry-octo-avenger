@@ -39,4 +39,9 @@ public class GameObject {
 	public void setVisible(boolean v) {
 		visible = v;
 	}
+
+	@Override
+	public boolean equals(Object obj) {
+		return this.gridPos == ((GameObject) obj).getGridPosition();
+	}
 }

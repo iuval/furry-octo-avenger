@@ -6,16 +6,8 @@ public class DefendUnitAction extends UnitAction {
 	}
 
 	@Override
-	public String getData() {
-		StringBuilder builder = new StringBuilder();
-		builder.append("\"action\": {");
-
-		addOrigin(builder);
-
-		builder.append(", \"action\": \"defend\"");
-
-		builder.append("}");
-		return builder.toString();
+	public void addDataToJson(StringBuilder builder) {
+		builder.append(",\"action\":\"defend\"");
 	}
 
 	@Override

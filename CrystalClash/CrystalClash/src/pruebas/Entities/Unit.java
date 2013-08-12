@@ -5,7 +5,7 @@ import pruebas.Renders.helpers.UnitHelper;
 
 public class Unit extends GameObject {
 
-	private int lifePoints;
+	private int hitPoints;
 	private int damage;
 	private int velicity;
 	private int range;
@@ -29,5 +29,9 @@ public class Unit extends GameObject {
 
 	public String getName() {
 		return unitName;
+	}
+
+	public int getHP() {
+		return hitPoints;
 	}
 }
