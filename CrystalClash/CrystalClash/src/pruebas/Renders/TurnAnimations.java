@@ -1,6 +1,7 @@
 package pruebas.Renders;
 
-import javax.swing.plaf.basic.BasicInternalFrameTitlePane.MoveAction;
+import java.util.ArrayList;
+import java.util.List;
 
 import pruebas.Accessors.ActorAccessor;
 import pruebas.Accessors.UnitAccessor;
@@ -10,10 +11,15 @@ import pruebas.Entities.Cell;
 import pruebas.Entities.Unit;
 import pruebas.Entities.helpers.MoveUnitAction;
 import pruebas.Entities.helpers.UnitAction;
+import pruebas.Renders.UnitRender.ANIM;
+import aurelienribon.tweenengine.BaseTween;
 import aurelienribon.tweenengine.Timeline;
 import aurelienribon.tweenengine.Tween;
+import aurelienribon.tweenengine.TweenCallback;
 import aurelienribon.tweenengine.TweenManager;
 
+import com.badlogic.gdx.Game;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.Array;
@@ -22,8 +28,8 @@ public class TurnAnimations extends GameRender {
 
 	private TweenManager tweenManager;
 
-	private Array<MoveUnitAction> alliedMoves;
-	private Array<MoveUnitAction> enemyMoves;
+	private Array<MoveUnitAction> player1Moves;
+	private Array<MoveUnitAction> player2Moves;
 
 	public TurnAnimations(WorldController world) {
 		super(world);
@@ -33,111 +39,113 @@ public class TurnAnimations extends GameRender {
 		init();
 	}
 
-	// private void loadDummyData() {
-	// Unit testUnit1 = new Unit("fire_archer");
-	// if (world.player == 2)
-	// testUnit1.getRender().setFacing(FACING.left);
-	//
-	// world.cellGrid[5][2].placeUnit(testUnit1, world.player);
-	//
-	// // -------------------------------------------------------------------
-	//
-	// movesPlayer1 = new ArrayList<MoveUnitAction>();
-	//
-	// MoveUnitAction moveUnit1 = new MoveUnitAction();
-	// moveUnit1.origin = world.cellGrid[5][2];
-	// moveUnit1.moves.add(world.cellGrid[5][3]);
-	// moveUnit1.moves.add(world.cellGrid[6][2]);
-	// moveUnit1.moves.add(world.cellGrid[6][1]);
-	// moveUnit1.moves.add(world.cellGrid[5][1]);
-	// moveUnit1.moves.add(world.cellGrid[4][1]);
-	// moveUnit1.moves.add(world.cellGrid[4][2]);
-	// moveUnit1.moves.add(world.cellGrid[5][3]);
-	// moveUnit1.moves.add(world.cellGrid[5][2]);
-	// movesPlayer1.add(moveUnit1);
-	// }
-
 	private void moveUnits() {
 		Timeline t = Timeline.createSequence();
 		t.beginParallel();
-		
-		MoveUnitAction action = null;
-		for (int m = 0; m < alliedMoves.size; m++) {
-			action = alliedMoves.get(m);
-			t.beginSequence();
-			for (int i = 0; i + 1 < action.moves.size; i++) {
-				t.beginParallel()
-						.push(Tween.to(action.origin.getUnit(1),
-								ActorAccessor.X, 1).target(
-								action.moves.get(i + 1).getX()
-										+ Cell.unitPlayer1X))
-						.push(Tween.to(action.origin.getUnit(1),
-								ActorAccessor.Y, 1).target(
-								action.moves.get(i + 1).getY()
-										+ Cell.unitPlayer1Y)).end();
-
-			}
-			t.end();
-		}
+		createPaths(player1Moves, 1, t);
 		t.end();
-		
 		t.beginParallel();
-		for (int m = 0; m < enemyMoves.size; m++) {
-			action = enemyMoves.get(m);
-			t.beginSequence();
-			for (int i = 0; i + 1 < action.moves.size; i++) {
-				t.beginParallel()
-						.push(Tween.to(action.origin.getUnit(2),
-								ActorAccessor.X, 1).target(
-								action.moves.get(i + 1).getX()
-										+ Cell.unitPlayer1X))
-						.push(Tween.to(action.origin.getUnit(2),
-								ActorAccessor.Y, 1).target(
-								action.moves.get(i + 1).getY()
-										+ Cell.unitPlayer1Y)).end();
-
-			}
-			t.end();
-		}
+		createPaths(player2Moves, 2, t);
 		t.end();
-		
 		t.start(tweenManager);
 	}
 
-	private void readActions() {
+	private void createPaths(Array<MoveUnitAction> moveActions, int player,
+			Timeline pathsTimeline) {
+		MoveUnitAction action = null;
+		for (int m = 0; m < moveActions.size; m++) {
+			action = moveActions.get(m);
+			
+			Timeline path = Timeline.createSequence();
+			path.setUserData(new Object[] { action.moves.size, action.origin.getUnit(player) });
+			path.setCallbackTriggers(TweenCallback.BEGIN);
+			path.setCallback(new TweenCallback() {
+				@Override
+				public void onEvent(int type, BaseTween<?> source) {
+					int stepsCount = (Integer) (((Object[]) source.getUserData())[0]);
+					Unit unit = (Unit) (((Object[]) source.getUserData())[1]);
+
+					if(stepsCount > 1)
+					{
+						unit.getRender().setAnimation(ANIM.walk);
+					}
+				}
+			});
+			
+			
+			for (int i = 0; i + 1 < action.moves.size; i++) {
+				Timeline step = createStep(action, i, action.moves.size, player);
+				path.push(step);
+			}
+			pathsTimeline.push(path);
+		}
+	}
+
+	private Timeline createStep(MoveUnitAction action, int currentStepIndex, int stepsCount,
+			int player) {
+		Timeline step = Timeline.createParallel();
+		boolean isLastStep = ((currentStepIndex + 1) == (stepsCount - 1)) || (stepsCount == 1);
+		
+		step.setUserData(new Object[] { action.moves.get(currentStepIndex),
+				action.moves.get(currentStepIndex + 1), player, isLastStep });
+		step.setCallbackTriggers(TweenCallback.COMPLETE);
+		step.setCallback(new TweenCallback() {
+			@Override
+			public void onEvent(int type, BaseTween<?> source) {
+				repositionUnit(source);
+			}
+		});
+		step.push(Tween
+				.to(action.origin.getUnit(player), ActorAccessor.X, 1)
+				.target(action.moves.get(currentStepIndex + 1).getX() + (player == 1 ? Cell.unitPlayer1X
+						: Cell.unitPlayer2X)));
+		step.push(Tween
+				.to(action.origin.getUnit(player), ActorAccessor.Y, 1)
+				.target(action.moves.get(currentStepIndex + 1).getY() + (player == 1 ? Cell.unitPlayer1Y
+						: Cell.unitPlayer2Y)));
+		return step;
+	}
+
+	private void repositionUnit(BaseTween<?> source) {
+		Cell cellFrom = (Cell) (((Object[]) source.getUserData())[0]);
+		Cell cellTo = (Cell) (((Object[]) source.getUserData())[1]);
+		int player = (Integer) (((Object[]) source.getUserData())[2]);
+		boolean isLastStep = (Boolean) (((Object[]) source.getUserData())[3]);
+		Unit unit = cellFrom.getUnit(player);
+
+		cellFrom.removeUnit(player);
+		cellTo.setUnit(unit, player);
+		
+		if(isLastStep)
+		{
+			unit.getRender().setAnimation(ANIM.idle);
+		}
+
+		String coordsFrom = cellFrom.getGridPosition().getX() + ","
+				+ cellFrom.getGridPosition().getY();
+		String coordsTo = cellTo.getGridPosition().getX() + ","
+				+ cellTo.getGridPosition().getY();
+		System.out.println("step:[" + coordsFrom + "]-->[" + coordsTo + "]");
+	}
+
+	private void readActions(int player) {
 		for (int row = 0; row < world.cellGrid.length; row++) {
 			for (int col = 0; col < world.cellGrid[0].length; col++) {
 
-				UnitAction alliedAction = world.cellGrid[row][col].getAction(1);
+				UnitAction action = world.cellGrid[row][col].getAction(player);
 
-				if (alliedAction != null) {
-					switch (alliedAction.getActionType()) {
+				if (action != null) {
+					switch (action.getActionType()) {
 					case ATTACK:
 						break;
 					case DEFENSE:
 						break;
 					case MOVE:
-						alliedMoves.add((MoveUnitAction) alliedAction);
-						break;
-					case NONE:
-						break;
-					case PLACE:
-						break;
-					default:
-						break;
-					}
-				}
-
-				UnitAction enemyAction = world.cellGrid[row][col].getAction(2);
-
-				if (enemyAction != null) {
-					switch (enemyAction.getActionType()) {
-					case ATTACK:
-						break;
-					case DEFENSE:
-						break;
-					case MOVE:
-						enemyMoves.add((MoveUnitAction) enemyAction);
+						if (player == 1) {
+							player1Moves.add((MoveUnitAction) action);
+						} else {
+							player2Moves.add((MoveUnitAction) action);
+						}
 						break;
 					case NONE:
 						break;
@@ -155,10 +163,11 @@ public class TurnAnimations extends GameRender {
 		GameController.getInstancia().loadUnitsStats();
 		Tween.registerAccessor(Unit.class, new UnitAccessor());
 
-		alliedMoves = new Array<MoveUnitAction>();
-		enemyMoves = new Array<MoveUnitAction>();
-		
-		readActions();
+		player1Moves = new Array<MoveUnitAction>();
+		player2Moves = new Array<MoveUnitAction>();
+
+		readActions(1);
+		readActions(2);
 	}
 
 	@Override
