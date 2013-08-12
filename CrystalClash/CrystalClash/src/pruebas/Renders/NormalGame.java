@@ -13,6 +13,7 @@ import pruebas.Entities.helpers.MoveUnitAction;
 import pruebas.Entities.helpers.PlaceUnitAction;
 import pruebas.Entities.helpers.UnitAction;
 import pruebas.Entities.helpers.UnitAction.UnitActionType;
+import pruebas.Util.Tuple;
 import aurelienribon.tweenengine.BaseTween;
 import aurelienribon.tweenengine.Timeline;
 import aurelienribon.tweenengine.Tween;
@@ -70,6 +71,7 @@ public class NormalGame extends GameRender {
 	
 	private UnitAction unitAction;
 	private Array<MoveUnitAction> mActions;
+	private Array<Tuple<Unit, MoveUnitAction>> ghostlyUnits;
 	
 	public NormalGame(WorldController world) {
 		super(world);
@@ -88,6 +90,7 @@ public class NormalGame extends GameRender {
 		maxMoves = 0;
 		
 		mActions = new Array<MoveUnitAction>();
+		ghostlyUnits = new Array<Tuple<Unit, MoveUnitAction>>();
 		init();
 	}
 
@@ -423,7 +426,16 @@ public class NormalGame extends GameRender {
 		clearCells();
 		lblMoves.setText(maxMoves + "");
 
-		mActions.removeValue((MoveUnitAction) unitAction, false);
+		MoveUnitAction action = (MoveUnitAction) unitAction;
+		MoveUnitAction aux = null;
+		for (int i = 0; i < ghostlyUnits.size; i++) {
+			aux = ghostlyUnits.get(i).getSecond();
+			if(action.equals(aux)){
+				ghostlyUnits.removeIndex(i);
+			}
+		}
+		
+		mActions.removeValue(action, false);
 		unitAction = new PlaceUnitAction();
 		((PlaceUnitAction) unitAction).unitName = selectedCell.getUnit(world.player).getName();
 		selectedCell.setAction(unitAction, world.player);
@@ -452,6 +464,12 @@ public class NormalGame extends GameRender {
 	@Override
 	public void render(float dt, SpriteBatch batch, Stage stage) {
 		selectorArrow.draw(batch, 1);
+		
+		Unit u = null;
+		for(int i = 0; i < ghostlyUnits.size; i++){
+			u = ghostlyUnits.get(i).getFirst();
+			u.getRender().draw(batch, dt);
+		}
 
 		stage.addActor(grpActionBar);
 		grpActionBar.act(dt);
@@ -487,7 +505,12 @@ public class NormalGame extends GameRender {
 					showAction(unitAction, true);
 				} else {
 					selectedCell.setAction(unitAction, world.player);
-					mActions.add((MoveUnitAction) unitAction);
+					MoveUnitAction action = (MoveUnitAction) unitAction;
+					mActions.add(action);
+					
+					Unit ghost = new Unit(selectedUnit.getName());
+					ghost.setPosition(action.moves.get(action.moves.size-1).getX() + Cell.unitPlayer1X, action.moves.get(action.moves.size-1).getY() + Cell.unitPlayer1Y);
+					ghostlyUnits.add(new Tuple<Unit, MoveUnitAction>(ghost, action));
 					clearCells();
 					clearSelection();
 					showMovePaths();
