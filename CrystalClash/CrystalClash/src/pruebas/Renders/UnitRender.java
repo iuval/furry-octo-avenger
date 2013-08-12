@@ -22,8 +22,10 @@ public class UnitRender {
 	private SuperAnimation currnetAnim;
 
 	private FACING facing = FACING.right;
+	private boolean ghostly;
 
 	public UnitRender() {
+		ghostly = false;
 	}
 
 	public void setFacing(FACING at) {
@@ -49,7 +51,7 @@ public class UnitRender {
 
 	public void draw(SpriteBatch batch, float dt) {
 		currnetAnim.update(dt, true, facing);
-		currnetAnim.draw(batch, dt, unit.getX(), unit.getY());
+		currnetAnim.draw(batch, dt, unit.getX(), unit.getY(), ghostly);
 	}
 
 	public UnitRender clone() {
@@ -59,5 +61,9 @@ public class UnitRender {
 		ren.walkAnim = walkAnim.clone();
 		ren.setAnimation(ANIM.idle);
 		return ren;
+	}
+	
+	public void setGhostly(){
+		ghostly = true;
 	}
 }
