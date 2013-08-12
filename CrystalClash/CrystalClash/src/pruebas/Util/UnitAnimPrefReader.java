@@ -30,6 +30,7 @@ public class UnitAnimPrefReader {
 		public int handle_x;
 		public int handle_y;
 		public float[] image_times;
+		public float total_time;
 		public int image_count;
 
 		public UnitPrefReaderData(FileHandle prefFile) {
@@ -59,7 +60,7 @@ public class UnitAnimPrefReader {
 						handle_x = Integer.parseInt(tuple[0]);
 						handle_y = Integer.parseInt(tuple[1]);
 
-						float total_time = Float.parseFloat(readValue(reader));
+						total_time = Float.parseFloat(readValue(reader));
 
 						image_count = Integer.parseInt(readValue(reader));
 					}

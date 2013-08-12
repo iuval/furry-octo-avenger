@@ -4,6 +4,7 @@ import pruebas.Renders.UnitRender.FACING;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Array;
 
 /**
@@ -25,65 +26,72 @@ public class SuperAnimation {
 	public int handle_y = 0;
 
 	final TextureRegion[] keyFrames;
+	final float[] keyTimes;
 	final float[] keyDurations;
 
 	private int playMode = NORMAL;
 	private float totalTime = 0;
+	private float animationTime = 0;
 	private int frameNumber = 0;
 
 	/**
 	 * Constructor, storing the frame duration and key frames.
 	 * 
-	 * @param frameDuration
-	 *            the time between frames in seconds.
+	 * @param animation_time
+	 *            the total time the animation takes to play.
+	 * @param keyTimes
+	 *            the time at which each key frame must show up.
 	 * @param keyFrames
 	 *            the {@link TextureRegion}s representing the frames.
 	 */
-	public SuperAnimation(float[] keyDurations,
-			Array<? extends TextureRegion> keyFrames) {
-		this.keyDurations = keyDurations;
-		this.keyFrames = new TextureRegion[keyFrames.size];
-		for (int i = 0, n = keyFrames.size; i < n; i++) {
-			this.keyFrames[i] = keyFrames.get(i);
-		}
-
-		this.playMode = NORMAL;
+	public SuperAnimation(float animation_time, float[] keyTimes, TextureRegion... keyFrames) {
+		this(animation_time, keyTimes, keyFrames, NORMAL);
 	}
-
+	
 	/**
 	 * Constructor, storing the frame duration, key frames and play type.
 	 * 
-	 * @param frameDuration
-	 *            the time between frames in seconds.
+	 * @param animation_time
+	 *            the total time the animation takes to play.
+	 * @param keyTimes
+	 *            the time at which each key frame must show up.
 	 * @param keyFrames
 	 *            the {@link TextureRegion}s representing the frames.
 	 * @param playType
 	 *            the type of animation play (NORMAL, REVERSED, LOOP,
 	 *            LOOP_REVERSED, LOOP_PINGPONG, LOOP_RANDOM)
 	 */
-	public SuperAnimation(float[] keyDurations,
-			Array<? extends TextureRegion> keyFrames, int playType) {
-		this.keyDurations = keyDurations;
-		this.keyFrames = new TextureRegion[keyFrames.size];
-		for (int i = 0, n = keyFrames.size; i < n; i++) {
-			this.keyFrames[i] = keyFrames.get(i);
-		}
-
+	public SuperAnimation(float animation_time, float[] keyTimes,
+			TextureRegion[] keyFrames, int playType) {
+		this.animationTime = animation_time;
+		this.keyTimes = keyTimes; 
+		this.keyDurations = calculateDurations(keyTimes);
+		this.keyFrames = getShallowCopy(keyFrames);
 		this.playMode = playType;
 	}
-
-	/**
-	 * Constructor, storing the frame duration and key frames.
-	 * 
-	 * @param frameDuration
-	 *            the time between frames in seconds.
-	 * @param keyFrames
-	 *            the {@link TextureRegion}s representing the frames.
-	 */
-	public SuperAnimation(float[] keyDurations, TextureRegion... keyFrames) {
-		this.keyDurations = keyDurations;
-		this.keyFrames = keyFrames;
-		this.playMode = NORMAL;
+	
+	private TextureRegion[] getShallowCopy(TextureRegion[] keyFrames)
+	{
+		TextureRegion[] frames = new TextureRegion[keyFrames.length];
+		for (int i = 0, n = keyFrames.length; i < n; i++) {
+			frames[i] = keyFrames[i];
+		}
+		return frames;
+	}
+	
+	private float[] calculateDurations(float[] keyTimes)
+	{
+		float[] durations = new float[keyTimes.length];
+		
+		if(keyTimes.length >= 1)
+		{
+			for (int i = 0; i+1 < keyTimes.length; i++) {
+				durations[i] = keyTimes[i+1] - keyTimes[i];
+			}
+			durations[keyTimes.length-1] =  animationTime - keyTimes[keyTimes.length-1];
+		}
+		
+		return durations;
 	}
 
 	public void update(float stateTime, boolean looping, FACING at) {
@@ -132,7 +140,7 @@ public class SuperAnimation {
 	 *         given state time.
 	 */
 	private TextureRegion getKeyFrame() {
-		int frameNumber = getKeyFrameIndex();
+		frameNumber = getKeyFrameIndex();
 		return keyFrames[frameNumber];
 	}
 
@@ -196,9 +204,18 @@ public class SuperAnimation {
 	 * All SuperAnimations clones share the frames and duration instances
 	 */
 	public SuperAnimation clone() {
-		SuperAnimation anim = new SuperAnimation(keyDurations, keyFrames);
+		SuperAnimation anim = new SuperAnimation(totalTime, keyDurations, keyFrames);
 		anim.handle_x = handle_x;
 		anim.handle_y = handle_y;
 		return anim;
+	}
+	
+	/**
+	 * Sets the current frame to a random value between 0 and total_frames.
+	 */
+	public void randomCurrentFrame()
+	{
+		this.frameNumber = MathUtils.random(0, keyFrames.length - 1);
+		this.totalTime = keyTimes[frameNumber];
 	}
 }

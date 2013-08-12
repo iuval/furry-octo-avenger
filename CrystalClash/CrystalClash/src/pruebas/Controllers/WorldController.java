@@ -93,7 +93,7 @@ public class WorldController {
 				unitA = new DefendUnitAction();
 			}
 			
-			cellGrid[x][y].setUnit(new Unit("fire_archer"),
+			cellGrid[x][y].setUnit(new Unit("darkness_mage"),
 					player);
 
 			unitA.origin = cellGrid[x][y];
