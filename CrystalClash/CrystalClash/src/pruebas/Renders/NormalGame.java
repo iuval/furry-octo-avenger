@@ -13,6 +13,7 @@ import pruebas.Entities.helpers.MoveUnitAction;
 import pruebas.Entities.helpers.PlaceUnitAction;
 import pruebas.Entities.helpers.UnitAction;
 import pruebas.Entities.helpers.UnitAction.UnitActionType;
+import pruebas.Renders.helpers.CellHelper;
 import pruebas.Util.Tuple;
 import aurelienribon.tweenengine.BaseTween;
 import aurelienribon.tweenengine.Timeline;
@@ -521,12 +522,12 @@ public class NormalGame extends GameRender {
 						Unit ghost = new Unit(selectedUnit.getName());
 						Cell ghostCell = action.moves.get(action.moves.size-1);
 						
-						float offSetX = Cell.unitPlayer1X;
-						float offSetY = Cell.unitPlayer1Y;
+						float offSetX = CellHelper.UNIT_PLAYER_1_X;
+						float offSetY = CellHelper.UNIT_PLAYER_1_Y;
 						
 						if(world.player == 2){
-							offSetX = Cell.unitPlayer2X;
-							offSetY = Cell.unitPlayer2Y;
+							offSetX = CellHelper.UNIT_PLAYER_2_X;
+							offSetY = CellHelper.UNIT_PLAYER_2_Y;
 						}
 						ghost.setPosition(ghostCell.getX() + offSetX, ghostCell.getY() + offSetY);
 						

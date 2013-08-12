@@ -1,9 +1,13 @@
 package pruebas.Entities.helpers;
 
+import pruebas.Entities.Cell;
+
 public abstract class UnitAction {
 	public enum UnitActionType {
 		NONE, PLACE, ATTACK, MOVE, DEFENSE
 	}
+
+	public Cell origin;
 
 	public abstract void addDataToJson(StringBuilder builder);
 

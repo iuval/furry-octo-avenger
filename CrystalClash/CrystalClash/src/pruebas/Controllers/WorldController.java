@@ -41,7 +41,8 @@ public class WorldController {
 		if (firstTurn) {
 			render.initFirstTurn();
 		} else {
-			render.initNormalTurn();
+			//render.initTurnAnimations();
+			 render.initNormalTurn();
 		}
 	}
 
@@ -218,8 +219,8 @@ public class WorldController {
 			cell.setState(state);
 		}
 	}
-	
-	public Cell cellAtByGrid(int x, int y){
+
+	public Cell cellAtByGrid(int x, int y) {
 		return cellGrid[x][y];
 	}
 

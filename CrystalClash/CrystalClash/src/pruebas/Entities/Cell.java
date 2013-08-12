@@ -10,7 +10,7 @@ public class Cell extends GameObject {
 	public enum State {
 		NONE, ABLE_TO_ATTACK, ABLE_TO_MOVE, ABLE_TO_PLACE, ATTACK_TARGET_CENTER, ATTACK_TARGET_RADIUS, MOVE_TARGET
 	}
-	
+
 	private Unit unitsPlayer1;
 	private Unit unitsPlayer2;
 	private UnitAction actionPlayer1;
@@ -39,9 +39,11 @@ public class Cell extends GameObject {
 		setUnit(unit, player);
 		if (player == 1) {
 			actionPlayer1 = new PlaceUnitAction();
+			actionPlayer1.origin = this;
 			((PlaceUnitAction) actionPlayer1).unitName = unit.getName();
 		} else {
 			actionPlayer2 = new PlaceUnitAction();
+			actionPlayer2.origin = this;
 			((PlaceUnitAction) actionPlayer2).unitName = unit.getName();
 		}
 	}
@@ -49,10 +51,12 @@ public class Cell extends GameObject {
 	public void setUnit(Unit unit, int player) {
 		if (player == 1) {
 			unitsPlayer1 = unit;
-			unit.setPosition(getX() + CellHelper.UNIT_PLAYER_1_X, getY() + CellHelper.UNIT_PLAYER_1_Y);
+			unit.setPosition(getX() + CellHelper.UNIT_PLAYER_1_X, getY()
+					+ CellHelper.UNIT_PLAYER_1_Y);
 		} else {
 			unitsPlayer2 = unit;
-			unit.setPosition(getX() + CellHelper.UNIT_PLAYER_2_X, getY() + CellHelper.UNIT_PLAYER_2_Y);
+			unit.setPosition(getX() + CellHelper.UNIT_PLAYER_2_X, getY()
+					+ CellHelper.UNIT_PLAYER_2_Y);
 			unit.getRender().setFacing(FACING.left);
 		}
 	}
@@ -82,6 +86,7 @@ public class Cell extends GameObject {
 	}
 
 	public void setAction(UnitAction action, int player) {
+		action.origin = this;
 		if (player == 1) {
 			actionPlayer1 = action;
 		} else {
@@ -114,11 +119,9 @@ public class Cell extends GameObject {
 	private void addUnitStatsToJson(StringBuilder builder, Unit unit) {
 		GridPos pos = getGridPosition();
 		builder.append("\"unit_name\":\"").append(unit.getName())
-			   .append("\",\"unit_hp\":").append(unit.getHP())
-			   .append(",\"cell\":{")
-					.append("\"x\":").append(pos.getX())
-					.append(",\"y\":").append(pos.getY())
-			   .append("}");
-			
+				.append("\",\"unit_hp\":").append(unit.getHP())
+				.append(",\"cell\":{").append("\"x\":").append(pos.getX())
+				.append(",\"y\":").append(pos.getY()).append("}");
+
 	}
 }
