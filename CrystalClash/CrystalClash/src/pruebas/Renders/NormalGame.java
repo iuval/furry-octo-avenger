@@ -330,19 +330,12 @@ public class NormalGame extends GameRender {
 			break;
 		case MOVE:
 			Cell top = null;
-			top = ((MoveUnitAction) unitAction).moves.peek();
-			top.setState(Cell.State.NONE);
-			int[][] cells = top.neigbours;
-			for (int i = 0; i < top.neigbours.length; i++) {
-				world.setCellStateByGridPos(cells[i][0], cells[i][1], Cell.State.NONE);
-			}
-			
-			if (((MoveUnitAction) unitAction).moves.size >= 2) {
-				top = ((MoveUnitAction) unitAction).moves.get(((MoveUnitAction) unitAction).moves.size - 2);  //Necesito el pen-ultimo si estoy armando el camino
-				cells = top.neigbours;
-				for (int i = 0; i < top.neigbours.length; i++) {
-					world.setCellStateByGridPos(cells[i][0], cells[i][1],
-							Cell.State.NONE);
+			for (int i = 0; i < ((MoveUnitAction) unitAction).moves.size; i++) {
+				top = ((MoveUnitAction) unitAction).moves.get(i);
+				top.setState(Cell.State.NONE);
+				int[][] cells = top.neigbours;
+				for (int j = 0; j < top.neigbours.length; j++) {
+					world.setCellStateByGridPos(cells[j][0], cells[j][1], Cell.State.NONE);
 				}
 			}
 			break;
@@ -361,7 +354,7 @@ public class NormalGame extends GameRender {
 		hideActionsBar();
 	}
 	
-	private void showAction(UnitAction action, boolean stillAsigning){
+	private void showAction(UnitAction action, boolean stillAssigning){
 		unitAction = action;
 		switch(unitAction.getActionType()){
 		case ATTACK:
@@ -369,7 +362,7 @@ public class NormalGame extends GameRender {
 		case DEFENSE:
 			break;
 		case MOVE:
-			if(stillAsigning){
+			if(stillAssigning){
 				showAbleToMoveCells();
 			}
 			
