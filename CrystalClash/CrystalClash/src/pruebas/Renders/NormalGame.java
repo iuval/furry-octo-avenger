@@ -13,6 +13,7 @@ import pruebas.Entities.helpers.MoveUnitAction;
 import pruebas.Entities.helpers.PlaceUnitAction;
 import pruebas.Entities.helpers.UnitAction;
 import pruebas.Entities.helpers.UnitAction.UnitActionType;
+import pruebas.Renders.UnitRender.FACING;
 import pruebas.Renders.helpers.CellHelper;
 import pruebas.Util.Tuple;
 import aurelienribon.tweenengine.BaseTween;
@@ -500,6 +501,7 @@ public class NormalGame extends GameRender {
 					showAbleToMoveCells();
 					showAction(unitAction, true);
 				} else if (cell.getState() == Cell.State.MOVE_TARGET) {
+					clearAction();
 					clearCells();
 					int index = ((MoveUnitAction) unitAction).moves.indexOf(
 							cell, true);
@@ -520,6 +522,9 @@ public class NormalGame extends GameRender {
 					
 					if(action.moves.size > 1){
 						Unit ghost = new Unit(selectedUnit.getName());
+						if (world.player == 2)
+							ghost.getRender().setFacing(FACING.left);
+							
 						Cell ghostCell = action.moves.get(action.moves.size-1);
 						
 						float offSetX = CellHelper.UNIT_PLAYER_1_X;
