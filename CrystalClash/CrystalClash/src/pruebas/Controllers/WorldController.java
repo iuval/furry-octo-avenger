@@ -41,7 +41,8 @@ public class WorldController {
 		if (firstTurn) {
 			render.initFirstTurn();
 		} else {
-			render.initNormalTurn();
+			//render.initTurnAnimations();
+			 render.initNormalTurn();
 		}
 	}
 
@@ -80,23 +81,22 @@ public class WorldController {
 				unitA = new MoveUnitAction();
 				JsonValue cells = child.get("target");
 				JsonValue pair = null;
-				for(int c = 0; c < cells.size ; c++)
-				{
+				((MoveUnitAction) unitA).moves.add(cellGrid[x][y]);
+				for (int c = 0; c < cells.size; c++) {
 					pair = cells.get(c);
 					int cellX = pair.getInt("x");
 					int cellY = pair.getInt("y");
-					
+
 					((MoveUnitAction) unitA).moves.add(cellGrid[cellX][cellY]);
 				}
-				
+
 			} else {
 				unitA = new DefendUnitAction();
 			}
-			
-			cellGrid[x][y].setUnit(new Unit("darkness_mage"),
+
+			cellGrid[x][y].setUnit(new Unit(child.getString("unit_name")),
 					player);
 
-			unitA.origin = cellGrid[x][y];
 			cellGrid[x][y].setAction(unitA, player);
 		}
 	}
@@ -219,8 +219,8 @@ public class WorldController {
 			cell.setState(state);
 		}
 	}
-	
-	public Cell cellAtByGrid(int x, int y){
+
+	public Cell cellAtByGrid(int x, int y) {
 		return cellGrid[x][y];
 	}
 
@@ -271,17 +271,10 @@ public class WorldController {
 		builder.append("{");
 
 		Cell cell;
-		UnitAction action;
 		for (int h = 0; h < 6; h++) {
 			for (int v = 0; v < 9; v++) {
 				cell = cellGrid[v][h];
-				action = cell.getAction(player);
-				if (action != null) {
-					String data = cell.getAction(player).getData();
-					System.out.println(data);
-					builder.append(data);
-					builder.append(",");
-				}
+				cell.addDataToJson(builder, player);
 			}
 		}
 		// Delete the last comma
@@ -289,7 +282,7 @@ public class WorldController {
 
 		builder.append("}");
 
-		System.out.println(builder.toString());
+		System.out.println("Sending-> " + builder.toString());
 		ServerDriver.gameTurn(GameController.getInstancia().getUser().getId(),
 				gameId, player, builder.toString());
 	}

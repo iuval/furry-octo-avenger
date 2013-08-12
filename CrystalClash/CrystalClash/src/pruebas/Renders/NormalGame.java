@@ -13,6 +13,7 @@ import pruebas.Entities.helpers.MoveUnitAction;
 import pruebas.Entities.helpers.PlaceUnitAction;
 import pruebas.Entities.helpers.UnitAction;
 import pruebas.Entities.helpers.UnitAction.UnitActionType;
+import pruebas.Renders.helpers.CellHelper;
 import pruebas.Util.Tuple;
 import aurelienribon.tweenengine.BaseTween;
 import aurelienribon.tweenengine.Timeline;
@@ -41,14 +42,14 @@ import com.badlogic.gdx.utils.Array;
 
 public class NormalGame extends GameRender {
 	private TweenManager tweenManager;
-	
-//	private Unit testUnit1;
-//	private Unit testUnit2;
-//	private Unit testUnit3;
-//	private Unit testUnit4;
+
+	// private Unit testUnit1;
+	// private Unit testUnit2;
+	// private Unit testUnit3;
+	// private Unit testUnit4;
 	private Unit selectedUnit;
 	private Cell selectedCell;
-	
+
 	private BitmapFont font;
 
 	private Image selectorArrow;
@@ -68,7 +69,7 @@ public class NormalGame extends GameRender {
 
 	private UnitActionType actionType;
 	private int maxMoves;
-	
+
 	private UnitAction unitAction;
 	private Array<Cell> alreadyAssigned;
 	private Array<MoveUnitAction> mActions;
@@ -81,7 +82,7 @@ public class NormalGame extends GameRender {
 
 		selectedUnit = null;
 		selectedCell = null;
-		
+
 		arrowX = 0;
 		arrowY = 0;
 		undoVisible = false;
@@ -127,8 +128,9 @@ public class NormalGame extends GameRender {
 		// world.setCellState(550, 450, Cell.State.ABLE_TO_PLACE);
 		// world.placeUnit(550, 450, testUnit4);
 		// world.setCellState(550, 450, Cell.State.NONE);
-		
-		Texture arrow = new Texture(Gdx.files.internal("data/Images/InGame/selector_arrow.png"));
+
+		Texture arrow = new Texture(
+				Gdx.files.internal("data/Images/InGame/selector_arrow.png"));
 		selectorArrow = new Image(arrow);
 		selectorArrow.setPosition(arrowX, arrowY);
 
@@ -188,7 +190,6 @@ public class NormalGame extends GameRender {
 				updateActionsBar();
 				
 				unitAction = new MoveUnitAction();
-				unitAction.origin = selectedCell;
 				((MoveUnitAction) unitAction).moves.add(selectedCell);
 				
 				showAbleToMoveCells();	
@@ -267,8 +268,8 @@ public class NormalGame extends GameRender {
 				.push(Tween.to(selectorArrow, ActorAccessor.Y, speed).target(
 						arrowY)).repeat(Tween.INFINITY, 0).start(tweenManager);
 	}
-	
-	private void showActionsBar(){
+
+	private void showActionsBar() {
 		float speed = 0.5f; // CrystalClash.ANIMATION_SPEED;
 		Timeline t = Timeline.createSequence();
 		if (450 < selectedUnit.getX() && selectedUnit.getX() < 825) {
@@ -295,20 +296,20 @@ public class NormalGame extends GameRender {
 		t.start(tweenManager);
 		actionsBarVisible = true;
 	}
-	
-	private void hideActionsBar(){
+
+	private void hideActionsBar() {
 		actionsBarVisible = false;
 		float speed = 0.5f; // CrystalClash.ANIMATION_SPEED;
 		Timeline.createSequence()
 				.push(Tween.to(grpActionBar, ActorAccessor.Y, speed).target(
 						CrystalClash.HEIGHT + 50)).start(tweenManager);
 	}
-	
-	private void showAbleToMoveCells(){
+
+	private void showAbleToMoveCells() {
 		clearCells();
 		actionType = UnitActionType.MOVE;
-		
-		if(((MoveUnitAction) unitAction).moves.size <= maxMoves){
+
+		if (((MoveUnitAction) unitAction).moves.size <= maxMoves) {
 			Cell top = ((MoveUnitAction) unitAction).moves.peek();
 			int[][] cells = top.neigbours;
 			Cell aux = null;
@@ -319,9 +320,9 @@ public class NormalGame extends GameRender {
 			}
 		}
 	}
-	
-	private void clearCells(){
-		switch(actionType){
+
+	private void clearCells() {
+		switch (actionType) {
 		case PLACE:
 			break;
 		case ATTACK:
@@ -346,8 +347,8 @@ public class NormalGame extends GameRender {
 		}
 		actionType = UnitActionType.NONE;
 	}
-	
-	private void clearSelection(){
+
+	private void clearSelection() {
 		selectedUnit = null;
 		selectedCell = null;
 		moveArrow(selectedUnit);
@@ -493,18 +494,21 @@ public class NormalGame extends GameRender {
 				break;
 			case MOVE:
 				if (cell.getState() == Cell.State.ABLE_TO_MOVE) {
-					lblMoves.setText(maxMoves - ((MoveUnitAction) unitAction).moves.size + "");
+					lblMoves.setText(maxMoves
+							- ((MoveUnitAction) unitAction).moves.size + "");
 					((MoveUnitAction) unitAction).moves.add(cell);
 					showAbleToMoveCells();
 					showAction(unitAction, true);
 				} else if (cell.getState() == Cell.State.MOVE_TARGET) {
 					clearCells();
-					int index = ((MoveUnitAction) unitAction).moves.indexOf(cell, true);
-					if(index != -1){
+					int index = ((MoveUnitAction) unitAction).moves.indexOf(
+							cell, true);
+					if (index != -1) {
 						((MoveUnitAction) unitAction).moves.truncate(index + 1);
 					}
-					
-					lblMoves.setText(maxMoves + 1 - ((MoveUnitAction) unitAction).moves.size + "");
+
+					lblMoves.setText(maxMoves + 1
+							- ((MoveUnitAction) unitAction).moves.size + "");
 					showAbleToMoveCells();
 					showAction(unitAction, true);
 				} else {
@@ -518,12 +522,12 @@ public class NormalGame extends GameRender {
 						Unit ghost = new Unit(selectedUnit.getName());
 						Cell ghostCell = action.moves.get(action.moves.size-1);
 						
-						float offSetX = Cell.unitPlayer1X;
-						float offSetY = Cell.unitPlayer1Y;
+						float offSetX = CellHelper.UNIT_PLAYER_1_X;
+						float offSetY = CellHelper.UNIT_PLAYER_1_Y;
 						
 						if(world.player == 2){
-							offSetX = Cell.unitPlayer2X;
-							offSetY = Cell.unitPlayer2Y;
+							offSetX = CellHelper.UNIT_PLAYER_2_X;
+							offSetY = CellHelper.UNIT_PLAYER_2_Y;
 						}
 						ghost.setPosition(ghostCell.getX() + offSetX, ghostCell.getY() + offSetY);
 						
@@ -545,8 +549,10 @@ public class NormalGame extends GameRender {
 						selectedUnit = u;
 						selectedCell = cell;
 
-						lblAttack.setText(GameController.getInstancia().getUnitAttack(selectedUnit.getName()) + "");
-						maxMoves = GameController.getInstancia().getUnitSpeed(selectedUnit.getName());
+						lblAttack.setText(GameController.getInstancia()
+								.getUnitAttack(selectedUnit.getName()) + "");
+						maxMoves = GameController.getInstancia().getUnitSpeed(
+								selectedUnit.getName());
 						lblMoves.setText(maxMoves + "");
 
 						hideMovePaths();
@@ -557,7 +563,6 @@ public class NormalGame extends GameRender {
 						updateActionsBar();
 						moveArrow(selectedUnit);
 						showActionsBar();
-						
 						System.out.println(selectedUnit.getName());
 					}
 				} else {

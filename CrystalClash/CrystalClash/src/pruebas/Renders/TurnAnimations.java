@@ -1,8 +1,5 @@
 package pruebas.Renders;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import pruebas.Accessors.ActorAccessor;
 import pruebas.Accessors.UnitAccessor;
 import pruebas.Controllers.GameController;
@@ -12,19 +9,19 @@ import pruebas.Entities.Unit;
 import pruebas.Entities.helpers.MoveUnitAction;
 import pruebas.Entities.helpers.UnitAction;
 import pruebas.Renders.UnitRender.ANIM;
+import pruebas.Renders.helpers.CellHelper;
 import aurelienribon.tweenengine.BaseTween;
 import aurelienribon.tweenengine.Timeline;
 import aurelienribon.tweenengine.Tween;
 import aurelienribon.tweenengine.TweenCallback;
 import aurelienribon.tweenengine.TweenManager;
 
-import com.badlogic.gdx.Game;
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.Array;
 
 public class TurnAnimations extends GameRender {
+
 
 	private TweenManager tweenManager;
 
@@ -97,12 +94,12 @@ public class TurnAnimations extends GameRender {
 		});
 		step.push(Tween
 				.to(action.origin.getUnit(player), ActorAccessor.X, 1)
-				.target(action.moves.get(currentStepIndex + 1).getX() + (player == 1 ? Cell.unitPlayer1X
-						: Cell.unitPlayer2X)));
+				.target(action.moves.get(currentStepIndex + 1).getX() + (player == 1 ? CellHelper.UNIT_PLAYER_1_X
+						: CellHelper.UNIT_PLAYER_2_X)));
 		step.push(Tween
 				.to(action.origin.getUnit(player), ActorAccessor.Y, 1)
-				.target(action.moves.get(currentStepIndex + 1).getY() + (player == 1 ? Cell.unitPlayer1Y
-						: Cell.unitPlayer2Y)));
+				.target(action.moves.get(currentStepIndex + 1).getY() + (player == 1 ? CellHelper.UNIT_PLAYER_1_Y
+						: CellHelper.UNIT_PLAYER_2_Y)));
 		return step;
 	}
 
@@ -197,5 +194,6 @@ public class TurnAnimations extends GameRender {
 	public boolean pan(float x, float y, float deltaX, float deltaY) {
 		return false;
 	}
+
 
 }
