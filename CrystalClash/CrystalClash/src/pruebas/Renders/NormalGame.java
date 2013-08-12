@@ -331,6 +331,7 @@ public class NormalGame extends GameRender {
 		case MOVE:
 			Cell top = null;
 			top = ((MoveUnitAction) unitAction).moves.peek();
+			top.setState(Cell.State.NONE);
 			int[][] cells = top.neigbours;
 			for (int i = 0; i < top.neigbours.length; i++) {
 				world.setCellStateByGridPos(cells[i][0], cells[i][1], Cell.State.NONE);
@@ -520,12 +521,14 @@ public class NormalGame extends GameRender {
 					MoveUnitAction action = (MoveUnitAction) unitAction;
 					mActions.add(action);
 					
-					Unit ghost = new Unit(selectedUnit.getName());
-					Cell ghostCell = action.moves.get(action.moves.size-1);
-					ghost.setPosition(ghostCell.getX() + Cell.unitPlayer1X, ghostCell.getY() + Cell.unitPlayer1Y);
-					
-					ghostlyUnits.add(new Tuple<Unit, MoveUnitAction>(ghost, action));
-					alreadyAssigned.add(ghostCell);
+					if(action.moves.size > 1){
+						Unit ghost = new Unit(selectedUnit.getName());
+						Cell ghostCell = action.moves.get(action.moves.size-1);
+						ghost.setPosition(ghostCell.getX() + Cell.unitPlayer1X, ghostCell.getY() + Cell.unitPlayer1Y);
+						
+						ghostlyUnits.add(new Tuple<Unit, MoveUnitAction>(ghost, action));
+						alreadyAssigned.add(ghostCell);
+					}
 					
 					clearCells();
 					clearSelection();
