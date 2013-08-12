@@ -80,19 +80,19 @@ public class WorldController {
 				unitA = new MoveUnitAction();
 				JsonValue cells = child.get("target");
 				JsonValue pair = null;
-				for(int c = 0; c < cells.size ; c++)
-				{
+				((MoveUnitAction) unitA).moves.add(cellGrid[x][y]);
+				for (int c = 0; c < cells.size; c++) {
 					pair = cells.get(c);
 					int cellX = pair.getInt("x");
 					int cellY = pair.getInt("y");
-					
+
 					((MoveUnitAction) unitA).moves.add(cellGrid[cellX][cellY]);
 				}
-				
+
 			} else {
 				unitA = new DefendUnitAction();
 			}
-			
+
 			cellGrid[x][y].setUnit(new Unit(child.getString("unit_name")),
 					player);
 

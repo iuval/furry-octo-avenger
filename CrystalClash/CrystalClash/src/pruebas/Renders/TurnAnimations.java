@@ -1,8 +1,5 @@
 package pruebas.Renders;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import pruebas.Accessors.ActorAccessor;
 import pruebas.Accessors.UnitAccessor;
 import pruebas.Controllers.GameController;
@@ -12,14 +9,13 @@ import pruebas.Entities.Unit;
 import pruebas.Entities.helpers.MoveUnitAction;
 import pruebas.Entities.helpers.UnitAction;
 import pruebas.Renders.UnitRender.ANIM;
+import pruebas.Renders.helpers.CellHelper;
 import aurelienribon.tweenengine.BaseTween;
 import aurelienribon.tweenengine.Timeline;
 import aurelienribon.tweenengine.Tween;
 import aurelienribon.tweenengine.TweenCallback;
 import aurelienribon.tweenengine.TweenManager;
 
-import com.badlogic.gdx.Game;
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.Array;
@@ -28,8 +24,8 @@ public class TurnAnimations extends GameRender {
 
 	private TweenManager tweenManager;
 
-	private Array<MoveUnitAction> player1Moves;
-	private Array<MoveUnitAction> player2Moves;
+	private Array<Cell> player1Moves;
+	private Array<Cell> player2Moves;
 
 	public TurnAnimations(WorldController world) {
 		super(world);
@@ -50,14 +46,14 @@ public class TurnAnimations extends GameRender {
 		t.start(tweenManager);
 	}
 
-	private void createPaths(Array<MoveUnitAction> moveActions, int player,
+	private void createPaths(Array<Cell> moveCells, int player,
 			Timeline pathsTimeline) {
 		MoveUnitAction action = null;
-		for (int m = 0; m < moveActions.size; m++) {
-			action = moveActions.get(m);
+		for (int m = 0; m < moveCells.size; m++) {
+			action = (MoveUnitAction) moveCells.get(m).getAction(player);
 			
 			Timeline path = Timeline.createSequence();
-			path.setUserData(new Object[] { action.moves.size, action.origin.getUnit(player) });
+			path.setUserData(new Object[] { action.moves.size, moveCells.get(m).getUnit(player) });
 			path.setCallbackTriggers(TweenCallback.BEGIN);
 			path.setCallback(new TweenCallback() {
 				@Override
@@ -71,23 +67,26 @@ public class TurnAnimations extends GameRender {
 					}
 				}
 			});
+
+			Unit unit = moveCells.get(m).getUnit(player);
+			Array<Cell> moves = ((MoveUnitAction)moveCells.get(m).getAction(player)).moves;
 			
-			
-			for (int i = 0; i + 1 < action.moves.size; i++) {
-				Timeline step = createStep(action, i, action.moves.size, player);
+			boolean isLastStep = false;
+			Timeline step;
+			for (int i = 0; i < action.moves.size - 1; i++) {
+				isLastStep = (i + 1) == (action.moves.size - 1);
+				step = createStep(unit, moves.get(i), moves.get(i+1), player, isLastStep);
 				path.push(step);
 			}
 			pathsTimeline.push(path);
 		}
 	}
 
-	private Timeline createStep(MoveUnitAction action, int currentStepIndex, int stepsCount,
-			int player) {
+	private Timeline createStep(Unit unit, Cell from, Cell to, int player,
+			boolean isLastStep) {
 		Timeline step = Timeline.createParallel();
-		boolean isLastStep = ((currentStepIndex + 1) == (stepsCount - 1)) || (stepsCount == 1);
-		
-		step.setUserData(new Object[] { action.moves.get(currentStepIndex),
-				action.moves.get(currentStepIndex + 1), player, isLastStep });
+
+		step.setUserData(new Object[] { from, to, player, isLastStep });
 		step.setCallbackTriggers(TweenCallback.COMPLETE);
 		step.setCallback(new TweenCallback() {
 			@Override
@@ -95,14 +94,14 @@ public class TurnAnimations extends GameRender {
 				repositionUnit(source);
 			}
 		});
-		step.push(Tween
-				.to(action.origin.getUnit(player), ActorAccessor.X, 1)
-				.target(action.moves.get(currentStepIndex + 1).getX() + (player == 1 ? Cell.unitPlayer1X
-						: Cell.unitPlayer2X)));
-		step.push(Tween
-				.to(action.origin.getUnit(player), ActorAccessor.Y, 1)
-				.target(action.moves.get(currentStepIndex + 1).getY() + (player == 1 ? Cell.unitPlayer1Y
-						: Cell.unitPlayer2Y)));
+		step.push(Tween.to(unit, ActorAccessor.X, 1).target(
+				to.getX()
+						+ (player == 1 ? CellHelper.UNIT_PLAYER_1_X
+								: CellHelper.UNIT_PLAYER_2_X)));
+		step.push(Tween.to(unit, ActorAccessor.Y, 1).target(
+				to.getY()
+						+ (player == 1 ? CellHelper.UNIT_PLAYER_1_Y
+								: CellHelper.UNIT_PLAYER_2_Y)));
 		return step;
 	}
 
@@ -115,9 +114,8 @@ public class TurnAnimations extends GameRender {
 
 		cellFrom.removeUnit(player);
 		cellTo.setUnit(unit, player);
-		
-		if(isLastStep)
-		{
+
+		if (isLastStep) {
 			unit.getRender().setAnimation(ANIM.idle);
 		}
 
@@ -142,9 +140,9 @@ public class TurnAnimations extends GameRender {
 						break;
 					case MOVE:
 						if (player == 1) {
-							player1Moves.add((MoveUnitAction) action);
+							player1Moves.add(world.cellGrid[row][col]);
 						} else {
-							player2Moves.add((MoveUnitAction) action);
+							player2Moves.add(world.cellGrid[row][col]);
 						}
 						break;
 					case NONE:
@@ -163,8 +161,8 @@ public class TurnAnimations extends GameRender {
 		GameController.getInstancia().loadUnitsStats();
 		Tween.registerAccessor(Unit.class, new UnitAccessor());
 
-		player1Moves = new Array<MoveUnitAction>();
-		player2Moves = new Array<MoveUnitAction>();
+		player1Moves = new Array<Cell>();
+		player2Moves = new Array<Cell>();
 
 		readActions(1);
 		readActions(2);
