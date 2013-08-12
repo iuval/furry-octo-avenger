@@ -517,7 +517,15 @@ public class NormalGame extends GameRender {
 					if(action.moves.size > 1){
 						Unit ghost = new Unit(selectedUnit.getName());
 						Cell ghostCell = action.moves.get(action.moves.size-1);
-						ghost.setPosition(ghostCell.getX() + Cell.unitPlayer1X, ghostCell.getY() + Cell.unitPlayer1Y);
+						
+						float offSetX = Cell.unitPlayer1X;
+						float offSetY = Cell.unitPlayer1Y;
+						
+						if(world.player == 2){
+							offSetX = Cell.unitPlayer2X;
+							offSetY = Cell.unitPlayer2Y;
+						}
+						ghost.setPosition(ghostCell.getX() + offSetX, ghostCell.getY() + offSetY);
 						
 						ghostlyUnits.add(new Tuple<Unit, MoveUnitAction>(ghost, action));
 						alreadyAssigned.add(ghostCell);
