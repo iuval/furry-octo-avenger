@@ -12,4 +12,9 @@ public abstract class UnitAction {
 	public abstract void addDataToJson(StringBuilder builder);
 
 	public abstract UnitActionType getActionType();
+	
+	public boolean equals(Object other){
+		UnitAction action = (UnitAction) other;
+		return this.origin == action.origin;
+	}
 }
