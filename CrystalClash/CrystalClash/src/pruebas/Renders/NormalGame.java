@@ -541,9 +541,14 @@ public class NormalGame extends GameRender {
 		Unit u = null;
 		for (int i = 0; i < ghostlyUnits.size; i++) {
 			u = ghostlyUnits.get(i).getFirst();
-			u.getRender().setGhostly();
+			
+			//u.getRender().setGhostly();
+			//PARA SACAR LO DE SUPERANIMATION CON LA IMAGEN Y EL NEW
+			batch.setColor(batch.getColor().r, batch.getColor().g, batch.getColor().b, 0.6f);
+			
 			u.getRender().draw(batch, dt);
 		}
+		batch.setColor(batch.getColor().r, batch.getColor().g, batch.getColor().b, 1);
 		
 		shieldAnimation.update(dt, true, FACING.left);
 		u = null;
