@@ -2,7 +2,7 @@ fire_archer
   life: 450
   attack: 150
   speed: 1
-  range: 3
+  range: 2
 earth_tank
   life: 850
   attack: 50
