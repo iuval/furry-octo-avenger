@@ -10,6 +10,7 @@ import pruebas.Entities.Unit;
 import pruebas.Entities.helpers.AttackUnitAction;
 import pruebas.Entities.helpers.DefendUnitAction;
 import pruebas.Entities.helpers.MoveUnitAction;
+import pruebas.Entities.helpers.NoneUnitAction;
 import pruebas.Entities.helpers.PlaceUnitAction;
 import pruebas.Entities.helpers.UnitAction;
 import pruebas.Entities.helpers.UnitAction.UnitActionType;
@@ -110,6 +111,7 @@ public class NormalGame extends GameRender {
 		
 		init();
 		loadShieldAnim();
+		clearAllMoves();
 	}
 
 	public void init() {
@@ -412,8 +414,10 @@ public class NormalGame extends GameRender {
 		GridPos g = null;
 		switch(unitAction.getActionType()){
 		case ATTACK:
-			actionType = UnitActionType.ATTACK;
 			btnUndo.setPosition(btnAttack.getX(), btnDefense.getY());
+			if(stillAssigning){
+				showAbleToAttackCells();
+			}
 
 			g = ((AttackUnitAction) action).target.getGridPosition();
 			world.setCellStateByGridPos(g.getX(), g.getY(), Cell.State.ATTACK_TARGET_CENTER);
@@ -437,6 +441,7 @@ public class NormalGame extends GameRender {
 			undoVisible = true;
 			break;
 		case NONE:
+			undoVisible = false;
 			actionType = UnitActionType.NONE;
 			break;
 		case PLACE:
@@ -464,8 +469,10 @@ public class NormalGame extends GameRender {
 		GridPos g = null;
 		switch(action.getActionType()){
 		case ATTACK:
-			g = ((AttackUnitAction) action).target.getGridPosition();
-			world.setCellStateByGridPos(g.getX(), g.getY(), Cell.State.NONE);
+			if (((AttackUnitAction) action).target != null) {
+				g = ((AttackUnitAction) action).target.getGridPosition();
+				world.setCellStateByGridPos(g.getX(), g.getY(), Cell.State.NONE);
+			}
 			break;
 		case DEFENSE:
 			break;
@@ -498,11 +505,11 @@ public class NormalGame extends GameRender {
 	private void undoAction(){
 		switch(actionType){
 		case ATTACK:
+			clearCells();
 			hideAction(unitAction);
 			aActions.removeValue((AttackUnitAction) unitAction, false);
 			
-			unitAction = new PlaceUnitAction();
-			((PlaceUnitAction) unitAction).unitName = selectedCell.getUnit(world.player).getName();
+			unitAction = new NoneUnitAction();
 			selectedCell.setAction(unitAction, world.player);
 			
 			actionType = UnitActionType.NONE;
@@ -510,8 +517,7 @@ public class NormalGame extends GameRender {
 		case DEFENSE:
 			defensiveUnits.removeValue(selectedCell, false);
 			
-			unitAction = new PlaceUnitAction();
-			((PlaceUnitAction) unitAction).unitName = selectedCell.getUnit(world.player).getName();
+			unitAction = new NoneUnitAction();
 			selectedCell.setAction(unitAction, world.player);
 			
 			actionType = UnitActionType.NONE;
@@ -522,8 +528,7 @@ public class NormalGame extends GameRender {
 
 			clearMoveAction();
 			
-			unitAction = new PlaceUnitAction();
-			((PlaceUnitAction) unitAction).unitName = selectedCell.getUnit(world.player).getName();
+			unitAction = new NoneUnitAction();
 			selectedCell.setAction(unitAction, world.player);
 			
 			actionType = UnitActionType.NONE;
@@ -589,6 +594,27 @@ public class NormalGame extends GameRender {
 		shieldAnimation = new SuperAnimation(data.total_time, data.image_times, frames);
 		shieldAnimation.handle_x = data.handle_x;
 		shieldAnimation.handle_y = data.handle_x;
+	}
+	
+	@Override
+	public void clearAllMoves() {
+		clearSelection();
+		
+		mActions.clear();
+		alreadyAssigned.clear();
+		ghostlyUnits.clear();
+		aActions.clear();
+		defensiveUnits.clear();
+		
+		for (int i = 0; i < world.cellGrid.length; i++) {
+			for (int j = 0; j < world.cellGrid[0].length; j++) {
+				unitAction = new NoneUnitAction();
+				world.cellGrid[i][j].setAction(unitAction, world.player);
+				world.cellGrid[i][j].setState(Cell.State.NONE);
+			}
+		}
+		
+		actionType = UnitActionType.NONE;
 	}
 	
 	@Override

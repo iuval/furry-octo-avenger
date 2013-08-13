@@ -110,6 +110,12 @@ public class SelectUnitsRender extends GameRender {
 
 	}
 
+	@Override
+	public void clearAllMoves() {
+		// TODO Quitar todas las unidades colocadas en el mapa.
+		
+	}
+	
 	public void render(float dt, SpriteBatch batch, Stage stage) {
 		tabs.draw(dt, batch);
 		if (selectedUnit != null) {
@@ -161,5 +167,4 @@ public class SelectUnitsRender extends GameRender {
 
 		return false;
 	}
-
 }
