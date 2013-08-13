@@ -162,11 +162,12 @@ public class NormalGame extends GameRender {
 		btnAttack.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
-				// TODO: Pintar AbleToAttack
 				btnUndo.setPosition(btnAttack.getX(), btnDefense.getY());
 				undoVisible = true;
 				updateActionsBar();
-				unitAction = new AttackUnitAction();
+				unitAction = new AttackUnitAction(selectedUnit.isMelee());
+				
+				showAbleToAttackCells();
 			}
 		});
 
@@ -336,6 +337,33 @@ public class NormalGame extends GameRender {
 		}
 	}
 
+	private void showAbleToAttackCells() {
+		clearCells();
+		actionType = UnitActionType.ATTACK;
+
+		boolean checkIfUnit = false;
+		if (selectedUnit.isMelee()) {
+			checkIfUnit = true;
+		}
+		
+		showAbleToAttackCellAux(selectedCell, checkIfUnit, selectedUnit.getRange());
+	}
+	
+	private void showAbleToAttackCellAux(Cell cell, boolean checkIfUnit, int range){
+		int[][] cells = cell.neigbours;
+		Cell aux = null;
+		for (int i = 0; i < cell.neigbours.length; i++) {
+			aux = world.cellAtByGrid(cells[i][0], cells[i][1]);
+			aux.setState(Cell.State.ABLE_TO_ATTACK);
+			int enemyPlayer = world.player == 1 ? 2 : 1;
+			if(checkIfUnit && aux.getUnit(enemyPlayer) == null)
+				aux.setState(Cell.State.NONE);
+			
+			if(range > 1)
+				showAbleToAttackCellAux(aux, checkIfUnit, range - 1);
+		}
+	}
+	
 	private void clearCells() {
 		switch (actionType) {
 		case PLACE:

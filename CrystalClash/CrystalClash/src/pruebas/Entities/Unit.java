@@ -67,6 +67,10 @@ public class Unit extends GameObject {
 		return enemy;
 	}
 	
+	public int getRange() {
+		return range;
+	}
+	
 	public boolean isMelee() {
 		return range == 1;
 	}
