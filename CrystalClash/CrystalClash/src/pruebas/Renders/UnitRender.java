@@ -1,14 +1,11 @@
 package pruebas.Renders;
 
 import pruebas.Entities.Unit;
+import pruebas.Renders.helpers.UnitHelper;
 import pruebas.Util.SuperAnimation;
 
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.Pixmap;
-import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
 public class UnitRender {
 	public enum FACING {
@@ -19,25 +16,32 @@ public class UnitRender {
 		idle, fight, walk
 	}
 
-	public Unit unit;
+	private Unit unit;
 
 	public SuperAnimation idleAnim;
 	public SuperAnimation fightAnim;
 	public SuperAnimation walkAnim;
 	private SuperAnimation currnetAnim;
-	private Texture hp;
+	private Texture hpBar;
 	private float hpWidth;
 	private FACING facing = FACING.right;
 	private boolean ghostly;
 
 	public UnitRender() {
 		ghostly = false;
-		Pixmap pixmap = new Pixmap(50, 10, Format.RGBA4444); // or RGBA8888
-		pixmap.setColor(0, 1, 0, 1);
-		pixmap.fill();
-		hp = new Texture(pixmap); // must be manually disposed
-		hpWidth = 50;
-		pixmap.dispose();
+	}
+
+	public Unit getUnit() {
+		return unit;
+	}
+
+	public void setUnit(Unit u) {
+		unit = u;
+		if (unit.isEnemy()) {
+			hpBar = UnitHelper.getEnemyHPBar();
+		} else {
+			hpBar = UnitHelper.getAllyHPBar();
+		}
 	}
 
 	public void setFacing(FACING at) {
@@ -62,13 +66,17 @@ public class UnitRender {
 	}
 
 	public void updateHp() {
-		hpWidth = (unit.getHP() * 50) / unit.getTotalHP();
+		if (unit.getTotalHP() != 0) {
+			hpWidth = (unit.getHP() * UnitHelper.HP_BAR_WIDTH)
+					/ unit.getTotalHP();
+		}
 	}
 
 	public void draw(SpriteBatch batch, float dt) {
 		currnetAnim.update(dt, true, facing);
 		currnetAnim.draw(batch, dt, unit.getX(), unit.getY(), ghostly);
-		batch.draw(hp, unit.getX(), unit.getY(), hpWidth, 10);
+		batch.draw(hpBar, unit.getX() + UnitHelper.HP_BAR_X, unit.getY()
+				+ UnitHelper.HP_BAR_Y, hpWidth, UnitHelper.HP_BAR_HEIGHT);
 	}
 
 	public UnitRender clone() {
@@ -79,8 +87,8 @@ public class UnitRender {
 		ren.setAnimation(ANIM.idle);
 		return ren;
 	}
-	
-	public void setGhostly(){
+
+	public void setGhostly() {
 		ghostly = true;
 	}
 }

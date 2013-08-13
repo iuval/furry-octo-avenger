@@ -1,7 +1,5 @@
 package pruebas.Controllers;
 
-import pruebas.Renders.GameEngine;
-
 public class MenuMaster {
 	private static MenuMaster instance;
 
@@ -36,24 +34,24 @@ public class MenuMaster {
 		currentMenu = menu;
 	}
 
-	public static MenuLogIn getMenuLogIn(){
+	public static MenuLogIn getMenuLogIn() {
 		if (menuLogInInstance == null)
 			menuLogInInstance = new MenuLogIn();
 		return menuLogInInstance;
 	}
-	
+
 	public static void changeMenuToLogIn() {
 		MenuLogIn aux = getMenuLogIn();
 		aux.resetRender();
 		currentMenu = aux;
 	}
 
-	public static MenuGames getMenuGames(){
+	public static MenuGames getMenuGames() {
 		if (menuMatchesInstance == null)
 			menuMatchesInstance = new MenuGames();
 		return menuMatchesInstance;
 	}
-	
+
 	public static void changeMenuToGames() {
 		currentMenu = getMenuGames();
 	}

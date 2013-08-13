@@ -136,6 +136,7 @@ public class ServerDriver {
 		data.put("player", player + "");
 		data.put("data", turnData);
 
+		System.out.println("Sending-> " + turnData);
 		Gdx.net.sendHttpRequest(getPost(ACTION_GAME_TURN, data),
 				new HttpResponseListener() {
 					public void handleHttpResponse(HttpResponse httpResponse) {

@@ -29,10 +29,8 @@ public class WorldController {
 	private boolean firstTurn;
 
 	public WorldController(JsonValue data) {
-		// TODO: Data reader
-
-		this.player = 1;// data.getInt("player");
-		this.gameId = "";// data.getString("game_id");
+		this.player = data.getInt("player");
+		this.gameId = data.getString("game_id");
 		init();
 
 		render = new WorldRender(this);
@@ -41,8 +39,8 @@ public class WorldController {
 		if (firstTurn) {
 			render.initFirstTurn();
 		} else {
-			//render.initTurnAnimations();
-			 render.initNormalTurn();
+			render.initTurnAnimations();
+			// render.initNormalTurn();
 		}
 	}
 
@@ -56,12 +54,13 @@ public class WorldController {
 		}
 	}
 
-	private void readPlayerData(JsonValue values, int player) {
+	private void readPlayerData(JsonValue values, int playerNum) {
 		JsonValue child;
 		JsonValue temp;
 		String action;
 		int x, y;
 		values = ServerDriver.parseJson(values.asString());
+		boolean isEnemy = player != playerNum;
 		for (int i = 0; i < values.size; i++) {
 			child = values.get(i);
 
@@ -94,10 +93,10 @@ public class WorldController {
 				unitA = new DefendUnitAction();
 			}
 
-			cellGrid[x][y].setUnit(new Unit(child.getString("unit_name")),
-					player);
+			cellGrid[x][y].setUnit(new Unit(child.getString("unit_name"),
+					isEnemy, child.getInt("unit_hp")), playerNum);
 
-			cellGrid[x][y].setAction(unitA, player);
+			cellGrid[x][y].setAction(unitA, playerNum);
 		}
 	}
 
@@ -282,7 +281,6 @@ public class WorldController {
 
 		builder.append("}");
 
-		System.out.println("Sending-> " + builder.toString());
 		ServerDriver.gameTurn(GameController.getInstancia().getUser().getId(),
 				gameId, player, builder.toString());
 	}
