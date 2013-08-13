@@ -15,7 +15,10 @@ import pruebas.Entities.helpers.UnitAction;
 import pruebas.Entities.helpers.UnitAction.UnitActionType;
 import pruebas.Renders.UnitRender.FACING;
 import pruebas.Renders.helpers.CellHelper;
+import pruebas.Util.SuperAnimation;
 import pruebas.Util.Tuple;
+import pruebas.Util.UnitAnimPrefReader;
+import pruebas.Util.UnitAnimPrefReader.UnitPrefReaderData;
 import aurelienribon.tweenengine.BaseTween;
 import aurelienribon.tweenengine.Timeline;
 import aurelienribon.tweenengine.Tween;
@@ -75,7 +78,10 @@ public class NormalGame extends GameRender {
 	private Array<Cell> alreadyAssigned;
 	private Array<MoveUnitAction> mActions;
 	private Array<Tuple<Unit, MoveUnitAction>> ghostlyUnits;
-
+	
+	private SuperAnimation shieldAnimation;
+	private Array<Cell> defensiveUnits;
+	
 	public NormalGame(WorldController world) {
 		super(world);
 
@@ -95,7 +101,11 @@ public class NormalGame extends GameRender {
 		alreadyAssigned = new Array<Cell>();
 		mActions = new Array<MoveUnitAction>();
 		ghostlyUnits = new Array<Tuple<Unit, MoveUnitAction>>();
+		
+		defensiveUnits = new Array<Cell>();
+		
 		init();
+		loadShieldAnim();
 	}
 
 	public void init() {
@@ -169,11 +179,14 @@ public class NormalGame extends GameRender {
 		btnDefense.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
-				// TODO: Pintar Escudito
 				btnUndo.setPosition(btnDefense.getX(), btnDefense.getY());
 				undoVisible = true;
 				updateActionsBar();
 				unitAction = new DefendUnitAction();
+				defensiveUnits.add(selectedCell);
+				
+				showAction(unitAction, false);
+				actionType = UnitActionType.DEFENSE;
 			}
 		});
 
@@ -362,11 +375,16 @@ public class NormalGame extends GameRender {
 		unitAction = action;
 		switch (unitAction.getActionType()) {
 		case ATTACK:
+			actionType = UnitActionType.ATTACK;
+			btnUndo.setPosition(btnAttack.getX(), btnDefense.getY());
 			break;
 		case DEFENSE:
+			actionType = UnitActionType.DEFENSE;
+			btnUndo.setPosition(btnDefense.getX(), btnDefense.getY());
 			break;
 		case MOVE:
-			if (stillAssigning) {
+			btnUndo.setPosition(btnMove.getX(), btnDefense.getY());
+			if(stillAssigning){
 				showAbleToMoveCells();
 			}
 
@@ -381,9 +399,11 @@ public class NormalGame extends GameRender {
 			undoVisible = true;
 			break;
 		case NONE:
+			actionType = UnitActionType.NONE;
 			break;
 		case PLACE:
 			undoVisible = false;
+			actionType = UnitActionType.NONE;
 			break;
 		default:
 			break;
@@ -425,19 +445,39 @@ public class NormalGame extends GameRender {
 		}
 		actionType = UnitActionType.NONE;
 	}
+	
+	private void undoAction(){
+		switch(actionType){
+		case ATTACK:
+			break;
+		case DEFENSE:
+			defensiveUnits.removeValue(selectedCell, false);
+			
+			unitAction = new PlaceUnitAction();
+			((PlaceUnitAction) unitAction).unitName = selectedCell.getUnit(world.player).getName();
+			selectedCell.setAction(unitAction, world.player);
+			
+			actionType = UnitActionType.NONE;
+			break;
+		case MOVE:
+			clearCells();
+			lblMoves.setText(maxMoves + "");
 
-	private void undoAction() {
-		clearCells();
-		lblMoves.setText(maxMoves + "");
-
-		clearAction();
-
-		unitAction = new PlaceUnitAction();
-		((PlaceUnitAction) unitAction).unitName = selectedCell.getUnit(
-				world.player).getName();
-		selectedCell.setAction(unitAction, world.player);
-
-		actionType = UnitActionType.NONE;
+			clearMoveAction();
+			
+			unitAction = new PlaceUnitAction();
+			((PlaceUnitAction) unitAction).unitName = selectedCell.getUnit(world.player).getName();
+			selectedCell.setAction(unitAction, world.player);
+			
+			actionType = UnitActionType.NONE;
+			break;
+		case NONE:
+			break;
+		case PLACE:
+			break;
+		default:
+			break;
+		}
 	}
 
 	private void updateActionsBar() {
@@ -457,10 +497,9 @@ public class NormalGame extends GameRender {
 			grpActionBar.removeActor(btnUndo);
 		}
 	}
-
-	// Borra la action de la lista, saca el fantasma y saca la cell de las
-	// asignadas
-	private void clearAction() {
+	
+	//Borra la action de la lista, saca el fantasma y saca la cell de las asignadas
+	private void clearMoveAction(){
 		MoveUnitAction action = (MoveUnitAction) unitAction;
 		MoveUnitAction aux = null;
 		for (int i = 0; i < ghostlyUnits.size; i++) {
@@ -474,7 +513,27 @@ public class NormalGame extends GameRender {
 
 		mActions.removeValue(action, false);
 	}
+	
+	private void loadShieldAnim(){
+		String base_file_name = "data/Units/defensive_shield";
+		UnitPrefReaderData data = UnitAnimPrefReader.load(base_file_name + ".pref");
+		Texture sheet = new Texture(Gdx.files.internal(base_file_name + ".png"));
+		TextureRegion[][] tmp = TextureRegion.split(sheet, sheet.getWidth()
+				/ data.cols, sheet.getHeight() / data.rows);
+		TextureRegion[] frames = new TextureRegion[data.cols * data.rows];
 
+		int index = 0;
+		for (int i = 0; i < data.rows; i++) {
+			for (int j = 0; j < data.cols; j++) {
+				frames[index++] = tmp[i][j];
+			}
+		}
+		
+		shieldAnimation = new SuperAnimation(data.total_time, data.image_times, frames);
+		shieldAnimation.handle_x = data.handle_x;
+		shieldAnimation.handle_y = data.handle_x;
+	}
+	
 	@Override
 	public void render(float dt, SpriteBatch batch, Stage stage) {
 		selectorArrow.draw(batch, 1);
@@ -485,6 +544,14 @@ public class NormalGame extends GameRender {
 			u.getRender().setGhostly();
 			u.getRender().draw(batch, dt);
 		}
+		
+		shieldAnimation.update(dt, true, FACING.left);
+		u = null;
+		for (int i = 0; i < defensiveUnits.size; i++) {
+			u = defensiveUnits.get(i).getUnit(world.player);
+			shieldAnimation.draw(batch, dt, u.getX(), u.getY(), false);
+		}
+		
 
 		stage.addActor(grpActionBar);
 		grpActionBar.act(dt);
@@ -501,6 +568,9 @@ public class NormalGame extends GameRender {
 			case ATTACK:
 				break;
 			case DEFENSE:
+				selectedCell.setAction(unitAction, world.player);
+				clearSelection();
+				actionType = UnitActionType.NONE;
 				break;
 			case MOVE:
 				if (cell.getState() == Cell.State.ABLE_TO_MOVE) {
@@ -510,7 +580,7 @@ public class NormalGame extends GameRender {
 					showAbleToMoveCells();
 					showAction(unitAction, true);
 				} else if (cell.getState() == Cell.State.MOVE_TARGET) {
-					clearAction();
+					clearMoveAction();
 					clearCells();
 					int index = ((MoveUnitAction) unitAction).moves.indexOf(
 							cell, true);
@@ -523,8 +593,8 @@ public class NormalGame extends GameRender {
 					showAbleToMoveCells();
 					showAction(unitAction, true);
 				} else {
-					clearAction();
-
+					clearMoveAction();
+					
 					selectedCell.setAction(unitAction, world.player);
 					MoveUnitAction action = (MoveUnitAction) unitAction;
 					mActions.add(action);

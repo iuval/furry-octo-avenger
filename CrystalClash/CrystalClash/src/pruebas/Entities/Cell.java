@@ -124,4 +124,8 @@ public class Cell extends GameObject {
 				.append(",\"y\":").append(pos.getY()).append("}");
 
 	}
+	
+	public boolean Equals(Object other){
+		return this.getGridPosition().equals(((Cell)other).getGridPosition());
+	}
 }
