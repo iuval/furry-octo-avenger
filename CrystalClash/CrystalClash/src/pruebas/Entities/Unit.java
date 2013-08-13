@@ -13,7 +13,6 @@ public class Unit extends GameObject {
 	private int range;
 	private String unitName;
 	private boolean enemy;
-
 	private UnitRender render;
 
 	public Unit(String unitName, boolean enemy, int hp) {
