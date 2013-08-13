@@ -62,4 +62,8 @@ public class GameController {
 	public int getUnitSpeedInScale(String unitName) {
 		return (int) ((getUnitSpeed(unitName) * 10) / unitMaxSpeed);
 	}
+	
+	public int getUnitRange(String unitName) {
+		return unitValues.get(unitName)[3];
+	}
 }

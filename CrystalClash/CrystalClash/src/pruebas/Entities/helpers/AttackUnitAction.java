@@ -6,8 +6,10 @@ import pruebas.Entities.GridPos;
 public class AttackUnitAction extends UnitAction {
 
 	public Cell target;
+	public boolean meleeAttack;
 
-	public AttackUnitAction() {
+	public AttackUnitAction(boolean meleeAttack) {
+		this.meleeAttack = meleeAttack;
 	}
 
 	@Override
