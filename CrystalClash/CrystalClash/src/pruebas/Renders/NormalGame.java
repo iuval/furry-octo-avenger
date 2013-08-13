@@ -542,10 +542,7 @@ public class NormalGame extends GameRender {
 		for (int i = 0; i < ghostlyUnits.size; i++) {
 			u = ghostlyUnits.get(i).getFirst();
 			
-			//u.getRender().setGhostly();
-			//PARA SACAR LO DE SUPERANIMATION CON LA IMAGEN Y EL NEW
 			batch.setColor(batch.getColor().r, batch.getColor().g, batch.getColor().b, 0.6f);
-			
 			u.getRender().draw(batch, dt);
 		}
 		batch.setColor(batch.getColor().r, batch.getColor().g, batch.getColor().b, 1);
@@ -554,10 +551,9 @@ public class NormalGame extends GameRender {
 		u = null;
 		for (int i = 0; i < defensiveUnits.size; i++) {
 			u = defensiveUnits.get(i).getUnit(world.player);
-			shieldAnimation.draw(batch, dt, u.getX(), u.getY(), false);
+			shieldAnimation.draw(batch, dt, u.getX(), u.getY());
 		}
 		
-
 		stage.addActor(grpActionBar);
 		grpActionBar.act(dt);
 		tweenManager.update(dt);
