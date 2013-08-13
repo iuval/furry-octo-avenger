@@ -5,7 +5,6 @@ import pruebas.Controllers.WorldController;
 import pruebas.CrystalClash.CrystalClash;
 import pruebas.Renders.helpers.CellHelper;
 import pruebas.Renders.helpers.UnitHelper;
-
 import aurelienribon.tweenengine.Timeline;
 import aurelienribon.tweenengine.Tween;
 import aurelienribon.tweenengine.TweenManager;
@@ -17,6 +16,8 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -70,7 +71,7 @@ public class WorldRender implements InputProcessor {
 	public void initNormalTurn() {
 		gameRender = new NormalGame(world);
 	}
-	
+
 	public void initTurnAnimations() {
 		gameRender = new TurnAnimations(world);
 	}
@@ -261,12 +262,12 @@ public class WorldRender implements InputProcessor {
 		Vector2 vec = GameEngine.getRealPosition(screenX, screenY);
 
 		if (hideMoreOptions
-				&& (vec.x > optionsBar.getX() + optionsBar.getWidth() || 
-						vec.y > btnSurrender.getTop() + 25)){
+				&& (vec.x > optionsBar.getX() + optionsBar.getWidth() || vec.y > btnSurrender
+						.getTop() + 25)) {
 			hideMoreOptions();
 		}
 		gameRender.touchDown(vec.x, vec.y, pointer, button);
-		
+
 		return false;
 	}
 

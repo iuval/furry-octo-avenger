@@ -123,7 +123,8 @@ public class SelectUnitsRender extends GameRender {
 				UnitListItem item = (UnitListItem) ((List) tabs
 						.getCurrentPanel()).getItemAt(x, y);
 				if (item != null) {
-					Unit u = new Unit(item.getUnitName());
+					Unit u = new Unit(item.getUnitName(), false, GameController
+							.getInstancia().getUnitLife(item.getUnitName()));
 					if (world.player == 2)
 						u.getRender().setFacing(FACING.left);
 					selectedUnit = u;

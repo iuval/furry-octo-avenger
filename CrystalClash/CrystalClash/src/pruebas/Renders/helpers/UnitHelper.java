@@ -8,13 +8,23 @@ import pruebas.Util.UnitAnimPrefReader;
 import pruebas.Util.UnitAnimPrefReader.UnitPrefReaderData;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 public class UnitHelper {
 	public static final float WIDTH = 135;
 	public static final float HEIGHT = 150;
+
+	public static final int HP_BAR_HEIGHT = 10;
+	public static final int HP_BAR_WIDTH = 50;
+	public static final int HP_BAR_Y = 130;
+	public static final int HP_BAR_X = 10;
+
 	public static Hashtable<String, UnitRender> renderMap;
+	public static Texture enemyHPBar;
+	public static Texture allyHPBar;
 
 	public static void init() {
 		renderMap = new Hashtable<String, UnitRender>();
@@ -35,7 +45,7 @@ public class UnitHelper {
 		UnitRender render = new UnitRender();
 		render.idleAnim = getUnitSuperAnimation(unitName, "idle");
 		render.idleAnim.randomCurrentFrame();
-		
+
 		// render.idleAnim = getUnitSuperAnimation(unitName, "attack");
 		render.walkAnim = getUnitSuperAnimation(unitName, "run");
 
@@ -47,7 +57,8 @@ public class UnitHelper {
 		String base_file_name = String.format("data/Units/%s/%s", unitName,
 				action);
 
-		UnitPrefReaderData data = UnitAnimPrefReader.load(base_file_name + ".pref");
+		UnitPrefReaderData data = UnitAnimPrefReader.load(base_file_name
+				+ ".pref");
 
 		Texture sheet = new Texture(Gdx.files.internal(base_file_name + ".png"));
 		TextureRegion[][] tmp = TextureRegion.split(sheet, sheet.getWidth()
@@ -60,10 +71,35 @@ public class UnitHelper {
 				frames[index++] = tmp[i][j];
 			}
 		}
-		
-		SuperAnimation anim = new SuperAnimation(data.total_time, data.image_times, frames);
+
+		SuperAnimation anim = new SuperAnimation(data.total_time,
+				data.image_times, frames);
 		anim.handle_x = data.handle_x;
 		anim.handle_y = data.handle_x;
 		return anim;
+	}
+
+	public static Texture getEnemyHPBar() {
+		if (enemyHPBar == null) {
+			enemyHPBar = createBar(1, 0, 0, 1);
+		}
+		return enemyHPBar;
+	}
+
+	public static Texture getAllyHPBar() {
+		if (allyHPBar == null) {
+			allyHPBar = createBar(0, 1, 0, 1);
+		}
+		return allyHPBar;
+	}
+
+	private static Texture createBar(int r, int g, int b, int a) {
+		Pixmap pixmap = new Pixmap(UnitHelper.HP_BAR_WIDTH,
+				UnitHelper.HP_BAR_HEIGHT, Format.RGBA4444); // or RGBA8888
+		pixmap.setColor(r, g, b, a);
+		pixmap.fill();
+		Texture text = new Texture(pixmap); // must be manually disposed
+		pixmap.dispose();
+		return text;
 	}
 }
