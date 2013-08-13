@@ -39,8 +39,8 @@ public class WorldController {
 		if (firstTurn) {
 			render.initFirstTurn();
 		} else {
-			render.initTurnAnimations();
-			// render.initNormalTurn();
+			//render.initTurnAnimations();
+			render.initNormalTurn();
 		}
 	}
 
