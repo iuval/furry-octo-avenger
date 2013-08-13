@@ -39,8 +39,8 @@ public class WorldController {
 		if (firstTurn) {
 			render.initFirstTurn();
 		} else {
-			render.initTurnAnimations();
-			// render.initNormalTurn();
+			//render.initTurnAnimations();
+			render.initNormalTurn();
 		}
 	}
 
@@ -75,7 +75,8 @@ public class WorldController {
 				((PlaceUnitAction) unitA).unitName = child
 						.getString("unit_name");
 			} else if (action.equals("attack")) {
-				unitA = new AttackUnitAction();
+				// TODO: Checkear!!!
+				unitA = new AttackUnitAction(false);
 			} else if (action.equals("move")) {
 				unitA = new MoveUnitAction();
 				JsonValue cells = child.get("target");

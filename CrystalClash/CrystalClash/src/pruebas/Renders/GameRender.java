@@ -12,6 +12,8 @@ public abstract class GameRender {
 		this.world = world;
 	}
 
+	public abstract void clearAllMoves();
+	
 	public abstract void render(float dt, SpriteBatch batch, Stage stage);
 
 	public abstract boolean touchDown(float x, float y, int pointer, int button);
