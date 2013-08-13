@@ -121,7 +121,7 @@ public class MenuGamesRender extends MenuRender {
 		scrollPane.invalidate();
 
 		gamesImage = new Image(new Texture(
-				Gdx.files.internal("data/Images/Menu/games_header.png")));
+				Gdx.files.internal("data/Images/Menu/current_games_header.png")));
 
 		list.addActor(gamesImage);
 

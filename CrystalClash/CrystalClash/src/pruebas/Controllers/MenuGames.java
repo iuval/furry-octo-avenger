@@ -52,8 +52,8 @@ public class MenuGames extends Menu {
 	}
 
 	public void getGameTurn(String gameId) {
-		ServerDriver.getGameTurn(GameController.getInstancia().getUser()
-				.getId(), gameId);
+		 ServerDriver.getGameTurn(GameController.getInstancia().getUser()
+		 .getId(), gameId);
 	}
 
 	public void gameTurnSuccess(String data) {
