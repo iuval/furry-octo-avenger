@@ -361,11 +361,14 @@ public class NormalGame extends GameRender {
 		int[][] cells = cell.neigbours;
 		Cell aux = null;
 		for (int i = 0; i < cell.neigbours.length; i++) {
-			aux = world.cellAtByGrid(cells[i][0], cells[i][1]);
-			aux.setState(Cell.State.ABLE_TO_ATTACK);
 			int enemyPlayer = world.player == 1 ? 2 : 1;
+			aux = world.cellAtByGrid(cells[i][0], cells[i][1]);
+			
 			if((checkIfUnit && aux.getUnit(enemyPlayer) == null) || hide)
 				aux.setState(Cell.State.NONE);
+			else{
+				aux.setState(Cell.State.ABLE_TO_ATTACK);
+			}
 			
 			if(range > 1)
 				showAbleToAttackCellAux(aux, checkIfUnit, range - 1, hide);

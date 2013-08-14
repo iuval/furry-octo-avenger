@@ -25,9 +25,12 @@ public class UnitHelper {
 	public static Hashtable<String, UnitRender> renderMap;
 	public static Texture enemyHPBar;
 	public static Texture allyHPBar;
+	
+	public static SuperAnimation shieldAnimation;
 
 	public static void init() {
 		renderMap = new Hashtable<String, UnitRender>();
+		shieldAnimation = loadShieldAnim();
 	}
 
 	public static UnitRender getUnitRender(String unitName) {
@@ -48,7 +51,7 @@ public class UnitHelper {
 
 		// render.idleAnim = getUnitSuperAnimation(unitName, "attack");
 		render.walkAnim = getUnitSuperAnimation(unitName, "run");
-		render.shieldAnim = loadShieldAnim();
+		render.shieldAnim = shieldAnimation;
 
 		return render;
 	}

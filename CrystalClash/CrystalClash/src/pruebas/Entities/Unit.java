@@ -23,11 +23,10 @@ public class Unit extends GameObject {
 			this.render = UnitHelper.getUnitRender(unitName);
 			this.render.setUnit(this);
 		}
-		this.setHP(hp);
 		this.unitName = unitName;
 		
 		GameController.getInstancia().loadUnitsStats();
-		this.hitPoints = GameController.getInstancia().getUnitLife(unitName);
+		this.hitPoints = hp;
 		this.damage = GameController.getInstancia().getUnitAttack(unitName);
 		this.velicity = GameController.getInstancia().getUnitSpeed(unitName);
 		this.range = GameController.getInstancia().getUnitRange(unitName);
