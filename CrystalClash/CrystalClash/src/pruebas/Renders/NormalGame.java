@@ -359,10 +359,11 @@ public class NormalGame extends GameRender {
 			checkIfUnit = true;
 		}
 		
-		showAbleToAttackCellAux(selectedCell, checkIfUnit, selectedUnit.getRange(), false);
+		showAbleToAttackCellRecirsive(selectedCell, checkIfUnit, selectedUnit.getRange(), false);
 	}
 	
-	private void showAbleToAttackCellAux(Cell cell, boolean checkIfUnit, int range, boolean hide){
+	//Method that actually "shows" (change state) the cell where units can attack
+	private void showAbleToAttackCellRecirsive(Cell cell, boolean checkIfUnit, int range, boolean hide){
 		int[][] cells = cell.neigbours;
 		Cell aux = null;
 		for (int i = 0; i < cell.neigbours.length; i++) {
@@ -376,7 +377,7 @@ public class NormalGame extends GameRender {
 			}
 			
 			if(range > 1)
-				showAbleToAttackCellAux(aux, checkIfUnit, range - 1, hide);
+				showAbleToAttackCellRecirsive(aux, checkIfUnit, range - 1, hide);
 		}
 	}
 	
@@ -385,7 +386,7 @@ public class NormalGame extends GameRender {
 		case PLACE:
 			break;
 		case ATTACK:
-			showAbleToAttackCellAux(selectedCell, false, selectedUnit.getRange(), true);
+			showAbleToAttackCellRecirsive(selectedCell, false, selectedUnit.getRange(), true);
 			break;
 		case DEFENSE:
 			break;

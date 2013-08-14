@@ -27,6 +27,7 @@ public class Unit extends GameObject {
 		
 		GameController.getInstancia().loadUnitsStats();
 		this.hitPoints = hp;
+		this.totalHitPoints = GameController.getInstancia().getUnitLife(unitName);
 		this.damage = GameController.getInstancia().getUnitAttack(unitName);
 		this.velicity = GameController.getInstancia().getUnitSpeed(unitName);
 		this.range = GameController.getInstancia().getUnitRange(unitName);

@@ -51,7 +51,7 @@ public class UnitHelper {
 
 		// render.idleAnim = getUnitSuperAnimation(unitName, "attack");
 		render.walkAnim = getUnitSuperAnimation(unitName, "run");
-		render.shieldAnim = shieldAnimation;
+		render.shieldAnim = shieldAnimation.clone();
 
 		return render;
 	}
