@@ -27,13 +27,14 @@ public class GameListItem extends Group {
 					"playStyle", TextButtonStyle.class));
 			buttonPlay.setBounds(0, 0, w, h);
 			buttonPlay.align(Align.center);
-			addActor(buttonPlay);
 			buttonPlay.addListener(playListener);
+			addActor(buttonPlay);
 		} else {
-			// background image
-			Image background = new Image(skin.getDrawable("play_down"));
-			background.setBounds(getX(), getY(), w, h);
-			addActor(background);
+			TextButton buttonWait = new TextButton(playerName, skin.get(
+					"waitStyle", TextButtonStyle.class));
+			buttonWait.setBounds(0, 0, w, h);
+			buttonWait.align(Align.center);
+			addActor(buttonWait);
 		}
 
 		Label labelTurn = new Label(turn, skin, "font", Color.WHITE);
