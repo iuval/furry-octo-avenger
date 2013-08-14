@@ -1,9 +1,18 @@
 package pruebas.Renders;
 
+import pruebas.Accessors.ActorAccessor;
 import pruebas.Controllers.MenuMaster;
 import pruebas.Controllers.WorldController;
 import pruebas.CrystalClash.CrystalClash;
 import pruebas.Enumerators.GameState;
+import pruebas.Renders.UnitRender.FACING;
+import pruebas.Renders.helpers.ui.SuperAnimatedActor;
+import pruebas.Util.FileUtil;
+import aurelienribon.tweenengine.BaseTween;
+import aurelienribon.tweenengine.Timeline;
+import aurelienribon.tweenengine.Tween;
+import aurelienribon.tweenengine.TweenCallback;
+import aurelienribon.tweenengine.TweenManager;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
@@ -37,6 +46,10 @@ public class GameEngine implements Screen {
 	private WorldController world;
 	private WorldRender worldRender;
 
+	private static TweenManager tweenManager;
+	private static SuperAnimatedActor loadingTexture;
+	private static boolean loading = false;
+
 	@Override
 	public void show() {
 		inputManager = new InputMultiplexer();
@@ -51,7 +64,14 @@ public class GameEngine implements Screen {
 		Gdx.input.setCatchBackKey(true);
 		Gdx.input.setInputProcessor(inputManager);
 
+		tweenManager = new TweenManager();
+
+		load();
 		openMenu();
+	}
+
+	private void load() {
+		loadingTexture = new SuperAnimatedActor(FileUtil.getSuperAnimation("data/Images/Menu/Loading/loading"), true, FACING.right);
 	}
 
 	@Override
@@ -82,17 +102,19 @@ public class GameEngine implements Screen {
 			batch.begin();
 			worldRender.render(dt, batch, stage);
 			batch.end();
-			stage.act(dt);
-			stage.draw();
 			break;
 		case InMenu:
 			menuRender.render(dt, stage);
-			stage.act(dt);
-			stage.draw();
 			break;
 		default:
 			break;
 		}
+		if (loading) {
+			stage.addActor(loadingTexture);
+		}
+		tweenManager.update(dt);
+		stage.act(dt);
+		stage.draw();
 	}
 
 	private void setState(GameState state) {
@@ -166,5 +188,28 @@ public class GameEngine implements Screen {
 		Vector3 vec = new Vector3(x, y, 0);
 		camera.unproject(vec);
 		return new Vector2(vec.x, vec.y);
+	}
+
+	public static void showLoading() {
+		loading = true;
+		float speed = 2.0f;
+		Timeline.createSequence()
+				.push(Tween.set(loadingTexture, ActorAccessor.ALPHA).target(0))
+				.push(Tween.to(loadingTexture, ActorAccessor.ALPHA, speed).target(1))
+				.start(tweenManager);
+		tweenManager.update(Float.MIN_VALUE);
+	}
+
+	public static void hideLoading() {
+		float speed = 2.0f;
+		Timeline.createSequence()
+				.push(Tween.to(loadingTexture, ActorAccessor.ALPHA, speed).target(0))
+				.setCallback(new TweenCallback() {
+					@Override
+					public void onEvent(int type, BaseTween<?> source) {
+						loading = false;
+					}
+				}).start(tweenManager);
+		tweenManager.update(Float.MIN_VALUE);
 	}
 }
