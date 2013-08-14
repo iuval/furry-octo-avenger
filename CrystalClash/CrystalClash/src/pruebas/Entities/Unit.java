@@ -14,6 +14,7 @@ public class Unit extends GameObject {
 	private int range;
 	private String unitName;
 	private boolean enemy;
+	private boolean inDefensePosition;
 	private UnitRender render;
 
 	public Unit(String unitName, boolean enemy, int hp) {
@@ -30,6 +31,7 @@ public class Unit extends GameObject {
 		this.damage = GameController.getInstancia().getUnitAttack(unitName);
 		this.velicity = GameController.getInstancia().getUnitSpeed(unitName);
 		this.range = GameController.getInstancia().getUnitRange(unitName);
+		inDefensePosition = false;
 	}
 
 	public Unit(String unitName) {
@@ -73,5 +75,13 @@ public class Unit extends GameObject {
 	
 	public boolean isMelee() {
 		return range == 1;
+	}
+	
+	public boolean isInDefensePosition() {
+		return inDefensePosition;
+	}
+	
+	public void setDefendingPosition(boolean position) {
+		inDefensePosition = position;
 	}
 }

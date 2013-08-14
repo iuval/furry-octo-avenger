@@ -48,6 +48,7 @@ public class UnitHelper {
 
 		// render.idleAnim = getUnitSuperAnimation(unitName, "attack");
 		render.walkAnim = getUnitSuperAnimation(unitName, "run");
+		render.shieldAnim = loadShieldAnim();
 
 		return render;
 	}
@@ -79,6 +80,28 @@ public class UnitHelper {
 		return anim;
 	}
 
+	private static SuperAnimation loadShieldAnim(){
+		String base_file_name = "data/Units/defensive_shield";
+		UnitPrefReaderData data = UnitAnimPrefReader.load(base_file_name + ".pref");
+		Texture sheet = new Texture(Gdx.files.internal(base_file_name + ".png"));
+		TextureRegion[][] tmp = TextureRegion.split(sheet, sheet.getWidth()
+				/ data.cols, sheet.getHeight() / data.rows);
+		TextureRegion[] frames = new TextureRegion[data.cols * data.rows];
+
+		int index = 0;
+		for (int i = 0; i < data.rows; i++) {
+			for (int j = 0; j < data.cols; j++) {
+				frames[index++] = tmp[i][j];
+			}
+		}
+		
+		SuperAnimation shieldAnimation = new SuperAnimation(data.total_time, data.image_times, frames);
+		shieldAnimation.handle_x = data.handle_x;
+		shieldAnimation.handle_y = data.handle_x;
+		
+		return shieldAnimation;
+	}
+	
 	public static Texture getEnemyHPBar() {
 		if (enemyHPBar == null) {
 			enemyHPBar = createBar(1, 0, 0, 1);

@@ -80,8 +80,7 @@ public class NormalGame extends GameRender {
 	private Array<MoveUnitAction> mActions;
 	private Array<Tuple<Unit, MoveUnitAction>> ghostlyUnits;
 	
-	private SuperAnimation shieldAnimation;
-	private Array<Cell> defensiveUnits;
+	private Array<Unit> defensiveUnits;
 	
 	private Array<AttackUnitAction> aActions;
 	
@@ -105,12 +104,11 @@ public class NormalGame extends GameRender {
 		mActions = new Array<MoveUnitAction>();
 		ghostlyUnits = new Array<Tuple<Unit, MoveUnitAction>>();
 		
-		defensiveUnits = new Array<Cell>();
+		defensiveUnits = new Array<Unit>();
 		
 		aActions = new Array<AttackUnitAction>();
 		
 		init();
-		loadShieldAnim();
 		clearAllMoves();
 	}
 
@@ -192,7 +190,8 @@ public class NormalGame extends GameRender {
 				updateActionsBar();
 				unitAction = new DefendUnitAction();
 				unitAction.origin = selectedCell;
-				defensiveUnits.add(selectedCell);
+				defensiveUnits.add(selectedUnit);
+				selectedUnit.setDefendingPosition(true);
 				
 				showAction(unitAction, false);
 				actionType = UnitActionType.DEFENSE;
@@ -515,7 +514,7 @@ public class NormalGame extends GameRender {
 			actionType = UnitActionType.NONE;
 			break;
 		case DEFENSE:
-			defensiveUnits.removeValue(selectedCell, false);
+			selectedUnit.setDefendingPosition(false);
 			
 			unitAction = new NoneUnitAction();
 			selectedCell.setAction(unitAction, world.player);
@@ -576,26 +575,6 @@ public class NormalGame extends GameRender {
 		mActions.removeValue(action, false);
 	}
 	
-	private void loadShieldAnim(){
-		String base_file_name = "data/Units/defensive_shield";
-		UnitPrefReaderData data = UnitAnimPrefReader.load(base_file_name + ".pref");
-		Texture sheet = new Texture(Gdx.files.internal(base_file_name + ".png"));
-		TextureRegion[][] tmp = TextureRegion.split(sheet, sheet.getWidth()
-				/ data.cols, sheet.getHeight() / data.rows);
-		TextureRegion[] frames = new TextureRegion[data.cols * data.rows];
-
-		int index = 0;
-		for (int i = 0; i < data.rows; i++) {
-			for (int j = 0; j < data.cols; j++) {
-				frames[index++] = tmp[i][j];
-			}
-		}
-		
-		shieldAnimation = new SuperAnimation(data.total_time, data.image_times, frames);
-		shieldAnimation.handle_x = data.handle_x;
-		shieldAnimation.handle_y = data.handle_x;
-	}
-	
 	@Override
 	public void clearAllMoves() {
 		clearSelection();
@@ -604,6 +583,10 @@ public class NormalGame extends GameRender {
 		alreadyAssigned.clear();
 		ghostlyUnits.clear();
 		aActions.clear();
+		
+		for (int i = 0; i < defensiveUnits.size; i++) {
+			defensiveUnits.get(i).setDefendingPosition(false);
+		}
 		defensiveUnits.clear();
 		
 		for (int i = 0; i < world.cellGrid.length; i++) {
@@ -629,13 +612,6 @@ public class NormalGame extends GameRender {
 			u.getRender().draw(batch, dt);
 		}
 		batch.setColor(batch.getColor().r, batch.getColor().g, batch.getColor().b, 1);
-		
-		shieldAnimation.update(dt, true, FACING.left);
-		u = null;
-		for (int i = 0; i < defensiveUnits.size; i++) {
-			u = defensiveUnits.get(i).getUnit(world.player);
-			shieldAnimation.draw(batch, dt, u.getX(), u.getY());
-		}
 		
 		stage.addActor(grpActionBar);
 		grpActionBar.act(dt);

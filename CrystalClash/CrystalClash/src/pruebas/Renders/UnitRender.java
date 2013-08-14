@@ -21,6 +21,7 @@ public class UnitRender {
 	public SuperAnimation idleAnim;
 	public SuperAnimation fightAnim;
 	public SuperAnimation walkAnim;
+	public SuperAnimation shieldAnim;
 	private SuperAnimation currnetAnim;
 	private Texture hpBar;
 	private float hpWidth;
@@ -72,10 +73,14 @@ public class UnitRender {
 
 	public void draw(SpriteBatch batch, float dt) {
 		currnetAnim.update(dt, true, facing);
+		shieldAnim.update(dt, true, facing);
 		currnetAnim.draw(batch, dt, unit.getX(), unit.getY());
 		batch.draw(hpBar, unit.getX() + UnitHelper.HP_BAR_X, unit.getY()
 				+ UnitHelper.HP_BAR_Y, hpWidth, UnitHelper.HP_BAR_HEIGHT);
-	}
+		
+		if(unit.isInDefensePosition())
+			shieldAnim.draw(batch, dt, unit.getX(), unit.getY());
+	}	
 
 	public UnitRender clone() {
 		UnitRender ren = new UnitRender();
