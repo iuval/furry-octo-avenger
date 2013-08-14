@@ -47,7 +47,8 @@ public class MenuGamesRender extends MenuRender {
 	private InputListener surrenderListener;
 	private InputListener playListener;
 	private Skin listItemSkin;
-	private TextButton buttonNewRandom;
+	private TextButton btnNewRandom;
+	private TextButton btnNewInvite;
 
 	public MenuGamesRender(MenuGames menu) {
 		this.controller = menu;
@@ -96,7 +97,7 @@ public class MenuGamesRender extends MenuRender {
 				new LabelStyle(font, Color.WHITE));
 		lblHeading.setPosition(50, CrystalClash.HEIGHT - 50);
 
-		btnLogOut = new TextButton("Log Out", listItemSkin.get("buttonStyle",
+		btnLogOut = new TextButton("Log Out", listItemSkin.get("innerButtonStyle",
 				TextButtonStyle.class));
 		btnLogOut.setPosition(CrystalClash.WIDTH - btnLogOut.getWidth() - 50,
 				CrystalClash.HEIGHT - btnLogOut.getHeight() - 10);
@@ -129,24 +130,24 @@ public class MenuGamesRender extends MenuRender {
 				Gdx.files.internal("data/Images/Menu/new_games_header.png")));
 		list.addActor(menuImage);
 
-		buttonNewRandom = new TextButton("New random game", listItemSkin.get(
-				"buttonStyle", TextButtonStyle.class));
-		buttonNewRandom.setBounds(0, 0, list.getWidth(), 160);
-		buttonNewRandom.align(Align.center);
-		list.addActorAfter(menuImage, buttonNewRandom);
-		buttonNewRandom.addListener(new ClickListener() {
+		btnNewRandom = new TextButton("New random game", listItemSkin.get(
+				"outterButtonStyle", TextButtonStyle.class));
+		btnNewRandom.setBounds(0, 0, list.getWidth(), 160);
+		btnNewRandom.align(Align.center);
+		btnNewRandom.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
 				((TextButton) event.getListenerActor()).setText("Loading...");
 				controller.enableRandom();
 			}
 		});
+		list.addActorAfter(menuImage, btnNewRandom);
 
-		TextButton buttonNewInvite = new TextButton("Invite friend",
-				listItemSkin.get("buttonStyle", TextButtonStyle.class));
-		buttonNewInvite.setBounds(0, 0, list.getWidth(), 160);
-		buttonNewInvite.align(Align.center);
-		list.addActorAfter(menuImage, buttonNewInvite);
+		btnNewInvite = new TextButton("Invite friend",
+				listItemSkin.get("outterButtonStyle", TextButtonStyle.class));
+		btnNewInvite.setBounds(0, 0, list.getWidth(), 160);
+		btnNewInvite.align(Align.center);
+		list.addActorAfter(menuImage, btnNewInvite);
 
 		ServerDriver.getListGames(GameController.getInstancia().getUser()
 				.getId());
@@ -199,6 +200,14 @@ public class MenuGamesRender extends MenuRender {
 		listItemSkin.add(
 				"play_down",
 				new Texture(Gdx.files
+						.internal("data/Images/Menu/games_list_item_green.png")));
+		listItemSkin.add(
+				"wait_up",
+				new Texture(Gdx.files
+						.internal("data/Images/Menu/games_list_item_red.png")));
+		listItemSkin.add(
+				"wait_down",
+				new Texture(Gdx.files
 						.internal("data/Images/Menu/games_list_item_red.png")));
 		listItemSkin.add(
 				"surrender_up",
@@ -209,11 +218,18 @@ public class MenuGamesRender extends MenuRender {
 						new Texture(
 								Gdx.files
 										.internal("data/Images/Menu/button_surrender_pressed.png")));
+		
 		TextButtonStyle playStyle = new TextButtonStyle();
 		playStyle.font = listItemSkin.getFont("font");
 		playStyle.up = listItemSkin.getDrawable("play_up");
 		playStyle.down = listItemSkin.getDrawable("play_down");
 		listItemSkin.add("playStyle", playStyle);
+		
+		TextButtonStyle waitStyle = new TextButtonStyle();
+		waitStyle.font = listItemSkin.getFont("font");
+		waitStyle.up = listItemSkin.getDrawable("wait_up");
+		waitStyle.down = listItemSkin.getDrawable("wait_down");
+		listItemSkin.add("waitStyle", waitStyle);
 
 		TextButtonStyle surrenderStyle = new TextButtonStyle();
 		surrenderStyle.font = listItemSkin.getFont("font");
@@ -225,7 +241,13 @@ public class MenuGamesRender extends MenuRender {
 		innerStyle.font = listItemSkin.getFont("font");
 		innerStyle.up = listItemSkin.getDrawable("button_orange");
 		innerStyle.down = listItemSkin.getDrawable("button_orange_pressed");
-		listItemSkin.add("buttonStyle", innerStyle);
+		listItemSkin.add("innerButtonStyle", innerStyle);
+		
+		TextButtonStyle outterStyle = new TextButtonStyle();
+		outterStyle.font = listItemSkin.getFont("font");
+		outterStyle.up = listItemSkin.getDrawable("outer_button_orange");
+		outterStyle.down = listItemSkin.getDrawable("outer_button_orange_pressed");
+		listItemSkin.add("outterButtonStyle", outterStyle);
 	}
 
 	public void listGamesError(String message) {
@@ -233,7 +255,7 @@ public class MenuGamesRender extends MenuRender {
 	}
 
 	public void enableRandomSuccess() {
-		buttonNewRandom.setText("New random game");
+		btnNewRandom.setText("New random game");
 	}
 
 	public void enableRandomError(String message) {
