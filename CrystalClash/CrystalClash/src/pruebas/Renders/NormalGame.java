@@ -10,12 +10,16 @@ import pruebas.Entities.Unit;
 import pruebas.Entities.helpers.AttackUnitAction;
 import pruebas.Entities.helpers.DefendUnitAction;
 import pruebas.Entities.helpers.MoveUnitAction;
+import pruebas.Entities.helpers.NoneUnitAction;
 import pruebas.Entities.helpers.PlaceUnitAction;
 import pruebas.Entities.helpers.UnitAction;
 import pruebas.Entities.helpers.UnitAction.UnitActionType;
 import pruebas.Renders.UnitRender.FACING;
 import pruebas.Renders.helpers.CellHelper;
+import pruebas.Util.SuperAnimation;
 import pruebas.Util.Tuple;
+import pruebas.Util.UnitAnimPrefReader;
+import pruebas.Util.UnitAnimPrefReader.UnitPrefReaderData;
 import aurelienribon.tweenengine.BaseTween;
 import aurelienribon.tweenengine.Timeline;
 import aurelienribon.tweenengine.Tween;
@@ -75,7 +79,11 @@ public class NormalGame extends GameRender {
 	private Array<Cell> alreadyAssigned;
 	private Array<MoveUnitAction> mActions;
 	private Array<Tuple<Unit, MoveUnitAction>> ghostlyUnits;
-
+	
+	private Array<Unit> defensiveUnits;
+	
+	private Array<AttackUnitAction> aActions;
+	
 	public NormalGame(WorldController world) {
 		super(world);
 
@@ -95,7 +103,13 @@ public class NormalGame extends GameRender {
 		alreadyAssigned = new Array<Cell>();
 		mActions = new Array<MoveUnitAction>();
 		ghostlyUnits = new Array<Tuple<Unit, MoveUnitAction>>();
+		
+		defensiveUnits = new Array<Unit>();
+		
+		aActions = new Array<AttackUnitAction>();
+		
 		init();
+		clearAllMoves();
 	}
 
 	public void init() {
@@ -152,11 +166,13 @@ public class NormalGame extends GameRender {
 		btnAttack.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
-				// TODO: Pintar AbleToAttack
 				btnUndo.setPosition(btnAttack.getX(), btnDefense.getY());
 				undoVisible = true;
 				updateActionsBar();
-				unitAction = new AttackUnitAction();
+				unitAction = new AttackUnitAction(selectedUnit.isMelee());
+				unitAction.origin = selectedCell;
+				
+				showAbleToAttackCells();
 			}
 		});
 
@@ -169,11 +185,16 @@ public class NormalGame extends GameRender {
 		btnDefense.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
-				// TODO: Pintar Escudito
 				btnUndo.setPosition(btnDefense.getX(), btnDefense.getY());
 				undoVisible = true;
 				updateActionsBar();
 				unitAction = new DefendUnitAction();
+				unitAction.origin = selectedCell;
+				defensiveUnits.add(selectedUnit);
+				selectedUnit.setDefendingPosition(true);
+				
+				showAction(unitAction, false);
+				actionType = UnitActionType.DEFENSE;
 			}
 		});
 
@@ -191,6 +212,7 @@ public class NormalGame extends GameRender {
 				updateActionsBar();
 
 				unitAction = new MoveUnitAction();
+				unitAction.origin = selectedCell;
 				((MoveUnitAction) unitAction).moves.add(selectedCell);
 
 				showAbleToMoveCells();
@@ -312,22 +334,59 @@ public class NormalGame extends GameRender {
 
 		if (((MoveUnitAction) unitAction).moves.size <= maxMoves) {
 			Cell top = ((MoveUnitAction) unitAction).moves.peek();
-			int[][] cells = top.neigbours;
-			Cell aux = null;
-			for (int i = 0; i < top.neigbours.length; i++) {
-				aux = world.cellAtByGrid(cells[i][0], cells[i][1]);
-				if (aux.getUnit(world.player) == null
-						&& !alreadyAssigned.contains(aux, true))
-					aux.setState(Cell.State.ABLE_TO_MOVE);
+			int enemyPlayer = world.player == 1 ? 2 : 1;
+			boolean continueMoving = top.getUnit(enemyPlayer) == null;
+			
+			if (continueMoving) {
+				int[][] cells = top.neigbours;
+				Cell aux = null;
+				for (int i = 0; i < top.neigbours.length; i++) {
+					aux = world.cellAtByGrid(cells[i][0], cells[i][1]);
+					if (aux.getUnit(world.player) == null
+							&& !alreadyAssigned.contains(aux, true))
+						aux.setState(Cell.State.ABLE_TO_MOVE);
+				}
 			}
 		}
 	}
 
+	private void showAbleToAttackCells() {
+		clearCells();
+		actionType = UnitActionType.ATTACK;
+
+		boolean checkIfUnit = false;
+		if (selectedUnit.isMelee()) {
+			checkIfUnit = true;
+		}
+		
+		showAbleToAttackCellRecirsive(selectedCell, checkIfUnit, selectedUnit.getRange(), false);
+	}
+	
+	//Method that actually "shows" (change state) the cell where units can attack
+	private void showAbleToAttackCellRecirsive(Cell cell, boolean checkIfUnit, int range, boolean hide){
+		int[][] cells = cell.neigbours;
+		Cell aux = null;
+		for (int i = 0; i < cell.neigbours.length; i++) {
+			int enemyPlayer = world.player == 1 ? 2 : 1;
+			aux = world.cellAtByGrid(cells[i][0], cells[i][1]);
+			
+			if((checkIfUnit && aux.getUnit(enemyPlayer) == null) || hide)
+				aux.setState(Cell.State.NONE);
+			else{
+				aux.setState(Cell.State.ABLE_TO_ATTACK);
+			}
+			
+			if(range > 1)
+				showAbleToAttackCellRecirsive(aux, checkIfUnit, range - 1, hide);
+		}
+	}
+	
 	private void clearCells() {
 		switch (actionType) {
 		case PLACE:
 			break;
 		case ATTACK:
+			showAbleToAttackCellRecirsive(selectedCell, false, selectedUnit.getRange(), true);
 			break;
 		case DEFENSE:
 			break;
@@ -360,53 +419,75 @@ public class NormalGame extends GameRender {
 
 	private void showAction(UnitAction action, boolean stillAssigning) {
 		unitAction = action;
-		switch (unitAction.getActionType()) {
+		GridPos g = null;
+		switch(unitAction.getActionType()){
 		case ATTACK:
+			btnUndo.setPosition(btnAttack.getX(), btnDefense.getY());
+			if(stillAssigning){
+				showAbleToAttackCells();
+			}
+
+			g = ((AttackUnitAction) action).target.getGridPosition();
+			world.setCellStateByGridPos(g.getX(), g.getY(), Cell.State.ATTACK_TARGET_CENTER);
 			break;
 		case DEFENSE:
+			actionType = UnitActionType.DEFENSE;
+			btnUndo.setPosition(btnDefense.getX(), btnDefense.getY());
 			break;
 		case MOVE:
-			if (stillAssigning) {
+			actionType = UnitActionType.MOVE;
+			btnUndo.setPosition(btnMove.getX(), btnDefense.getY());
+			if(stillAssigning){
 				showAbleToMoveCells();
 			}
 
 			for (int i = 0; i < ((MoveUnitAction) action).moves.size; i++) {
-				GridPos g = ((MoveUnitAction) action).moves.get(i)
-						.getGridPosition();
-				world.setCellStateByGridPos(g.getX(), g.getY(),
-						Cell.State.MOVE_TARGET);
+				g = ((MoveUnitAction) action).moves.get(i).getGridPosition();
+				world.setCellStateByGridPos(g.getX(), g.getY(), Cell.State.MOVE_TARGET);
 			}
 			lblMoves.setText(maxMoves + 1
 					- ((MoveUnitAction) unitAction).moves.size + "");
 			undoVisible = true;
 			break;
 		case NONE:
+			undoVisible = false;
+			actionType = UnitActionType.NONE;
 			break;
 		case PLACE:
 			undoVisible = false;
+			actionType = UnitActionType.NONE;
 			break;
 		default:
 			break;
 		}
 	}
 
-	private void showMovePaths() {
-		for (int i = 0; i < mActions.size; i++) {
+	private void showAssignedActions(){
+		for(int i = 0; i < mActions.size; i++){
 			showAction(mActions.get(i), false);
 		}
+		
+		for(int i = 0; i < aActions.size; i++){
+			showAction(aActions.get(i), false);
+		}
+		
 		actionType = UnitActionType.NONE;
 	}
-
-	private void hideAction(UnitAction action) {
-		switch (action.getActionType()) {
+	
+	private void hideAction(UnitAction action){
+		GridPos g = null;
+		switch(action.getActionType()){
 		case ATTACK:
+			if (((AttackUnitAction) action).target != null) {
+				g = ((AttackUnitAction) action).target.getGridPosition();
+				world.setCellStateByGridPos(g.getX(), g.getY(), Cell.State.NONE);
+			}
 			break;
 		case DEFENSE:
 			break;
 		case MOVE:
 			for (int i = 0; i < ((MoveUnitAction) action).moves.size; i++) {
-				GridPos g = ((MoveUnitAction) action).moves.get(i)
-						.getGridPosition();
+				g = ((MoveUnitAction) action).moves.get(i).getGridPosition();
 				world.setCellStateByGridPos(g.getX(), g.getY(), Cell.State.NONE);
 			}
 			break;
@@ -418,26 +499,56 @@ public class NormalGame extends GameRender {
 			break;
 		}
 	}
-
-	private void hideMovePaths() {
-		for (int i = 0; i < mActions.size; i++) {
+	
+	private void hideAssignedActions(){
+		for(int i = 0; i < mActions.size; i++){
 			hideAction(mActions.get(i));
+		}
+		
+		for(int i = 0; i < aActions.size; i++){
+			hideAction(aActions.get(i));
 		}
 		actionType = UnitActionType.NONE;
 	}
+	
+	private void undoAction(){
+		switch(actionType){
+		case ATTACK:
+			clearCells();
+			hideAction(unitAction);
+			aActions.removeValue((AttackUnitAction) unitAction, false);
+			
+			unitAction = new NoneUnitAction();
+			selectedCell.setAction(unitAction, world.player);
+			
+			actionType = UnitActionType.NONE;
+			break;
+		case DEFENSE:
+			selectedUnit.setDefendingPosition(false);
+			
+			unitAction = new NoneUnitAction();
+			selectedCell.setAction(unitAction, world.player);
+			
+			actionType = UnitActionType.NONE;
+			break;
+		case MOVE:
+			clearCells();
+			lblMoves.setText(maxMoves + "");
 
-	private void undoAction() {
-		clearCells();
-		lblMoves.setText(maxMoves + "");
-
-		clearAction();
-
-		unitAction = new PlaceUnitAction();
-		((PlaceUnitAction) unitAction).unitName = selectedCell.getUnit(
-				world.player).getName();
-		selectedCell.setAction(unitAction, world.player);
-
-		actionType = UnitActionType.NONE;
+			clearMoveAction();
+			
+			unitAction = new NoneUnitAction();
+			selectedCell.setAction(unitAction, world.player);
+			
+			actionType = UnitActionType.NONE;
+			break;
+		case NONE:
+			break;
+		case PLACE:
+			break;
+		default:
+			break;
+		}
 	}
 
 	private void updateActionsBar() {
@@ -457,10 +568,9 @@ public class NormalGame extends GameRender {
 			grpActionBar.removeActor(btnUndo);
 		}
 	}
-
-	// Borra la action de la lista, saca el fantasma y saca la cell de las
-	// asignadas
-	private void clearAction() {
+	
+	//Borra la action de la lista, saca el fantasma y saca la cell de las asignadas
+	private void clearMoveAction(){
 		MoveUnitAction action = (MoveUnitAction) unitAction;
 		MoveUnitAction aux = null;
 		for (int i = 0; i < ghostlyUnits.size; i++) {
@@ -474,7 +584,32 @@ public class NormalGame extends GameRender {
 
 		mActions.removeValue(action, false);
 	}
-
+	
+	@Override
+	public void clearAllMoves() {
+		clearSelection();
+		
+		mActions.clear();
+		alreadyAssigned.clear();
+		ghostlyUnits.clear();
+		aActions.clear();
+		
+		for (int i = 0; i < defensiveUnits.size; i++) {
+			defensiveUnits.get(i).setDefendingPosition(false);
+		}
+		defensiveUnits.clear();
+		
+		for (int i = 0; i < world.cellGrid.length; i++) {
+			for (int j = 0; j < world.cellGrid[0].length; j++) {
+				unitAction = new NoneUnitAction();
+				world.cellGrid[i][j].setAction(unitAction, world.player);
+				world.cellGrid[i][j].setState(Cell.State.NONE);
+			}
+		}
+		
+		actionType = UnitActionType.NONE;
+	}
+	
 	@Override
 	public void render(float dt, SpriteBatch batch, Stage stage) {
 		selectorArrow.draw(batch, 1);
@@ -482,10 +617,12 @@ public class NormalGame extends GameRender {
 		Unit u = null;
 		for (int i = 0; i < ghostlyUnits.size; i++) {
 			u = ghostlyUnits.get(i).getFirst();
-			u.getRender().setGhostly();
+			
+			batch.setColor(batch.getColor().r, batch.getColor().g, batch.getColor().b, 0.6f);
 			u.getRender().draw(batch, dt);
 		}
-
+		batch.setColor(batch.getColor().r, batch.getColor().g, batch.getColor().b, 1);
+		
 		stage.addActor(grpActionBar);
 		grpActionBar.act(dt);
 		tweenManager.update(dt);
@@ -499,18 +636,33 @@ public class NormalGame extends GameRender {
 			case PLACE:
 				break;
 			case ATTACK:
+				if (cell.getState() == Cell.State.ABLE_TO_ATTACK) {
+					showAbleToAttackCells();
+					cell.setState(Cell.State.ATTACK_TARGET_CENTER);
+					((AttackUnitAction) unitAction).target = cell;
+				} else {
+					selectedCell.setAction(unitAction, world.player);
+					aActions.add((AttackUnitAction) unitAction);
+					clearCells();
+					clearSelection();
+					showAssignedActions();
+				}
 				break;
 			case DEFENSE:
+				selectedCell.setAction(unitAction, world.player);
+				clearSelection();
+				actionType = UnitActionType.NONE;
 				break;
 			case MOVE:
 				if (cell.getState() == Cell.State.ABLE_TO_MOVE) {
 					lblMoves.setText(maxMoves
 							- ((MoveUnitAction) unitAction).moves.size + "");
 					((MoveUnitAction) unitAction).moves.add(cell);
-					showAbleToMoveCells();
+					
+					clearCells();
 					showAction(unitAction, true);
 				} else if (cell.getState() == Cell.State.MOVE_TARGET) {
-					clearAction();
+					clearMoveAction();
 					clearCells();
 					int index = ((MoveUnitAction) unitAction).moves.indexOf(
 							cell, true);
@@ -520,11 +672,12 @@ public class NormalGame extends GameRender {
 
 					lblMoves.setText(maxMoves + 1
 							- ((MoveUnitAction) unitAction).moves.size + "");
-					showAbleToMoveCells();
+					
+					clearCells();
 					showAction(unitAction, true);
 				} else {
-					clearAction();
-
+					clearMoveAction();
+					
 					selectedCell.setAction(unitAction, world.player);
 					MoveUnitAction action = (MoveUnitAction) unitAction;
 					mActions.add(action);
@@ -554,11 +707,11 @@ public class NormalGame extends GameRender {
 
 					clearCells();
 					clearSelection();
-					showMovePaths();
+					showAssignedActions();
 				}
 				break;
 			case NONE:
-				showMovePaths();
+				showAssignedActions();
 				Unit u = cell.getUnit(world.player);
 				if (u != null) {
 					clearSelection();
@@ -572,8 +725,8 @@ public class NormalGame extends GameRender {
 								selectedUnit.getName());
 						lblMoves.setText(maxMoves + "");
 
-						hideMovePaths();
-						if (cell.getAction(world.player) != null) {
+						hideAssignedActions();
+						if(cell.getAction(world.player) != null){
 							showAction(cell.getAction(world.player), true);
 						}
 

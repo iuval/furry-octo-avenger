@@ -31,10 +31,4 @@ public class MoveUnitAction extends UnitAction {
 	public UnitActionType getActionType() {
 		return UnitActionType.MOVE;
 	}
-	
-	public boolean equals(Object other){
-		MoveUnitAction m = (MoveUnitAction) other;
-		
-		return this.origin == m.origin;
-	}
 }

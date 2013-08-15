@@ -22,7 +22,6 @@ import com.badlogic.gdx.utils.Array;
 
 public class TurnAnimations extends GameRender {
 
-
 	private TweenManager tweenManager;
 
 	private Array<MoveUnitAction> player1Moves;
@@ -168,6 +167,12 @@ public class TurnAnimations extends GameRender {
 	}
 
 	@Override
+	public void clearAllMoves() {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	@Override
 	public void render(float dt, SpriteBatch batch, Stage stage) {
 		tweenManager.update(dt);
 	}
@@ -194,6 +199,4 @@ public class TurnAnimations extends GameRender {
 	public boolean pan(float x, float y, float deltaX, float deltaY) {
 		return false;
 	}
-
-
 }

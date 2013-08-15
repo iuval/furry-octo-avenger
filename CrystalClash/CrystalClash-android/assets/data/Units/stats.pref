@@ -2,15 +2,19 @@ fire_archer
   life: 450
   attack: 150
   speed: 1
+  range: 2
 earth_tank
   life: 850
   attack: 50
   speed: 2
+  range: 1
 darkness_mage
   life: 340
   attack: 150
   speed: 1
+  range: 3
 wind_assassin
   life: 450
   attack: 150
   speed: 4
+  range: 1

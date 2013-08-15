@@ -20,7 +20,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
  */
 public class SuperAnimation {
 	private TextureRegion current;
-	private Image currentImage;
 
 	public static final int NORMAL = 0;
 	public static final int LOOP = 1;
@@ -199,15 +198,8 @@ public class SuperAnimation {
 		return keyFrames.length - 1 < frameNumber;
 	}
 
-	public void draw(SpriteBatch batch, float dt, float x, float y, boolean ghostly) {
-		if (ghostly) {
-			currentImage = new Image(current);
-			currentImage.getColor().a = 0.6f;
-			currentImage.setPosition(x - handle_x, y - handle_y);
-			currentImage.draw(batch, 1);
-		} else {
-			batch.draw(current, x - handle_x, y - handle_y);
-		}
+	public void draw(SpriteBatch batch, float dt, float x, float y) {
+		batch.draw(current, x - handle_x, y - handle_y);
 	}
 
 	/**

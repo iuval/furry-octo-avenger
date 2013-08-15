@@ -1,5 +1,6 @@
 package pruebas.Entities;
 
+import pruebas.Controllers.GameController;
 import pruebas.Renders.UnitRender;
 import pruebas.Renders.helpers.UnitHelper;
 
@@ -13,7 +14,7 @@ public class Unit extends GameObject {
 	private int range;
 	private String unitName;
 	private boolean enemy;
-
+	private boolean inDefensePosition;
 	private UnitRender render;
 
 	public Unit(String unitName, boolean enemy, int hp) {
@@ -22,8 +23,15 @@ public class Unit extends GameObject {
 			this.render = UnitHelper.getUnitRender(unitName);
 			this.render.setUnit(this);
 		}
-		this.setHP(hp);
 		this.unitName = unitName;
+		
+		GameController.getInstancia().loadUnitsStats();
+		this.hitPoints = hp;
+		this.totalHitPoints = GameController.getInstancia().getUnitLife(unitName);
+		this.damage = GameController.getInstancia().getUnitAttack(unitName);
+		this.velicity = GameController.getInstancia().getUnitSpeed(unitName);
+		this.range = GameController.getInstancia().getUnitRange(unitName);
+		inDefensePosition = false;
 	}
 
 	public Unit(String unitName) {
@@ -59,5 +67,21 @@ public class Unit extends GameObject {
 
 	public boolean isEnemy() {
 		return enemy;
+	}
+	
+	public int getRange() {
+		return range;
+	}
+	
+	public boolean isMelee() {
+		return range == 1;
+	}
+	
+	public boolean isInDefensePosition() {
+		return inDefensePosition;
+	}
+	
+	public void setDefendingPosition(boolean position) {
+		inDefensePosition = position;
 	}
 }

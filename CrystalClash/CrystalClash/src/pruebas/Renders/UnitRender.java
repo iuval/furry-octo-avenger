@@ -21,14 +21,13 @@ public class UnitRender {
 	public SuperAnimation idleAnim;
 	public SuperAnimation fightAnim;
 	public SuperAnimation walkAnim;
+	public SuperAnimation shieldAnim;
 	private SuperAnimation currnetAnim;
 	private Texture hpBar;
 	private float hpWidth;
 	private FACING facing = FACING.right;
-	private boolean ghostly;
 
 	public UnitRender() {
-		ghostly = false;
 	}
 
 	public Unit getUnit() {
@@ -74,10 +73,15 @@ public class UnitRender {
 
 	public void draw(SpriteBatch batch, float dt) {
 		currnetAnim.update(dt, true, facing);
-		currnetAnim.draw(batch, dt, unit.getX(), unit.getY(), ghostly);
+		currnetAnim.draw(batch, dt, unit.getX(), unit.getY());
 		batch.draw(hpBar, unit.getX() + UnitHelper.HP_BAR_X, unit.getY()
 				+ UnitHelper.HP_BAR_Y, hpWidth, UnitHelper.HP_BAR_HEIGHT);
-	}
+		
+		if(unit.isInDefensePosition()){
+			shieldAnim.update(dt, true, facing);
+			shieldAnim.draw(batch, dt, unit.getX(), unit.getY());
+		}
+	}	
 
 	public UnitRender clone() {
 		UnitRender ren = new UnitRender();
@@ -86,9 +90,5 @@ public class UnitRender {
 		ren.walkAnim = walkAnim.clone();
 		ren.setAnimation(ANIM.idle);
 		return ren;
-	}
-
-	public void setGhostly() {
-		ghostly = true;
 	}
 }
