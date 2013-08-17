@@ -4,6 +4,10 @@ import pruebas.Controllers.MenuMaster;
 import pruebas.Controllers.WorldController;
 import pruebas.CrystalClash.CrystalClash;
 import pruebas.Enumerators.GameState;
+import pruebas.Renders.UnitRender.FACING;
+import pruebas.Renders.helpers.ui.SuperAnimatedActor;
+import pruebas.Util.FileUtil;
+import aurelienribon.tweenengine.TweenManager;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
@@ -37,6 +41,10 @@ public class GameEngine implements Screen {
 	private WorldController world;
 	private WorldRender worldRender;
 
+	private static TweenManager tweenManager;
+	private static SuperAnimatedActor loadingTexture;
+	private static boolean loading = false;
+
 	@Override
 	public void show() {
 		inputManager = new InputMultiplexer();
@@ -51,7 +59,14 @@ public class GameEngine implements Screen {
 		Gdx.input.setCatchBackKey(true);
 		Gdx.input.setInputProcessor(inputManager);
 
+		tweenManager = new TweenManager();
+
+		load();
 		openMenu();
+	}
+
+	private void load() {
+		loadingTexture = new SuperAnimatedActor(FileUtil.getSuperAnimation("data/Images/Menu/Loading/loading"), true, FACING.right);
 	}
 
 	@Override
@@ -76,22 +91,28 @@ public class GameEngine implements Screen {
 	private void renderGame(float dt) {
 		Gdx.gl.glClearColor(0, 0, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
 		switch (state) {
 		case InGame:
 			batch.begin();
 			worldRender.render(dt, batch, stage);
 			batch.end();
-			stage.act(dt);
-			stage.draw();
 			break;
 		case InMenu:
 			menuRender.render(dt, stage);
-			stage.act(dt);
-			stage.draw();
 			break;
 		default:
 			break;
+		}
+		
+		tweenManager.update(dt);
+		stage.act(dt);
+		stage.draw();
+		if (loading) {
+			stage.addActor(loadingTexture);
+			loadingTexture.act(dt);
+			batch.begin();
+			loadingTexture.draw(batch, 1);
+			batch.end();
 		}
 	}
 
@@ -166,5 +187,13 @@ public class GameEngine implements Screen {
 		Vector3 vec = new Vector3(x, y, 0);
 		camera.unproject(vec);
 		return new Vector2(vec.x, vec.y);
+	}
+
+	public static void showLoading() {
+		loading = true;
+	}
+
+	public static void hideLoading() {
+		loading = false;
 	}
 }

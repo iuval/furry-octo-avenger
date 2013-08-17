@@ -110,6 +110,7 @@ public class NormalGame extends GameRender {
 		
 		init();
 		clearAllMoves();
+		GameEngine.hideLoading();
 	}
 
 	public void init() {

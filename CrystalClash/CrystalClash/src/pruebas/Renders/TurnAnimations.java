@@ -33,6 +33,7 @@ public class TurnAnimations extends GameRender {
 		tweenManager = new TweenManager();
 
 		init();
+		GameEngine.hideLoading();
 	}
 
 	private void moveUnits() {
@@ -51,7 +52,7 @@ public class TurnAnimations extends GameRender {
 		MoveUnitAction action = null;
 		for (int m = 0; m < moveActions.size; m++) {
 			action = moveActions.get(m);
-			
+
 			Timeline path = Timeline.createSequence();
 			path.setUserData(new Object[] { action.moves.size, action.origin.getUnit(player) });
 			path.setCallbackTriggers(TweenCallback.BEGIN);
@@ -61,14 +62,13 @@ public class TurnAnimations extends GameRender {
 					int stepsCount = (Integer) (((Object[]) source.getUserData())[0]);
 					Unit unit = (Unit) (((Object[]) source.getUserData())[1]);
 
-					if(stepsCount > 1)
+					if (stepsCount > 1)
 					{
 						unit.getRender().setAnimation(ANIM.walk);
 					}
 				}
 			});
-			
-			
+
 			for (int i = 0; i + 1 < action.moves.size; i++) {
 				Timeline step = createStep(action, i, action.moves.size, player);
 				path.push(step);
@@ -81,7 +81,7 @@ public class TurnAnimations extends GameRender {
 			int player) {
 		Timeline step = Timeline.createParallel();
 		boolean isLastStep = ((currentStepIndex + 1) == (stepsCount - 1)) || (stepsCount == 1);
-		
+
 		step.setUserData(new Object[] { action.moves.get(currentStepIndex),
 				action.moves.get(currentStepIndex + 1), player, isLastStep });
 		step.setCallbackTriggers(TweenCallback.COMPLETE);
@@ -111,8 +111,8 @@ public class TurnAnimations extends GameRender {
 
 		cellFrom.removeUnit(player);
 		cellTo.setUnit(unit, player);
-		
-		if(isLastStep)
+
+		if (isLastStep)
 		{
 			unit.getRender().setAnimation(ANIM.idle);
 		}

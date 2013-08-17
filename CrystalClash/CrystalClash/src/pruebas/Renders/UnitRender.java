@@ -73,13 +73,13 @@ public class UnitRender {
 
 	public void draw(SpriteBatch batch, float dt) {
 		currnetAnim.update(dt, true, facing);
-		currnetAnim.draw(batch, dt, unit.getX(), unit.getY());
+		currnetAnim.draw(batch, unit.getX(), unit.getY());
 		batch.draw(hpBar, unit.getX() + UnitHelper.HP_BAR_X, unit.getY()
 				+ UnitHelper.HP_BAR_Y, hpWidth, UnitHelper.HP_BAR_HEIGHT);
 		
 		if(unit.isInDefensePosition()){
 			shieldAnim.update(dt, true, facing);
-			shieldAnim.draw(batch, dt, unit.getX(), unit.getY());
+			shieldAnim.draw(batch, unit.getX(), unit.getY());
 		}
 	}	
 

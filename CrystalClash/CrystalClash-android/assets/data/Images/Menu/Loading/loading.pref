@@ -1,0 +1,10 @@
+animation
+  sheet: 4, 1
+  handle: 0, 0
+  total-time: 2
+  image-count: 4
+images-time
+  0001: 0
+  0002: 0.5
+  0003: 1.0
+  0004: 1.5

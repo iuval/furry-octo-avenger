@@ -105,6 +105,7 @@ public class MenuLogInRender extends MenuRender {
 		txtEmail.setText("");
 		txtEmail.setMessageText("");
 
+		controller.logIn();
 		float speed = CrystalClash.ANIMATION_SPEED;
 		Timeline.createParallel()
 				.push(Tween.to(group2, ActorAccessor.ALPHA, speed).target(0))
@@ -251,11 +252,13 @@ public class MenuLogInRender extends MenuRender {
 					break;
 				case LogIn:
 					if (!email.isEmpty() && !nick.isEmpty()) {
+						GameEngine.showLoading();
 						controller.authenticate(email, nick);
 					}
 					break;
 				case SignIn:
 					if (!email.isEmpty() && !nick.isEmpty()) {
+						GameEngine.showLoading();
 						controller.signIn(email, nick);
 					}
 					break;
