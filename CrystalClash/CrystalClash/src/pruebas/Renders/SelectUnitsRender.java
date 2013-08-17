@@ -13,13 +13,20 @@ import pruebas.Renders.helpers.ui.TabContainer;
 import pruebas.Renders.helpers.ui.ToggleButton;
 import pruebas.Renders.helpers.ui.UnitListItem;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 
 public class SelectUnitsRender extends GameRender {
 
+	private int unitCount = 0;
+	private Label lblUnitsCount;
 	private Unit selectedUnit = null;
 	private TabContainer tabs;
 
@@ -32,8 +39,13 @@ public class SelectUnitsRender extends GameRender {
 	}
 
 	public void init() {
-
 		GameController.getInstancia().loadUnitsStats();
+
+		BitmapFont font = new BitmapFont(Gdx.files.internal("data/Fonts/font.fnt"), false);
+
+		lblUnitsCount = new Label("", new LabelStyle(font, Color.WHITE));
+		lblUnitsCount.setPosition(CrystalClash.WIDTH - 100, 50);
+		resetUnitsCount();
 
 		TextureAtlas atlas = new TextureAtlas(
 				"data/Images/InGame/FirstTurn/unit_select.pack");
@@ -119,6 +131,20 @@ public class SelectUnitsRender extends GameRender {
 		}
 	}
 
+	private void changeUnitsCountBy(int du) {
+		unitCount += du;
+		updateUnitsCountLabel();
+	}
+
+	private void resetUnitsCount() {
+		unitCount = 0;
+		updateUnitsCountLabel();
+	}
+
+	private void updateUnitsCountLabel() {
+		lblUnitsCount.setText(unitCount + "/" + GameController.getInstancia().unitsPerPlayer);
+	}
+
 	@Override
 	public void clearAllMoves() {
 		// TODO Quitar todas las unidades colocadas en el mapa.
@@ -130,6 +156,7 @@ public class SelectUnitsRender extends GameRender {
 		if (selectedUnit != null) {
 			selectedUnit.getRender().draw(batch, dt);
 		}
+		stage.addActor(lblUnitsCount);
 	}
 
 	public boolean touchDown(float x, float y, int pointer, int button) {
@@ -160,6 +187,7 @@ public class SelectUnitsRender extends GameRender {
 		if (selectedUnit != null) {
 			world.placeUnit(x, y, selectedUnit);
 			selectedUnit = null;
+			changeUnitsCountBy(1);
 		}
 		return true;
 	}

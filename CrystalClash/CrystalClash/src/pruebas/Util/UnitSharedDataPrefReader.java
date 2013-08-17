@@ -16,7 +16,7 @@ public class UnitSharedDataPrefReader {
 	private static int[] load(FileHandle prefFile) {
 		BufferedReader reader = new BufferedReader(new InputStreamReader(
 				prefFile.read()), 64);
-		int[] values = new int[3];
+		int[] values = new int[4];
 		try {
 			while (true) {
 				String line = reader.readLine();
@@ -28,6 +28,7 @@ public class UnitSharedDataPrefReader {
 					values[0] = Integer.parseInt(readValue(reader));
 					values[1] = Integer.parseInt(readValue(reader));
 					values[2] = Integer.parseInt(readValue(reader));
+					values[3] = Integer.parseInt(readValue(reader));
 				}
 			}
 		} catch (Exception ex) {
