@@ -6,6 +6,12 @@ import pruebas.Renders.helpers.UnitHelper;
 
 public class Unit extends GameObject {
 
+	public static final int ELEMENT_FIRE = 0;
+	public static final int ELEMENT_EARTH = 1;
+	public static final int ELEMENT_WIND = 2;
+	public static final int ELEMENT_WATER = 3;
+	public static final int ELEMENT_DARKNESS = 4;
+
 	private int hitPoints;
 	private int totalHitPoints;
 
@@ -24,7 +30,7 @@ public class Unit extends GameObject {
 			this.render.setUnit(this);
 		}
 		this.unitName = unitName;
-		
+
 		GameController.getInstancia().loadUnitsStats();
 		this.hitPoints = hp;
 		this.totalHitPoints = GameController.getInstancia().getUnitLife(unitName);
@@ -68,19 +74,19 @@ public class Unit extends GameObject {
 	public boolean isEnemy() {
 		return enemy;
 	}
-	
+
 	public int getRange() {
 		return range;
 	}
-	
+
 	public boolean isMelee() {
 		return range == 1;
 	}
-	
+
 	public boolean isInDefensePosition() {
 		return inDefensePosition;
 	}
-	
+
 	public void setDefendingPosition(boolean position) {
 		inDefensePosition = position;
 	}
