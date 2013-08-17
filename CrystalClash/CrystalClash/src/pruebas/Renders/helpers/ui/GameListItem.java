@@ -3,7 +3,6 @@ package pruebas.Renders.helpers.ui;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.EventListener;
 import com.badlogic.gdx.scenes.scene2d.Group;
-import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
@@ -53,5 +52,9 @@ public class GameListItem extends Group {
 
 		// set the group size to background size
 		setBounds(getX(), getY(), w, h);
+	}
+
+	public void dispose() {
+		this.clear();
 	}
 }
