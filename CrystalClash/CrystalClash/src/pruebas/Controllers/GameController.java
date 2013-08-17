@@ -1,5 +1,6 @@
 package pruebas.Controllers;
 
+import java.util.Enumeration;
 import java.util.Hashtable;
 
 import pruebas.Entities.User;
@@ -39,8 +40,12 @@ public class GameController {
 		unitMaxSpeed = shared[2];
 	}
 
-	public int getUnitLife(String unitName) {
+	public int getUnitElement(String unitName) {
 		return unitValues.get(unitName)[0];
+	}
+
+	public int getUnitLife(String unitName) {
+		return unitValues.get(unitName)[1];
 	}
 
 	public int getUnitLifeInScale(String unitName) {
@@ -48,7 +53,7 @@ public class GameController {
 	}
 
 	public int getUnitAttack(String unitName) {
-		return unitValues.get(unitName)[1];
+		return unitValues.get(unitName)[2];
 	}
 
 	public int getUnitAttackInScale(String unitName) {
@@ -56,14 +61,18 @@ public class GameController {
 	}
 
 	public int getUnitSpeed(String unitName) {
-		return unitValues.get(unitName)[2];
+		return unitValues.get(unitName)[3];
 	}
 
 	public int getUnitSpeedInScale(String unitName) {
 		return (int) ((getUnitSpeed(unitName) * 10) / unitMaxSpeed);
 	}
-	
+
 	public int getUnitRange(String unitName) {
-		return unitValues.get(unitName)[3];
+		return unitValues.get(unitName)[4];
+	}
+
+	public Enumeration<String> getUnitNames() {
+		return unitValues.keys();
 	}
 }
