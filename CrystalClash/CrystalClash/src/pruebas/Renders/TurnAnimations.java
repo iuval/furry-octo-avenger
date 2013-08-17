@@ -4,6 +4,7 @@ import pruebas.Accessors.ActorAccessor;
 import pruebas.Accessors.UnitAccessor;
 import pruebas.Controllers.GameController;
 import pruebas.Controllers.WorldController;
+import pruebas.CrystalClash.CrystalClash;
 import pruebas.Entities.Cell;
 import pruebas.Entities.Unit;
 import pruebas.Entities.helpers.MoveUnitAction;
@@ -16,8 +17,19 @@ import aurelienribon.tweenengine.Tween;
 import aurelienribon.tweenengine.TweenCallback;
 import aurelienribon.tweenengine.TweenManager;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.scenes.scene2d.Group;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Array;
 
 public class TurnAnimations extends GameRender {
@@ -26,12 +38,19 @@ public class TurnAnimations extends GameRender {
 
 	private Array<MoveUnitAction> player1Moves;
 	private Array<MoveUnitAction> player2Moves;
+	
+	private Image panel;
+	private TextButton btnPlay;
+	private TextButton btnSkip;
+	private Group grpPanel;
 
 	public TurnAnimations(WorldController world) {
 		super(world);
 
 		tweenManager = new TweenManager();
 
+		player1Moves = new Array<MoveUnitAction>();
+		player2Moves = new Array<MoveUnitAction>();
 		init();
 		GameEngine.hideLoading();
 	}
@@ -44,6 +63,12 @@ public class TurnAnimations extends GameRender {
 		t.beginParallel();
 		createPaths(player2Moves, 2, t);
 		t.end();
+		t.setCallback(new TweenCallback() {
+			@Override
+			public void onEvent(int type, BaseTween<?> source) {
+				showPanel();
+			}
+		});
 		t.start(tweenManager);
 	}
 
@@ -159,29 +184,89 @@ public class TurnAnimations extends GameRender {
 		GameController.getInstancia().loadUnitsStats();
 		Tween.registerAccessor(Unit.class, new UnitAccessor());
 
-		player1Moves = new Array<MoveUnitAction>();
-		player2Moves = new Array<MoveUnitAction>();
-
 		readActions(1);
 		readActions(2);
+
+		TextureAtlas atlas = new TextureAtlas("data/Images/Buttons/buttons.pack");
+		Skin skin = new Skin(atlas);
+		
+		Texture panelTexture = new Texture(Gdx.files.internal("data/Images/TurnAnimation/games_list_background.png"));
+		panel = new Image(panelTexture);
+		
+		BitmapFont font = new BitmapFont(Gdx.files.internal("data/Fonts/font.fnt"), false);
+		TextButtonStyle playStyle = new TextButtonStyle(
+				skin.getDrawable("outer_button_orange"),
+				skin.getDrawable("outer_button_orange_pressed"), null, font);
+		btnPlay = new TextButton("PLAY", playStyle);
+		btnPlay.setPosition(panel.getWidth() / 4 - btnPlay.getWidth() / 2, panel.getHeight() / 2);
+		btnPlay.addListener(new ClickListener() {
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+				hidePanel();
+				moveUnits();
+			}
+		});
+		
+		TextButtonStyle skipStyle = new TextButtonStyle(
+				skin.getDrawable("outer_button_orange"),
+				skin.getDrawable("outer_button_orange_pressed"), null, font);
+		btnSkip = new TextButton("SKIP", skipStyle);
+		btnSkip.setPosition(panel.getWidth() / 4 * 3 - btnSkip.getWidth() / 2, panel.getHeight() / 2);
+		btnSkip.addListener(new ClickListener() {
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+				extiAnimation();
+			}
+		});
+		
+		grpPanel = new Group();
+		grpPanel.addActor(panel);
+		grpPanel.addActor(btnPlay);
+		grpPanel.addActor(btnSkip);
 	}
 
 	@Override
 	public void clearAllChanges() {
 		// TODO Auto-generated method stub
-		
+	}
+	
+	private void extiAnimation(){
+		float speed = 0.5f; // CrystalClash.ANIMATION_SPEED;
+		Timeline.createSequence()
+				.push(Tween.to(grpPanel, ActorAccessor.ALPHA, speed).target(0))
+				.setCallback(new TweenCallback() {
+					@Override
+					public void onEvent(int type, BaseTween<?> source) {
+						world.initNormalTurn();
+					}
+				}).start(tweenManager);
+	}
+	
+	private void hidePanel(){
+		float speed = 0.5f; // CrystalClash.ANIMATION_SPEED;
+		Timeline.createSequence()
+				.push(Tween.to(grpPanel, ActorAccessor.Y, speed).target(CrystalClash.HEIGHT))
+				.start(tweenManager);
+	}
+	
+	private void showPanel(){
+		float speed = 0.5f; // CrystalClash.ANIMATION_SPEED;
+		Timeline.createSequence()
+				.push(Tween.to(grpPanel, ActorAccessor.Y, speed).target(0))
+				.start(tweenManager);
 	}
 	
 	@Override
 	public void render(float dt, SpriteBatch batch, Stage stage) {
 		tweenManager.update(dt);
+		
+		stage.addActor(grpPanel);
+		grpPanel.act(dt);
 	}
 
 	@Override
 	public boolean touchDown(float x, float y, int pointer, int button) {
-
-		moveUnits();
-
+		//moveUnits();
 		return false;
 	}
 

@@ -39,8 +39,7 @@ public class WorldController {
 		if (firstTurn) {
 			render.initFirstTurn();
 		} else {
-			// render.initTurnAnimations();
-			render.initNormalTurn();
+			render.initTurnAnimations();
 		}
 	}
 
@@ -72,8 +71,7 @@ public class WorldController {
 			action = child.getString("action");
 			if (action.equals("place")) {
 				unitA = new PlaceUnitAction();
-				((PlaceUnitAction) unitA).unitName = child
-						.getString("unit_name");
+				((PlaceUnitAction) unitA).unitName = child.getString("unit_name");
 			} else if (action.equals("attack")) {
 				// TODO: Checkear!!!
 				unitA = new AttackUnitAction(false);
@@ -298,5 +296,9 @@ public class WorldController {
 
 	public WorldRender getRender() {
 		return render;
+	}
+	
+	public void initNormalTurn(){
+		render.initNormalTurn();
 	}
 }
