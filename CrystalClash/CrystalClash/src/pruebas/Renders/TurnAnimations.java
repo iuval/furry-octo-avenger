@@ -232,8 +232,9 @@ public class TurnAnimations extends GameRender {
 	
 	private void extiAnimation(){
 		float speed = 0.5f; // CrystalClash.ANIMATION_SPEED;
-		Timeline.createSequence()
+		Timeline.createParallel()
 				.push(Tween.to(grpPanel, ActorAccessor.ALPHA, speed).target(0))
+				.push(Tween.to(grpPanel, ActorAccessor.Y, speed).target(CrystalClash.HEIGHT))
 				.setCallback(new TweenCallback() {
 					@Override
 					public void onEvent(int type, BaseTween<?> source) {
@@ -266,7 +267,6 @@ public class TurnAnimations extends GameRender {
 
 	@Override
 	public boolean touchDown(float x, float y, int pointer, int button) {
-		//moveUnits();
 		return false;
 	}
 
