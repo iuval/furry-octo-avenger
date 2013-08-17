@@ -30,6 +30,6 @@ public class SuperAnimatedActor extends Actor {
 
 	@Override
 	public void draw(SpriteBatch batch, float parentAlpha) {
-		anim.draw(batch, 0, 0, false);
+		anim.draw(batch, 0, 0);
 	}
 }

@@ -202,7 +202,7 @@ public class SuperAnimation {
 		return keyFrames.length - 1 < frameNumber;
 	}
 
-	public void draw(SpriteBatch batch, float dt, float x, float y) {
+	public void draw(SpriteBatch batch, float x, float y) {
 		batch.draw(current, x - handle_x, y - handle_y);
 	}
 
