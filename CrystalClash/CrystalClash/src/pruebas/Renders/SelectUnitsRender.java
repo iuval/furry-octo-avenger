@@ -29,6 +29,7 @@ public class SelectUnitsRender extends GameRender {
 	private Label lblUnitsCount;
 	private Unit selectedUnit = null;
 	private TabContainer tabs;
+	private boolean isSelectedUnitFromTabs = true;
 
 	public SelectUnitsRender(WorldController world) {
 		super(world);
@@ -171,12 +172,14 @@ public class SelectUnitsRender extends GameRender {
 						u.getRender().setFacing(FACING.left);
 					selectedUnit = u;
 					selectedUnit.setPosition(x, y);
+					isSelectedUnitFromTabs = true;
 				}
 			} else {
 				Cell cell = world.cellAt(x, y);
 				if (cell != null) {
 					selectedUnit = cell.getUnit(world.player);
 					cell.removeUnit(world.player);
+					isSelectedUnitFromTabs = false;
 				}
 			}
 		}
@@ -185,9 +188,14 @@ public class SelectUnitsRender extends GameRender {
 
 	public boolean touchUp(float x, float y, int pointer, int button) {
 		if (selectedUnit != null) {
-			world.placeUnit(x, y, selectedUnit);
+			if (world.placeUnit(x, y, selectedUnit)) {
+				changeUnitsCountBy(1);
+			} else {
+				if (!isSelectedUnitFromTabs) {
+					changeUnitsCountBy(-1);
+				}
+			}
 			selectedUnit = null;
-			changeUnitsCountBy(1);
 		}
 		return true;
 	}

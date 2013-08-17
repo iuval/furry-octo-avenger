@@ -39,7 +39,7 @@ public class WorldController {
 		if (firstTurn) {
 			render.initFirstTurn();
 		} else {
-			//render.initTurnAnimations();
+			// render.initTurnAnimations();
 			render.initNormalTurn();
 		}
 	}
@@ -202,11 +202,13 @@ public class WorldController {
 			cell.setState(Cell.State.MOVE_TARGET);
 	}
 
-	public void placeUnit(float x, float y, Unit unit) {
+	public boolean placeUnit(float x, float y, Unit unit) {
 		Cell cell = cellAt(x, y);
 		if (cell != null && cell.getState() == Cell.State.ABLE_TO_PLACE) {
 			cell.placeUnit(unit, player);
+			return true;
 		}
+		return false;
 	}
 
 	public void update(float paramFloat) {
