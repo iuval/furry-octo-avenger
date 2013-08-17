@@ -91,7 +91,6 @@ public class GameEngine implements Screen {
 	private void renderGame(float dt) {
 		Gdx.gl.glClearColor(0, 0, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
 		switch (state) {
 		case InGame:
 			batch.begin();
@@ -104,11 +103,12 @@ public class GameEngine implements Screen {
 		default:
 			break;
 		}
-
+		
 		tweenManager.update(dt);
 		stage.act(dt);
 		stage.draw();
 		if (loading) {
+			stage.addActor(loadingTexture);
 			loadingTexture.act(dt);
 			batch.begin();
 			loadingTexture.draw(batch, 1);
