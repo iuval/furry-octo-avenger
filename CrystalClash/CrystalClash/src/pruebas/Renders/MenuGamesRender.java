@@ -15,6 +15,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -38,7 +39,8 @@ public class MenuGamesRender extends MenuRender {
 	private ScrollPane scrollPane;
 	private Image gamesImage;
 
-	VerticalGroup list;
+	private VerticalGroup list;
+	private GameListItem[] gamesList;
 
 	private BitmapFont font;
 	private Label lblHeading;
@@ -91,7 +93,7 @@ public class MenuGamesRender extends MenuRender {
 		} else {
 			if (isTryingToRefresh) {
 				if (showRelease) {
-					System.out.println("Refresh");
+					loadGameList();
 				}
 				isTryingToRefresh = false;
 			}
@@ -191,8 +193,7 @@ public class MenuGamesRender extends MenuRender {
 		btnNewInvite.align(Align.center);
 		list.addActorAfter(menuImage, btnNewInvite);
 
-		ServerDriver.getListGames(GameController.getInstancia().getUser()
-				.getId());
+		loadGameList();
 
 		refreshMessagePull = new Image(new Texture(
 				Gdx.files.internal("data/Images/Menu/RefreshList/refresh_message_pull.png")));
@@ -202,13 +203,27 @@ public class MenuGamesRender extends MenuRender {
 		enterAnimation();
 	}
 
+	private void loadGameList() {
+		ServerDriver.getListGames(GameController.getInstancia().getUser()
+				.getId());
+	}
+
 	// SERVER DRIVER CALLBACKS --------------------------------------------
 	public void listGamesSuccess(String[][] games) {
+		if (gamesList != null) {
+			for (int i = 0; i < gamesList.length; i++) {
+				gamesList[i].dispose();
+				gamesList[i].remove();
+			}
+		}
+		gamesList = new GameListItem[games.length];
+
 		GameListItem listingItem;
 		for (int i = 0, len = games.length; i < len; i++) {
 			listingItem = new GameListItem(games[i][0], games[i][1],
 					games[i][2], games[i][3], listItemSkin, surrenderListener,
 					playListener);
+			gamesList[i] = listingItem;
 			list.addActorAfter(gamesImage, listingItem);
 		}
 	}
