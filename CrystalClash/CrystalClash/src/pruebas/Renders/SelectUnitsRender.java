@@ -1,5 +1,7 @@
 package pruebas.Renders;
 
+import java.util.Enumeration;
+
 import pruebas.Controllers.GameController;
 import pruebas.Controllers.WorldController;
 import pruebas.CrystalClash.CrystalClash;
@@ -54,11 +56,6 @@ public class SelectUnitsRender extends GameRender {
 				skin.getRegion("fire_tab_selected"));
 		tabs.addTab(headerFire, listFire);
 
-		// Fire items
-		UnitListItem item_fire_archer = new UnitListItem("fire_archer",
-				portraitsAtlas.findRegion("portrait_fire_archer"), skin);
-		listFire.addUnitItem(item_fire_archer);
-
 		// Wind
 		List listWind = new List(skin.getRegion("wind_background"));
 		listWind.setPaddingTop(160);
@@ -66,11 +63,6 @@ public class SelectUnitsRender extends GameRender {
 		headerWind.setTextureRegion(skin.getRegion("wind_tab"),
 				skin.getRegion("wind_tab_selected"));
 		tabs.addTab(headerWind, listWind);
-
-		// Wind items
-		UnitListItem item_wind_assassin = new UnitListItem("wind_assassin",
-				portraitsAtlas.findRegion("portrait_wind_assassin"), skin);
-		listWind.addUnitItem(item_wind_assassin);
 
 		// Earth
 		List listEarth = new List(skin.getRegion("earth_background"));
@@ -80,11 +72,6 @@ public class SelectUnitsRender extends GameRender {
 				skin.getRegion("earth_tab_selected"));
 		tabs.addTab(headerEarth, listEarth);
 
-		// Earth items
-		UnitListItem item_earth_tank = new UnitListItem("earth_tank",
-				portraitsAtlas.findRegion("portrait_earth_tank"), skin);
-		listEarth.addUnitItem(item_earth_tank);
-
 		// Water
 		List listWater = new List(skin.getRegion("water_background"));
 		listWater.setPaddingTop(160);
@@ -92,8 +79,6 @@ public class SelectUnitsRender extends GameRender {
 		headerWater.setTextureRegion(skin.getRegion("water_tab"),
 				skin.getRegion("water_tab_selected"));
 		tabs.addTab(headerWater, listWater);
-
-		// Water items
 
 		// Darkness
 		List listDarkness = new List(skin.getRegion("darkness_background"));
@@ -103,19 +88,42 @@ public class SelectUnitsRender extends GameRender {
 				skin.getRegion("darkness_tab_selected"));
 		tabs.addTab(headerDarkness, listDarkness);
 
-		// Wind items
-		UnitListItem item_darkness_mage = new UnitListItem("darkness_mage",
-				portraitsAtlas.findRegion("portrait_darkness_mage"), skin);
-		listDarkness.addUnitItem(item_darkness_mage);
+		// List items
+		Enumeration<String> unit_names = GameController.getInstancia().getUnitNames();
+		String unit_name;
+		while (unit_names.hasMoreElements()) {
+			unit_name = unit_names.nextElement();
+			UnitListItem item = new UnitListItem(unit_name,
+					portraitsAtlas.findRegion("portrait_" + unit_name), skin);
+			switch (GameController.getInstancia().getUnitElement(unit_name)) {
+			case Unit.ELEMENT_FIRE:
+				listFire.addUnitItem(item);
+				break;
+			case Unit.ELEMENT_EARTH:
+				listEarth.addUnitItem(item);
+				break;
+			case Unit.ELEMENT_WIND:
+				listWind.addUnitItem(item);
+				break;
+			case Unit.ELEMENT_WATER:
+				listWater.addUnitItem(item);
+				break;
+			case Unit.ELEMENT_DARKNESS:
+				listDarkness.addUnitItem(item);
+				break;
 
+			default:
+				break;
+			}
+		}
 	}
 
 	@Override
 	public void clearAllMoves() {
 		// TODO Quitar todas las unidades colocadas en el mapa.
-		
+
 	}
-	
+
 	public void render(float dt, SpriteBatch batch, Stage stage) {
 		tabs.draw(dt, batch);
 		if (selectedUnit != null) {
