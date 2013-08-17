@@ -50,11 +50,17 @@ public class MenuGamesRender extends MenuRender {
 	private TextButton btnNewRandom;
 	private TextButton btnNewInvite;
 
+	private Image refreshMessagePull;
+	private Image refreshMessageRelease;
+	private boolean isTryingToRefresh = false;
+	private boolean showPullDown = false;
+	private boolean showRelease = false;
+
 	public MenuGamesRender(MenuGames menu) {
 		this.controller = menu;
 		tweenManager = new TweenManager();
 
-		loadStuff();
+		load();
 	}
 
 	public static MenuGamesRender getInstance(MenuGames menu) {
@@ -66,6 +72,41 @@ public class MenuGamesRender extends MenuRender {
 
 	@Override
 	public void render(float dt, Stage stage) {
+		if (scrollPane.isPanning()) {
+			if (!isTryingToRefresh && scrollPane.getScrollY() < -100) {
+				showPullDown = true;
+				showRelease = false;
+				isTryingToRefresh = true;
+			} else if (isTryingToRefresh && scrollPane.getScrollY() < -200) {
+				showPullDown = false;
+				showRelease = true;
+			} else if (isTryingToRefresh && scrollPane.getScrollY() > -200) {
+				if (isTryingToRefresh && scrollPane.getScrollY() > -100) {
+					isTryingToRefresh = false;
+				} else {
+					showPullDown = true;
+					showRelease = false;
+				}
+			}
+		} else {
+			if (isTryingToRefresh) {
+				if (showRelease) {
+					System.out.println("Refresh");
+				}
+				isTryingToRefresh = false;
+			}
+		}
+
+		if (isTryingToRefresh) {
+			if (showRelease) {
+				refreshMessageRelease.setY(list.getTop());
+				stage.addActor(refreshMessageRelease);
+			} else if (showPullDown) {
+				refreshMessagePull.setY(list.getTop());
+				stage.addActor(refreshMessagePull);
+			}
+		}
+
 		stage.addActor(lblHeading);
 		stage.addActor(btnLogOut);
 		stage.addActor(scrollPane);
@@ -87,7 +128,7 @@ public class MenuGamesRender extends MenuRender {
 	public void exitAnimation() {
 	}
 
-	private void loadStuff() {
+	private void load() {
 		initSkin();
 
 		font = new BitmapFont(Gdx.files.internal("data/Fonts/font.fnt"), false);
@@ -120,6 +161,7 @@ public class MenuGamesRender extends MenuRender {
 		scrollPane.setOverscroll(false, true);
 		scrollPane.setSmoothScrolling(true);
 		scrollPane.invalidate();
+		scrollPane.setupOverscroll(CrystalClash.HEIGHT, 4000, 5000);
 
 		gamesImage = new Image(new Texture(
 				Gdx.files.internal("data/Images/Menu/current_games_header.png")));
@@ -151,6 +193,12 @@ public class MenuGamesRender extends MenuRender {
 
 		ServerDriver.getListGames(GameController.getInstancia().getUser()
 				.getId());
+
+		refreshMessagePull = new Image(new Texture(
+				Gdx.files.internal("data/Images/Menu/RefreshList/refresh_message_pull.png")));
+		refreshMessageRelease = new Image(new Texture(
+				Gdx.files.internal("data/Images/Menu/RefreshList/refresh_message_release.png")));
+
 		enterAnimation();
 	}
 
@@ -218,13 +266,13 @@ public class MenuGamesRender extends MenuRender {
 						new Texture(
 								Gdx.files
 										.internal("data/Images/Menu/button_surrender_pressed.png")));
-		
+
 		TextButtonStyle playStyle = new TextButtonStyle();
 		playStyle.font = listItemSkin.getFont("font");
 		playStyle.up = listItemSkin.getDrawable("play_up");
 		playStyle.down = listItemSkin.getDrawable("play_down");
 		listItemSkin.add("playStyle", playStyle);
-		
+
 		TextButtonStyle waitStyle = new TextButtonStyle();
 		waitStyle.font = listItemSkin.getFont("font");
 		waitStyle.up = listItemSkin.getDrawable("wait_up");
@@ -242,7 +290,7 @@ public class MenuGamesRender extends MenuRender {
 		innerStyle.up = listItemSkin.getDrawable("button_orange");
 		innerStyle.down = listItemSkin.getDrawable("button_orange_pressed");
 		listItemSkin.add("innerButtonStyle", innerStyle);
-		
+
 		TextButtonStyle outterStyle = new TextButtonStyle();
 		outterStyle.font = listItemSkin.getFont("font");
 		outterStyle.up = listItemSkin.getDrawable("outer_button_orange");
