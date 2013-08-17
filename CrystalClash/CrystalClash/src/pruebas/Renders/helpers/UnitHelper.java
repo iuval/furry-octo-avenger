@@ -3,6 +3,7 @@ package pruebas.Renders.helpers;
 import java.util.Hashtable;
 
 import pruebas.Renders.UnitRender;
+import pruebas.Util.FileUtil;
 import pruebas.Util.SuperAnimation;
 import pruebas.Util.UnitAnimPrefReader;
 import pruebas.Util.UnitAnimPrefReader.UnitPrefReaderData;
@@ -58,29 +59,8 @@ public class UnitHelper {
 
 	public static SuperAnimation getUnitSuperAnimation(String unitName,
 			String action) {
-		String base_file_name = String.format("data/Units/%s/%s", unitName,
-				action);
-
-		UnitPrefReaderData data = UnitAnimPrefReader.load(base_file_name
-				+ ".pref");
-
-		Texture sheet = new Texture(Gdx.files.internal(base_file_name + ".png"));
-		TextureRegion[][] tmp = TextureRegion.split(sheet, sheet.getWidth()
-				/ data.cols, sheet.getHeight() / data.rows);
-		TextureRegion[] frames = new TextureRegion[data.cols * data.rows];
-
-		int index = 0;
-		for (int i = 0; i < data.rows; i++) {
-			for (int j = 0; j < data.cols; j++) {
-				frames[index++] = tmp[i][j];
-			}
-		}
-
-		SuperAnimation anim = new SuperAnimation(data.total_time,
-				data.image_times, frames);
-		anim.handle_x = data.handle_x;
-		anim.handle_y = data.handle_x;
-		return anim;
+		return FileUtil.getSuperAnimation(String.format("data/Units/%s/%s", unitName,
+				action));
 	}
 
 	private static SuperAnimation loadShieldAnim(){

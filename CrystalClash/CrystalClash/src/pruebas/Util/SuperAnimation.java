@@ -49,7 +49,7 @@ public class SuperAnimation {
 	public SuperAnimation(float animation_time, float[] keyTimes, TextureRegion... keyFrames) {
 		this(animation_time, keyTimes, keyFrames, NORMAL);
 	}
-	
+
 	/**
 	 * Constructor, storing the frame duration, key frames and play type.
 	 * 
@@ -66,12 +66,12 @@ public class SuperAnimation {
 	public SuperAnimation(float animation_time, float[] keyTimes,
 			TextureRegion[] keyFrames, int playType) {
 		this.animationTime = animation_time;
-		this.keyTimes = keyTimes; 
+		this.keyTimes = keyTimes;
 		this.keyDurations = calculateDurations(keyTimes);
 		this.keyFrames = getShallowCopy(keyFrames);
 		this.playMode = playType;
 	}
-	
+
 	private TextureRegion[] getShallowCopy(TextureRegion[] keyFrames)
 	{
 		TextureRegion[] frames = new TextureRegion[keyFrames.length];
@@ -80,20 +80,24 @@ public class SuperAnimation {
 		}
 		return frames;
 	}
-	
+
 	private float[] calculateDurations(float[] keyTimes)
 	{
 		float[] durations = new float[keyTimes.length];
-		
-		if(keyTimes.length >= 1)
+
+		if (keyTimes.length >= 1)
 		{
-			for (int i = 0; i+1 < keyTimes.length; i++) {
-				durations[i] = keyTimes[i+1] - keyTimes[i];
+			for (int i = 0; i + 1 < keyTimes.length; i++) {
+				durations[i] = keyTimes[i + 1] - keyTimes[i];
 			}
-			durations[keyTimes.length-1] =  animationTime - keyTimes[keyTimes.length-1];
+			durations[keyTimes.length - 1] = animationTime - keyTimes[keyTimes.length - 1];
 		}
-		
+
 		return durations;
+	}
+
+	public void update(float stateTime, boolean looping) {
+		update(stateTime, looping, FACING.right);
 	}
 
 	public void update(float stateTime, boolean looping, FACING at) {
@@ -198,7 +202,7 @@ public class SuperAnimation {
 		return keyFrames.length - 1 < frameNumber;
 	}
 
-	public void draw(SpriteBatch batch, float dt, float x, float y) {
+	public void draw(SpriteBatch batch, float x, float y) {
 		batch.draw(current, x - handle_x, y - handle_y);
 	}
 
@@ -211,7 +215,7 @@ public class SuperAnimation {
 		anim.handle_y = handle_y;
 		return anim;
 	}
-	
+
 	/**
 	 * Sets the current frame to a random value between 0 and total_frames.
 	 */
@@ -219,5 +223,17 @@ public class SuperAnimation {
 	{
 		this.frameNumber = MathUtils.random(0, keyFrames.length - 1);
 		this.totalTime = keyTimes[frameNumber];
+	}
+
+	public float getFirstHeight() {
+		if (keyFrames == null || keyFrames.length == 0)
+			return 0;
+		return keyFrames[0].getRegionHeight();
+	}
+
+	public float getFirstWidth() {
+		if (keyFrames == null || keyFrames.length == 0)
+			return 0;
+		return keyFrames[0].getRegionWidth();
 	}
 }

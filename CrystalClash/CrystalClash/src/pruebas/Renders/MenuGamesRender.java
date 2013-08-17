@@ -226,6 +226,7 @@ public class MenuGamesRender extends MenuRender {
 			gamesList[i] = listingItem;
 			list.addActorAfter(gamesImage, listingItem);
 		}
+		GameEngine.hideLoading();
 	}
 
 	private void initSkin() {
@@ -233,6 +234,7 @@ public class MenuGamesRender extends MenuRender {
 		surrenderListener = new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
+				// GameEngine.showLoading();
 				System.out
 						.println("surrender: "
 								+ ((GameListItem) event.getListenerActor()
@@ -243,6 +245,7 @@ public class MenuGamesRender extends MenuRender {
 		playListener = new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
+				GameEngine.showLoading();
 				controller.getGameTurn(((GameListItem) event.getListenerActor()
 						.getParent()).gameId);
 			}
@@ -315,14 +318,17 @@ public class MenuGamesRender extends MenuRender {
 
 	public void listGamesError(String message) {
 		System.out.println(message);
+		GameEngine.hideLoading();
 	}
 
 	public void enableRandomSuccess() {
 		btnNewRandom.setText("New random game");
+		GameEngine.hideLoading();
 	}
 
 	public void enableRandomError(String message) {
 		System.out.println(message);
+		GameEngine.hideLoading();
 	}
 
 	// INPUT PROCESSOR--------------------------------------------

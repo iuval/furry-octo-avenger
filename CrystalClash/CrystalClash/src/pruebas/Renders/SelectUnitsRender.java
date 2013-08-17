@@ -28,6 +28,7 @@ public class SelectUnitsRender extends GameRender {
 		world.assignFirstTurnAvailablePlaces();
 
 		init();
+		GameEngine.hideLoading();
 	}
 
 	public void init() {
