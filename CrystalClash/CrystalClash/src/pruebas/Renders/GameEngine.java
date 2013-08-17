@@ -192,18 +192,15 @@ public class GameEngine implements Screen {
 
 	public static void showLoading() {
 		loading = true;
-		float speed = 2.0f;
 		Timeline.createSequence()
-				.push(Tween.set(loadingTexture, ActorAccessor.ALPHA).target(0))
-				.push(Tween.to(loadingTexture, ActorAccessor.ALPHA, speed).target(1))
+				.push(Tween.to(loadingTexture, ActorAccessor.ALPHA, 5.0f).target(0, 1))
 				.start(tweenManager);
 		tweenManager.update(Float.MIN_VALUE);
 	}
 
 	public static void hideLoading() {
-		float speed = 2.0f;
 		Timeline.createSequence()
-				.push(Tween.to(loadingTexture, ActorAccessor.ALPHA, speed).target(0))
+				.push(Tween.to(loadingTexture, ActorAccessor.ALPHA, 5.0f).target(0))
 				.setCallback(new TweenCallback() {
 					@Override
 					public void onEvent(int type, BaseTween<?> source) {

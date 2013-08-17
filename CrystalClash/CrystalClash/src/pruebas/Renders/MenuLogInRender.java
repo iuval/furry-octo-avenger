@@ -5,8 +5,10 @@ import pruebas.Controllers.MenuLogIn;
 import pruebas.CrystalClash.CrystalClash;
 import pruebas.Enumerators.MenuLogInState;
 import pruebas.Enumerators.StringWriting;
+import aurelienribon.tweenengine.BaseTween;
 import aurelienribon.tweenengine.Timeline;
 import aurelienribon.tweenengine.Tween;
+import aurelienribon.tweenengine.TweenCallback;
 import aurelienribon.tweenengine.TweenManager;
 
 import com.badlogic.gdx.Gdx;
@@ -103,16 +105,16 @@ public class MenuLogInRender extends MenuRender {
 		txtEmail.setText("");
 		txtEmail.setMessageText("");
 
-		// controller.logIn();
-		// float speed = CrystalClash.ANIMATION_SPEED;
-		// Timeline.createParallel()
-		// .push(Tween.to(group2, ActorAccessor.ALPHA, speed).target(0))
-		// .setCallback(new TweenCallback() {
-		// @Override
-		// public void onEvent(int type, BaseTween<?> source) {
-		// controller.logIn();
-		// }
-		// }).start(tweenManager);
+		controller.logIn();
+		float speed = CrystalClash.ANIMATION_SPEED;
+		Timeline.createParallel()
+				.push(Tween.to(group2, ActorAccessor.ALPHA, speed).target(0))
+				.setCallback(new TweenCallback() {
+					@Override
+					public void onEvent(int type, BaseTween<?> source) {
+						controller.logIn();
+					}
+				}).start(tweenManager);
 	}
 
 	private void loadStuff() {
