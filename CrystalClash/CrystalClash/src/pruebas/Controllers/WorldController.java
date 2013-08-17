@@ -67,14 +67,19 @@ public class WorldController {
 			x = temp.getInt("x");
 			y = temp.getInt("y");
 
+			Unit unit = new Unit(child.getString("unit_name"), isEnemy, child.getInt("unit_hp"));
 			UnitAction unitA;
 			action = child.getString("action");
 			if (action.equals("place")) {
 				unitA = new PlaceUnitAction();
 				((PlaceUnitAction) unitA).unitName = child.getString("unit_name");
 			} else if (action.equals("attack")) {
-				// TODO: Checkear!!!
-				unitA = new AttackUnitAction(false);
+				unitA = new AttackUnitAction(unit.getRange() == 1);
+				JsonValue cells = child.get("target");
+				int cellX = cells.getInt("x");
+				int cellY = cells.getInt("y");
+				
+				((AttackUnitAction) unitA).target = cellGrid[cellX][cellY];
 			} else if (action.equals("move")) {
 				unitA = new MoveUnitAction();
 				JsonValue cells = child.get("target");
@@ -87,14 +92,11 @@ public class WorldController {
 
 					((MoveUnitAction) unitA).moves.add(cellGrid[cellX][cellY]);
 				}
-
 			} else {
 				unitA = new DefendUnitAction();
 			}
 
-			cellGrid[x][y].setUnit(new Unit(child.getString("unit_name"),
-					isEnemy, child.getInt("unit_hp")), playerNum);
-
+			cellGrid[x][y].setUnit(unit, playerNum);
 			cellGrid[x][y].setAction(unitA, playerNum);
 		}
 	}
