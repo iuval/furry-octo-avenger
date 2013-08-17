@@ -428,8 +428,10 @@ public class NormalGame extends GameRender {
 				showAbleToAttackCells();
 			}
 
-			g = ((AttackUnitAction) action).target.getGridPosition();
-			world.setCellStateByGridPos(g.getX(), g.getY(), Cell.State.ATTACK_TARGET_CENTER);
+			if (((AttackUnitAction) action).target != null) {
+				g = ((AttackUnitAction) action).target.getGridPosition();
+				world.setCellStateByGridPos(g.getX(), g.getY(), Cell.State.ATTACK_TARGET_CENTER);
+			}
 			break;
 		case DEFENSE:
 			actionType = UnitActionType.DEFENSE;
