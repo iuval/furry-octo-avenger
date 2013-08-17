@@ -1,6 +1,5 @@
 package pruebas.Renders;
 
-import pruebas.Accessors.ActorAccessor;
 import pruebas.Controllers.MenuMaster;
 import pruebas.Controllers.WorldController;
 import pruebas.CrystalClash.CrystalClash;
@@ -8,10 +7,6 @@ import pruebas.Enumerators.GameState;
 import pruebas.Renders.UnitRender.FACING;
 import pruebas.Renders.helpers.ui.SuperAnimatedActor;
 import pruebas.Util.FileUtil;
-import aurelienribon.tweenengine.BaseTween;
-import aurelienribon.tweenengine.Timeline;
-import aurelienribon.tweenengine.Tween;
-import aurelienribon.tweenengine.TweenCallback;
 import aurelienribon.tweenengine.TweenManager;
 
 import com.badlogic.gdx.Gdx;
@@ -109,12 +104,16 @@ public class GameEngine implements Screen {
 		default:
 			break;
 		}
-		if (loading) {
-			stage.addActor(loadingTexture);
-		}
+
 		tweenManager.update(dt);
 		stage.act(dt);
 		stage.draw();
+		if (loading) {
+			loadingTexture.act(dt);
+			batch.begin();
+			loadingTexture.draw(batch, 1);
+			batch.end();
+		}
 	}
 
 	private void setState(GameState state) {
@@ -192,21 +191,9 @@ public class GameEngine implements Screen {
 
 	public static void showLoading() {
 		loading = true;
-		Timeline.createSequence()
-				.push(Tween.to(loadingTexture, ActorAccessor.ALPHA, 5.0f).target(0, 1))
-				.start(tweenManager);
-		tweenManager.update(Float.MIN_VALUE);
 	}
 
 	public static void hideLoading() {
-		Timeline.createSequence()
-				.push(Tween.to(loadingTexture, ActorAccessor.ALPHA, 5.0f).target(0))
-				.setCallback(new TweenCallback() {
-					@Override
-					public void onEvent(int type, BaseTween<?> source) {
-						loading = false;
-					}
-				}).start(tweenManager);
-		tweenManager.update(Float.MIN_VALUE);
+		loading = false;
 	}
 }
