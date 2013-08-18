@@ -51,17 +51,17 @@ public class MenuGames extends Menu {
 		MenuMaster.changeMenuToLogIn();
 	}
 
-	public void getGameTurn(String gameId) {
+	public void getGameTurn(String gameId, int turn) {
 		 ServerDriver.getGameTurn(GameController.getInstancia().getUser()
-		 .getId(), gameId);
+		 .getId(), gameId, turn);
 	}
 
 	public void gameTurnSuccess(String data) {
 		GameEngine.getInstance().openMenu();
 	}
 
-	public void getGameTurnSuccess(JsonValue data) {
-		GameEngine.getInstance().openGame(data);
+	public void getGameTurnSuccess(JsonValue data, int turn) {
+		GameEngine.getInstance().openGame(data, turn);
 	}
 
 	public void postGameTurnError(String message) {

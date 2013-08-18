@@ -11,11 +11,13 @@ import com.badlogic.gdx.scenes.scene2d.utils.Align;
 
 public class GameListItem extends Group {
 	public final String gameId;
+	public int turn;
 
 	public GameListItem(String gameId, String playerName, String turn,
 			String state, Skin skin, EventListener surrenderListener,
 			EventListener playListener) {
 		this.gameId = gameId;
+		this.turn = Integer.parseInt(turn);
 
 		float w = 1189;
 		float h = 187;
