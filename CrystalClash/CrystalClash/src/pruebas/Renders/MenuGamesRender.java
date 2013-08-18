@@ -247,7 +247,8 @@ public class MenuGamesRender extends MenuRender {
 			public void clicked(InputEvent event, float x, float y) {
 				GameEngine.showLoading();
 				controller.getGameTurn(((GameListItem) event.getListenerActor()
-						.getParent()).gameId);
+						.getParent()).gameId, ((GameListItem) event.getListenerActor()
+								.getParent()).turn);
 			}
 		};
 

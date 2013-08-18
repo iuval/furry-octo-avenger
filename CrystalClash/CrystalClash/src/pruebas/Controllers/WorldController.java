@@ -28,7 +28,7 @@ public class WorldController {
 	private String gameId;
 	private boolean firstTurn;
 
-	public WorldController(JsonValue data) {
+	public WorldController(JsonValue data, int turn) {
 		this.player = data.getInt("player");
 		this.gameId = data.getString("game_id");
 		init();
@@ -39,7 +39,11 @@ public class WorldController {
 		if (firstTurn) {
 			render.initFirstTurn();
 		} else {
-			render.initTurnAnimations();
+			if(turn == 2){ //First playable turn, only FirstTurn actions (PlaceActions), so nothing to show
+				render.initNormalTurn();
+			}else{
+				render.initTurnAnimations();
+			}
 		}
 	}
 
