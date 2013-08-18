@@ -70,7 +70,7 @@ public class MenuGamesRender extends MenuRender {
 	}
 
 	@Override
-	public void update(float dt) {
+	public void act(float delta) {
 		if (scrollPane.isPanning()) {
 			if (!isTryingToRefresh && scrollPane.getScrollY() < -100) {
 				showPullDown = true;
@@ -110,22 +110,26 @@ public class MenuGamesRender extends MenuRender {
 			refreshMessagePull.setVisible(false);
 			refreshMessageRelease.setVisible(false);
 		}
-		tweenManager.update(dt);
+		tweenManager.update(delta);
+		super.act(delta);
 	}
 
 	@Override
-	public void enterAnimation() {
-		float speed = CrystalClash.ANIMATION_SPEED;
-		Timeline.createParallel()
-				.push(Tween.set(lblHeading, ActorAccessor.ALPHA).target(0))
-				.push(Tween.to(lblHeading, ActorAccessor.ALPHA, speed)
-						.target(1)).start(tweenManager);
-
-		tweenManager.update(Float.MIN_VALUE);
+	public Timeline pushEnterAnimation(Timeline t) {
+		return t.beginParallel()
+				.push(Tween.to(lblHeading, ActorAccessor.X, CrystalClash.ANIMATION_SPEED).target(50))
+				.push(Tween.to(btnLogOut, ActorAccessor.Y, CrystalClash.ANIMATION_SPEED).target(CrystalClash.HEIGHT - btnLogOut.getHeight() - 10))
+				.push(Tween.to(scrollPane, ActorAccessor.X, CrystalClash.ANIMATION_SPEED).target(0))
+				.end();
 	}
 
 	@Override
-	public void exitAnimation() {
+	public Timeline pushExitAnimation(Timeline t) {
+		return t.beginParallel()
+				.push(Tween.to(lblHeading, ActorAccessor.X, CrystalClash.ANIMATION_SPEED).target(-CrystalClash.WIDTH))
+				.push(Tween.to(btnLogOut, ActorAccessor.Y, CrystalClash.ANIMATION_SPEED).target(CrystalClash.HEIGHT))
+				.push(Tween.to(scrollPane, ActorAccessor.X, CrystalClash.ANIMATION_SPEED).target(CrystalClash.WIDTH))
+				.end();
 	}
 
 	private void load() {
@@ -136,13 +140,13 @@ public class MenuGamesRender extends MenuRender {
 		lblHeading = new Label("Welcome "
 				+ GameController.getInstancia().getUser().getNick(),
 				new LabelStyle(font, Color.WHITE));
-		lblHeading.setPosition(50, CrystalClash.HEIGHT - 50);
+		lblHeading.setPosition(-CrystalClash.WIDTH, CrystalClash.HEIGHT - 50);
 		addActor(lblHeading);
 
 		btnLogOut = new TextButton("Log Out", listItemSkin.get("innerButtonStyle",
 				TextButtonStyle.class));
 		btnLogOut.setPosition(CrystalClash.WIDTH - btnLogOut.getWidth() - 50,
-				CrystalClash.HEIGHT - btnLogOut.getHeight() - 10);
+				CrystalClash.HEIGHT);
 		btnLogOut.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
@@ -157,7 +161,7 @@ public class MenuGamesRender extends MenuRender {
 		// put the table inside a scrollpane
 		scrollPane = new ScrollPane(list);
 		scrollPane
-				.setBounds(0, 0, CrystalClash.WIDTH, CrystalClash.HEIGHT - 80);
+				.setBounds(CrystalClash.WIDTH, 0, CrystalClash.WIDTH, CrystalClash.HEIGHT - 80);
 		scrollPane.setScrollingDisabled(true, false);
 		scrollPane.setOverscroll(false, true);
 		scrollPane.setSmoothScrolling(true);

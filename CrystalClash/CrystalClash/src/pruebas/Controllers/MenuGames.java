@@ -57,7 +57,7 @@ public class MenuGames {
 	}
 
 	public void gameTurnSuccess(String data) {
-		GameEngine.getInstance().openMenuLogIn();
+		GameEngine.getInstance().openMenuGames();
 	}
 
 	public void getGameTurnSuccess(JsonValue data, int turn) {

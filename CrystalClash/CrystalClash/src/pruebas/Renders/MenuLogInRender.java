@@ -75,38 +75,23 @@ public class MenuLogInRender extends MenuRender {
 	}
 
 	@Override
-	public void update(float dt) {
-		tweenManager.update(dt);
+	public void act(float delta) {
+		tweenManager.update(delta);
+		super.act(delta);
 	}
 
 	@Override
-	public void enterAnimation() {
-		float speed = CrystalClash.ANIMATION_SPEED;
-
-		Timeline.createParallel()
-				.push(Tween.set(group1, ActorAccessor.ALPHA).target(0))
-				.push(Tween.to(group1, ActorAccessor.ALPHA, speed).target(1))
-				.start(tweenManager);
-
-		tweenManager.update(Float.MIN_VALUE);
+	public Timeline pushEnterAnimation(Timeline t) {
+		return t.push(Tween.to(popUp, ActorAccessor.Y, CrystalClash.ANIMATION_SPEED)
+				.target((CrystalClash.HEIGHT / 2 - popUp.getHeight() / 2)));
 	}
 
 	@Override
-	public void exitAnimation() {
+	public Timeline pushExitAnimation(Timeline t) {
 		txtNick.setText("");
 		txtNick.setMessageText("");
-		txtEmail.setText("");
-		txtEmail.setMessageText("");
 
-		// float speed = CrystalClash.ANIMATION_SPEED;
-		// Timeline.createParallel()
-		// .push(Tween.to(popUp, ActorAccessor.ALPHA, speed).target(0))
-		// .setCallback(new TweenCallback() {
-		// @Override
-		// public void onEvent(int type, BaseTween<?> source) {
-		// controller.authenticate(email, nick);
-		// }
-		// }).start(tweenManager);
+		return t.push(Tween.to(popUp, ActorAccessor.Y, CrystalClash.ANIMATION_SPEED).target(CrystalClash.HEIGHT));
 	}
 
 	private void loadStuff() {
@@ -276,10 +261,6 @@ public class MenuLogInRender extends MenuRender {
 				(CrystalClash.HEIGHT / 2 - popUp.getHeight() / 2)
 						+ CrystalClash.HEIGHT);
 		addActor(popUp);
-	}
-
-	public void authenticateSuccess(String userId, String name) {
-		exitAnimation();
 	}
 
 	public void authenticateError(String message) {
