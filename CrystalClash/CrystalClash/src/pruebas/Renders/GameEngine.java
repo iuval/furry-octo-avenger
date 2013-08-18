@@ -1,12 +1,16 @@
 package pruebas.Renders;
 
-import pruebas.Controllers.MenuMaster;
+import pruebas.Accessors.ActorAccessor;
+import pruebas.Controllers.MenuGames;
+import pruebas.Controllers.MenuLogIn;
 import pruebas.Controllers.WorldController;
 import pruebas.CrystalClash.CrystalClash;
 import pruebas.Enumerators.GameState;
 import pruebas.Renders.UnitRender.FACING;
 import pruebas.Renders.helpers.ui.SuperAnimatedActor;
 import pruebas.Util.FileUtil;
+import aurelienribon.tweenengine.Timeline;
+import aurelienribon.tweenengine.Tween;
 import aurelienribon.tweenengine.TweenManager;
 
 import com.badlogic.gdx.Gdx;
@@ -14,10 +18,13 @@ import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.utils.JsonValue;
 
 public class GameEngine implements Screen {
@@ -36,14 +43,16 @@ public class GameEngine implements Screen {
 
 	private GameState state;
 
-	private MenuMaster menu;
-	private MenuMasterRender menuRender;
+	private MenuLogInRender menuLogInRender;
+	private MenuGamesRender menuGamesRender;
 	private WorldController world;
 	private WorldRender worldRender;
 
 	private static TweenManager tweenManager;
 	private static SuperAnimatedActor loadingTexture;
 	private static boolean loading = false;
+
+	private Image background;
 
 	@Override
 	public void show() {
@@ -62,11 +71,23 @@ public class GameEngine implements Screen {
 		tweenManager = new TweenManager();
 
 		load();
-		openMenu();
+		openMenuLogIn();
 	}
 
 	private void load() {
 		loadingTexture = new SuperAnimatedActor(FileUtil.getSuperAnimation("data/Images/Menu/Loading/loading"), true, FACING.right);
+
+		Texture backgroundTexture = new Texture(
+				Gdx.files.internal("data/Images/Menu/menu_background.jpg"));
+		background = new Image(backgroundTexture);
+
+		Tween.registerAccessor(Actor.class, new ActorAccessor());
+		Timeline.createParallel()
+				.push(Tween.set(background, ActorAccessor.ALPHA).target(0))
+				.push(Tween.to(background, ActorAccessor.ALPHA, 2).target(1))
+				.start(tweenManager);
+
+		tweenManager.update(Float.MIN_VALUE);
 	}
 
 	@Override
@@ -80,12 +101,16 @@ public class GameEngine implements Screen {
 		case InGame:
 			world.update(dt);
 			break;
-		case InMenu:
-			menu.update(dt);
+		case InMenuLogIn:
+			menuLogInRender.update(dt);
+			break;
+		case InMenuGames:
+			menuGamesRender.update(dt);
 			break;
 		default:
 			break;
 		}
+		tweenManager.update(dt);
 	}
 
 	private void renderGame(float dt) {
@@ -97,13 +122,20 @@ public class GameEngine implements Screen {
 			worldRender.render(dt, batch, stage);
 			batch.end();
 			break;
-		case InMenu:
-			menuRender.update(dt, stage);
+		case InMenuLogIn:
+			stage.addActor(background);
+			menuLogInRender.update(dt);
+			stage.addActor(menuLogInRender);
+			break;
+		case InMenuGames:
+			stage.addActor(background);
+			menuGamesRender.update(dt);
+			stage.addActor(menuGamesRender);
 			break;
 		default:
 			break;
 		}
-		
+
 		tweenManager.update(dt);
 		stage.act(dt);
 		stage.draw();
@@ -125,9 +157,13 @@ public class GameEngine implements Screen {
 			inputManager.addProcessor(stage);
 			inputManager.addProcessor(worldRender);
 			break;
-		case InMenu:
+		case InMenuLogIn:
 			inputManager.addProcessor(stage);
-			inputManager.addProcessor(menu.getCurrentMenu().getRender());
+			inputManager.addProcessor(menuLogInRender);
+			break;
+		case InMenuGames:
+			inputManager.addProcessor(stage);
+			inputManager.addProcessor(menuGamesRender);
 			break;
 		default:
 			break;
@@ -147,16 +183,26 @@ public class GameEngine implements Screen {
 		setState(GameState.InGame);
 	}
 
-	public void openMenu() {
-		if (menuRender == null) {
-			menu = MenuMaster.getInstance();
-			menuRender = new MenuMasterRender(menu);
+	public void openMenuLogIn() {
+		if (menuLogInRender == null) {
+			menuLogInRender = MenuLogIn.getInstance().getRender();
 		}
 		if (worldRender != null) {
 			worldRender.dispose();
 			worldRender = null;
 		}
-		setState(GameState.InMenu);
+		setState(GameState.InMenuLogIn);
+	}
+
+	public void openMenuGames() {
+		if (menuGamesRender == null) {
+			menuGamesRender = MenuGames.getInstance().getRender();
+		}
+		if (worldRender != null) {
+			worldRender.dispose();
+			worldRender = null;
+		}
+		setState(GameState.InMenuGames);
 	}
 
 	@Override
@@ -179,7 +225,7 @@ public class GameEngine implements Screen {
 	public void dispose() {
 		batch.dispose();
 		stage.dispose();
-		menuRender.dispose();
+		menuLogInRender.dispose();
 		worldRender.dispose();
 	}
 

@@ -176,7 +176,7 @@ public class WorldRender implements InputProcessor {
 		btnBack.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
-				GameEngine.getInstance().openMenu();
+				GameEngine.getInstance().openMenuLogIn();
 			}
 		});
 

@@ -3,13 +3,12 @@ package pruebas.Controllers;
 import pruebas.Networking.ServerDriver;
 import pruebas.Renders.GameEngine;
 import pruebas.Renders.MenuGamesRender;
-import pruebas.Renders.MenuRender;
 
 import com.badlogic.gdx.utils.JsonValue;
 
-public class MenuGames extends Menu {
+public class MenuGames {
 
-	public static MenuGames instance;
+	private static MenuGames instance;
 
 	public static MenuGames getInstance() {
 		if (instance == null)
@@ -17,13 +16,14 @@ public class MenuGames extends Menu {
 		return instance;
 	}
 
-	@Override
-	public void update(float delta) {
+	public MenuGamesRender render;
+
+	private MenuGames() {
+		render = MenuGamesRender.getInstance(this);
 	}
 
-	@Override
-	public MenuRender getRender() {
-		return MenuGamesRender.getInstance(this);
+	public MenuGamesRender getRender() {
+		return render;
 	}
 
 	public void enableRandom() {
@@ -32,23 +32,23 @@ public class MenuGames extends Menu {
 	}
 
 	public void listGamesSuccess(String[][] games) {
-		((MenuGamesRender) getRender()).listGamesSuccess(games);
+		render.listGamesSuccess(games);
 	}
 
 	public void listGamesError(String message) {
-		((MenuGamesRender) getRender()).listGamesError(message);
+		render.listGamesError(message);
 	}
 
 	public void enableRandomSuccess() {
-		((MenuGamesRender) getRender()).enableRandomSuccess();
+		render.enableRandomSuccess();
 	}
 
 	public void enableRandomError(String message) {
-		((MenuGamesRender) getRender()).enableRandomError(message);
+		render.enableRandomError(message);
 	}
 
 	public void logOut() {
-		MenuMaster.changeMenuToLogIn();
+		// MenuMaster.changeMenuToLogIn();
 	}
 
 	public void getGameTurn(String gameId, int turn) {
@@ -57,7 +57,7 @@ public class MenuGames extends Menu {
 	}
 
 	public void gameTurnSuccess(String data) {
-		GameEngine.getInstance().openMenu();
+		GameEngine.getInstance().openMenuLogIn();
 	}
 
 	public void getGameTurnSuccess(JsonValue data, int turn) {
@@ -65,6 +65,6 @@ public class MenuGames extends Menu {
 	}
 
 	public void postGameTurnError(String message) {
-		// ((MenuGamesRender) getRender()).listGamesError(message);
+		// render.listGamesError(message);
 	}
 }

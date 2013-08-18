@@ -5,7 +5,6 @@ import java.util.Map;
 
 import pruebas.Controllers.MenuGames;
 import pruebas.Controllers.MenuLogIn;
-import pruebas.Util.TestHelper;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Net.HttpMethods;
@@ -161,8 +160,8 @@ public class ServerDriver {
 		Gdx.net.sendHttpRequest(getGet(ACTION_GAME_TURN + "/p/" + playerId
 				+ "/g/" + gameId), new HttpResponseListener() {
 			public void handleHttpResponse(HttpResponse httpResponse) {
-				 JsonValue values =
-				 ServerDriver.ProcessResponce(httpResponse);
+				JsonValue values =
+						ServerDriver.ProcessResponce(httpResponse);
 				// JsonValue values = ServerDriver.ProcessResponce(TestHelper
 				// .getSecondTurnJson(1));
 				if (values.getString("value").equals("ok")) {

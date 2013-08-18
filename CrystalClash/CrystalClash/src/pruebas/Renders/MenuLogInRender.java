@@ -78,11 +78,6 @@ public class MenuLogInRender extends MenuRender {
 
 	@Override
 	public void update(float dt) {
-		// stage.addActor(this);
-		// stage.addActor(group1);
-		// stage.addActor(group2);
-		// group1.act(dt);
-		// group2.act(dt);
 		tweenManager.update(dt);
 	}
 
@@ -105,16 +100,15 @@ public class MenuLogInRender extends MenuRender {
 		txtEmail.setText("");
 		txtEmail.setMessageText("");
 
-		controller.logIn();
-		float speed = CrystalClash.ANIMATION_SPEED;
-		Timeline.createParallel()
-				.push(Tween.to(popUp, ActorAccessor.ALPHA, speed).target(0))
-				.setCallback(new TweenCallback() {
-					@Override
-					public void onEvent(int type, BaseTween<?> source) {
-						controller.logIn();
-					}
-				}).start(tweenManager);
+		// float speed = CrystalClash.ANIMATION_SPEED;
+		// Timeline.createParallel()
+		// .push(Tween.to(popUp, ActorAccessor.ALPHA, speed).target(0))
+		// .setCallback(new TweenCallback() {
+		// @Override
+		// public void onEvent(int type, BaseTween<?> source) {
+		// controller.authenticate(email, nick);
+		// }
+		// }).start(tweenManager);
 	}
 
 	private void loadStuff() {

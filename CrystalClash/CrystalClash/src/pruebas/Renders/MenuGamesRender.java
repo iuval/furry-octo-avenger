@@ -110,11 +110,6 @@ public class MenuGamesRender extends MenuRender {
 			refreshMessagePull.setVisible(false);
 			refreshMessageRelease.setVisible(false);
 		}
-
-		// stage.addActor(lblHeading);
-		// stage.addActor(btnLogOut);
-		// stage.addActor(scrollPane);
-		// stage.addActor(this);
 		tweenManager.update(dt);
 	}
 
