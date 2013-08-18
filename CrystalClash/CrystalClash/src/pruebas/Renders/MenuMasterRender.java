@@ -39,9 +39,10 @@ public class MenuMasterRender {
 		tweenManager.update(Float.MIN_VALUE);
 	}
 
-	public void render(float dt, Stage stage) {
+	public void update(float dt, Stage stage) {
 		stage.addActor(background);
-		menu.getCurrentMenu().getRender().render(dt, stage);
+		menu.getCurrentMenu().getRender().update(dt);
+		stage.addActor(menu.getCurrentMenu().getRender());
 		tweenManager.update(dt);
 	}
 

@@ -98,7 +98,7 @@ public class GameEngine implements Screen {
 			batch.end();
 			break;
 		case InMenu:
-			menuRender.render(dt, stage);
+			menuRender.update(dt, stage);
 			break;
 		default:
 			break;

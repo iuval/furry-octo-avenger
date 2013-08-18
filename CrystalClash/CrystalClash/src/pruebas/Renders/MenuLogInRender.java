@@ -19,7 +19,6 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
@@ -78,8 +77,8 @@ public class MenuLogInRender extends MenuRender {
 	}
 
 	@Override
-	public void render(float dt, Stage stage) {
-		stage.addActor(this);
+	public void update(float dt) {
+		// stage.addActor(this);
 		// stage.addActor(group1);
 		// stage.addActor(group2);
 		// group1.act(dt);

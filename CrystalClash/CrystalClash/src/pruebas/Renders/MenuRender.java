@@ -9,7 +9,7 @@ public abstract class MenuRender extends Group implements InputProcessor {
 	public MenuRender() {
 	}
 
-	public abstract void render(float dt, Stage stage);
+	public abstract void update(float dt);
 
 	public abstract void enterAnimation();
 

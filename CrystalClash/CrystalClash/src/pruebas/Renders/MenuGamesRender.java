@@ -15,10 +15,8 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
-import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
@@ -72,7 +70,7 @@ public class MenuGamesRender extends MenuRender {
 	}
 
 	@Override
-	public void render(float dt, Stage stage) {
+	public void update(float dt) {
 		if (scrollPane.isPanning()) {
 			if (!isTryingToRefresh && scrollPane.getScrollY() < -100) {
 				showPullDown = true;
@@ -101,17 +99,22 @@ public class MenuGamesRender extends MenuRender {
 		if (isTryingToRefresh) {
 			if (showRelease) {
 				refreshMessageRelease.setY(list.getTop());
-				stage.addActor(refreshMessageRelease);
+				refreshMessageRelease.setVisible(true);
+				refreshMessagePull.setVisible(false);
 			} else if (showPullDown) {
 				refreshMessagePull.setY(list.getTop());
-				stage.addActor(refreshMessagePull);
+				refreshMessagePull.setVisible(true);
+				refreshMessageRelease.setVisible(false);
 			}
+		} else {
+			refreshMessagePull.setVisible(false);
+			refreshMessageRelease.setVisible(false);
 		}
 
 		// stage.addActor(lblHeading);
 		// stage.addActor(btnLogOut);
 		// stage.addActor(scrollPane);
-		stage.addActor(this);
+		// stage.addActor(this);
 		tweenManager.update(dt);
 	}
 
@@ -198,8 +201,13 @@ public class MenuGamesRender extends MenuRender {
 
 		refreshMessagePull = new Image(new Texture(
 				Gdx.files.internal("data/Images/Menu/RefreshList/refresh_message_pull.png")));
+		refreshMessagePull.setVisible(false);
+		addActor(refreshMessagePull);
+
 		refreshMessageRelease = new Image(new Texture(
 				Gdx.files.internal("data/Images/Menu/RefreshList/refresh_message_release.png")));
+		refreshMessageRelease.setVisible(false);
+		addActor(refreshMessageRelease);
 
 		enterAnimation();
 	}
