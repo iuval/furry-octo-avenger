@@ -10,6 +10,7 @@ import pruebas.Entities.helpers.MoveUnitAction;
 import pruebas.Entities.helpers.PlaceUnitAction;
 import pruebas.Entities.helpers.UnitAction;
 import pruebas.Networking.ServerDriver;
+import pruebas.Renders.GameEngine;
 import pruebas.Renders.WorldRender;
 import pruebas.Renders.helpers.CellHelper;
 
@@ -306,5 +307,9 @@ public class WorldController {
 	
 	public void initNormalTurn(){
 		render.initNormalTurn();
+	}
+	
+	public void leaveGame() {
+		GameEngine.getInstance().openMenuGames();
 	}
 }

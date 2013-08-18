@@ -2,7 +2,6 @@ package pruebas.Renders;
 
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.scenes.scene2d.Group;
-import com.badlogic.gdx.scenes.scene2d.Stage;
 
 public abstract class MenuRender extends Group implements InputProcessor {
 

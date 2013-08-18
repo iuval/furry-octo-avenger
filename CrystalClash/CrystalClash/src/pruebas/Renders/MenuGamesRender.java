@@ -203,8 +203,6 @@ public class MenuGamesRender extends MenuRender {
 				Gdx.files.internal("data/Images/Menu/RefreshList/refresh_message_release.png")));
 		refreshMessageRelease.setVisible(false);
 		addActor(refreshMessageRelease);
-
-		enterAnimation();
 	}
 
 	private void loadGameList() {

@@ -48,7 +48,7 @@ public class MenuGames {
 	}
 
 	public void logOut() {
-		// MenuMaster.changeMenuToLogIn();
+		GameController.getInstancia().logOut();
 	}
 
 	public void getGameTurn(String gameId, int turn) {

@@ -5,10 +5,8 @@ import pruebas.Controllers.MenuLogIn;
 import pruebas.CrystalClash.CrystalClash;
 import pruebas.Enumerators.MenuLogInState;
 import pruebas.Enumerators.StringWriting;
-import aurelienribon.tweenengine.BaseTween;
 import aurelienribon.tweenengine.Timeline;
 import aurelienribon.tweenengine.Tween;
-import aurelienribon.tweenengine.TweenCallback;
 import aurelienribon.tweenengine.TweenManager;
 
 import com.badlogic.gdx.Gdx;
@@ -278,7 +276,6 @@ public class MenuLogInRender extends MenuRender {
 				(CrystalClash.HEIGHT / 2 - popUp.getHeight() / 2)
 						+ CrystalClash.HEIGHT);
 		addActor(popUp);
-		enterAnimation();
 	}
 
 	public void authenticateSuccess(String userId, String name) {

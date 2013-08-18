@@ -4,6 +4,7 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 
 import pruebas.Entities.User;
+import pruebas.Renders.GameEngine;
 import pruebas.Util.UnitSharedDataPrefReader;
 import pruebas.Util.UnitStatsPrefReader;
 
@@ -81,5 +82,10 @@ public class GameController {
 
 	public Enumeration<String> getUnitNames() {
 		return unitValues.keys();
+	}
+
+	public void logOut() {
+		this.currentUser = null;
+		GameEngine.getInstance().openMenuLogIn();
 	}
 }

@@ -176,7 +176,7 @@ public class WorldRender implements InputProcessor {
 		btnBack.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
-				GameEngine.getInstance().openMenuLogIn();
+				world.leaveGame();
 			}
 		});
 
@@ -185,7 +185,6 @@ public class WorldRender implements InputProcessor {
 		btnClear.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
-				// TODO: clear moves
 				gameRender.clearAllChanges();
 			}
 		});

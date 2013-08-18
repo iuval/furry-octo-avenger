@@ -41,7 +41,7 @@ public class GameEngine implements Screen {
 	private Stage stage;
 	private static OrthographicCamera camera;
 
-	private GameState state;
+	private GameState state = GameState.InMenuLogIn;
 
 	private MenuLogInRender menuLogInRender;
 	private MenuGamesRender menuGamesRender;
@@ -76,6 +76,7 @@ public class GameEngine implements Screen {
 
 	private void load() {
 		loadingTexture = new SuperAnimatedActor(FileUtil.getSuperAnimation("data/Images/Menu/Loading/loading"), true, FACING.right);
+		stage.addActor(loadingTexture);
 
 		Texture backgroundTexture = new Texture(
 				Gdx.files.internal("data/Images/Menu/menu_background.jpg"));
@@ -123,14 +124,10 @@ public class GameEngine implements Screen {
 			batch.end();
 			break;
 		case InMenuLogIn:
-			stage.addActor(background);
 			menuLogInRender.update(dt);
-			stage.addActor(menuLogInRender);
 			break;
 		case InMenuGames:
-			stage.addActor(background);
 			menuGamesRender.update(dt);
-			stage.addActor(menuGamesRender);
 			break;
 		default:
 			break;
@@ -140,7 +137,6 @@ public class GameEngine implements Screen {
 		stage.act(dt);
 		stage.draw();
 		if (loading) {
-			stage.addActor(loadingTexture);
 			loadingTexture.act(dt);
 			batch.begin();
 			loadingTexture.draw(batch, 1);
@@ -148,26 +144,27 @@ public class GameEngine implements Screen {
 		}
 	}
 
-	private void setState(GameState state) {
-		this.state = state;
+	private void setState(GameState newState) {
 		inputManager.clear();
 		stage.clear();
-		switch (state) {
+		inputManager.addProcessor(stage);
+		this.state = newState;
+		switch (newState) {
 		case InGame:
-			inputManager.addProcessor(stage);
 			inputManager.addProcessor(worldRender);
 			break;
 		case InMenuLogIn:
-			inputManager.addProcessor(stage);
-			inputManager.addProcessor(menuLogInRender);
+			stage.addActor(background);
+			stage.addActor(menuLogInRender);
+			menuLogInRender.enterAnimation();
 			break;
 		case InMenuGames:
-			inputManager.addProcessor(stage);
-			inputManager.addProcessor(menuGamesRender);
-			break;
-		default:
+			stage.addActor(background);
+			stage.addActor(menuGamesRender);
+			menuGamesRender.enterAnimation();
 			break;
 		}
+
 	}
 
 	public void openGame(JsonValue data, int turn) {
@@ -191,6 +188,12 @@ public class GameEngine implements Screen {
 			worldRender.dispose();
 			worldRender = null;
 		}
+
+		switch (state) {
+		case InMenuGames:
+			menuGamesRender.exitAnimation();
+			break;
+		}
 		setState(GameState.InMenuLogIn);
 	}
 
@@ -201,6 +204,11 @@ public class GameEngine implements Screen {
 		if (worldRender != null) {
 			worldRender.dispose();
 			worldRender = null;
+		}
+		switch (state) {
+		case InMenuGames:
+			menuLogInRender.exitAnimation();
+			break;
 		}
 		setState(GameState.InMenuGames);
 	}
