@@ -12,7 +12,7 @@ public abstract class GameRender {
 		this.world = world;
 	}
 
-	public abstract void clearAllMoves();
+	public abstract void clearAllChanges();
 	
 	public abstract void render(float dt, SpriteBatch batch, Stage stage);
 

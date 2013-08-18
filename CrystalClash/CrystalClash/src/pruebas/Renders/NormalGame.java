@@ -109,7 +109,7 @@ public class NormalGame extends GameRender {
 		aActions = new Array<AttackUnitAction>();
 		
 		init();
-		clearAllMoves();
+		clearAllChanges();
 		GameEngine.hideLoading();
 	}
 
@@ -587,7 +587,7 @@ public class NormalGame extends GameRender {
 	}
 	
 	@Override
-	public void clearAllMoves() {
+	public void clearAllChanges() {
 		clearSelection();
 		
 		mActions.clear();

@@ -151,9 +151,9 @@ public class SelectUnitsRender extends GameRender {
 	}
 
 	@Override
-	public void clearAllMoves() {
-		// TODO Quitar todas las unidades colocadas en el mapa.
-
+	public void clearAllChanges() {
+		world.deleteAllUnits();
+		resetUnitsCount();
 	}
 
 	public void render(float dt, SpriteBatch batch, Stage stage) {
