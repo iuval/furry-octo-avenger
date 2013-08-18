@@ -196,8 +196,6 @@ public class MenuGamesRender extends MenuRender {
 		btnNewInvite.align(Align.center);
 		list.addActorAfter(menuImage, btnNewInvite);
 
-		loadGameList();
-
 		refreshMessagePull = new Image(new Texture(
 				Gdx.files.internal("data/Images/Menu/RefreshList/refresh_message_pull.png")));
 		refreshMessagePull.setVisible(false);
@@ -210,8 +208,7 @@ public class MenuGamesRender extends MenuRender {
 	}
 
 	private void loadGameList() {
-		ServerDriver.getListGames(GameController.getInstancia().getUser()
-				.getId());
+		controller.getGames();
 	}
 
 	// SERVER DRIVER CALLBACKS --------------------------------------------
@@ -251,7 +248,6 @@ public class MenuGamesRender extends MenuRender {
 		playListener = new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
-				GameEngine.showLoading();
 				controller.getGameTurn(((GameListItem) event.getListenerActor()
 						.getParent()).gameId, ((GameListItem) event.getListenerActor()
 								.getParent()).turn);

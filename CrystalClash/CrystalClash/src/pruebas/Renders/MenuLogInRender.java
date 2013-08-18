@@ -181,7 +181,6 @@ public class MenuLogInRender extends MenuRender {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
 				adjustToKeyboard(true);
-				Gdx.input.setOnscreenKeyboardVisible(true);
 				stringWriting = StringWriting.Email;
 			}
 		});
@@ -195,7 +194,6 @@ public class MenuLogInRender extends MenuRender {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
 				adjustToKeyboard(true);
-				Gdx.input.setOnscreenKeyboardVisible(true);
 				stringWriting = StringWriting.Nick;
 			}
 		});
@@ -231,12 +229,14 @@ public class MenuLogInRender extends MenuRender {
 				case LogIn:
 					if (!email.isEmpty() && !nick.isEmpty()) {
 						GameEngine.showLoading();
+						Gdx.input.setOnscreenKeyboardVisible(false);
 						controller.authenticate(email, nick);
 					}
 					break;
 				case SignIn:
 					if (!email.isEmpty() && !nick.isEmpty()) {
 						GameEngine.showLoading();
+						Gdx.input.setOnscreenKeyboardVisible(false);
 						controller.signIn(email, nick);
 					}
 					break;
@@ -294,6 +294,7 @@ public class MenuLogInRender extends MenuRender {
 	}
 
 	private void adjustToKeyboard(boolean up) {
+		Gdx.input.setOnscreenKeyboardVisible(up);
 		// true mueve hacia arriba, false mueve hacia abajo
 		float jump = CrystalClash.HEIGHT / 2 - popUp.getHeight() / 2;
 		if (up)
@@ -310,24 +311,6 @@ public class MenuLogInRender extends MenuRender {
 		atlas.dispose();
 		skin.dispose();
 		font.dispose();
-	}
-
-	public void reset() {
-		instance = new MenuLogInRender(controller);
-
-		// TODO: Hay que setear de nuevo el InputController porque sino no puedo
-		// escribir
-
-		// No se porque haciendo esto se caga :S
-		// enterAnimation();
-		//
-		// txtEmail.setText("iuvalgoldansky@gmail.com");
-		// txtEmail.setMessageText("Enter your Email...");
-		// txtNick.setText("pepe");
-		// txtNick.setMessageText("Enter your Nick...");
-		//
-		// group2.setY((CrystalClash.HEIGHT / 2 - group2.getHeight() / 2)
-		// + CrystalClash.HEIGHT);
 	}
 
 	// INPUT PROCESSOR--------------------------------------------
@@ -357,7 +340,6 @@ public class MenuLogInRender extends MenuRender {
 
 		if (keycode == Keys.BACK) {
 			adjustToKeyboard(false);
-			Gdx.input.setOnscreenKeyboardVisible(false);
 		}
 		return true;
 	}
@@ -394,7 +376,6 @@ public class MenuLogInRender extends MenuRender {
 	@Override
 	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
 		adjustToKeyboard(false);
-		Gdx.input.setOnscreenKeyboardVisible(false);
 		return true;
 	}
 

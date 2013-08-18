@@ -51,9 +51,16 @@ public class MenuGames {
 		GameController.getInstancia().logOut();
 	}
 
+	public void getGames() {
+		GameEngine.showLoading();
+		ServerDriver.getListGames(GameController.getInstancia().getUser()
+				.getId());
+	}
+
 	public void getGameTurn(String gameId, int turn) {
-		 ServerDriver.getGameTurn(GameController.getInstancia().getUser()
-		 .getId(), gameId, turn);
+		GameEngine.showLoading();
+		ServerDriver.getGameTurn(GameController.getInstancia().getUser()
+				.getId(), gameId, turn);
 	}
 
 	public void gameTurnSuccess(String data) {

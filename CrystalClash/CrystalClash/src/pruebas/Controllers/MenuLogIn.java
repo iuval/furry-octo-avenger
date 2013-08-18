@@ -67,8 +67,4 @@ public class MenuLogIn {
 
 		return true;
 	}
-
-	public void resetRender() {
-		render.reset();
-	}
 }
