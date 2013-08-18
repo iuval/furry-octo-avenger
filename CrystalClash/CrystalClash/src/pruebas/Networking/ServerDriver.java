@@ -157,7 +157,7 @@ public class ServerDriver {
 				});
 	}
 
-	public static void getGameTurn(String playerId, String gameId) {
+	public static void getGameTurn(String playerId, String gameId, final int turn) {
 		Gdx.net.sendHttpRequest(getGet(ACTION_GAME_TURN + "/p/" + playerId
 				+ "/g/" + gameId), new HttpResponseListener() {
 			public void handleHttpResponse(HttpResponse httpResponse) {
@@ -167,7 +167,7 @@ public class ServerDriver {
 				// .getSecondTurnJson(1));
 				if (values.getString("value").equals("ok")) {
 					MenuGames.getInstance().getGameTurnSuccess(
-							values.get("data"));
+							values.get("data"), turn);
 				} else {
 					MenuGames.getInstance().enableRandomError(
 							values.getString("message"));

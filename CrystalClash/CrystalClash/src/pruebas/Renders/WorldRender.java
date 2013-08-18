@@ -44,6 +44,8 @@ public class WorldRender implements InputProcessor {
 	private TextButton btnClear;
 	private Group grpMoreOptions;
 	private boolean hideMoreOptions;
+	
+	private boolean showingAnimations;
 
 	private WorldController world;
 	GameRender gameRender;
@@ -57,6 +59,7 @@ public class WorldRender implements InputProcessor {
 		cellHelper.load();
 
 		hideMoreOptions = false;
+		showingAnimations = false;
 
 		UnitHelper.init();
 		loadStuff();
@@ -64,14 +67,17 @@ public class WorldRender implements InputProcessor {
 
 	public void initFirstTurn() {
 		gameRender = new SelectUnitsRender(world);
+		showingAnimations = false;
 	}
 
 	public void initNormalTurn() {
 		gameRender = new NormalGame(world);
+		showingAnimations = false;
 	}
 
 	public void initTurnAnimations() {
 		gameRender = new TurnAnimations(world);
+		showingAnimations = true;
 	}
 
 	public void render(float dt, SpriteBatch batch, Stage stage) {
@@ -90,15 +96,17 @@ public class WorldRender implements InputProcessor {
 
 		gameRender.render(dt, batch, stage);
 
-		moreOptions.draw(batch, 1);
-		optionsBar.draw(batch, 1);
+		if(!showingAnimations){
+			moreOptions.draw(batch, 1);
+			optionsBar.draw(batch, 1);
 
-		stage.addActor(btnMoreOptions);
-		stage.addActor(grpMoreOptions);
-		stage.addActor(sendBar);
-		stage.addActor(btnSend);
-		grpMoreOptions.act(dt);
-		tweenManager.update(dt);
+			stage.addActor(btnMoreOptions);
+			stage.addActor(grpMoreOptions);
+			stage.addActor(sendBar);
+			stage.addActor(btnSend);
+			grpMoreOptions.act(dt);
+			tweenManager.update(dt);
+		}
 	}
 
 	private void loadStuff() {
