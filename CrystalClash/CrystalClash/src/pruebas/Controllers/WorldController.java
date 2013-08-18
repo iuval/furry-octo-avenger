@@ -204,7 +204,7 @@ public class WorldController {
 
 	public boolean placeUnit(float x, float y, Unit unit) {
 		Cell cell = cellAt(x, y);
-		if (cell != null && cell.getState() == Cell.State.ABLE_TO_PLACE) {
+		if (cell != null && cell.getState() == Cell.State.ABLE_TO_PLACE && cell.getUnit(player) == null) {
 			cell.placeUnit(unit, player);
 			return true;
 		}

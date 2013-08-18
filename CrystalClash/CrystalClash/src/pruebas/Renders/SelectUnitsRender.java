@@ -132,6 +132,10 @@ public class SelectUnitsRender extends GameRender {
 		}
 	}
 
+	private boolean canPlaceUnit() {
+		return unitCount < GameController.getInstancia().unitsPerPlayer;
+	}
+
 	private void changeUnitsCountBy(int du) {
 		unitCount += du;
 		updateUnitsCountLabel();
@@ -178,8 +182,10 @@ public class SelectUnitsRender extends GameRender {
 				Cell cell = world.cellAt(x, y);
 				if (cell != null) {
 					selectedUnit = cell.getUnit(world.player);
-					cell.removeUnit(world.player);
-					isSelectedUnitFromTabs = false;
+					if (selectedUnit != null) {
+						cell.removeUnit(world.player);
+						changeUnitsCountBy(-1);
+					}
 				}
 			}
 		}
@@ -188,12 +194,8 @@ public class SelectUnitsRender extends GameRender {
 
 	public boolean touchUp(float x, float y, int pointer, int button) {
 		if (selectedUnit != null) {
-			if (world.placeUnit(x, y, selectedUnit)) {
+			if (canPlaceUnit() && world.placeUnit(x, y, selectedUnit)) {
 				changeUnitsCountBy(1);
-			} else {
-				if (!isSelectedUnitFromTabs) {
-					changeUnitsCountBy(-1);
-				}
 			}
 			selectedUnit = null;
 		}
