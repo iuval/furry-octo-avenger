@@ -167,7 +167,7 @@ public class TurnAnimations extends GameRender {
 	}
 
 	@Override
-	public void clearAllMoves() {
+	public void clearAllChanges() {
 		// TODO Auto-generated method stub
 		
 	}
