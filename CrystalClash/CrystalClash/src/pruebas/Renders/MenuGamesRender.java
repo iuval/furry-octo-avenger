@@ -15,7 +15,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -31,7 +31,6 @@ import com.badlogic.gdx.scenes.scene2d.utils.Align;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
 public class MenuGamesRender extends MenuRender {
-
 	private static MenuGamesRender instance;
 	private TweenManager tweenManager;
 
@@ -109,9 +108,10 @@ public class MenuGamesRender extends MenuRender {
 			}
 		}
 
-		stage.addActor(lblHeading);
-		stage.addActor(btnLogOut);
-		stage.addActor(scrollPane);
+		// stage.addActor(lblHeading);
+		// stage.addActor(btnLogOut);
+		// stage.addActor(scrollPane);
+		stage.addActor(this);
 		tweenManager.update(dt);
 	}
 
@@ -139,6 +139,7 @@ public class MenuGamesRender extends MenuRender {
 				+ GameController.getInstancia().getUser().getNick(),
 				new LabelStyle(font, Color.WHITE));
 		lblHeading.setPosition(50, CrystalClash.HEIGHT - 50);
+		addActor(lblHeading);
 
 		btnLogOut = new TextButton("Log Out", listItemSkin.get("innerButtonStyle",
 				TextButtonStyle.class));
@@ -151,7 +152,7 @@ public class MenuGamesRender extends MenuRender {
 				controller.logOut();
 			}
 		});
-
+		addActor(btnLogOut);
 		list = new VerticalGroup();
 		list.setWidth(CrystalClash.WIDTH);
 
@@ -164,7 +165,7 @@ public class MenuGamesRender extends MenuRender {
 		scrollPane.setSmoothScrolling(true);
 		scrollPane.invalidate();
 		scrollPane.setupOverscroll(CrystalClash.HEIGHT, 4000, 5000);
-
+		addActor(scrollPane);
 		gamesImage = new Image(new Texture(
 				Gdx.files.internal("data/Images/Menu/current_games_header.png")));
 

@@ -56,7 +56,7 @@ public class MenuLogInRender extends MenuRender {
 	private Image characters;
 
 	private Group group1;
-	private Group group2;
+	private Group popUp;
 
 	private StringWriting stringWriting;
 	public MenuLogInState state;
@@ -79,10 +79,11 @@ public class MenuLogInRender extends MenuRender {
 
 	@Override
 	public void render(float dt, Stage stage) {
-		stage.addActor(group1);
-		stage.addActor(group2);
-		group1.act(dt);
-		group2.act(dt);
+		stage.addActor(this);
+		// stage.addActor(group1);
+		// stage.addActor(group2);
+		// group1.act(dt);
+		// group2.act(dt);
 		tweenManager.update(dt);
 	}
 
@@ -108,7 +109,7 @@ public class MenuLogInRender extends MenuRender {
 		controller.logIn();
 		float speed = CrystalClash.ANIMATION_SPEED;
 		Timeline.createParallel()
-				.push(Tween.to(group2, ActorAccessor.ALPHA, speed).target(0))
+				.push(Tween.to(popUp, ActorAccessor.ALPHA, speed).target(0))
 				.setCallback(new TweenCallback() {
 					@Override
 					public void onEvent(int type, BaseTween<?> source) {
@@ -159,6 +160,7 @@ public class MenuLogInRender extends MenuRender {
 		group1.addActor(characters);
 		group1.addActor(btnLogIn);
 		group1.addActor(btnSignIn);
+		addActor(group1);
 
 		popupPanelTexture = new Texture(
 				Gdx.files.internal("data/Images/Menu/menu_login_popup.png"));
@@ -268,21 +270,21 @@ public class MenuLogInRender extends MenuRender {
 			}
 		});
 
-		group2 = new Group();
-		group2.addActor(popupPanel);
-		group2.addActor(lblHeading);
-		group2.addActor(textFieldEmail);
-		group2.addActor(textFieldNick);
-		group2.addActor(txtEmail);
-		group2.addActor(txtNick);
-		group2.addActor(btnConfirm);
-		group2.addActor(btnBack);
+		popUp = new Group();
+		popUp.addActor(popupPanel);
+		popUp.addActor(lblHeading);
+		popUp.addActor(textFieldEmail);
+		popUp.addActor(textFieldNick);
+		popUp.addActor(txtEmail);
+		popUp.addActor(txtNick);
+		popUp.addActor(btnConfirm);
+		popUp.addActor(btnBack);
 
-		group2.setSize(popupPanel.getWidth(), popupPanel.getHeight());
-		group2.setPosition(CrystalClash.WIDTH / 2 - group2.getWidth() / 2,
-				(CrystalClash.HEIGHT / 2 - group2.getHeight() / 2)
+		popUp.setSize(popupPanel.getWidth(), popupPanel.getHeight());
+		popUp.setPosition(CrystalClash.WIDTH / 2 - popUp.getWidth() / 2,
+				(CrystalClash.HEIGHT / 2 - popUp.getHeight() / 2)
 						+ CrystalClash.HEIGHT);
-
+		addActor(popUp);
 		enterAnimation();
 	}
 
@@ -299,10 +301,10 @@ public class MenuLogInRender extends MenuRender {
 	private void moveUp(MenuLogInState state) {
 		float speed = CrystalClash.ANIMATION_SPEED;
 		Timeline.createParallel()
-				.push(Tween.to(group2, ActorAccessor.ALPHA, speed).target(0))
+				.push(Tween.to(popUp, ActorAccessor.ALPHA, speed).target(0))
 				.push(Tween.to(group1, ActorAccessor.ALPHA, speed).target(1))
-				.push(Tween.to(group2, ActorAccessor.Y, speed).target(
-						group2.getY() + CrystalClash.HEIGHT))
+				.push(Tween.to(popUp, ActorAccessor.Y, speed).target(
+						popUp.getY() + CrystalClash.HEIGHT))
 				.start(tweenManager);
 
 		this.state = state;
@@ -311,9 +313,9 @@ public class MenuLogInRender extends MenuRender {
 	private void moveDown(MenuLogInState state) {
 		float speed = CrystalClash.ANIMATION_SPEED;
 		Timeline.createParallel()
-				.push(Tween.to(group2, ActorAccessor.Y, speed).target(
-						CrystalClash.HEIGHT / 2 - group2.getHeight() / 2))
-				.push(Tween.to(group2, ActorAccessor.ALPHA, speed).target(1))
+				.push(Tween.to(popUp, ActorAccessor.Y, speed).target(
+						CrystalClash.HEIGHT / 2 - popUp.getHeight() / 2))
+				.push(Tween.to(popUp, ActorAccessor.ALPHA, speed).target(1))
 				.push(Tween.to(group1, ActorAccessor.ALPHA, speed).target(0))
 				.start(tweenManager);
 
@@ -322,13 +324,13 @@ public class MenuLogInRender extends MenuRender {
 
 	private void adjustToKeyboard(boolean up) {
 		// true mueve hacia arriba, false mueve hacia abajo
-		float jump = CrystalClash.HEIGHT / 2 - group2.getHeight() / 2;
+		float jump = CrystalClash.HEIGHT / 2 - popUp.getHeight() / 2;
 		if (up)
 			jump = CrystalClash.HEIGHT / 2 - 30;
 
 		float speed = CrystalClash.ANIMATION_SPEED;
 		Timeline.createParallel()
-				.push(Tween.to(group2, ActorAccessor.Y, speed).target(jump))
+				.push(Tween.to(popUp, ActorAccessor.Y, speed).target(jump))
 				.start(tweenManager);
 	}
 
