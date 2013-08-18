@@ -7,10 +7,13 @@ import pruebas.Controllers.WorldController;
 import pruebas.CrystalClash.CrystalClash;
 import pruebas.Entities.Cell;
 import pruebas.Entities.Unit;
+import pruebas.Entities.helpers.AttackUnitAction;
+import pruebas.Entities.helpers.DefendUnitAction;
 import pruebas.Entities.helpers.MoveUnitAction;
 import pruebas.Entities.helpers.UnitAction;
 import pruebas.Renders.UnitRender.ANIM;
 import pruebas.Renders.helpers.CellHelper;
+import pruebas.Renders.helpers.UnitHelper;
 import aurelienribon.tweenengine.BaseTween;
 import aurelienribon.tweenengine.Timeline;
 import aurelienribon.tweenengine.Tween;
@@ -38,12 +41,18 @@ public class TurnAnimations extends GameRender {
 
 	private Array<MoveUnitAction> player1Moves;
 	private Array<MoveUnitAction> player2Moves;
+	private Array<AttackUnitAction> player1MeleeAttacks;
+	private Array<AttackUnitAction> player2MeleeAttacks;
+	private Array<AttackUnitAction> player1RangedAttacks;
+	private Array<AttackUnitAction> player2RangedAttacks;
+	private Array<DefendUnitAction> player1Defend;
+	private Array<DefendUnitAction> player2Defend;
 	
 	private Image panel;
 	private TextButton btnPlay;
 	private TextButton btnSkip;
 	private Group grpPanel;
-
+	
 	public TurnAnimations(WorldController world) {
 		super(world);
 
@@ -51,10 +60,36 @@ public class TurnAnimations extends GameRender {
 
 		player1Moves = new Array<MoveUnitAction>();
 		player2Moves = new Array<MoveUnitAction>();
+		player1MeleeAttacks = new Array<AttackUnitAction>();
+		player2MeleeAttacks = new Array<AttackUnitAction>();
+		player1RangedAttacks = new Array<AttackUnitAction>();	
+		player2RangedAttacks = new Array<AttackUnitAction>();
+		player1Defend = new Array<DefendUnitAction>();
+		player2Defend = new Array<DefendUnitAction>();
+		
 		init();
+
+		readActions(1);
+		readActions(2);
 		GameEngine.hideLoading();
 	}
 
+	private void defensiveUnits() {
+		DefendUnitAction action = null;
+		for (int i = 0; i < player1Defend.size; i++) {
+			action = player1Defend.get(i);
+			action.origin.getUnit(1).setDefendingPosition(true);
+		}
+
+		for (int i = 0; i < player2Defend.size; i++) {
+			action = player2Defend.get(i);
+			action.origin.getUnit(2).setDefendingPosition(true);
+		}
+	}
+	
+	private void meleeAttackUnits() {
+	}
+	
 	private void moveUnits() {
 		Timeline t = Timeline.createSequence();
 		t.beginParallel();
@@ -71,7 +106,10 @@ public class TurnAnimations extends GameRender {
 		});
 		t.start(tweenManager);
 	}
-
+	
+	private void rangedAttackUnits() {
+	}
+	
 	private void createPaths(Array<MoveUnitAction> moveActions, int player,
 			Timeline pathsTimeline) {
 		MoveUnitAction action = null;
@@ -158,8 +196,27 @@ public class TurnAnimations extends GameRender {
 				if (action != null) {
 					switch (action.getActionType()) {
 					case ATTACK:
+						AttackUnitAction aux = (AttackUnitAction) action;
+						if (player == 1) {
+							if (aux.meleeAttack) {
+								player1MeleeAttacks.add(aux);
+							} else {
+								player1RangedAttacks.add(aux);
+							}
+						} else {
+							if (aux.meleeAttack) {
+								player2MeleeAttacks.add(aux);
+							} else {
+								player2RangedAttacks.add(aux);
+							}
+						}
 						break;
 					case DEFENSE:
+						if (player == 1) {
+							player1Defend.add((DefendUnitAction) action);
+						} else {
+							player2Defend.add((DefendUnitAction) action);
+						}
 						break;
 					case MOVE:
 						if (player == 1) {
@@ -184,9 +241,6 @@ public class TurnAnimations extends GameRender {
 		GameController.getInstancia().loadUnitsStats();
 		Tween.registerAccessor(Unit.class, new UnitAccessor());
 
-		readActions(1);
-		readActions(2);
-
 		TextureAtlas atlas = new TextureAtlas("data/Images/Buttons/buttons.pack");
 		Skin skin = new Skin(atlas);
 		
@@ -203,6 +257,7 @@ public class TurnAnimations extends GameRender {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
 				hidePanel();
+				defensiveUnits();
 				moveUnits();
 			}
 		});

@@ -39,7 +39,7 @@ public class WorldController {
 		if (firstTurn) {
 			render.initFirstTurn();
 		} else {
-			if(turn == 2){ //First playable turn, only FirstTurn actions (PlaceActions), so nothing to show
+			if(turn == 1){ //First playable turn, only FirstTurn actions (PlaceActions), so nothing to show
 				render.initNormalTurn();
 			}else{
 				render.initTurnAnimations();
