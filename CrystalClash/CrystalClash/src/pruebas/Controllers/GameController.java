@@ -17,12 +17,14 @@ public class GameController {
 		return instancia;
 	}
 
+	private boolean dataLoaded = false;
 	private User currentUser;
 	private Hashtable<String, int[]> unitValues;
 
 	public float unitMaxLife = 0;
 	public float unitMaxAttack = 0;
 	public float unitMaxSpeed = 0;
+	public int unitsPerPlayer = 0;
 
 	public void setUser(User user) {
 		currentUser = user;
@@ -33,11 +35,16 @@ public class GameController {
 	}
 
 	public void loadUnitsStats() {
-		unitValues = UnitStatsPrefReader.load("data/Units/stats.pref");
-		int[] shared = UnitSharedDataPrefReader.load("data/Units/shared.pref");
-		unitMaxLife = shared[0];
-		unitMaxAttack = shared[1];
-		unitMaxSpeed = shared[2];
+		if (!dataLoaded) {
+			unitValues = UnitStatsPrefReader.load("data/Units/stats.pref");
+			int[] shared = UnitSharedDataPrefReader.load("data/Units/shared.pref");
+			unitMaxLife = shared[0];
+			unitMaxAttack = shared[1];
+			unitMaxSpeed = shared[2];
+			unitsPerPlayer = shared[3];
+
+			dataLoaded = true;
+		}
 	}
 
 	public int getUnitElement(String unitName) {
