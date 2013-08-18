@@ -41,6 +41,7 @@ public class UnitRender {
 		} else {
 			hpBar = UnitHelper.getAllyHPBar();
 		}
+		updateHp();
 	}
 
 	public void setFacing(FACING at) {
@@ -76,12 +77,12 @@ public class UnitRender {
 		currnetAnim.draw(batch, unit.getX(), unit.getY());
 		batch.draw(hpBar, unit.getX() + UnitHelper.HP_BAR_X, unit.getY()
 				+ UnitHelper.HP_BAR_Y, hpWidth, UnitHelper.HP_BAR_HEIGHT);
-		
-		if(unit.isInDefensePosition()){
+
+		if (unit.isInDefensePosition()) {
 			shieldAnim.update(dt, true, facing);
 			shieldAnim.draw(batch, unit.getX(), unit.getY());
 		}
-	}	
+	}
 
 	public UnitRender clone() {
 		UnitRender ren = new UnitRender();

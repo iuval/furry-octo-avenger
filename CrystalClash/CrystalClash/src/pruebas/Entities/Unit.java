@@ -23,12 +23,12 @@ public class Unit extends GameObject {
 	private boolean inDefensePosition;
 	private UnitRender render;
 
+	public Unit(String unitName, boolean enemy) {
+		this(unitName, enemy, GameController.getInstancia().getUnitLife(unitName));
+	}
+
 	public Unit(String unitName, boolean enemy, int hp) {
 		this.enemy = enemy;
-		if (render == null) {
-			this.render = UnitHelper.getUnitRender(unitName);
-			this.render.setUnit(this);
-		}
 		this.unitName = unitName;
 
 		GameController.getInstancia().loadUnitsStats();
@@ -38,6 +38,11 @@ public class Unit extends GameObject {
 		this.velicity = GameController.getInstancia().getUnitSpeed(unitName);
 		this.range = GameController.getInstancia().getUnitRange(unitName);
 		inDefensePosition = false;
+
+		if (render == null) {
+			this.render = UnitHelper.getUnitRender(unitName);
+			this.render.setUnit(this);
+		}
 	}
 
 	public Unit(String unitName) {
