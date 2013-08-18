@@ -178,7 +178,7 @@ public class WorldRender implements InputProcessor {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
 				// TODO: clear moves
-				gameRender.clearAllMoves();
+				gameRender.clearAllChanges();
 			}
 		});
 
