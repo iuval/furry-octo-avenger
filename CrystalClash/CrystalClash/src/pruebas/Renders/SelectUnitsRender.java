@@ -153,6 +153,7 @@ public class SelectUnitsRender extends GameRender {
 	@Override
 	public void clearAllChanges() {
 		world.deleteAllUnits();
+		resetUnitsCount();
 	}
 
 	public void render(float dt, SpriteBatch batch, Stage stage) {
