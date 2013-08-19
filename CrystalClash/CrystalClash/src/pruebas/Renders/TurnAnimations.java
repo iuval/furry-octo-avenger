@@ -12,8 +12,8 @@ import pruebas.Entities.helpers.DefendUnitAction;
 import pruebas.Entities.helpers.MoveUnitAction;
 import pruebas.Entities.helpers.UnitAction;
 import pruebas.Renders.UnitRender.ANIM;
+import pruebas.Renders.UnitRender.FACING;
 import pruebas.Renders.helpers.CellHelper;
-import pruebas.Renders.helpers.UnitHelper;
 import aurelienribon.tweenengine.BaseTween;
 import aurelienribon.tweenengine.Timeline;
 import aurelienribon.tweenengine.Tween;
@@ -73,24 +73,41 @@ public class TurnAnimations extends GameRender {
 		readActions(2);
 		GameEngine.hideLoading();
 	}
+	
+	private void play(){
+		hidePanel();
+		defensiveUnits(true);
+		Timeline t = Timeline.createSequence();
+		t.push(meleeAttackUnits());
+		t.start(tweenManager);
+	}
 
-	private void defensiveUnits() {
+	private void defensiveUnits(boolean active) {
 		DefendUnitAction action = null;
 		for (int i = 0; i < player1Defend.size; i++) {
 			action = player1Defend.get(i);
-			action.origin.getUnit(1).setDefendingPosition(true);
+			action.origin.getUnit(1).setDefendingPosition(active);
 		}
 
 		for (int i = 0; i < player2Defend.size; i++) {
 			action = player2Defend.get(i);
-			action.origin.getUnit(2).setDefendingPosition(true);
+			action.origin.getUnit(2).setDefendingPosition(active);
 		}
 	}
 	
-	private void meleeAttackUnits() {
+	private Timeline meleeAttackUnits() {
+		Timeline t = Timeline.createSequence();
+		t.setCallback(new TweenCallback() {
+			@Override
+			public void onEvent(int type, BaseTween<?> source) {
+				moveUnits();
+			}
+		}).start(tweenManager);
+		
+		return t;
 	}
 	
-	private void moveUnits() {
+	private Timeline moveUnits() {
 		Timeline t = Timeline.createSequence();
 		t.beginParallel();
 		createPaths(player1Moves, 1, t);
@@ -101,13 +118,22 @@ public class TurnAnimations extends GameRender {
 		t.setCallback(new TweenCallback() {
 			@Override
 			public void onEvent(int type, BaseTween<?> source) {
-				showPanel();
+				rangedAttackUnits();
 			}
-		});
-		t.start(tweenManager);
+		}).start(tweenManager);
+		
+		return t;
 	}
 	
 	private void rangedAttackUnits() {
+		Timeline t = Timeline.createSequence();
+		t.setCallback(new TweenCallback() {
+			@Override
+			public void onEvent(int type, BaseTween<?> source) {
+				defensiveUnits(false);
+				showPanel();
+			}
+		}).start(tweenManager);
 	}
 	
 	private void createPaths(Array<MoveUnitAction> moveActions, int player,
@@ -157,7 +183,7 @@ public class TurnAnimations extends GameRender {
 		step.push(Tween
 				.to(action.origin.getUnit(player), ActorAccessor.X, 1)
 				.target(action.moves.get(currentStepIndex + 1).getX() + (player == 1 ? CellHelper.UNIT_PLAYER_1_X
-						: CellHelper.UNIT_PLAYER_2_X)));
+						: CellHelper.UNIT_PLAYER_2_X), player));
 		step.push(Tween
 				.to(action.origin.getUnit(player), ActorAccessor.Y, 1)
 				.target(action.moves.get(currentStepIndex + 1).getY() + (player == 1 ? CellHelper.UNIT_PLAYER_1_Y
@@ -178,6 +204,10 @@ public class TurnAnimations extends GameRender {
 		if (isLastStep)
 		{
 			unit.getRender().setAnimation(ANIM.idle);
+			if(player == 1)
+				unit.getRender().setFacing(FACING.right);
+			else
+				unit.getRender().setFacing(FACING.left);
 		}
 
 		String coordsFrom = cellFrom.getGridPosition().getX() + ","
@@ -256,9 +286,7 @@ public class TurnAnimations extends GameRender {
 		btnPlay.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
-				hidePanel();
-				defensiveUnits();
-				moveUnits();
+				play();
 			}
 		});
 		
