@@ -2,10 +2,10 @@ package pruebas.Controllers;
 
 import pruebas.Entities.User;
 import pruebas.Networking.ServerDriver;
+import pruebas.Renders.GameEngine;
 import pruebas.Renders.MenuLogInRender;
-import pruebas.Renders.MenuRender;
 
-public class MenuLogIn extends Menu {
+public class MenuLogIn {
 
 	private static MenuLogIn instance;
 
@@ -17,19 +17,16 @@ public class MenuLogIn extends Menu {
 
 	private String email;
 	private String nick;
+	private MenuLogInRender render;
 
-	public MenuLogIn() {
+	private MenuLogIn() {
+		render = MenuLogInRender.getInstance(this);
 		email = "";
 		nick = "";
 	}
 
-	@Override
-	public void update(float delta) {
-	}
-
-	@Override
-	public MenuRender getRender() {
-		return MenuLogInRender.getInstance(this);
+	public MenuLogInRender getRender() {
+		return render;
 	}
 
 	public String getEmail() {
@@ -40,43 +37,30 @@ public class MenuLogIn extends Menu {
 		return nick;
 	}
 
-	public boolean authenticate(String email, String nick) {
+	public void sendLogIn(String email, String nick) {
 		this.email = email;
 		this.nick = nick;
 
-		ServerDriver.logIn(email, nick);
-
-		return true;
+		ServerDriver.sendLogIn(email, nick);
 	}
 
-	public void authenticateSuccess(String userId, String name) {
-		// TODO corregir
+	public void sendLogInSuccess(String userId, String name) {
 		GameController.getInstancia().setUser(new User(userId, name, name));
-		((MenuLogInRender) getRender()).authenticateSuccess(userId, name);
+		GameEngine.getInstance().openMenuGames();
 	}
 
-	public void authenticateError(String message) {
-		((MenuLogInRender) getRender()).authenticateError(message);
+	public void sendLogInError(String message) {
+		render.authenticateError(message);
 	}
 
 	public void serverError(String message) {
 		System.out.println(message);
 	}
 
-	public boolean signIn(String email, String nick) {
+	public void sendSignIn(String email, String nick) {
 		this.email = email;
 		this.nick = nick;
 
-		ServerDriver.signIn(email, nick);
-
-		return true;
-	}
-
-	public void logIn() {
-		MenuMaster.changeMenuToGames();
-	}
-
-	public void resetRender() {
-		((MenuLogInRender) getRender()).reset();
+		ServerDriver.sendSignIn(email, nick);
 	}
 }
