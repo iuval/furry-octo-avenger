@@ -207,7 +207,7 @@ public class GameEngine implements Screen {
 					if (menuGamesRender == null) {
 						menuGamesRender = MenuGames.getInstance().getRender();
 					}
-					MenuGames.getInstance().listGames();
+					MenuGames.getInstance().getGamesList();
 					setState(GameState.InTranstionMenuLogInAndMenuGames);
 					menuGamesRender.pushEnterAnimation(Timeline.createSequence())
 							.setCallback(new TweenCallback() {
@@ -227,7 +227,7 @@ public class GameEngine implements Screen {
 					if (menuGamesRender == null) {
 						menuGamesRender = MenuGames.getInstance().getRender();
 					}
-					MenuGames.getInstance().listGames();
+					MenuGames.getInstance().getGamesList();
 					setState(GameState.InTranstionMenuGamesAndGame);
 					menuGamesRender.pushEnterAnimation(Timeline.createSequence())
 							.setCallback(new TweenCallback() {

@@ -41,7 +41,7 @@ public class MenuLogIn {
 		this.email = email;
 		this.nick = nick;
 
-		ServerDriver.logIn(email, nick);
+		ServerDriver.sendLogIn(email, nick);
 	}
 
 	public void sendLogInSuccess(String userId, String name) {
@@ -61,6 +61,6 @@ public class MenuLogIn {
 		this.email = email;
 		this.nick = nick;
 
-		ServerDriver.signIn(email, nick);
+		ServerDriver.sendSignIn(email, nick);
 	}
 }

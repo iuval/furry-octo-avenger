@@ -297,7 +297,7 @@ public class WorldController {
 
 		builder.append("}");
 
-		ServerDriver.gameTurn(GameController.getInstancia().getUser().getId(),
+		ServerDriver.sendGameTurn(GameController.getInstancia().getUser().getId(),
 				gameId, player, builder.toString());
 	}
 

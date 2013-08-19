@@ -24,7 +24,7 @@ public class ServerDriver {
 	private final static String ACTION_ENABLE_RANDOM = "enable_random";
 	private final static String ACTION_GAME_TURN = "game_turn";
 
-	public static void signIn(final String email, String password) {
+	public static void sendSignIn(final String email, String password) {
 		Map<String, String> data = new HashMap<String, String>();
 		data.put("email", email);
 
@@ -35,11 +35,9 @@ public class ServerDriver {
 								.ProcessResponce(httpResponse);
 						if (values.getString("value").equals("ok")) {
 							JsonValue data = values.get("data");
-							MenuLogIn.getInstance().sendLogInSuccess(
-									data.getString("id"), email);
+							MenuLogIn.getInstance().sendLogInSuccess(data.getString("id"), email);
 						} else {
-							MenuLogIn.getInstance().sendLogInError(
-									values.getString("message"));
+							MenuLogIn.getInstance().sendLogInError(values.getString("message"));
 						}
 					}
 
@@ -49,7 +47,7 @@ public class ServerDriver {
 				});
 	}
 
-	public static void logIn(final String email, String password) {
+	public static void sendLogIn(final String email, String password) {
 		Map<String, String> data = new HashMap<String, String>();
 		data.put("email", email);
 
@@ -60,11 +58,9 @@ public class ServerDriver {
 								.ProcessResponce(httpResponse);
 						if (values.getString("value").equals("ok")) {
 							JsonValue data = values.get("data");
-							MenuLogIn.getInstance().sendLogInSuccess(
-									data.getString("id"), email);
+							MenuLogIn.getInstance().sendLogInSuccess(data.getString("id"), email);
 						} else {
-							MenuLogIn.getInstance().sendLogInError(
-									values.getString("message"));
+							MenuLogIn.getInstance().sendLogInError(values.getString("message"));
 						}
 					}
 
@@ -91,10 +87,9 @@ public class ServerDriver {
 								games[i][2] = child.getString("turn");
 								games[i][3] = child.getString("state");
 							}
-							MenuGames.getInstance().listGamesSuccess(games);
+							MenuGames.getInstance().getGamesListSuccess(games);
 						} else {
-							MenuGames.getInstance().listGamesError(
-									values.getString("message"));
+							MenuGames.getInstance().getGamesListError(values.getString("message"));
 						}
 					}
 
@@ -116,8 +111,7 @@ public class ServerDriver {
 						if (values.getString("value").equals("ok")) {
 							MenuGames.getInstance().enableRandomSuccess();
 						} else {
-							MenuGames.getInstance().enableRandomError(
-									values.getString("message"));
+							MenuGames.getInstance().enableRandomError(values.getString("message"));
 						}
 					}
 
@@ -127,7 +121,7 @@ public class ServerDriver {
 				});
 	}
 
-	public static void gameTurn(String playerId, String gameId, int player,
+	public static void sendGameTurn(String playerId, String gameId, int player,
 			String turnData) {
 		Map<String, String> data = new HashMap<String, String>();
 		data.put("player_id", playerId);
@@ -142,11 +136,9 @@ public class ServerDriver {
 						JsonValue values = ServerDriver
 								.ProcessResponce(httpResponse);
 						if (values.getString("value").equals("ok")) {
-							MenuGames.getInstance().getGameTurnSuccess(
-									values.getString("data"));
+							MenuGames.getInstance().sendGameTurnSuccess(values.getString("data"));
 						} else {
-							MenuGames.getInstance().enableRandomError(
-									values.getString("message"));
+							MenuGames.getInstance().sendGameTurnError(values.getString("message"));
 						}
 					}
 
@@ -162,14 +154,10 @@ public class ServerDriver {
 			public void handleHttpResponse(HttpResponse httpResponse) {
 				JsonValue values =
 						ServerDriver.ProcessResponce(httpResponse);
-				// JsonValue values = ServerDriver.ProcessResponce(TestHelper
-				// .getSecondTurnJson(1));
 				if (values.getString("value").equals("ok")) {
-					MenuGames.getInstance().getGameTurnSuccess(
-							values.get("data"), turn);
+					MenuGames.getInstance().getGameTurnSuccess(values.get("data"), turn);
 				} else {
-					MenuGames.getInstance().enableRandomError(
-							values.getString("message"));
+					MenuGames.getInstance().getGameTurnError(values.getString("message"));
 				}
 			}
 

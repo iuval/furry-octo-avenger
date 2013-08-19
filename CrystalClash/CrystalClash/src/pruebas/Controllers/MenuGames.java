@@ -31,17 +31,16 @@ public class MenuGames {
 				.getId());
 	}
 
-	public void listGames() {
+	public void getGamesList() {
 		GameEngine.showLoading();
-		ServerDriver.getListGames(GameController.getInstancia().getUser()
-				.getId());
+		ServerDriver.getListGames(GameController.getInstancia().getUser().getId());
 	}
 
-	public void listGamesSuccess(String[][] games) {
+	public void getGamesListSuccess(String[][] games) {
 		render.listGamesSuccess(games);
 	}
 
-	public void listGamesError(String message) {
+	public void getGamesListError(String message) {
 		render.listGamesError(message);
 	}
 
@@ -59,16 +58,19 @@ public class MenuGames {
 
 	public void getGameTurn(String gameId, int turn) {
 		GameEngine.showLoading();
-		ServerDriver.getGameTurn(GameController.getInstancia().getUser()
-				.getId(), gameId, turn);
-	}
-
-	public void getGameTurnSuccess(String data) {
-		GameEngine.getInstance().openMenuGames();
+		ServerDriver.getGameTurn(GameController.getInstancia().getUser().getId(), gameId, turn);
 	}
 
 	public void getGameTurnSuccess(JsonValue data, int turn) {
 		GameEngine.getInstance().openGame(data, turn);
+	}
+
+	public void getGameTurnError(String string) {
+		// TODO Auto-generated method stub
+	}
+
+	public void sendGameTurnSuccess(String data) {
+		GameEngine.getInstance().openMenuGames();
 	}
 
 	public void sendGameTurnError(String message) {
