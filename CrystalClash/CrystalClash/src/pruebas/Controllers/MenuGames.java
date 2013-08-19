@@ -31,6 +31,12 @@ public class MenuGames {
 				.getId());
 	}
 
+	public void listGames() {
+		GameEngine.showLoading();
+		ServerDriver.getListGames(GameController.getInstancia().getUser()
+				.getId());
+	}
+
 	public void listGamesSuccess(String[][] games) {
 		render.listGamesSuccess(games);
 	}
@@ -51,19 +57,13 @@ public class MenuGames {
 		GameController.getInstancia().logOut();
 	}
 
-	public void getGames() {
-		GameEngine.showLoading();
-		ServerDriver.getListGames(GameController.getInstancia().getUser()
-				.getId());
-	}
-
 	public void getGameTurn(String gameId, int turn) {
 		GameEngine.showLoading();
 		ServerDriver.getGameTurn(GameController.getInstancia().getUser()
 				.getId(), gameId, turn);
 	}
 
-	public void gameTurnSuccess(String data) {
+	public void getGameTurnSuccess(String data) {
 		GameEngine.getInstance().openMenuGames();
 	}
 
@@ -71,7 +71,7 @@ public class MenuGames {
 		GameEngine.getInstance().openGame(data, turn);
 	}
 
-	public void postGameTurnError(String message) {
+	public void sendGameTurnError(String message) {
 		// render.listGamesError(message);
 	}
 }

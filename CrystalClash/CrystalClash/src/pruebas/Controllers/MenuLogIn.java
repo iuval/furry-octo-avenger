@@ -37,21 +37,19 @@ public class MenuLogIn {
 		return nick;
 	}
 
-	public boolean authenticate(String email, String nick) {
+	public void sendLogIn(String email, String nick) {
 		this.email = email;
 		this.nick = nick;
 
 		ServerDriver.logIn(email, nick);
-
-		return true;
 	}
 
-	public void authenticateSuccess(String userId, String name) {
+	public void sendLogInSuccess(String userId, String name) {
 		GameController.getInstancia().setUser(new User(userId, name, name));
 		GameEngine.getInstance().openMenuGames();
 	}
 
-	public void authenticateError(String message) {
+	public void sendLogInError(String message) {
 		render.authenticateError(message);
 	}
 
@@ -59,12 +57,10 @@ public class MenuLogIn {
 		System.out.println(message);
 	}
 
-	public boolean signIn(String email, String nick) {
+	public void sendSignIn(String email, String nick) {
 		this.email = email;
 		this.nick = nick;
 
 		ServerDriver.signIn(email, nick);
-
-		return true;
 	}
 }

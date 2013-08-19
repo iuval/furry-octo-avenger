@@ -35,10 +35,10 @@ public class ServerDriver {
 								.ProcessResponce(httpResponse);
 						if (values.getString("value").equals("ok")) {
 							JsonValue data = values.get("data");
-							MenuLogIn.getInstance().authenticateSuccess(
+							MenuLogIn.getInstance().sendLogInSuccess(
 									data.getString("id"), email);
 						} else {
-							MenuLogIn.getInstance().authenticateError(
+							MenuLogIn.getInstance().sendLogInError(
 									values.getString("message"));
 						}
 					}
@@ -60,10 +60,10 @@ public class ServerDriver {
 								.ProcessResponce(httpResponse);
 						if (values.getString("value").equals("ok")) {
 							JsonValue data = values.get("data");
-							MenuLogIn.getInstance().authenticateSuccess(
+							MenuLogIn.getInstance().sendLogInSuccess(
 									data.getString("id"), email);
 						} else {
-							MenuLogIn.getInstance().authenticateError(
+							MenuLogIn.getInstance().sendLogInError(
 									values.getString("message"));
 						}
 					}
@@ -142,7 +142,7 @@ public class ServerDriver {
 						JsonValue values = ServerDriver
 								.ProcessResponce(httpResponse);
 						if (values.getString("value").equals("ok")) {
-							MenuGames.getInstance().gameTurnSuccess(
+							MenuGames.getInstance().getGameTurnSuccess(
 									values.getString("data"));
 						} else {
 							MenuGames.getInstance().enableRandomError(

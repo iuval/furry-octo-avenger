@@ -230,14 +230,14 @@ public class MenuLogInRender extends MenuRender {
 					if (!email.isEmpty() && !nick.isEmpty()) {
 						GameEngine.showLoading();
 						Gdx.input.setOnscreenKeyboardVisible(false);
-						controller.authenticate(email, nick);
+						controller.sendLogIn(email, nick);
 					}
 					break;
 				case SignIn:
 					if (!email.isEmpty() && !nick.isEmpty()) {
 						GameEngine.showLoading();
 						Gdx.input.setOnscreenKeyboardVisible(false);
-						controller.signIn(email, nick);
+						controller.sendSignIn(email, nick);
 					}
 					break;
 				default:

@@ -208,7 +208,7 @@ public class MenuGamesRender extends MenuRender {
 	}
 
 	private void loadGameList() {
-		controller.getGames();
+		controller.listGames();
 	}
 
 	// SERVER DRIVER CALLBACKS --------------------------------------------
