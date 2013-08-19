@@ -1,16 +1,16 @@
 package pruebas.Renders;
 
+import aurelienribon.tweenengine.Timeline;
+
 import com.badlogic.gdx.InputProcessor;
-import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.Group;
 
-public abstract class MenuRender implements InputProcessor {
+public abstract class MenuRender extends Group implements InputProcessor {
 
-	public MenuRender(){
+	public MenuRender() {
 	}
-	
-	public abstract void render(float dt, Stage stage);
-	
-	public abstract void enterAnimation();
-	
-	public abstract void exitAnimation();
+
+	public abstract Timeline pushEnterAnimation(Timeline t);
+
+	public abstract Timeline pushExitAnimation(Timeline t);
 }

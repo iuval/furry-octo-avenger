@@ -4,7 +4,6 @@ import pruebas.Entities.Cell;
 import pruebas.Entities.Unit;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
 public class CellRender {
 	private Cell cell;

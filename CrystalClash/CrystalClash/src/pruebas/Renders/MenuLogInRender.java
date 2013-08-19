@@ -5,10 +5,8 @@ import pruebas.Controllers.MenuLogIn;
 import pruebas.CrystalClash.CrystalClash;
 import pruebas.Enumerators.MenuLogInState;
 import pruebas.Enumerators.StringWriting;
-import aurelienribon.tweenengine.BaseTween;
 import aurelienribon.tweenengine.Timeline;
 import aurelienribon.tweenengine.Tween;
-import aurelienribon.tweenengine.TweenCallback;
 import aurelienribon.tweenengine.TweenManager;
 
 import com.badlogic.gdx.Gdx;
@@ -19,7 +17,6 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
@@ -56,7 +53,7 @@ public class MenuLogInRender extends MenuRender {
 	private Image characters;
 
 	private Group group1;
-	private Group group2;
+	private Group popUp;
 
 	private StringWriting stringWriting;
 	public MenuLogInState state;
@@ -78,43 +75,23 @@ public class MenuLogInRender extends MenuRender {
 	}
 
 	@Override
-	public void render(float dt, Stage stage) {
-		stage.addActor(group1);
-		stage.addActor(group2);
-		group1.act(dt);
-		group2.act(dt);
-		tweenManager.update(dt);
+	public void act(float delta) {
+		tweenManager.update(delta);
+		super.act(delta);
 	}
 
 	@Override
-	public void enterAnimation() {
-		float speed = CrystalClash.ANIMATION_SPEED;
-
-		Timeline.createParallel()
-				.push(Tween.set(group1, ActorAccessor.ALPHA).target(0))
-				.push(Tween.to(group1, ActorAccessor.ALPHA, speed).target(1))
-				.start(tweenManager);
-
-		tweenManager.update(Float.MIN_VALUE);
+	public Timeline pushEnterAnimation(Timeline t) {
+		return t.push(Tween.to(popUp, ActorAccessor.Y, CrystalClash.ANIMATION_SPEED)
+				.target((CrystalClash.HEIGHT / 2 - popUp.getHeight() / 2)));
 	}
 
 	@Override
-	public void exitAnimation() {
+	public Timeline pushExitAnimation(Timeline t) {
 		txtNick.setText("");
 		txtNick.setMessageText("");
-		txtEmail.setText("");
-		txtEmail.setMessageText("");
 
-		controller.logIn();
-		float speed = CrystalClash.ANIMATION_SPEED;
-		Timeline.createParallel()
-				.push(Tween.to(group2, ActorAccessor.ALPHA, speed).target(0))
-				.setCallback(new TweenCallback() {
-					@Override
-					public void onEvent(int type, BaseTween<?> source) {
-						controller.logIn();
-					}
-				}).start(tweenManager);
+		return t.push(Tween.to(popUp, ActorAccessor.Y, CrystalClash.ANIMATION_SPEED).target(CrystalClash.HEIGHT));
 	}
 
 	private void loadStuff() {
@@ -159,6 +136,7 @@ public class MenuLogInRender extends MenuRender {
 		group1.addActor(characters);
 		group1.addActor(btnLogIn);
 		group1.addActor(btnSignIn);
+		addActor(group1);
 
 		popupPanelTexture = new Texture(
 				Gdx.files.internal("data/Images/Menu/menu_login_popup.png"));
@@ -203,7 +181,6 @@ public class MenuLogInRender extends MenuRender {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
 				adjustToKeyboard(true);
-				Gdx.input.setOnscreenKeyboardVisible(true);
 				stringWriting = StringWriting.Email;
 			}
 		});
@@ -217,7 +194,6 @@ public class MenuLogInRender extends MenuRender {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
 				adjustToKeyboard(true);
-				Gdx.input.setOnscreenKeyboardVisible(true);
 				stringWriting = StringWriting.Nick;
 			}
 		});
@@ -253,13 +229,15 @@ public class MenuLogInRender extends MenuRender {
 				case LogIn:
 					if (!email.isEmpty() && !nick.isEmpty()) {
 						GameEngine.showLoading();
-						controller.authenticate(email, nick);
+						Gdx.input.setOnscreenKeyboardVisible(false);
+						controller.sendLogIn(email, nick);
 					}
 					break;
 				case SignIn:
 					if (!email.isEmpty() && !nick.isEmpty()) {
 						GameEngine.showLoading();
-						controller.signIn(email, nick);
+						Gdx.input.setOnscreenKeyboardVisible(false);
+						controller.sendSignIn(email, nick);
 					}
 					break;
 				default:
@@ -268,26 +246,21 @@ public class MenuLogInRender extends MenuRender {
 			}
 		});
 
-		group2 = new Group();
-		group2.addActor(popupPanel);
-		group2.addActor(lblHeading);
-		group2.addActor(textFieldEmail);
-		group2.addActor(textFieldNick);
-		group2.addActor(txtEmail);
-		group2.addActor(txtNick);
-		group2.addActor(btnConfirm);
-		group2.addActor(btnBack);
+		popUp = new Group();
+		popUp.addActor(popupPanel);
+		popUp.addActor(lblHeading);
+		popUp.addActor(textFieldEmail);
+		popUp.addActor(textFieldNick);
+		popUp.addActor(txtEmail);
+		popUp.addActor(txtNick);
+		popUp.addActor(btnConfirm);
+		popUp.addActor(btnBack);
 
-		group2.setSize(popupPanel.getWidth(), popupPanel.getHeight());
-		group2.setPosition(CrystalClash.WIDTH / 2 - group2.getWidth() / 2,
-				(CrystalClash.HEIGHT / 2 - group2.getHeight() / 2)
+		popUp.setSize(popupPanel.getWidth(), popupPanel.getHeight());
+		popUp.setPosition(CrystalClash.WIDTH / 2 - popUp.getWidth() / 2,
+				(CrystalClash.HEIGHT / 2 - popUp.getHeight() / 2)
 						+ CrystalClash.HEIGHT);
-
-		enterAnimation();
-	}
-
-	public void authenticateSuccess(String userId, String name) {
-		exitAnimation();
+		addActor(popUp);
 	}
 
 	public void authenticateError(String message) {
@@ -299,10 +272,10 @@ public class MenuLogInRender extends MenuRender {
 	private void moveUp(MenuLogInState state) {
 		float speed = CrystalClash.ANIMATION_SPEED;
 		Timeline.createParallel()
-				.push(Tween.to(group2, ActorAccessor.ALPHA, speed).target(0))
+				.push(Tween.to(popUp, ActorAccessor.ALPHA, speed).target(0))
 				.push(Tween.to(group1, ActorAccessor.ALPHA, speed).target(1))
-				.push(Tween.to(group2, ActorAccessor.Y, speed).target(
-						group2.getY() + CrystalClash.HEIGHT))
+				.push(Tween.to(popUp, ActorAccessor.Y, speed).target(
+						popUp.getY() + CrystalClash.HEIGHT))
 				.start(tweenManager);
 
 		this.state = state;
@@ -311,9 +284,9 @@ public class MenuLogInRender extends MenuRender {
 	private void moveDown(MenuLogInState state) {
 		float speed = CrystalClash.ANIMATION_SPEED;
 		Timeline.createParallel()
-				.push(Tween.to(group2, ActorAccessor.Y, speed).target(
-						CrystalClash.HEIGHT / 2 - group2.getHeight() / 2))
-				.push(Tween.to(group2, ActorAccessor.ALPHA, speed).target(1))
+				.push(Tween.to(popUp, ActorAccessor.Y, speed).target(
+						CrystalClash.HEIGHT / 2 - popUp.getHeight() / 2))
+				.push(Tween.to(popUp, ActorAccessor.ALPHA, speed).target(1))
 				.push(Tween.to(group1, ActorAccessor.ALPHA, speed).target(0))
 				.start(tweenManager);
 
@@ -321,14 +294,15 @@ public class MenuLogInRender extends MenuRender {
 	}
 
 	private void adjustToKeyboard(boolean up) {
+		Gdx.input.setOnscreenKeyboardVisible(up);
 		// true mueve hacia arriba, false mueve hacia abajo
-		float jump = CrystalClash.HEIGHT / 2 - group2.getHeight() / 2;
+		float jump = CrystalClash.HEIGHT / 2 - popUp.getHeight() / 2;
 		if (up)
 			jump = CrystalClash.HEIGHT / 2 - 30;
 
 		float speed = CrystalClash.ANIMATION_SPEED;
 		Timeline.createParallel()
-				.push(Tween.to(group2, ActorAccessor.Y, speed).target(jump))
+				.push(Tween.to(popUp, ActorAccessor.Y, speed).target(jump))
 				.start(tweenManager);
 	}
 
@@ -337,24 +311,6 @@ public class MenuLogInRender extends MenuRender {
 		atlas.dispose();
 		skin.dispose();
 		font.dispose();
-	}
-
-	public void reset() {
-		instance = new MenuLogInRender(controller);
-
-		// TODO: Hay que setear de nuevo el InputController porque sino no puedo
-		// escribir
-
-		// No se porque haciendo esto se caga :S
-		// enterAnimation();
-		//
-		// txtEmail.setText("iuvalgoldansky@gmail.com");
-		// txtEmail.setMessageText("Enter your Email...");
-		// txtNick.setText("pepe");
-		// txtNick.setMessageText("Enter your Nick...");
-		//
-		// group2.setY((CrystalClash.HEIGHT / 2 - group2.getHeight() / 2)
-		// + CrystalClash.HEIGHT);
 	}
 
 	// INPUT PROCESSOR--------------------------------------------
@@ -384,7 +340,6 @@ public class MenuLogInRender extends MenuRender {
 
 		if (keycode == Keys.BACK) {
 			adjustToKeyboard(false);
-			Gdx.input.setOnscreenKeyboardVisible(false);
 		}
 		return true;
 	}
@@ -421,7 +376,6 @@ public class MenuLogInRender extends MenuRender {
 	@Override
 	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
 		adjustToKeyboard(false);
-		Gdx.input.setOnscreenKeyboardVisible(false);
 		return true;
 	}
 

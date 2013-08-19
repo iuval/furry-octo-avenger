@@ -3,13 +3,12 @@ package pruebas.Controllers;
 import pruebas.Networking.ServerDriver;
 import pruebas.Renders.GameEngine;
 import pruebas.Renders.MenuGamesRender;
-import pruebas.Renders.MenuRender;
 
 import com.badlogic.gdx.utils.JsonValue;
 
-public class MenuGames extends Menu {
+public class MenuGames {
 
-	public static MenuGames instance;
+	private static MenuGames instance;
 
 	public static MenuGames getInstance() {
 		if (instance == null)
@@ -17,13 +16,14 @@ public class MenuGames extends Menu {
 		return instance;
 	}
 
-	@Override
-	public void update(float delta) {
+	public MenuGamesRender render;
+
+	private MenuGames() {
+		render = MenuGamesRender.getInstance(this);
 	}
 
-	@Override
-	public MenuRender getRender() {
-		return MenuGamesRender.getInstance(this);
+	public MenuGamesRender getRender() {
+		return render;
 	}
 
 	public void enableRandom() {
@@ -31,40 +31,49 @@ public class MenuGames extends Menu {
 				.getId());
 	}
 
-	public void listGamesSuccess(String[][] games) {
-		((MenuGamesRender) getRender()).listGamesSuccess(games);
+	public void getGamesList() {
+		GameEngine.showLoading();
+		ServerDriver.getListGames(GameController.getInstancia().getUser().getId());
 	}
 
-	public void listGamesError(String message) {
-		((MenuGamesRender) getRender()).listGamesError(message);
+	public void getGamesListSuccess(String[][] games) {
+		render.listGamesSuccess(games);
+	}
+
+	public void getGamesListError(String message) {
+		render.listGamesError(message);
 	}
 
 	public void enableRandomSuccess() {
-		((MenuGamesRender) getRender()).enableRandomSuccess();
+		render.enableRandomSuccess();
 	}
 
 	public void enableRandomError(String message) {
-		((MenuGamesRender) getRender()).enableRandomError(message);
+		render.enableRandomError(message);
 	}
 
 	public void logOut() {
-		MenuMaster.changeMenuToLogIn();
+		GameController.getInstancia().logOut();
 	}
 
 	public void getGameTurn(String gameId, int turn) {
-		 ServerDriver.getGameTurn(GameController.getInstancia().getUser()
-		 .getId(), gameId, turn);
-	}
-
-	public void gameTurnSuccess(String data) {
-		GameEngine.getInstance().openMenu();
+		GameEngine.showLoading();
+		ServerDriver.getGameTurn(GameController.getInstancia().getUser().getId(), gameId, turn);
 	}
 
 	public void getGameTurnSuccess(JsonValue data, int turn) {
 		GameEngine.getInstance().openGame(data, turn);
 	}
 
-	public void postGameTurnError(String message) {
-		// ((MenuGamesRender) getRender()).listGamesError(message);
+	public void getGameTurnError(String string) {
+		// TODO Auto-generated method stub
+	}
+
+	public void sendGameTurnSuccess(String data) {
+		GameEngine.getInstance().openMenuGames();
+	}
+
+	public void sendGameTurnError(String message) {
+		// render.listGamesError(message);
 	}
 }
