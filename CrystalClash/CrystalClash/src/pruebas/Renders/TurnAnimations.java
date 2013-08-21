@@ -129,6 +129,12 @@ public class TurnAnimations extends GameRender {
 			attack.push(walkAnim);
 			
 			Timeline move = Timeline.createParallel();
+			move.push(Tween
+					.to(action.origin.getUnit(player), UnitAccessor.X, 1)
+					.target(CellHelper.getUnitX(player, action.target)));
+			move.push(Tween
+					.to(action.origin.getUnit(player), UnitAccessor.Y, 1)
+					.target(CellHelper.getUnitY(player, action.target)));
 			move.setUserData(new Object[] { action.origin.getUnit(player) });
 			move.setCallback(new TweenCallback() {
 				@Override
@@ -137,14 +143,6 @@ public class TurnAnimations extends GameRender {
 					unit.getRender().setAnimation(ANIM.fight);
 				}
 			});
-			move.push(Tween
-					.to(action.origin.getUnit(player), ActorAccessor.X, 1)
-					.target(action.target.getX() + (player == 1 ? CellHelper.UNIT_PLAYER_1_X
-							: CellHelper.UNIT_PLAYER_2_X), player));
-			move.push(Tween
-					.to(action.origin.getUnit(player), ActorAccessor.Y, 1)
-					.target(action.target.getY() + (player == 1 ? CellHelper.UNIT_PLAYER_1_Y
-							: CellHelper.UNIT_PLAYER_2_Y)));
 			
 			attack.push(move);
 			
@@ -160,10 +158,16 @@ public class TurnAnimations extends GameRender {
 					unit.getRender().setAnimation(ANIM.walk);
 				}
 			});
-			walkAnim2.push(Tween.to(action.origin.getUnit(player), ActorAccessor.X, 2).target(action.origin.getUnit(player).getX()));
+			walkAnim2.delay(2);
 			attack.push(walkAnim2);
 			
 			Timeline moveBack = Timeline.createParallel();
+			moveBack.push(Tween
+					.to(action.origin.getUnit(player), UnitAccessor.X, 1)
+					.target(CellHelper.getUnitX(player, action.origin)));
+			moveBack.push(Tween
+					.to(action.origin.getUnit(player), UnitAccessor.Y, 1)
+					.target(CellHelper.getUnitY(player, action.origin)));
 			moveBack.setUserData(new Object[] { action.origin.getUnit(player), player });
 			moveBack.setCallback(new TweenCallback() {
 				@Override
@@ -172,21 +176,12 @@ public class TurnAnimations extends GameRender {
 					int player = (Integer) (((Object[]) source.getUserData())[1]);
 					
 					unit.getRender().setAnimation(ANIM.idle);
-					if(player == 1)
+					if (player == 1)
 						unit.getRender().setFacing(FACING.right);
 					else
 						unit.getRender().setFacing(FACING.left);
 				}
 			});
-			
-			moveBack.push(Tween
-					.to(action.origin.getUnit(player), ActorAccessor.X, 1)
-					.target(action.origin.getX() + (player == 1 ? CellHelper.UNIT_PLAYER_1_X
-							: CellHelper.UNIT_PLAYER_2_X), player));
-			moveBack.push(Tween
-					.to(action.origin.getUnit(player), ActorAccessor.Y, 1)
-					.target(action.origin.getY() + (player == 1 ? CellHelper.UNIT_PLAYER_1_Y
-							: CellHelper.UNIT_PLAYER_2_Y)));
 			
 			attack.push(moveBack);
 			attackTimeline.push(attack);
@@ -254,13 +249,11 @@ public class TurnAnimations extends GameRender {
 			}
 		});
 		step.push(Tween
-				.to(action.origin.getUnit(player), ActorAccessor.X, 1)
-				.target(action.moves.get(currentStepIndex + 1).getX() + (player == 1 ? CellHelper.UNIT_PLAYER_1_X
-						: CellHelper.UNIT_PLAYER_2_X), player));
+				.to(action.origin.getUnit(player), UnitAccessor.X, 1)
+				.target(CellHelper.getUnitX(player, action.moves.get(currentStepIndex + 1))));
 		step.push(Tween
-				.to(action.origin.getUnit(player), ActorAccessor.Y, 1)
-				.target(action.moves.get(currentStepIndex + 1).getY() + (player == 1 ? CellHelper.UNIT_PLAYER_1_Y
-						: CellHelper.UNIT_PLAYER_2_Y)));
+				.to(action.origin.getUnit(player), UnitAccessor.Y, 1)
+				.target(CellHelper.getUnitY(player, action.moves.get(currentStepIndex + 1))));
 		return step;
 	}
 
