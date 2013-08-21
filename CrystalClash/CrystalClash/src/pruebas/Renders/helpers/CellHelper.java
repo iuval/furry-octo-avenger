@@ -10,7 +10,7 @@ public class CellHelper {
 
 	public final static float CELL_HEIGHT = 109.0F;
 	public final static float CELL_WIDTH = 162.0F;
-	
+
 	public static final float UNIT_PLAYER_1_X = 10f;
 	public static final float UNIT_PLAYER_1_Y = 50f;
 	public static final float UNIT_PLAYER_2_X = 71f;
@@ -67,5 +67,13 @@ public class CellHelper {
 			return none;
 		}
 		}
+	}
+
+	public static float getUnitX(int player, Cell cell) {
+		return cell.getX() + (player == 1 ? CellHelper.UNIT_PLAYER_1_X : CellHelper.UNIT_PLAYER_2_X);
+	}
+
+	public static float getUnitY(int player, Cell cell) {
+		return cell.getY() + (player == 1 ? CellHelper.UNIT_PLAYER_1_Y : CellHelper.UNIT_PLAYER_2_Y);
 	}
 }

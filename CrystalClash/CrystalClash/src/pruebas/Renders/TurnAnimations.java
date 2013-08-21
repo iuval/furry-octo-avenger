@@ -12,8 +12,8 @@ import pruebas.Entities.helpers.DefendUnitAction;
 import pruebas.Entities.helpers.MoveUnitAction;
 import pruebas.Entities.helpers.UnitAction;
 import pruebas.Renders.UnitRender.ANIM;
+import pruebas.Renders.UnitRender.FACING;
 import pruebas.Renders.helpers.CellHelper;
-import pruebas.Renders.helpers.UnitHelper;
 import aurelienribon.tweenengine.BaseTween;
 import aurelienribon.tweenengine.Timeline;
 import aurelienribon.tweenengine.Tween;
@@ -73,21 +73,119 @@ public class TurnAnimations extends GameRender {
 		readActions(2);
 		GameEngine.hideLoading();
 	}
+	
+	private void play(){
+		hidePanel();
+		defensiveUnits(true);
+		meleeAttackUnits();
+	}
 
-	private void defensiveUnits() {
+	private void defensiveUnits(boolean active) {
 		DefendUnitAction action = null;
 		for (int i = 0; i < player1Defend.size; i++) {
 			action = player1Defend.get(i);
-			action.origin.getUnit(1).setDefendingPosition(true);
+			action.origin.getUnit(1).setDefendingPosition(active);
 		}
 
 		for (int i = 0; i < player2Defend.size; i++) {
 			action = player2Defend.get(i);
-			action.origin.getUnit(2).setDefendingPosition(true);
+			action.origin.getUnit(2).setDefendingPosition(active);
 		}
 	}
 	
 	private void meleeAttackUnits() {
+		Timeline t = Timeline.createSequence();
+		t.beginParallel();
+		createMeleeAttacks(player1MeleeAttacks, 1, t);
+		t.end();
+		t.beginParallel();
+		createMeleeAttacks(player2MeleeAttacks, 2, t);
+		t.end();
+		t.setCallback(new TweenCallback() {
+			@Override
+			public void onEvent(int type, BaseTween<?> source) {
+				moveUnits();
+			}
+		}).start(tweenManager);
+	}
+	
+	private void createMeleeAttacks(Array<AttackUnitAction> attackActions, int player,
+			Timeline attackTimeline) {
+		AttackUnitAction action = null;
+		for (int m = 0; m < attackActions.size; m++) {
+			action = attackActions.get(m);
+
+			Timeline attack = Timeline.createSequence();
+			
+			Timeline walkAnim = Timeline.createParallel();
+			walkAnim.setUserData(new Object[] { action.origin.getUnit(player) });
+			walkAnim.setCallback(new TweenCallback() {
+				@Override
+				public void onEvent(int type, BaseTween<?> source) {
+					Unit unit = (Unit) (((Object[]) source.getUserData())[0]);
+					unit.getRender().setAnimation(ANIM.walk);
+				}
+			});
+			attack.push(walkAnim);
+			
+			Timeline move = Timeline.createParallel();
+			move.push(Tween
+					.to(action.origin.getUnit(player), UnitAccessor.X, 1)
+					.target(CellHelper.getUnitX(player, action.target)));
+			move.push(Tween
+					.to(action.origin.getUnit(player), UnitAccessor.Y, 1)
+					.target(CellHelper.getUnitY(player, action.target)));
+			move.setUserData(new Object[] { action.origin.getUnit(player) });
+			move.setCallback(new TweenCallback() {
+				@Override
+				public void onEvent(int type, BaseTween<?> source) {
+					Unit unit = (Unit) (((Object[]) source.getUserData())[0]);
+					unit.getRender().setAnimation(ANIM.fight);
+				}
+			});
+			
+			attack.push(move);
+			
+			Timeline walkAnim2 = Timeline.createParallel();
+			walkAnim2.setUserData(new Object[] { action.origin.getUnit(player), action.target.getUnit(player == 1 ? 2 : 1) });
+			walkAnim2.setCallback(new TweenCallback() {
+				@Override
+				public void onEvent(int type, BaseTween<?> source) {
+					Unit unit = (Unit) (((Object[]) source.getUserData())[0]);
+					Unit enemy = (Unit) (((Object[]) source.getUserData())[1]);
+					enemy.damage(unit.getDamage());
+					
+					unit.getRender().setAnimation(ANIM.walk);
+				}
+			});
+			walkAnim2.delay(2);
+			attack.push(walkAnim2);
+			
+			Timeline moveBack = Timeline.createParallel();
+			moveBack.push(Tween
+					.to(action.origin.getUnit(player), UnitAccessor.X, 1)
+					.target(CellHelper.getUnitX(player, action.origin)));
+			moveBack.push(Tween
+					.to(action.origin.getUnit(player), UnitAccessor.Y, 1)
+					.target(CellHelper.getUnitY(player, action.origin)));
+			moveBack.setUserData(new Object[] { action.origin.getUnit(player), player });
+			moveBack.setCallback(new TweenCallback() {
+				@Override
+				public void onEvent(int type, BaseTween<?> source) {
+					Unit unit = (Unit) (((Object[]) source.getUserData())[0]);
+					int player = (Integer) (((Object[]) source.getUserData())[1]);
+					
+					unit.getRender().setAnimation(ANIM.idle);
+					if (player == 1)
+						unit.getRender().setFacing(FACING.right);
+					else
+						unit.getRender().setFacing(FACING.left);
+				}
+			});
+			
+			attack.push(moveBack);
+			attackTimeline.push(attack);
+		}
 	}
 	
 	private void moveUnits() {
@@ -101,13 +199,9 @@ public class TurnAnimations extends GameRender {
 		t.setCallback(new TweenCallback() {
 			@Override
 			public void onEvent(int type, BaseTween<?> source) {
-				showPanel();
+				rangedAttackUnits();
 			}
-		});
-		t.start(tweenManager);
-	}
-	
-	private void rangedAttackUnits() {
+		}).start(tweenManager);
 	}
 	
 	private void createPaths(Array<MoveUnitAction> moveActions, int player,
@@ -155,13 +249,11 @@ public class TurnAnimations extends GameRender {
 			}
 		});
 		step.push(Tween
-				.to(action.origin.getUnit(player), ActorAccessor.X, 1)
-				.target(action.moves.get(currentStepIndex + 1).getX() + (player == 1 ? CellHelper.UNIT_PLAYER_1_X
-						: CellHelper.UNIT_PLAYER_2_X)));
+				.to(action.origin.getUnit(player), UnitAccessor.X, 1)
+				.target(CellHelper.getUnitX(player, action.moves.get(currentStepIndex + 1))));
 		step.push(Tween
-				.to(action.origin.getUnit(player), ActorAccessor.Y, 1)
-				.target(action.moves.get(currentStepIndex + 1).getY() + (player == 1 ? CellHelper.UNIT_PLAYER_1_Y
-						: CellHelper.UNIT_PLAYER_2_Y)));
+				.to(action.origin.getUnit(player), UnitAccessor.Y, 1)
+				.target(CellHelper.getUnitY(player, action.moves.get(currentStepIndex + 1))));
 		return step;
 	}
 
@@ -178,6 +270,10 @@ public class TurnAnimations extends GameRender {
 		if (isLastStep)
 		{
 			unit.getRender().setAnimation(ANIM.idle);
+			if(player == 1)
+				unit.getRender().setFacing(FACING.right);
+			else
+				unit.getRender().setFacing(FACING.left);
 		}
 
 		String coordsFrom = cellFrom.getGridPosition().getX() + ","
@@ -187,6 +283,17 @@ public class TurnAnimations extends GameRender {
 		System.out.println("step:[" + coordsFrom + "]-->[" + coordsTo + "]");
 	}
 
+	private void rangedAttackUnits() {
+		Timeline t = Timeline.createSequence();
+		t.setCallback(new TweenCallback() {
+			@Override
+			public void onEvent(int type, BaseTween<?> source) {
+				defensiveUnits(false);
+				showPanel();
+			}
+		}).start(tweenManager);
+	}
+	
 	private void readActions(int player) {
 		for (int row = 0; row < world.cellGrid.length; row++) {
 			for (int col = 0; col < world.cellGrid[0].length; col++) {
@@ -252,13 +359,11 @@ public class TurnAnimations extends GameRender {
 				skin.getDrawable("outer_button_orange"),
 				skin.getDrawable("outer_button_orange_pressed"), null, font);
 		btnPlay = new TextButton("PLAY", playStyle);
-		btnPlay.setPosition(panel.getWidth() / 4 - btnPlay.getWidth() / 2, panel.getHeight() / 2);
+		btnPlay.setPosition(panel.getWidth() / 2 - btnPlay.getWidth() / 2, panel.getHeight() / 2);
 		btnPlay.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
-				hidePanel();
-				defensiveUnits();
-				moveUnits();
+				play();
 			}
 		});
 		
@@ -266,7 +371,7 @@ public class TurnAnimations extends GameRender {
 				skin.getDrawable("outer_button_orange"),
 				skin.getDrawable("outer_button_orange_pressed"), null, font);
 		btnSkip = new TextButton("SKIP", skipStyle);
-		btnSkip.setPosition(panel.getWidth() / 4 * 3 - btnSkip.getWidth() / 2, panel.getHeight() / 2);
+		btnSkip.setPosition(panel.getWidth() / 2 - btnSkip.getWidth() / 2, panel.getHeight() / 2);
 		btnSkip.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
@@ -277,7 +382,7 @@ public class TurnAnimations extends GameRender {
 		grpPanel = new Group();
 		grpPanel.addActor(panel);
 		grpPanel.addActor(btnPlay);
-		grpPanel.addActor(btnSkip);
+		//grpPanel.addActor(btnSkip);
 	}
 
 	@Override
@@ -306,6 +411,9 @@ public class TurnAnimations extends GameRender {
 	}
 	
 	private void showPanel(){
+		grpPanel.removeActor(btnPlay);
+		grpPanel.addActor(btnSkip);
+	
 		float speed = 0.5f; // CrystalClash.ANIMATION_SPEED;
 		Timeline.createSequence()
 				.push(Tween.to(grpPanel, ActorAccessor.Y, speed).target(0))

@@ -50,7 +50,7 @@ public class UnitHelper {
 		render.idleAnim = getUnitSuperAnimation(unitName, "idle");
 		render.idleAnim.randomCurrentFrame();
 
-		// render.idleAnim = getUnitSuperAnimation(unitName, "attack");
+		render.fightAnim = getUnitSuperAnimation(unitName, "attack");
 		render.walkAnim = getUnitSuperAnimation(unitName, "run");
 		render.shieldAnim = shieldAnimation.clone();
 
