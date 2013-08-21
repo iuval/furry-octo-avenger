@@ -366,7 +366,7 @@ public class TurnAnimations extends GameRender {
 				skin.getDrawable("outer_button_orange"),
 				skin.getDrawable("outer_button_orange_pressed"), null, font);
 		btnPlay = new TextButton("PLAY", playStyle);
-		btnPlay.setPosition(panel.getWidth() / 4 - btnPlay.getWidth() / 2, panel.getHeight() / 2);
+		btnPlay.setPosition(panel.getWidth() / 2 - btnPlay.getWidth() / 2, panel.getHeight() / 2);
 		btnPlay.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
@@ -378,7 +378,7 @@ public class TurnAnimations extends GameRender {
 				skin.getDrawable("outer_button_orange"),
 				skin.getDrawable("outer_button_orange_pressed"), null, font);
 		btnSkip = new TextButton("SKIP", skipStyle);
-		btnSkip.setPosition(panel.getWidth() / 4 * 3 - btnSkip.getWidth() / 2, panel.getHeight() / 2);
+		btnSkip.setPosition(panel.getWidth() / 2 - btnSkip.getWidth() / 2, panel.getHeight() / 2);
 		btnSkip.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
@@ -389,7 +389,7 @@ public class TurnAnimations extends GameRender {
 		grpPanel = new Group();
 		grpPanel.addActor(panel);
 		grpPanel.addActor(btnPlay);
-		grpPanel.addActor(btnSkip);
+		//grpPanel.addActor(btnSkip);
 	}
 
 	@Override
@@ -418,6 +418,9 @@ public class TurnAnimations extends GameRender {
 	}
 	
 	private void showPanel(){
+		grpPanel.removeActor(btnPlay);
+		grpPanel.addActor(btnSkip);
+	
 		float speed = 0.5f; // CrystalClash.ANIMATION_SPEED;
 		Timeline.createSequence()
 				.push(Tween.to(grpPanel, ActorAccessor.Y, speed).target(0))
