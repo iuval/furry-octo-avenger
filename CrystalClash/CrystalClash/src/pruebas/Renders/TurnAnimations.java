@@ -77,9 +77,7 @@ public class TurnAnimations extends GameRender {
 	private void play(){
 		hidePanel();
 		defensiveUnits(true);
-		Timeline t = Timeline.createSequence();
-		t.push(meleeAttackUnits());
-		t.start(tweenManager);
+		meleeAttackUnits();
 	}
 
 	private void defensiveUnits(boolean active) {
@@ -95,19 +93,107 @@ public class TurnAnimations extends GameRender {
 		}
 	}
 	
-	private Timeline meleeAttackUnits() {
+	private void meleeAttackUnits() {
 		Timeline t = Timeline.createSequence();
+		t.beginParallel();
+		createMeleeAttacks(player1MeleeAttacks, 1, t);
+		t.end();
+		t.beginParallel();
+		createMeleeAttacks(player2MeleeAttacks, 2, t);
+		t.end();
 		t.setCallback(new TweenCallback() {
 			@Override
 			public void onEvent(int type, BaseTween<?> source) {
 				moveUnits();
 			}
 		}).start(tweenManager);
-		
-		return t;
 	}
 	
-	private Timeline moveUnits() {
+	private void createMeleeAttacks(Array<AttackUnitAction> attackActions, int player,
+			Timeline attackTimeline) {
+		AttackUnitAction action = null;
+		for (int m = 0; m < attackActions.size; m++) {
+			action = attackActions.get(m);
+
+			Timeline attack = Timeline.createSequence();
+			
+			Timeline walkAnim = Timeline.createParallel();
+			walkAnim.setUserData(new Object[] { action.origin.getUnit(player) });
+			walkAnim.setCallback(new TweenCallback() {
+				@Override
+				public void onEvent(int type, BaseTween<?> source) {
+					Unit unit = (Unit) (((Object[]) source.getUserData())[0]);
+					unit.getRender().setAnimation(ANIM.walk);
+				}
+			});
+			attack.push(walkAnim);
+			
+			Timeline move = Timeline.createParallel();
+			move.setUserData(new Object[] { action.origin.getUnit(player) });
+			move.setCallback(new TweenCallback() {
+				@Override
+				public void onEvent(int type, BaseTween<?> source) {
+					Unit unit = (Unit) (((Object[]) source.getUserData())[0]);
+					unit.getRender().setAnimation(ANIM.fight);
+				}
+			});
+			move.push(Tween
+					.to(action.origin.getUnit(player), ActorAccessor.X, 1)
+					.target(action.target.getX() + (player == 1 ? CellHelper.UNIT_PLAYER_1_X
+							: CellHelper.UNIT_PLAYER_2_X), player));
+			move.push(Tween
+					.to(action.origin.getUnit(player), ActorAccessor.Y, 1)
+					.target(action.target.getY() + (player == 1 ? CellHelper.UNIT_PLAYER_1_Y
+							: CellHelper.UNIT_PLAYER_2_Y)));
+			
+			attack.push(move);
+			
+			Timeline walkAnim2 = Timeline.createParallel();
+			walkAnim2.setUserData(new Object[] { action.origin.getUnit(player) });
+			walkAnim2.setCallback(new TweenCallback() {
+				@Override
+				public void onEvent(int type, BaseTween<?> source) {
+					Unit unit = (Unit) (((Object[]) source.getUserData())[0]);
+					unit.getRender().setAnimation(ANIM.walk);
+				}
+			});
+			walkAnim2.push(Tween.to(action.origin.getUnit(player), ActorAccessor.X, 2).target(action.origin.getUnit(player).getX()));
+			attack.push(walkAnim2);
+			
+			Timeline moveBack = Timeline.createParallel();
+			moveBack.setUserData(new Object[] { action.origin.getUnit(player), action.target.getUnit(player == 1 ? 2
+					: 1), player });
+			moveBack.setCallback(new TweenCallback() {
+				@Override
+				public void onEvent(int type, BaseTween<?> source) {
+					Unit unit = (Unit) (((Object[]) source.getUserData())[0]);
+					Unit enemy = (Unit) (((Object[]) source.getUserData())[1]);
+					int player = (Integer) (((Object[]) source.getUserData())[2]);
+					
+					unit.getRender().setAnimation(ANIM.idle);
+					enemy.damage(unit.getDamage());
+					if(player == 1)
+						unit.getRender().setFacing(FACING.right);
+					else
+						unit.getRender().setFacing(FACING.left);
+				}
+			});
+			
+			moveBack.push(Tween
+					.to(action.origin.getUnit(player), ActorAccessor.X, 1)
+					.target(action.origin.getX() + (player == 1 ? CellHelper.UNIT_PLAYER_1_X
+							: CellHelper.UNIT_PLAYER_2_X), player));
+			moveBack.push(Tween
+					.to(action.origin.getUnit(player), ActorAccessor.Y, 1)
+					.target(action.origin.getY() + (player == 1 ? CellHelper.UNIT_PLAYER_1_Y
+							: CellHelper.UNIT_PLAYER_2_Y)));
+			
+			attack.push(moveBack);
+			attackTimeline.push(attack);
+		}
+	}
+	
+	private void moveUnits() {
 		Timeline t = Timeline.createSequence();
 		t.beginParallel();
 		createPaths(player1Moves, 1, t);
@@ -119,19 +205,6 @@ public class TurnAnimations extends GameRender {
 			@Override
 			public void onEvent(int type, BaseTween<?> source) {
 				rangedAttackUnits();
-			}
-		}).start(tweenManager);
-		
-		return t;
-	}
-	
-	private void rangedAttackUnits() {
-		Timeline t = Timeline.createSequence();
-		t.setCallback(new TweenCallback() {
-			@Override
-			public void onEvent(int type, BaseTween<?> source) {
-				defensiveUnits(false);
-				showPanel();
 			}
 		}).start(tweenManager);
 	}
@@ -217,6 +290,17 @@ public class TurnAnimations extends GameRender {
 		System.out.println("step:[" + coordsFrom + "]-->[" + coordsTo + "]");
 	}
 
+	private void rangedAttackUnits() {
+		Timeline t = Timeline.createSequence();
+		t.setCallback(new TweenCallback() {
+			@Override
+			public void onEvent(int type, BaseTween<?> source) {
+				defensiveUnits(false);
+				showPanel();
+			}
+		}).start(tweenManager);
+	}
+	
 	private void readActions(int player) {
 		for (int row = 0; row < world.cellGrid.length; row++) {
 			for (int col = 0; col < world.cellGrid[0].length; col++) {

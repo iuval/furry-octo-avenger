@@ -28,10 +28,10 @@ public class UnitAccessor implements TweenAccessor<Unit> {
 		switch (tweenType) {
 		case X:
 			if (newValues[1] == 1) {
-				if (target.getX() >= newValues[0])
+				if (target.getX() > newValues[0])
 					target.getRender().setFacing(FACING.left);
 			} else {
-				if (target.getX() <= newValues[0])
+				if (target.getX() < newValues[0])
 					target.getRender().setFacing(FACING.right);
 			}
 			
