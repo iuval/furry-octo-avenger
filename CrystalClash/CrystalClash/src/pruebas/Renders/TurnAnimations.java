@@ -149,11 +149,14 @@ public class TurnAnimations extends GameRender {
 			attack.push(move);
 			
 			Timeline walkAnim2 = Timeline.createParallel();
-			walkAnim2.setUserData(new Object[] { action.origin.getUnit(player) });
+			walkAnim2.setUserData(new Object[] { action.origin.getUnit(player), action.target.getUnit(player == 1 ? 2 : 1) });
 			walkAnim2.setCallback(new TweenCallback() {
 				@Override
 				public void onEvent(int type, BaseTween<?> source) {
 					Unit unit = (Unit) (((Object[]) source.getUserData())[0]);
+					Unit enemy = (Unit) (((Object[]) source.getUserData())[1]);
+					enemy.damage(unit.getDamage());
+					
 					unit.getRender().setAnimation(ANIM.walk);
 				}
 			});
@@ -161,17 +164,14 @@ public class TurnAnimations extends GameRender {
 			attack.push(walkAnim2);
 			
 			Timeline moveBack = Timeline.createParallel();
-			moveBack.setUserData(new Object[] { action.origin.getUnit(player), action.target.getUnit(player == 1 ? 2
-					: 1), player });
+			moveBack.setUserData(new Object[] { action.origin.getUnit(player), player });
 			moveBack.setCallback(new TweenCallback() {
 				@Override
 				public void onEvent(int type, BaseTween<?> source) {
 					Unit unit = (Unit) (((Object[]) source.getUserData())[0]);
-					Unit enemy = (Unit) (((Object[]) source.getUserData())[1]);
-					int player = (Integer) (((Object[]) source.getUserData())[2]);
+					int player = (Integer) (((Object[]) source.getUserData())[1]);
 					
 					unit.getRender().setAnimation(ANIM.idle);
-					enemy.damage(unit.getDamage());
 					if(player == 1)
 						unit.getRender().setFacing(FACING.right);
 					else

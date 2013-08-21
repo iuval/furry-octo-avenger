@@ -1,0 +1,12 @@
+animation
+  sheet: 2, 3
+  handle: 10, 2
+  total-time: 0.9167
+  image-count: 6
+images-time
+  0001: 0
+  0002: 0.0833
+  0003: 0.1667
+  0004: 0.25
+  0007: 0.5
+  0008: 0.5333
