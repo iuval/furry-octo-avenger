@@ -1,6 +1,7 @@
 package pruebas.Accessors;
 
 import pruebas.Entities.Unit;
+import pruebas.Renders.UnitRender.FACING;
 import aurelienribon.tweenengine.TweenAccessor;
 
 public class UnitAccessor implements TweenAccessor<Unit> {
@@ -26,6 +27,11 @@ public class UnitAccessor implements TweenAccessor<Unit> {
 	public void setValues(Unit target, int tweenType, float[] newValues) {
 		switch (tweenType) {
 		case X:
+			if (target.getX() > newValues[0])
+				target.getRender().setFacing(FACING.left);
+			else if (newValues[0] > target.getX())
+				target.getRender().setFacing(FACING.right);
+
 			target.setPosition(newValues[0], target.getY());
 			break;
 		case Y:
