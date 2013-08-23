@@ -42,6 +42,7 @@ public class Unit extends GameObject {
 		if (render == null) {
 			this.render = UnitHelper.getUnitRender(unitName);
 			this.render.setUnit(this);
+			this.render.updateHp();
 		}
 	}
 
@@ -98,7 +99,7 @@ public class Unit extends GameObject {
 	public void setDefendingPosition(boolean position) {
 		inDefensePosition = position;
 	}
-	
+
 	public int getDamage() {
 		return damage;
 	}
