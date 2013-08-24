@@ -72,7 +72,9 @@ public class Unit extends GameObject {
 	}
 
 	public void damage(float damage) {
-		// TODO: Aplicar defensive pos
+		if(inDefensePosition)
+			damage /= 2;
+		
 		hitPoints -= damage;
 		getRender().updateHp();
 	}
