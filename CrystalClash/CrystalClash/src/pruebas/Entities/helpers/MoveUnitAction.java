@@ -19,9 +19,7 @@ public class MoveUnitAction extends UnitAction {
 		GridPos pos;
 		for (int i = 0; i < moves.size; i++) {
 			pos = moves.get(i).getGridPosition();
-			if (i > 0)
-				builder.append("\"pos\":{\"x\":").append(pos.getX()).append(",\"y\": ")
-						.append(pos.getY()).append("},");
+			builder.append("\"pos\":{\"x\":").append(pos.getX()).append(",\"y\": ").append(pos.getY()).append("},");
 		}
 		builder.deleteCharAt(builder.length() - 1);
 		builder.append("}");

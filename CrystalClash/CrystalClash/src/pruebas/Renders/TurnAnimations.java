@@ -130,10 +130,10 @@ public class TurnAnimations extends GameRender {
 			
 			Timeline move = Timeline.createParallel();
 			move.push(Tween
-					.to(action.origin.getUnit(player), UnitAccessor.X, 1)
+					.to(action.origin.getUnit(player), UnitAccessor.X, CrystalClash.WALK_ANIMATION_SPEED)
 					.target(CellHelper.getUnitX(player, action.target)));
 			move.push(Tween
-					.to(action.origin.getUnit(player), UnitAccessor.Y, 1)
+					.to(action.origin.getUnit(player), UnitAccessor.Y, CrystalClash.WALK_ANIMATION_SPEED)
 					.target(CellHelper.getUnitY(player, action.target)));
 			move.setUserData(new Object[] { action.origin.getUnit(player) });
 			move.setCallback(new TweenCallback() {
@@ -158,15 +158,15 @@ public class TurnAnimations extends GameRender {
 					unit.getRender().setAnimation(ANIM.walk);
 				}
 			});
-			walkAnim2.delay(2);
+			walkAnim2.delay(CrystalClash.FIGTH_ANIMATION_SPEED);
 			attack.push(walkAnim2);
 			
 			Timeline moveBack = Timeline.createParallel();
 			moveBack.push(Tween
-					.to(action.origin.getUnit(player), UnitAccessor.X, 1)
+					.to(action.origin.getUnit(player), UnitAccessor.X, CrystalClash.WALK_ANIMATION_SPEED)
 					.target(CellHelper.getUnitX(player, action.origin)));
 			moveBack.push(Tween
-					.to(action.origin.getUnit(player), UnitAccessor.Y, 1)
+					.to(action.origin.getUnit(player), UnitAccessor.Y, CrystalClash.WALK_ANIMATION_SPEED)
 					.target(CellHelper.getUnitY(player, action.origin)));
 			moveBack.setUserData(new Object[] { action.origin.getUnit(player), player });
 			moveBack.setCallback(new TweenCallback() {
@@ -249,10 +249,10 @@ public class TurnAnimations extends GameRender {
 			}
 		});
 		step.push(Tween
-				.to(action.origin.getUnit(player), UnitAccessor.X, 1)
+				.to(action.origin.getUnit(player), UnitAccessor.X, CrystalClash.WALK_ANIMATION_SPEED)
 				.target(CellHelper.getUnitX(player, action.moves.get(currentStepIndex + 1))));
 		step.push(Tween
-				.to(action.origin.getUnit(player), UnitAccessor.Y, 1)
+				.to(action.origin.getUnit(player), UnitAccessor.Y, CrystalClash.WALK_ANIMATION_SPEED)
 				.target(CellHelper.getUnitY(player, action.moves.get(currentStepIndex + 1))));
 		return step;
 	}
@@ -285,6 +285,12 @@ public class TurnAnimations extends GameRender {
 
 	private void rangedAttackUnits() {
 		Timeline t = Timeline.createSequence();
+		t.beginParallel();
+		createRangedAttacks(player1RangedAttacks, 1, t);
+		t.end();
+		t.beginParallel();
+		createRangedAttacks(player2RangedAttacks, 2, t);
+		t.end();
 		t.setCallback(new TweenCallback() {
 			@Override
 			public void onEvent(int type, BaseTween<?> source) {
@@ -292,6 +298,42 @@ public class TurnAnimations extends GameRender {
 				showPanel();
 			}
 		}).start(tweenManager);
+	}
+	
+	private void createRangedAttacks(Array<AttackUnitAction> attackActions, int player,
+			Timeline attackTimeline) {
+		AttackUnitAction action = null;
+		for (int m = 0; m < attackActions.size; m++) {
+			action = attackActions.get(m);
+
+			Timeline attackAnim = Timeline.createSequence();
+			attackAnim.setUserData(new Object[] { action.origin.getUnit(player)});
+			attackAnim.setCallback(new TweenCallback() {
+				@Override
+				public void onEvent(int type, BaseTween<?> source) {
+					Unit unit = (Unit) (((Object[]) source.getUserData())[0]);
+					unit.getRender().setAnimation(ANIM.fight);
+				}
+			});
+			
+			Timeline stopAnim = Timeline.createSequence();
+			stopAnim.setUserData(new Object[] { action.origin.getUnit(player), action.target.getUnit(player == 1 ? 2 : 1) });
+			stopAnim.setCallback(new TweenCallback() {
+				@Override
+				public void onEvent(int type, BaseTween<?> source) {
+					Unit unit = (Unit) (((Object[]) source.getUserData())[0]);
+					Unit enemy = (Unit) (((Object[]) source.getUserData())[1]);
+					if(enemy != null)
+						enemy.damage(unit.getDamage());
+					
+					unit.getRender().setAnimation(ANIM.idle);
+				}
+			});
+			stopAnim.delay(CrystalClash.FIGTH_ANIMATION_SPEED);
+			
+			attackTimeline.push(attackAnim);
+			attackTimeline.push(stopAnim);
+		}
 	}
 	
 	private void readActions(int player) {
