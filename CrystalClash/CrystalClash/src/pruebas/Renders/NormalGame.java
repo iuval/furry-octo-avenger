@@ -301,9 +301,9 @@ public class NormalGame extends GameRender {
 			int enemyPlayer = world.player == 1 ? 2 : 1;
 			boolean continueMoving = top.getUnit(enemyPlayer) == null;
 
-			if(top.Equals(unitAction.origin))
+			if (top.Equals(unitAction.origin))
 				continueMoving = true;
-			
+
 			if (continueMoving) {
 				int[][] cells = top.neigbours;
 				Cell aux = null;
@@ -329,14 +329,15 @@ public class NormalGame extends GameRender {
 		showAbleToAttackCellRecirsive(selectedCell, checkIfUnit, selectedUnit.getRange(), false);
 	}
 
-	// Method that actually "shows" (change state) the cell where units can attack
+	// Method that actually "shows" (change state) the cell where units can
+	// attack
 	private void showAbleToAttackCellRecirsive(Cell cell, boolean checkIfUnit, int range, boolean hide) {
 		int[][] cells = cell.neigbours;
 		int enemyPlayer = world.player == 1 ? 2 : 1;
-		
-		if(checkIfUnit && cell.getUnit(enemyPlayer) != null)
+
+		if (checkIfUnit && cell.getUnit(enemyPlayer) != null)
 			cell.setState(Cell.State.ABLE_TO_ATTACK);
-			
+
 		Cell aux = null;
 		for (int i = 0; i < cells.length; i++) {
 			aux = world.cellAtByGrid(cells[i][0], cells[i][1]);
@@ -615,8 +616,12 @@ public class NormalGame extends GameRender {
 					cell.setState(Cell.State.ATTACK_TARGET_CENTER);
 					((AttackUnitAction) unitAction).target = cell;
 				} else {
+					if (((AttackUnitAction) unitAction).target != null) {
+						aActions.add((AttackUnitAction) unitAction);
+					} else {
+						unitAction = new NoneUnitAction();
+					}
 					selectedCell.setAction(unitAction, world.player);
-					aActions.add((AttackUnitAction) unitAction);
 					clearCells();
 					clearSelection();
 					showAssignedActions();
@@ -651,12 +656,12 @@ public class NormalGame extends GameRender {
 					showAction(unitAction, true);
 				} else {
 					clearMoveAction();
+					clearCells();
 
-					selectedCell.setAction(unitAction, world.player);
 					MoveUnitAction action = (MoveUnitAction) unitAction;
-					mActions.add(action);
-
 					if (action.moves.size > 1) {
+						mActions.add(action);
+
 						Unit ghost = new Unit(selectedUnit.getName());
 						if (world.player == 2)
 							ghost.getRender().setFacing(FACING.left);
@@ -677,9 +682,11 @@ public class NormalGame extends GameRender {
 						ghostlyUnits.add(new Tuple<Unit, MoveUnitAction>(ghost,
 								action));
 						alreadyAssigned.add(ghostCell);
+					} else {
+						unitAction = new NoneUnitAction();
 					}
+					selectedCell.setAction(unitAction, world.player);
 
-					clearCells();
 					clearSelection();
 					showAssignedActions();
 				}
