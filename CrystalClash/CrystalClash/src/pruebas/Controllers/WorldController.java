@@ -7,6 +7,7 @@ import pruebas.Entities.Unit;
 import pruebas.Entities.helpers.AttackUnitAction;
 import pruebas.Entities.helpers.DefendUnitAction;
 import pruebas.Entities.helpers.MoveUnitAction;
+import pruebas.Entities.helpers.NoneUnitAction;
 import pruebas.Entities.helpers.PlaceUnitAction;
 import pruebas.Entities.helpers.UnitAction;
 import pruebas.Networking.ServerDriver;
@@ -75,6 +76,7 @@ public class WorldController {
 			Unit unit = new Unit(child.getString("unit_name"), isEnemy, child.getInt("unit_hp"));
 			UnitAction unitA;
 			action = child.getString("action");
+			
 			if (action.equals("place")) {
 				unitA = new PlaceUnitAction();
 				((PlaceUnitAction) unitA).unitName = child.getString("unit_name");
@@ -97,8 +99,10 @@ public class WorldController {
 
 					((MoveUnitAction) unitA).moves.add(cellGrid[cellX][cellY]);
 				}
-			} else {
+			} else if (action.equals("defense")) {
 				unitA = new DefendUnitAction();
+			} else {
+				unitA = new NoneUnitAction();
 			}
 
 			cellGrid[x][y].setUnit(unit, playerNum);
