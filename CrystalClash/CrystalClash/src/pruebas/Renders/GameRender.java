@@ -13,7 +13,7 @@ public abstract class GameRender {
 	}
 
 	public abstract void clearAllChanges();
-	
+
 	public abstract void render(float dt, SpriteBatch batch, Stage stage);
 
 	public abstract boolean touchDown(float x, float y, int pointer, int button);

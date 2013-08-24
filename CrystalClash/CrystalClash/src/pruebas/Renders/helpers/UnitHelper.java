@@ -23,68 +23,38 @@ public class UnitHelper {
 	public static final int HP_BAR_Y = 130;
 	public static final int HP_BAR_X = 10;
 
-	public static Hashtable<String, UnitRender> renderMap;
+	public static Hashtable<String, SuperAnimation> renderMap;
 	public static Texture enemyHPBar;
 	public static Texture allyHPBar;
-	
-	public static SuperAnimation shieldAnimation;
 
 	public static void init() {
-		renderMap = new Hashtable<String, UnitRender>();
-		shieldAnimation = loadShieldAnim();
+		renderMap = new Hashtable<String, SuperAnimation>();
 	}
 
 	public static UnitRender getUnitRender(String unitName) {
-		if (renderMap.contains(unitName)) {
-			return renderMap.get(unitName).clone();
-		}
-
-		UnitRender render = loadRender(unitName);
-		render.setAnimation(UnitRender.ANIM.idle);
-		renderMap.put(unitName, render);
-		return render;
-	}
-
-	private static UnitRender loadRender(String unitName) {
 		UnitRender render = new UnitRender();
 		render.idleAnim = getUnitSuperAnimation(unitName, "idle");
 		render.idleAnim.randomCurrentFrame();
-
 		render.fightAnim = getUnitSuperAnimation(unitName, "attack");
 		render.walkAnim = getUnitSuperAnimation(unitName, "run");
-		render.shieldAnim = shieldAnimation.clone();
-
+		
+		render.dieAnim = getUnitSuperAnimation(unitName, "die");
+		render.shieldAnim = getSuperAnimation("data/Units/defensive_shield");
+		render.setState(UnitRender.STATE.idle);
 		return render;
 	}
 
-	public static SuperAnimation getUnitSuperAnimation(String unitName,
-			String action) {
-		return FileUtil.getSuperAnimation(String.format("data/Units/%s/%s", unitName,
-				action));
+	public static SuperAnimation getUnitSuperAnimation(String unitName, String action) {
+		return getSuperAnimation(String.format("data/Units/%s/%s", unitName, action));
 	}
 
-	private static SuperAnimation loadShieldAnim(){
-		String base_file_name = "data/Units/defensive_shield";
-		UnitPrefReaderData data = UnitAnimPrefReader.load(base_file_name + ".pref");
-		Texture sheet = new Texture(Gdx.files.internal(base_file_name + ".png"));
-		TextureRegion[][] tmp = TextureRegion.split(sheet, sheet.getWidth()
-				/ data.cols, sheet.getHeight() / data.rows);
-		TextureRegion[] frames = new TextureRegion[data.cols * data.rows];
-
-		int index = 0;
-		for (int i = 0; i < data.rows; i++) {
-			for (int j = 0; j < data.cols; j++) {
-				frames[index++] = tmp[i][j];
-			}
+	public static SuperAnimation getSuperAnimation(String path) {
+		if (renderMap.contains(path)) {
+			return renderMap.get(path).clone();
 		}
-		
-		SuperAnimation shieldAnimation = new SuperAnimation(data.total_time, data.image_times, frames);
-		shieldAnimation.handle_x = data.handle_x;
-		shieldAnimation.handle_y = data.handle_x;
-		
-		return shieldAnimation;
+		return FileUtil.getSuperAnimation(path);
 	}
-	
+
 	public static Texture getEnemyHPBar() {
 		if (enemyHPBar == null) {
 			enemyHPBar = createBar(1, 0, 0, 1);

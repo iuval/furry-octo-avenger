@@ -11,7 +11,7 @@ import pruebas.Entities.helpers.AttackUnitAction;
 import pruebas.Entities.helpers.DefendUnitAction;
 import pruebas.Entities.helpers.MoveUnitAction;
 import pruebas.Entities.helpers.UnitAction;
-import pruebas.Renders.UnitRender.ANIM;
+import pruebas.Renders.UnitRender.STATE;
 import pruebas.Renders.UnitRender.FACING;
 import pruebas.Renders.helpers.CellHelper;
 import aurelienribon.tweenengine.BaseTween;
@@ -123,7 +123,7 @@ public class TurnAnimations extends GameRender {
 				@Override
 				public void onEvent(int type, BaseTween<?> source) {
 					Unit unit = (Unit) (((Object[]) source.getUserData())[0]);
-					unit.getRender().setAnimation(ANIM.walk);
+					unit.getRender().setState(STATE.walking);
 				}
 			});
 			attack.push(walkAnim);
@@ -140,7 +140,7 @@ public class TurnAnimations extends GameRender {
 				@Override
 				public void onEvent(int type, BaseTween<?> source) {
 					Unit unit = (Unit) (((Object[]) source.getUserData())[0]);
-					unit.getRender().setAnimation(ANIM.fight);
+					unit.getRender().setState(STATE.fighting);
 				}
 			});
 
@@ -154,8 +154,7 @@ public class TurnAnimations extends GameRender {
 					Unit unit = (Unit) (((Object[]) source.getUserData())[0]);
 					Unit enemy = (Unit) (((Object[]) source.getUserData())[1]);
 					enemy.damage(unit.getDamage());
-
-					unit.getRender().setAnimation(ANIM.walk);
+					unit.getRender().setState(STATE.walking);
 				}
 			});
 			walkAnim2.delay(CrystalClash.FIGTH_ANIMATION_SPEED);
@@ -174,8 +173,7 @@ public class TurnAnimations extends GameRender {
 				public void onEvent(int type, BaseTween<?> source) {
 					Unit unit = (Unit) (((Object[]) source.getUserData())[0]);
 					int player = (Integer) (((Object[]) source.getUserData())[1]);
-
-					unit.getRender().setAnimation(ANIM.idle);
+					unit.getRender().setState(STATE.idle);
 					if (player == 1)
 						unit.getRender().setFacing(FACING.right);
 					else

@@ -739,6 +739,7 @@ public class NormalGame extends GameRender {
 
 	@Override
 	public boolean pan(float x, float y, float deltaX, float deltaY) {
+		// TODO Auto-generated method stub
 		return false;
 	}
 

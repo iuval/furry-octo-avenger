@@ -4,7 +4,6 @@ import pruebas.Accessors.ActorAccessor;
 import pruebas.Controllers.GameController;
 import pruebas.Controllers.MenuGames;
 import pruebas.CrystalClash.CrystalClash;
-import pruebas.Networking.ServerDriver;
 import pruebas.Renders.helpers.ui.GameListItem;
 import aurelienribon.tweenengine.Timeline;
 import aurelienribon.tweenengine.Tween;
@@ -250,7 +249,7 @@ public class MenuGamesRender extends MenuRender {
 			public void clicked(InputEvent event, float x, float y) {
 				controller.getGameTurn(((GameListItem) event.getListenerActor()
 						.getParent()).gameId, ((GameListItem) event.getListenerActor()
-								.getParent()).turn);
+						.getParent()).turn);
 			}
 		};
 
@@ -373,5 +372,11 @@ public class MenuGamesRender extends MenuRender {
 	@Override
 	public boolean scrolled(int amount) {
 		return false;
+	}
+
+	@Override
+	public void dispose() {
+		// TODO Auto-generated method stub
+
 	}
 }

@@ -103,4 +103,8 @@ public class Unit extends GameObject {
 	public int getDamage() {
 		return damage;
 	}
+
+	public boolean isAlive() {
+		return hitPoints > 0;
+	}
 }

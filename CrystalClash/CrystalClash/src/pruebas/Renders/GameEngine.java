@@ -41,10 +41,11 @@ public class GameEngine implements Screen {
 	private InputMultiplexer inputManager;
 	private SpriteBatch batch;
 	private Stage stage;
-	private static OrthographicCamera camera;
+	public static OrthographicCamera camera;
 
-	private GameState state = GameState.InMenuLogIn;
+	private GameState state = GameState.InSplash;
 
+	private SplashScreen splashRender;
 	private MenuLogInRender menuLogInRender;
 	private MenuGamesRender menuGamesRender;
 	private WorldController world;
@@ -57,6 +58,8 @@ public class GameEngine implements Screen {
 
 	@Override
 	public void show() {
+		Tween.registerAccessor(Actor.class, new ActorAccessor());
+
 		inputManager = new InputMultiplexer();
 		batch = new SpriteBatch();
 		stage = new Stage();
@@ -66,19 +69,21 @@ public class GameEngine implements Screen {
 		batch.setProjectionMatrix(camera.combined);
 		stage.setCamera(camera);
 
-		Gdx.input.setCatchBackKey(true);
-		Gdx.input.setInputProcessor(inputManager);
-
 		tweenManager = new TweenManager();
 
 		load();
-		openMenuLogIn();
+		openSplash();
+	}
+
+	private void loadInSplash() {
+		loadingTexture = new SuperAnimatedActor(FileUtil.getSuperAnimation("data/Images/Menu/Loading/loading"), true, FACING.right);
 		hideLoading();
+
+		Gdx.input.setCatchBackKey(true);
+		Gdx.input.setInputProcessor(inputManager);
 	}
 
 	private void load() {
-		loadingTexture = new SuperAnimatedActor(FileUtil.getSuperAnimation("data/Images/Menu/Loading/loading"), true, FACING.right);
-
 		Texture backgroundTexture = new Texture(
 				Gdx.files.internal("data/Images/Menu/menu_background.jpg"));
 		background = new Image(backgroundTexture);
@@ -126,11 +131,15 @@ public class GameEngine implements Screen {
 		stage.addActor(background);
 		inputManager.addProcessor(stage);
 		switch (newState) {
-		case InGame:
-			inputManager.addProcessor(worldRender);
+		case InSplash:
+			stage.addActor(splashRender);
 			break;
 		case InMenuLogIn:
 			stage.addActor(menuLogInRender);
+			break;
+		case InTranstionMenuLogInAndMenuGames:
+			stage.addActor(menuLogInRender);
+			stage.addActor(menuGamesRender);
 			break;
 		case InMenuGames:
 			stage.addActor(background);
@@ -140,15 +149,15 @@ public class GameEngine implements Screen {
 				worldRender = null;
 			}
 			break;
-		case InTranstionMenuLogInAndMenuGames:
-			stage.addActor(menuLogInRender);
-			stage.addActor(menuGamesRender);
-			break;
 		case InTranstionMenuGamesAndGame:
 			stage.addActor(menuGamesRender);
 			break;
+		case InGame:
+			inputManager.addProcessor(worldRender);
+			break;
 		}
-		stage.addActor(loadingTexture);
+		if (loadingTexture != null)
+			stage.addActor(loadingTexture);
 	}
 
 	public void openGame(final JsonValue data, final int turn) {
@@ -175,26 +184,42 @@ public class GameEngine implements Screen {
 		t.start(tweenManager);
 	}
 
-	public void openMenuLogIn() {
-		if (menuLogInRender == null) {
-			menuLogInRender = MenuLogIn.getInstance().getRender();
+	public void openSplash() {
+		if (splashRender == null) {
+			splashRender = new SplashScreen();
 		}
 
+		setState(GameState.InSplash);
+		Timeline t = Timeline.createSequence();
+		splashRender.pushEnterAnimation(t);
+		t.setCallback(new TweenCallback() {
+			@Override
+			public void onEvent(int type, BaseTween<?> source) {
+				loadInSplash();
+				openMenuLogIn();
+			}
+		});
+		t.start(tweenManager);
+	}
+
+	public void openMenuLogIn() {
+		Timeline t = Timeline.createSequence();
 		if (state == GameState.InMenuGames) {
-			setState(GameState.InTranstionMenuLogInAndMenuGames);
-			Timeline t = Timeline.createSequence();
 			menuGamesRender.pushExitAnimation(t);
-			menuLogInRender.pushEnterAnimation(t);
-			t.setCallback(new TweenCallback() {
-				@Override
-				public void onEvent(int type, BaseTween<?> source) {
-					setState(GameState.InMenuLogIn);
-				}
-			});
-			t.start(tweenManager);
-		} else {
-			setState(GameState.InMenuLogIn);
+		} else if (state == GameState.InSplash) {
+			splashRender.pushExitAnimation(t);
 		}
+		t.setCallback(new TweenCallback() {
+			@Override
+			public void onEvent(int type, BaseTween<?> source) {
+				if (menuLogInRender == null) {
+					menuLogInRender = MenuLogIn.getInstance().getRender();
+				}
+				setState(GameState.InMenuLogIn);
+				menuLogInRender.pushEnterAnimation(Timeline.createSequence()).start(tweenManager);
+			}
+		});
+		t.start(tweenManager);
 	}
 
 	public void openMenuGames() {
@@ -279,4 +304,5 @@ public class GameEngine implements Screen {
 	public static void hideLoading() {
 		loadingTexture.setVisible(false);
 	}
+
 }
