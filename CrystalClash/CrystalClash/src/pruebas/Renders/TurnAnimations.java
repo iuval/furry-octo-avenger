@@ -47,7 +47,7 @@ public class TurnAnimations extends GameRender {
 	private Array<AttackUnitAction> player2RangedAttacks;
 	private Array<DefendUnitAction> player1Defend;
 	private Array<DefendUnitAction> player2Defend;
-	private static Array<Unit> deadUnits;
+	private Array<Cell> deadUnits;
 
 	private Image panel;
 	private TextButton btnPlay;
@@ -67,7 +67,7 @@ public class TurnAnimations extends GameRender {
 		player2RangedAttacks = new Array<AttackUnitAction>();
 		player1Defend = new Array<DefendUnitAction>();
 		player2Defend = new Array<DefendUnitAction>();
-		deadUnits = new Array<Unit>();
+		deadUnits = new Array<Cell>();
 
 		init();
 
@@ -136,15 +136,17 @@ public class TurnAnimations extends GameRender {
 			move.push(Tween
 					.to(action.origin.getUnit(player), UnitAccessor.Y, CrystalClash.WALK_ANIMATION_SPEED)
 					.target(CellHelper.getUnitY(player, action.target)));
-			move.setUserData(new Object[] { action.origin.getUnit(player), action.target.getUnit(player == 1 ? 2 : 1) });
+			move.setUserData(new Object[] { action, player });
 			move.setCallback(new TweenCallback() {
 				@Override
 				public void onEvent(int type, BaseTween<?> source) {
-					Unit unit = (Unit) (((Object[]) source.getUserData())[0]);
-					Unit enemy = (Unit) (((Object[]) source.getUserData())[1]);
+					AttackUnitAction action = (AttackUnitAction) (((Object[]) source.getUserData())[0]);
+					int player = Integer.parseInt(((Object[]) source.getUserData())[1].toString());
+					Unit unit = action.origin.getUnit(player);
+					Unit enemy = action.target.getUnit(player == 1 ? 2 : 1);
 					enemy.damage(unit.getDamage());
 					if (!enemy.isAlive()) {
-						deadUnits.add(enemy);
+						deadUnits.add(action.target);
 					}
 					unit.getRender().setState(STATE.fighting);
 				}
@@ -253,16 +255,27 @@ public class TurnAnimations extends GameRender {
 	}
 
 	private void playDeaths() {
-		Unit unit = null;
 		Timeline deathTimeline = Timeline.createParallel();
-		for (int m = 0; m < deadUnits.size; m++) {
-			unit = deadUnits.get(m);
-			unit.getRender().setState(STATE.dieing);
+		if (deadUnits.size > 0) {
+			Unit unit = null;
+			for (int m = 0; m < deadUnits.size; m++) {
+				Cell cell = deadUnits.get(m);
+				for (int i = 0; i < 2; i++) {
+					if (cell.getUnit(i) != null) {
+						unit = deadUnits.get(m).getUnit(i);
+						if (unit.getRender().getState() != STATE.dead)
+							unit.getRender().setState(STATE.dieing);
+					}
+				}
+			}
+			deathTimeline.delay(6);
 		}
-		deathTimeline.delay(6);
 		deathTimeline.setCallback(new TweenCallback() {
 			@Override
 			public void onEvent(int type, BaseTween<?> source) {
+				for (int i = 0; i < deadUnits.size; i++) {
+					deadUnits.get(i).removeDeadUnits();
+				}
 				showPanel();
 			}
 		});

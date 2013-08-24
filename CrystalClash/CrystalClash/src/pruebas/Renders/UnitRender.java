@@ -50,6 +50,10 @@ public class UnitRender {
 		facing = at;
 	}
 
+	public STATE getState() {
+		return state;
+	}
+
 	public void setState(STATE state) {
 		this.state = state;
 		switch (state) {
