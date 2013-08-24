@@ -41,9 +41,10 @@ public class WorldController {
 		if (firstTurn) {
 			render.initFirstTurn();
 		} else {
-			if(turn == 1){ //First playable turn, only FirstTurn actions (PlaceActions), so nothing to show
+			if (turn == 1) { // First playable turn, only FirstTurn actions
+								// (PlaceActions), so nothing to show
 				render.initNormalTurn();
-			}else{
+			} else {
 				render.initTurnAnimations();
 			}
 		}
@@ -85,7 +86,7 @@ public class WorldController {
 				JsonValue cells = child.get("target");
 				int cellX = cells.getInt("x");
 				int cellY = cells.getInt("y");
-				
+
 				((AttackUnitAction) unitA).target = cellGrid[cellX][cellY];
 			} else if (action.equals("move")) {
 				unitA = new MoveUnitAction();
@@ -170,8 +171,7 @@ public class WorldController {
 	}
 
 	protected void init() {
-		this.cellGrid = ((Cell[][]) java.lang.reflect.Array.newInstance(
-				Cell.class, new int[] { 9, 6 }));
+		this.cellGrid = new Cell[9][6];
 
 		createMap();
 	}
@@ -308,11 +308,11 @@ public class WorldController {
 	public WorldRender getRender() {
 		return render;
 	}
-	
-	public void initNormalTurn(){
+
+	public void initNormalTurn() {
 		render.initNormalTurn();
 	}
-	
+
 	public void leaveGame() {
 		GameEngine.getInstance().openMenuGames();
 	}

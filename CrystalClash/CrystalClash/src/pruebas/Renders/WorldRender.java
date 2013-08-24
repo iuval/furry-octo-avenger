@@ -44,7 +44,7 @@ public class WorldRender implements InputProcessor {
 	private TextButton btnClear;
 	private Group grpMoreOptions;
 	private boolean hideMoreOptions;
-	
+
 	private boolean showingAnimations;
 
 	private WorldController world;
@@ -88,15 +88,18 @@ public class WorldRender implements InputProcessor {
 			}
 		}
 
-		for (int i = 0; i < world.cellGrid.length; i++) {
-			for (int j = world.cellGrid[i].length - 1; j >= 0; j--) {
+		for (int j = 5; j >= 0; j--) {
+			for (int i = 0; i < 9; i += 2) {
+				world.cellGrid[i][j].getRender().drawUnits(dt, batch);
+			}
+			for (int i = 1; i < 9; i += 2) {
 				world.cellGrid[i][j].getRender().drawUnits(dt, batch);
 			}
 		}
 
 		gameRender.render(dt, batch, stage);
 
-		if(!showingAnimations){
+		if (!showingAnimations) {
 			moreOptions.draw(batch, 1);
 			optionsBar.draw(batch, 1);
 

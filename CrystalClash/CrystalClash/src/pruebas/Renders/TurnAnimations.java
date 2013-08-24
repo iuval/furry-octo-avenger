@@ -136,20 +136,8 @@ public class TurnAnimations extends GameRender {
 			move.push(Tween
 					.to(action.origin.getUnit(player), UnitAccessor.Y, CrystalClash.WALK_ANIMATION_SPEED)
 					.target(CellHelper.getUnitY(player, action.target)));
-			move.setUserData(new Object[] { action.origin.getUnit(player) });
+			move.setUserData(new Object[] { action.origin.getUnit(player), action.target.getUnit(player == 1 ? 2 : 1) });
 			move.setCallback(new TweenCallback() {
-				@Override
-				public void onEvent(int type, BaseTween<?> source) {
-					Unit unit = (Unit) (((Object[]) source.getUserData())[0]);
-					unit.getRender().setState(STATE.fighting);
-				}
-			});
-
-			attack.push(move);
-
-			Timeline walkAnim2 = Timeline.createParallel();
-			walkAnim2.setUserData(new Object[] { action.origin.getUnit(player), action.target.getUnit(player == 1 ? 2 : 1) });
-			walkAnim2.setCallback(new TweenCallback() {
 				@Override
 				public void onEvent(int type, BaseTween<?> source) {
 					Unit unit = (Unit) (((Object[]) source.getUserData())[0]);
@@ -158,6 +146,18 @@ public class TurnAnimations extends GameRender {
 					if (!enemy.isAlive()) {
 						deadUnits.add(enemy);
 					}
+					unit.getRender().setState(STATE.fighting);
+				}
+			});
+
+			attack.push(move);
+
+			Timeline walkAnim2 = Timeline.createParallel();
+			walkAnim2.setUserData(new Object[] { action.origin.getUnit(player) });
+			walkAnim2.setCallback(new TweenCallback() {
+				@Override
+				public void onEvent(int type, BaseTween<?> source) {
+					Unit unit = (Unit) (((Object[]) source.getUserData())[0]);
 					unit.getRender().setState(STATE.walking);
 				}
 			});
@@ -211,19 +211,19 @@ public class TurnAnimations extends GameRender {
 		MoveUnitAction action = null;
 		for (int m = 0; m < moveActions.size; m++) {
 			action = moveActions.get(m);
-			
+
 			Timeline walkAnim = Timeline.createSequence();
 			walkAnim.setUserData(new Object[] { action.origin.getUnit(player) });
 			walkAnim.setCallback(new TweenCallback() {
 				@Override
 				public void onEvent(int type, BaseTween<?> source) {
 					Unit unit = (Unit) (((Object[]) source.getUserData())[0]);
-					unit.getRender().setAnimation(ANIM.walk);
+					unit.getRender().setState(STATE.walking);
 				}
 			});
-			
+
 			Timeline path = Timeline.createSequence();
-			path.setUserData(new Object[] { player,	action.origin, action.moves.get(action.moves.size - 1) });
+			path.setUserData(new Object[] { player, action.origin, action.moves.get(action.moves.size - 1) });
 			path.setCallback(new TweenCallback() {
 				@Override
 				public void onEvent(int type, BaseTween<?> source) {
@@ -252,14 +252,14 @@ public class TurnAnimations extends GameRender {
 		return step;
 	}
 
-	private void createDeaths() {
+	private void playDeaths() {
 		Unit unit = null;
 		Timeline deathTimeline = Timeline.createParallel();
 		for (int m = 0; m < deadUnits.size; m++) {
 			unit = deadUnits.get(m);
 			unit.getRender().setState(STATE.dieing);
 		}
-		deathTimeline.delay(3);
+		deathTimeline.delay(6);
 		deathTimeline.setCallback(new TweenCallback() {
 			@Override
 			public void onEvent(int type, BaseTween<?> source) {
@@ -278,7 +278,7 @@ public class TurnAnimations extends GameRender {
 		cellFrom.removeUnit(player);
 		cellTo.setUnit(unit, player);
 
-		unit.getRender().setAnimation(ANIM.idle);
+		unit.getRender().setState(STATE.idle);
 		if (player == 1)
 			unit.getRender().setFacing(FACING.right);
 		else
@@ -303,7 +303,7 @@ public class TurnAnimations extends GameRender {
 			@Override
 			public void onEvent(int type, BaseTween<?> source) {
 				defensiveUnits(false);
-				createDeaths();
+				playDeaths();
 			}
 		}).start(tweenManager);
 	}
@@ -320,7 +320,7 @@ public class TurnAnimations extends GameRender {
 				@Override
 				public void onEvent(int type, BaseTween<?> source) {
 					Unit unit = (Unit) (((Object[]) source.getUserData())[0]);
-					unit.getRender().setAnimation(ANIM.fight);
+					unit.getRender().setState(STATE.fighting);
 				}
 			});
 
@@ -334,7 +334,7 @@ public class TurnAnimations extends GameRender {
 					if (enemy != null)
 						enemy.damage(unit.getDamage());
 
-					unit.getRender().setAnimation(ANIM.idle);
+					unit.getRender().setState(STATE.idle);
 				}
 			});
 			stopAnim.delay(CrystalClash.FIGTH_ANIMATION_SPEED);
