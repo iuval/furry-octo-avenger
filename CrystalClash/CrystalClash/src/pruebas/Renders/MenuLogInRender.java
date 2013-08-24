@@ -52,7 +52,7 @@ public class MenuLogInRender extends MenuRender {
 	private Texture charactersTexture;
 	private Image characters;
 
-	private Group group1;
+	private Group groupInitialScreen;
 	private Group popUp;
 
 	private StringWriting stringWriting;
@@ -82,8 +82,10 @@ public class MenuLogInRender extends MenuRender {
 
 	@Override
 	public Timeline pushEnterAnimation(Timeline t) {
-		return t.push(Tween.to(popUp, ActorAccessor.Y, CrystalClash.ANIMATION_SPEED)
-				.target((CrystalClash.HEIGHT / 2 - popUp.getHeight() / 2)));
+		return t.push(Tween.set(groupInitialScreen, ActorAccessor.ALPHA)
+				.target(0))
+				.push(Tween.to(groupInitialScreen, ActorAccessor.ALPHA, CrystalClash.ANIMATION_SPEED)
+				.target(1));
 	}
 
 	@Override
@@ -132,11 +134,11 @@ public class MenuLogInRender extends MenuRender {
 			}
 		});
 
-		group1 = new Group();
-		group1.addActor(characters);
-		group1.addActor(btnLogIn);
-		group1.addActor(btnSignIn);
-		addActor(group1);
+		groupInitialScreen = new Group();
+		groupInitialScreen.addActor(characters);
+		groupInitialScreen.addActor(btnLogIn);
+		groupInitialScreen.addActor(btnSignIn);
+		addActor(groupInitialScreen);
 
 		popupPanelTexture = new Texture(
 				Gdx.files.internal("data/Images/Menu/menu_login_popup.png"));
@@ -273,7 +275,7 @@ public class MenuLogInRender extends MenuRender {
 		float speed = CrystalClash.ANIMATION_SPEED;
 		Timeline.createParallel()
 				.push(Tween.to(popUp, ActorAccessor.ALPHA, speed).target(0))
-				.push(Tween.to(group1, ActorAccessor.ALPHA, speed).target(1))
+				.push(Tween.to(groupInitialScreen, ActorAccessor.ALPHA, speed).target(1))
 				.push(Tween.to(popUp, ActorAccessor.Y, speed).target(
 						popUp.getY() + CrystalClash.HEIGHT))
 				.start(tweenManager);
@@ -287,7 +289,7 @@ public class MenuLogInRender extends MenuRender {
 				.push(Tween.to(popUp, ActorAccessor.Y, speed).target(
 						CrystalClash.HEIGHT / 2 - popUp.getHeight() / 2))
 				.push(Tween.to(popUp, ActorAccessor.ALPHA, speed).target(1))
-				.push(Tween.to(group1, ActorAccessor.ALPHA, speed).target(0))
+				.push(Tween.to(groupInitialScreen, ActorAccessor.ALPHA, speed).target(0))
 				.start(tweenManager);
 
 		this.state = state;
