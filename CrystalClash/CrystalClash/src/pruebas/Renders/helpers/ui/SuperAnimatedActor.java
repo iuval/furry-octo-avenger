@@ -8,8 +8,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 
 public class SuperAnimatedActor extends Actor {
-	private final SuperAnimation anim;
-	private boolean looping;
+	public final SuperAnimation anim;
 	private FACING at;
 
 	public SuperAnimatedActor(float time, float[] frameDuration, boolean loop, FACING at, TextureRegion... keyFrames) {
@@ -19,13 +18,13 @@ public class SuperAnimatedActor extends Actor {
 	public SuperAnimatedActor(SuperAnimation anim, boolean loop, FACING at) {
 		this.anim = anim;
 		setSize(anim.getFirstWidth(), anim.getFirstHeight());
-		this.looping = loop;
+		this.anim.setLooping(loop);
 		this.at = at;
 	}
 
 	@Override
 	public void act(float delta) {
-		anim.update(delta, looping, at);
+		anim.update(delta, at);
 	}
 
 	@Override

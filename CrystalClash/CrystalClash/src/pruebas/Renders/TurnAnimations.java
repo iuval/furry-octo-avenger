@@ -11,8 +11,8 @@ import pruebas.Entities.helpers.AttackUnitAction;
 import pruebas.Entities.helpers.DefendUnitAction;
 import pruebas.Entities.helpers.MoveUnitAction;
 import pruebas.Entities.helpers.UnitAction;
-import pruebas.Renders.UnitRender.STATE;
 import pruebas.Renders.UnitRender.FACING;
+import pruebas.Renders.UnitRender.STATE;
 import pruebas.Renders.helpers.CellHelper;
 import aurelienribon.tweenengine.BaseTween;
 import aurelienribon.tweenengine.Timeline;
@@ -47,6 +47,7 @@ public class TurnAnimations extends GameRender {
 	private Array<AttackUnitAction> player2RangedAttacks;
 	private Array<DefendUnitAction> player1Defend;
 	private Array<DefendUnitAction> player2Defend;
+	private static Array<Unit> deadUnits;
 
 	private Image panel;
 	private TextButton btnPlay;
@@ -66,6 +67,7 @@ public class TurnAnimations extends GameRender {
 		player2RangedAttacks = new Array<AttackUnitAction>();
 		player1Defend = new Array<DefendUnitAction>();
 		player2Defend = new Array<DefendUnitAction>();
+		deadUnits = new Array<Unit>();
 
 		init();
 
@@ -109,8 +111,7 @@ public class TurnAnimations extends GameRender {
 		}).start(tweenManager);
 	}
 
-	private void createMeleeAttacks(Array<AttackUnitAction> attackActions, int player,
-			Timeline attackTimeline) {
+	private void createMeleeAttacks(Array<AttackUnitAction> attackActions, int player, Timeline attackTimeline) {
 		AttackUnitAction action = null;
 		for (int m = 0; m < attackActions.size; m++) {
 			action = attackActions.get(m);
@@ -154,6 +155,9 @@ public class TurnAnimations extends GameRender {
 					Unit unit = (Unit) (((Object[]) source.getUserData())[0]);
 					Unit enemy = (Unit) (((Object[]) source.getUserData())[1]);
 					enemy.damage(unit.getDamage());
+					if (!enemy.isAlive()) {
+						deadUnits.add(enemy);
+					}
 					unit.getRender().setState(STATE.walking);
 				}
 			});
@@ -248,6 +252,23 @@ public class TurnAnimations extends GameRender {
 		return step;
 	}
 
+	private void createDeaths() {
+		Unit unit = null;
+		Timeline deathTimeline = Timeline.createParallel();
+		for (int m = 0; m < deadUnits.size; m++) {
+			unit = deadUnits.get(m);
+			unit.getRender().setState(STATE.dieing);
+		}
+		deathTimeline.delay(3);
+		deathTimeline.setCallback(new TweenCallback() {
+			@Override
+			public void onEvent(int type, BaseTween<?> source) {
+				showPanel();
+			}
+		});
+		deathTimeline.start(tweenManager);
+	}
+
 	private void repositionUnit(BaseTween<?> source) {
 		int player = (Integer) (((Object[]) source.getUserData())[0]);
 		Cell cellFrom = (Cell) (((Object[]) source.getUserData())[1]);
@@ -282,7 +303,7 @@ public class TurnAnimations extends GameRender {
 			@Override
 			public void onEvent(int type, BaseTween<?> source) {
 				defensiveUnits(false);
-				showPanel();
+				createDeaths();
 			}
 		}).start(tweenManager);
 	}
