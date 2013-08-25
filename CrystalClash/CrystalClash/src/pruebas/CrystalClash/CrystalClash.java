@@ -1,6 +1,6 @@
 package pruebas.CrystalClash;
 
-import pruebas.Renders.SplashScreen;
+import pruebas.Renders.GameEngine;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.graphics.Texture;
@@ -20,7 +20,7 @@ public class CrystalClash extends Game {
 	@Override
 	public void create() {
 		Texture.setEnforcePotImages(false);
-		setScreen(new SplashScreen());
+		setScreen(GameEngine.getInstance());
 	}
 
 	@Override

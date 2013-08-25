@@ -2,12 +2,9 @@ package pruebas.Util;
 
 import pruebas.Renders.UnitRender.FACING;
 
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
-import com.badlogic.gdx.scenes.scene2d.ui.Image;
 
 /**
  * <p>
@@ -31,7 +28,7 @@ public class SuperAnimation {
 	final float[] keyTimes;
 	final float[] keyDurations;
 
-	private int playMode = NORMAL;
+	private boolean looping = true;
 	private float totalTime = 0;
 	private float animationTime = 0;
 	private int frameNumber = 0;
@@ -47,7 +44,7 @@ public class SuperAnimation {
 	 *            the {@link TextureRegion}s representing the frames.
 	 */
 	public SuperAnimation(float animation_time, float[] keyTimes, TextureRegion... keyFrames) {
-		this(animation_time, keyTimes, keyFrames, NORMAL);
+		this(animation_time, keyTimes, keyFrames, true);
 	}
 
 	/**
@@ -64,12 +61,12 @@ public class SuperAnimation {
 	 *            LOOP_REVERSED, LOOP_PINGPONG, LOOP_RANDOM)
 	 */
 	public SuperAnimation(float animation_time, float[] keyTimes,
-			TextureRegion[] keyFrames, int playType) {
+			TextureRegion[] keyFrames, boolean loop) {
 		this.animationTime = animation_time;
 		this.keyTimes = keyTimes;
 		this.keyDurations = calculateDurations(keyTimes);
 		this.keyFrames = getShallowCopy(keyFrames);
-		this.playMode = playType;
+		this.looping = loop;
 	}
 
 	private TextureRegion[] getShallowCopy(TextureRegion[] keyFrames)
@@ -96,15 +93,11 @@ public class SuperAnimation {
 		return durations;
 	}
 
-	public void update(float stateTime, boolean looping) {
-		update(stateTime, looping, FACING.right);
+	public void update(float stateTime) {
+		update(stateTime, FACING.right);
 	}
 
-	public void update(float stateTime, boolean looping, FACING at) {
-		// we set the play mode by overriding the previous mode based on looping
-		// parameter value
-		playMode = looping ? LOOP : NORMAL;
-
+	public void update(float stateTime, FACING at) {
 		totalTime += stateTime;
 		current = getKeyFrame();
 
@@ -126,10 +119,8 @@ public class SuperAnimation {
 	 * @return the TextureRegion representing the frame of animation for the
 	 *         given state time.
 	 */
-	private TextureRegion getKeyFrame(float stateTime, boolean looping) {
-		// we set the play mode by overriding the previous mode based on looping
-		// parameter value
-		playMode = looping ? LOOP : NORMAL;
+	private TextureRegion getKeyFrame(float stateTime, boolean loop) {
+		looping = loop;
 
 		totalTime += stateTime;
 		return getKeyFrame();
@@ -139,7 +130,7 @@ public class SuperAnimation {
 	 * Returns a {@link TextureRegion} based on the so called state time. This
 	 * is the amount of seconds an object has spent in the state this Animation
 	 * instance represents, e.g. running, jumping and so on using the mode
-	 * specified by {@link #setPlayMode(int)} method.
+	 * specified by {@link #setLooping(int)} method.
 	 * 
 	 * @param stateTime
 	 * @return the TextureRegion representing the frame of animation for the
@@ -165,18 +156,10 @@ public class SuperAnimation {
 			totalTime = 0;
 		}
 
-		switch (playMode) {
-		case NORMAL:
-			frameNumber = Math.min(keyFrames.length - 1, frameNumber);
-			break;
-		case LOOP:
+		if (looping)
 			frameNumber = frameNumber % keyFrames.length;
-			break;
-		default:
-			// play normal otherwise
+		else
 			frameNumber = Math.min(keyFrames.length - 1, frameNumber);
-			break;
-		}
 
 		return frameNumber;
 	}
@@ -184,22 +167,21 @@ public class SuperAnimation {
 	/**
 	 * Sets the animation play mode.
 	 * 
-	 * @param playMode
+	 * @param looping
 	 *            can be one of the following: Animation.NORMAL, Animation.LOOP
 	 */
-	public void setPlayMode(int playMode) {
-		this.playMode = playMode;
+	public void setLooping(boolean loop) {
+		this.looping = loop;
 	}
 
 	/**
 	 * Whether the animation would be finished if played without looping
 	 * (PlayMode Animation#NORMAL), given the state time.
 	 * 
-	 * @param stateTime
 	 * @return whether the animation is finished.
 	 */
-	public boolean isAnimationFinished(float stateTime) {
-		return keyFrames.length - 1 < frameNumber;
+	public boolean isAnimationFinished() {
+		return keyFrames.length - 1 == frameNumber;
 	}
 
 	public void draw(SpriteBatch batch, float x, float y) {

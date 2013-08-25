@@ -11,14 +11,15 @@ import pruebas.Entities.helpers.AttackUnitAction;
 import pruebas.Entities.helpers.DefendUnitAction;
 import pruebas.Entities.helpers.MoveUnitAction;
 import pruebas.Entities.helpers.UnitAction;
-import pruebas.Renders.UnitRender.ANIM;
 import pruebas.Renders.UnitRender.FACING;
+import pruebas.Renders.UnitRender.STATE;
 import pruebas.Renders.helpers.CellHelper;
 import aurelienribon.tweenengine.BaseTween;
 import aurelienribon.tweenengine.Timeline;
 import aurelienribon.tweenengine.Tween;
 import aurelienribon.tweenengine.TweenCallback;
 import aurelienribon.tweenengine.TweenManager;
+import aurelienribon.tweenengine.equations.Linear;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
@@ -47,11 +48,15 @@ public class TurnAnimations extends GameRender {
 	private Array<AttackUnitAction> player2RangedAttacks;
 	private Array<DefendUnitAction> player1Defend;
 	private Array<DefendUnitAction> player2Defend;
+	private Array<Unit> deadUnits;
 
 	private Image panel;
 	private TextButton btnPlay;
 	private TextButton btnSkip;
 	private Group grpPanel;
+	private Image victoryMessage;
+	private Image defeatMessage;
+	private Image drawMessage;
 
 	public TurnAnimations(WorldController world) {
 		super(world);
@@ -66,6 +71,7 @@ public class TurnAnimations extends GameRender {
 		player2RangedAttacks = new Array<AttackUnitAction>();
 		player1Defend = new Array<DefendUnitAction>();
 		player2Defend = new Array<DefendUnitAction>();
+		deadUnits = new Array<Unit>();
 
 		init();
 
@@ -109,24 +115,12 @@ public class TurnAnimations extends GameRender {
 		}).start(tweenManager);
 	}
 
-	private void createMeleeAttacks(Array<AttackUnitAction> attackActions, int player,
-			Timeline attackTimeline) {
+	private void createMeleeAttacks(Array<AttackUnitAction> attackActions, int player, Timeline attackTimeline) {
 		AttackUnitAction action = null;
 		for (int m = 0; m < attackActions.size; m++) {
 			action = attackActions.get(m);
 
 			Timeline attack = Timeline.createSequence();
-
-			Timeline walkAnim = Timeline.createParallel();
-			walkAnim.setUserData(new Object[] { action.origin.getUnit(player) });
-			walkAnim.setCallback(new TweenCallback() {
-				@Override
-				public void onEvent(int type, BaseTween<?> source) {
-					Unit unit = (Unit) (((Object[]) source.getUserData())[0]);
-					unit.getRender().setAnimation(ANIM.walk);
-				}
-			});
-			attack.push(walkAnim);
 
 			Timeline move = Timeline.createParallel();
 			move.push(Tween
@@ -135,33 +129,38 @@ public class TurnAnimations extends GameRender {
 			move.push(Tween
 					.to(action.origin.getUnit(player), UnitAccessor.Y, CrystalClash.WALK_ANIMATION_SPEED)
 					.target(CellHelper.getUnitY(player, action.target)));
-			move.setUserData(new Object[] { action.origin.getUnit(player) });
+			move.setUserData(new Object[] { action, player });
+			move.setCallbackTriggers(TweenCallback.BEGIN | TweenCallback.COMPLETE);
 			move.setCallback(new TweenCallback() {
 				@Override
 				public void onEvent(int type, BaseTween<?> source) {
-					Unit unit = (Unit) (((Object[]) source.getUserData())[0]);
-					unit.getRender().setAnimation(ANIM.fight);
+					AttackUnitAction action = (AttackUnitAction) (((Object[]) source.getUserData())[0]);
+					int player = Integer.parseInt(((Object[]) source.getUserData())[1].toString());
+					Unit unit = action.origin.getUnit(player);
+					System.out.println(TweenCallback.BEGIN + " -> " + type);
+					if (type == TweenCallback.COMPLETE) {
+						Unit enemy = action.target.getUnit(player == 1 ? 2 : 1);
+						if (enemy != null) {
+							enemy.damage(unit.getDamage());
+
+							if (!enemy.isAlive()) {
+								deadUnits.add(enemy);
+								if (player == world.player)
+									world.enemiesCount--;
+								else
+									world.allysCount--;
+							}
+							unit.getRender().setState(STATE.fighting);
+						}
+					} else {
+						unit.getRender().setState(STATE.walking);
+					}
 				}
 			});
-
 			attack.push(move);
 
-			Timeline walkAnim2 = Timeline.createParallel();
-			walkAnim2.setUserData(new Object[] { action.origin.getUnit(player), action.target.getUnit(player == 1 ? 2 : 1) });
-			walkAnim2.setCallback(new TweenCallback() {
-				@Override
-				public void onEvent(int type, BaseTween<?> source) {
-					Unit unit = (Unit) (((Object[]) source.getUserData())[0]);
-					Unit enemy = (Unit) (((Object[]) source.getUserData())[1]);
-					enemy.damage(unit.getDamage());
-
-					unit.getRender().setAnimation(ANIM.walk);
-				}
-			});
-			walkAnim2.delay(CrystalClash.FIGTH_ANIMATION_SPEED);
-			attack.push(walkAnim2);
-
 			Timeline moveBack = Timeline.createParallel();
+			moveBack.delay(CrystalClash.FIGTH_ANIMATION_SPEED);
 			moveBack.push(Tween
 					.to(action.origin.getUnit(player), UnitAccessor.X, CrystalClash.WALK_ANIMATION_SPEED)
 					.target(CellHelper.getUnitX(player, action.origin)));
@@ -169,17 +168,21 @@ public class TurnAnimations extends GameRender {
 					.to(action.origin.getUnit(player), UnitAccessor.Y, CrystalClash.WALK_ANIMATION_SPEED)
 					.target(CellHelper.getUnitY(player, action.origin)));
 			moveBack.setUserData(new Object[] { action.origin.getUnit(player), player });
+			moveBack.setCallbackTriggers(TweenCallback.BEGIN | TweenCallback.COMPLETE);
 			moveBack.setCallback(new TweenCallback() {
 				@Override
 				public void onEvent(int type, BaseTween<?> source) {
 					Unit unit = (Unit) (((Object[]) source.getUserData())[0]);
-					int player = (Integer) (((Object[]) source.getUserData())[1]);
-
-					unit.getRender().setAnimation(ANIM.idle);
-					if (player == 1)
-						unit.getRender().setFacing(FACING.right);
-					else
-						unit.getRender().setFacing(FACING.left);
+					if (type == TweenCallback.COMPLETE) {
+						int player = (Integer) (((Object[]) source.getUserData())[1]);
+						unit.getRender().setState(STATE.idle);
+						if (player == 1)
+							unit.getRender().setFacing(FACING.right);
+						else
+							unit.getRender().setFacing(FACING.left);
+					} else {
+						unit.getRender().setState(STATE.walking);
+					}
 				}
 			});
 
@@ -204,62 +207,88 @@ public class TurnAnimations extends GameRender {
 		}).start(tweenManager);
 	}
 
-	private void createPaths(Array<MoveUnitAction> moveActions, int player,
-			Timeline pathsTimeline) {
+	private void createPaths(Array<MoveUnitAction> moveActions, int player, Timeline pathsTimeline) {
 		MoveUnitAction action = null;
 		for (int m = 0; m < moveActions.size; m++) {
 			action = moveActions.get(m);
-			
-			Timeline walkAnim = Timeline.createSequence();
-			walkAnim.setUserData(new Object[] { action.origin.getUnit(player) });
-			walkAnim.setCallback(new TweenCallback() {
-				@Override
-				public void onEvent(int type, BaseTween<?> source) {
-					Unit unit = (Unit) (((Object[]) source.getUserData())[0]);
-					unit.getRender().setAnimation(ANIM.walk);
-				}
-			});
-			
+
 			Timeline path = Timeline.createSequence();
-			path.setUserData(new Object[] { player,	action.origin, action.moves.get(action.moves.size - 1) });
+			path.setUserData(new Object[] { player, action.origin, action.moves.get(action.moves.size - 1) });
+			path.setCallbackTriggers(TweenCallback.BEGIN | TweenCallback.COMPLETE);
 			path.setCallback(new TweenCallback() {
 				@Override
 				public void onEvent(int type, BaseTween<?> source) {
-					repositionUnit(source);
+					int player = (Integer) (((Object[]) source.getUserData())[0]);
+					Cell cellFrom = (Cell) (((Object[]) source.getUserData())[1]);
+					Cell cellTo = (Cell) (((Object[]) source.getUserData())[2]);
+
+					if (type == TweenCallback.COMPLETE)
+						repositionUnit(player, cellFrom, cellTo);
+					else {
+						Unit unit = cellFrom.getUnit(player);
+						unit.getRender().setState(STATE.walking);
+					}
 				}
 			});
 
 			for (int i = 0; i + 1 < action.moves.size; i++) {
-				Timeline step = createStep(action, i, action.moves.size, player);
-				path.push(step);
+				path.push(createStep(action, i, action.moves.size, player));
 			}
-			pathsTimeline.push(walkAnim);
 			pathsTimeline.push(path);
 		}
 	}
 
-	private Timeline createStep(MoveUnitAction action, int currentStepIndex, int stepsCount,
-			int player) {
-		Timeline step = Timeline.createParallel();
-		step.push(Tween
-				.to(action.origin.getUnit(player), UnitAccessor.X, CrystalClash.WALK_ANIMATION_SPEED)
-				.target(CellHelper.getUnitX(player, action.moves.get(currentStepIndex + 1))));
-		step.push(Tween
-				.to(action.origin.getUnit(player), UnitAccessor.Y, CrystalClash.WALK_ANIMATION_SPEED)
-				.target(CellHelper.getUnitY(player, action.moves.get(currentStepIndex + 1))));
-		return step;
+	private Timeline createStep(MoveUnitAction action, int currentStepIndex, int stepsCount, int player) {
+		return Timeline.createParallel()
+				.push(Tween
+						.to(action.origin.getUnit(player), UnitAccessor.X, CrystalClash.WALK_ANIMATION_SPEED)
+						.ease(Linear.INOUT)
+						.target(CellHelper.getUnitX(player, action.moves.get(currentStepIndex + 1))))
+				.push(Tween
+						.to(action.origin.getUnit(player), UnitAccessor.Y, CrystalClash.WALK_ANIMATION_SPEED)
+						.ease(Linear.INOUT)
+						.target(CellHelper.getUnitY(player, action.moves.get(currentStepIndex + 1))));
 	}
 
-	private void repositionUnit(BaseTween<?> source) {
-		int player = (Integer) (((Object[]) source.getUserData())[0]);
-		Cell cellFrom = (Cell) (((Object[]) source.getUserData())[1]);
-		Cell cellTo = (Cell) (((Object[]) source.getUserData())[2]);
+	private void playDeaths() {
+		Timeline deathTimeline = Timeline.createParallel();
+		if (deadUnits.size > 0) {
+			Unit unit = null;
+			for (int m = 0; m < deadUnits.size; m++) {
+				unit = deadUnits.get(m);
+				if (unit.getRender().getState() != STATE.dead)
+					unit.getRender().setState(STATE.dieing);
+			}
+			deathTimeline.delay(6);
+		}
+		deathTimeline.setCallback(new TweenCallback() {
+			@Override
+			public void onEvent(int type, BaseTween<?> source) {
+				endTurnAnimations();
+			}
+		});
+		deathTimeline.start(tweenManager);
+	}
+
+	private void endTurnAnimations() {
+		world.removeAllDeadUnits();
+		if (world.allysCount == 0 && world.enemiesCount > 0) {
+			grpPanel.addActor(defeatMessage);
+		} else if (world.enemiesCount == 0 && world.allysCount > 0) {
+			grpPanel.addActor(victoryMessage);
+		} else if (world.allysCount == 0 && world.enemiesCount == 0) {
+			grpPanel.addActor(drawMessage);
+		}
+		showPanel();
+	}
+
+	private void repositionUnit(int player, Cell cellFrom, Cell cellTo) {
 		Unit unit = cellFrom.getUnit(player);
 
 		cellFrom.removeUnit(player);
 		cellTo.setUnit(unit, player);
 
-		unit.getRender().setAnimation(ANIM.idle);
+		unit.getRender().setState(STATE.idle);
 		if (player == 1)
 			unit.getRender().setFacing(FACING.right);
 		else
@@ -284,7 +313,7 @@ public class TurnAnimations extends GameRender {
 			@Override
 			public void onEvent(int type, BaseTween<?> source) {
 				defensiveUnits(false);
-				showPanel();
+				playDeaths();
 			}
 		}).start(tweenManager);
 	}
@@ -294,33 +323,34 @@ public class TurnAnimations extends GameRender {
 		AttackUnitAction action = null;
 		for (int m = 0; m < attackActions.size; m++) {
 			action = attackActions.get(m);
-
-			Timeline attackAnim = Timeline.createSequence();
-			attackAnim.setUserData(new Object[] { action.origin.getUnit(player) });
-			attackAnim.setCallback(new TweenCallback() {
-				@Override
-				public void onEvent(int type, BaseTween<?> source) {
-					Unit unit = (Unit) (((Object[]) source.getUserData())[0]);
-					unit.getRender().setAnimation(ANIM.fight);
-				}
-			});
+			action.origin.getUnit(player).getRender().setState(STATE.fighting);
 
 			Timeline stopAnim = Timeline.createSequence();
-			stopAnim.setUserData(new Object[] { action.origin.getUnit(player), action.target.getUnit(player == 1 ? 2 : 1) });
+			stopAnim.delay(CrystalClash.FIGTH_ANIMATION_SPEED);
+			stopAnim.setUserData(new Object[] { action, player });
 			stopAnim.setCallback(new TweenCallback() {
 				@Override
 				public void onEvent(int type, BaseTween<?> source) {
-					Unit unit = (Unit) (((Object[]) source.getUserData())[0]);
-					Unit enemy = (Unit) (((Object[]) source.getUserData())[1]);
-					if (enemy != null)
+					AttackUnitAction action = (AttackUnitAction) (((Object[]) source.getUserData())[0]);
+					int player = Integer.parseInt(((Object[]) source.getUserData())[1].toString());
+					Unit unit = action.origin.getUnit(player);
+
+					Unit enemy = action.target.getUnit(player == 1 ? 2 : 1);
+					if (enemy != null) {
 						enemy.damage(unit.getDamage());
 
-					unit.getRender().setAnimation(ANIM.idle);
+						if (!enemy.isAlive()) {
+							deadUnits.add(enemy);
+							if (player == world.player)
+								world.enemiesCount--;
+							else
+								world.allysCount--;
+						}
+					}
+					unit.getRender().setState(STATE.idle);
 				}
 			});
-			stopAnim.delay(CrystalClash.FIGTH_ANIMATION_SPEED);
 
-			attackTimeline.push(attackAnim);
 			attackTimeline.push(stopAnim);
 		}
 	}
@@ -384,6 +414,21 @@ public class TurnAnimations extends GameRender {
 
 		Texture panelTexture = new Texture(Gdx.files.internal("data/Images/TurnAnimation/games_list_background.png"));
 		panel = new Image(panelTexture);
+
+		Texture victoryTexture = new Texture(Gdx.files.internal("data/Images/TurnAnimation/Messages/victory.png"));
+		victoryMessage = new Image(victoryTexture);
+		victoryMessage.setPosition(CrystalClash.WIDTH / 2 - victoryMessage.getWidth() / 2,
+				CrystalClash.HEIGHT / 2 - victoryMessage.getHeight() / 2);
+
+		Texture defeatTexture = new Texture(Gdx.files.internal("data/Images/TurnAnimation/Messages/defeat.png"));
+		defeatMessage = new Image(defeatTexture);
+		defeatMessage.setPosition(CrystalClash.WIDTH / 2 - defeatMessage.getWidth() / 2,
+				CrystalClash.HEIGHT / 2 - defeatMessage.getHeight() / 2);
+
+		Texture drawTexture = new Texture(Gdx.files.internal("data/Images/TurnAnimation/Messages/defeat.png"));
+		drawMessage = new Image(drawTexture);
+		drawMessage.setPosition(CrystalClash.WIDTH / 2 - drawMessage.getWidth() / 2,
+				CrystalClash.HEIGHT / 2 - drawMessage.getHeight() / 2);
 
 		BitmapFont font = new BitmapFont(Gdx.files.internal("data/Fonts/font.fnt"), false);
 		TextButtonStyle playStyle = new TextButtonStyle(
@@ -477,5 +522,17 @@ public class TurnAnimations extends GameRender {
 	@Override
 	public boolean pan(float x, float y, float deltaX, float deltaY) {
 		return false;
+	}
+
+	@Override
+	public Timeline pushEnterAnimation(Timeline t) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Timeline pushExitAnimation(Timeline t) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

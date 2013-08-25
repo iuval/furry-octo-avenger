@@ -77,6 +77,15 @@ public class Cell extends GameObject {
 		}
 	}
 
+	public void removeDeadUnits() {
+		if (unitsPlayer1 != null && !unitsPlayer1.isAlive()) {
+			unitsPlayer1 = null;
+		}
+		if (unitsPlayer2 != null && !unitsPlayer2.isAlive()) {
+			unitsPlayer2 = null;
+		}
+	}
+
 	public UnitAction getAction(int player) {
 		if (player == 1) {
 			return actionPlayer1;
@@ -124,8 +133,8 @@ public class Cell extends GameObject {
 				.append(",\"y\":").append(pos.getY()).append("}");
 
 	}
-	
-	public boolean Equals(Object other){
-		return this.getGridPosition().equals(((Cell)other).getGridPosition());
+
+	public boolean Equals(Object other) {
+		return this.getGridPosition().equals(((Cell) other).getGridPosition());
 	}
 }

@@ -29,6 +29,8 @@ public class WorldController {
 	public int player;
 	private String gameId;
 	private boolean firstTurn;
+	public int enemiesCount;
+	public int allysCount;
 
 	public WorldController(JsonValue data, int turn) {
 		this.player = data.getInt("player");
@@ -41,9 +43,10 @@ public class WorldController {
 		if (firstTurn) {
 			render.initFirstTurn();
 		} else {
-			if(turn == 1){ //First playable turn, only FirstTurn actions (PlaceActions), so nothing to show
+			if (turn == 1) { // First playable turn, only FirstTurn actions
+								// (PlaceActions), so nothing to show
 				render.initNormalTurn();
-			}else{
+			} else {
 				render.initTurnAnimations();
 			}
 		}
@@ -54,6 +57,8 @@ public class WorldController {
 				&& values.get("data").asString().equals("none")) {
 			firstTurn = true;
 		} else {
+			enemiesCount = 0;
+			allysCount = 0;
 			readPlayerData(values.get("data1"), 1);
 			readPlayerData(values.get("data2"), 2);
 		}
@@ -76,7 +81,7 @@ public class WorldController {
 			Unit unit = new Unit(child.getString("unit_name"), isEnemy, child.getInt("unit_hp"));
 			UnitAction unitA;
 			action = child.getString("action");
-			
+
 			if (action.equals("place")) {
 				unitA = new PlaceUnitAction();
 				((PlaceUnitAction) unitA).unitName = child.getString("unit_name");
@@ -85,13 +90,12 @@ public class WorldController {
 				JsonValue cells = child.get("target");
 				int cellX = cells.getInt("x");
 				int cellY = cells.getInt("y");
-				
+
 				((AttackUnitAction) unitA).target = cellGrid[cellX][cellY];
 			} else if (action.equals("move")) {
 				unitA = new MoveUnitAction();
 				JsonValue cells = child.get("target");
 				JsonValue pair = null;
-				((MoveUnitAction) unitA).moves.add(cellGrid[x][y]);
 				for (int c = 0; c < cells.size; c++) {
 					pair = cells.get(c);
 					int cellX = pair.getInt("x");
@@ -107,6 +111,11 @@ public class WorldController {
 
 			cellGrid[x][y].setUnit(unit, playerNum);
 			cellGrid[x][y].setAction(unitA, playerNum);
+
+			if (playerNum == player)
+				allysCount++;
+			else
+				enemiesCount++;
 		}
 	}
 
@@ -170,8 +179,7 @@ public class WorldController {
 	}
 
 	protected void init() {
-		this.cellGrid = ((Cell[][]) java.lang.reflect.Array.newInstance(
-				Cell.class, new int[] { 9, 6 }));
+		this.cellGrid = new Cell[9][6];
 
 		createMap();
 	}
@@ -284,6 +292,14 @@ public class WorldController {
 		}
 	}
 
+	public void removeAllDeadUnits() {
+		for (int h = 0; h < 6; h++) {
+			for (int v = 0; v < 9; v++) {
+				cellGrid[v][h].removeDeadUnits();
+			}
+		}
+	}
+
 	public void sendTurn() {
 		StringBuilder builder = new StringBuilder();
 
@@ -308,11 +324,11 @@ public class WorldController {
 	public WorldRender getRender() {
 		return render;
 	}
-	
-	public void initNormalTurn(){
+
+	public void initNormalTurn() {
 		render.initNormalTurn();
 	}
-	
+
 	public void leaveGame() {
 		GameEngine.getInstance().openMenuGames();
 	}
