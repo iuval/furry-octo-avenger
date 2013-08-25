@@ -47,7 +47,7 @@ public class TurnAnimations extends GameRender {
 	private Array<AttackUnitAction> player2RangedAttacks;
 	private Array<DefendUnitAction> player1Defend;
 	private Array<DefendUnitAction> player2Defend;
-	private Array<Cell> deadUnits;
+	private Array<Unit> deadUnits;
 
 	private Image panel;
 	private TextButton btnPlay;
@@ -70,7 +70,7 @@ public class TurnAnimations extends GameRender {
 		player2RangedAttacks = new Array<AttackUnitAction>();
 		player1Defend = new Array<DefendUnitAction>();
 		player2Defend = new Array<DefendUnitAction>();
-		deadUnits = new Array<Cell>();
+		deadUnits = new Array<Unit>();
 
 		init();
 
@@ -151,7 +151,7 @@ public class TurnAnimations extends GameRender {
 						enemy.damage(unit.getDamage());
 
 						if (!enemy.isAlive()) {
-							deadUnits.add(action.target);
+							deadUnits.add(enemy);
 							if (player == world.player)
 								world.enemiesCount--;
 							else
@@ -269,14 +269,9 @@ public class TurnAnimations extends GameRender {
 		if (deadUnits.size > 0) {
 			Unit unit = null;
 			for (int m = 0; m < deadUnits.size; m++) {
-				Cell cell = deadUnits.get(m);
-				for (int i = 0; i < 2; i++) {
-					if (cell.getUnit(i) != null) {
-						unit = deadUnits.get(m).getUnit(i);
-						if (unit.getRender().getState() != STATE.dead)
-							unit.getRender().setState(STATE.dieing);
-					}
-				}
+				unit = deadUnits.get(m);
+				if (unit.getRender().getState() != STATE.dead)
+					unit.getRender().setState(STATE.dieing);
 			}
 			deathTimeline.delay(6);
 		}
@@ -290,9 +285,7 @@ public class TurnAnimations extends GameRender {
 	}
 
 	private void endTurnAnimations() {
-		for (int i = 0; i < deadUnits.size; i++) {
-			deadUnits.get(i).removeDeadUnits();
-		}
+		world.removeAllDeadUnits();
 		if (world.allysCount == 0 && world.enemiesCount > 0) {
 			grpPanel.addActor(defeatMessage);
 		} else if (world.enemiesCount == 0 && world.allysCount > 0) {
@@ -359,15 +352,25 @@ public class TurnAnimations extends GameRender {
 			});
 
 			Timeline stopAnim = Timeline.createSequence();
-			stopAnim.setUserData(new Object[] { action.origin.getUnit(player), action.target.getUnit(player == 1 ? 2 : 1) });
+			stopAnim.setUserData(new Object[] { action, player });
 			stopAnim.setCallback(new TweenCallback() {
 				@Override
 				public void onEvent(int type, BaseTween<?> source) {
-					Unit unit = (Unit) (((Object[]) source.getUserData())[0]);
-					Unit enemy = (Unit) (((Object[]) source.getUserData())[1]);
-					if (enemy != null)
+					AttackUnitAction action = (AttackUnitAction) (((Object[]) source.getUserData())[0]);
+					int player = Integer.parseInt(((Object[]) source.getUserData())[1].toString());
+					Unit unit = action.origin.getUnit(player);
+					Unit enemy = action.target.getUnit(player == 1 ? 2 : 1);
+					if (enemy != null) {
 						enemy.damage(unit.getDamage());
 
+						if (!enemy.isAlive()) {
+							deadUnits.add(enemy);
+							if (player == world.player)
+								world.enemiesCount--;
+							else
+								world.allysCount--;
+						}
+					}
 					unit.getRender().setState(STATE.idle);
 				}
 			});

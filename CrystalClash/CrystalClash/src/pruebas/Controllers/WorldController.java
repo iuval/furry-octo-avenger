@@ -293,6 +293,14 @@ public class WorldController {
 		}
 	}
 
+	public void removeAllDeadUnits() {
+		for (int h = 0; h < 6; h++) {
+			for (int v = 0; v < 9; v++) {
+				cellGrid[v][h].removeDeadUnits();
+			}
+		}
+	}
+
 	public void sendTurn() {
 		StringBuilder builder = new StringBuilder();
 
