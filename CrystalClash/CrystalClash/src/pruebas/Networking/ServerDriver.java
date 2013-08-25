@@ -78,14 +78,15 @@ public class ServerDriver {
 								.ProcessResponce(httpResponse);
 						if (values.getString("value").equals("ok")) {
 							JsonValue data = values.get("data");
-							String[][] games = new String[data.size][4];
+							String[][] games = new String[data.size][5];
 							JsonValue child;
 							for (int i = 0; i < games.length; i++) {
 								child = data.get(i);
 								games[i][0] = child.getString("game_id");
 								games[i][1] = child.getString("name");
-								games[i][2] = child.getString("turn");
-								games[i][3] = child.getString("state");
+								games[i][2] = child.getString("victories");
+								games[i][3] = child.getString("turn");
+								games[i][4] = child.getString("state");
 							}
 							MenuGames.getInstance().getGamesListSuccess(games);
 						} else {
@@ -121,15 +122,19 @@ public class ServerDriver {
 				});
 	}
 
-	public static void sendGameTurn(String playerId, String gameId, int player,
-			String turnData) {
+	public static void sendGameTurn(String playerId, String gameId, int player, String turnData, String result) {
 		Map<String, String> data = new HashMap<String, String>();
 		data.put("player_id", playerId);
 		data.put("game_id", gameId);
 		data.put("player", player + "");
+		if (turnData == null)
+			turnData = "ended";
 		data.put("data", turnData);
+		if (result != null) {
+			data.put("result", result);
+		}
 
-		System.out.println("Sending-> " + turnData);
+		System.out.println("Sending-> " + data);
 		Gdx.net.sendHttpRequest(getPost(ACTION_GAME_TURN, data),
 				new HttpResponseListener() {
 					public void handleHttpResponse(HttpResponse httpResponse) {

@@ -31,6 +31,7 @@ public class WorldController {
 	private boolean firstTurn;
 	public int enemiesCount;
 	public int allysCount;
+	public boolean gameEnded = false;
 
 	public WorldController(JsonValue data, int turn) {
 		this.player = data.getInt("player");
@@ -43,7 +44,7 @@ public class WorldController {
 		if (firstTurn) {
 			render.initFirstTurn();
 		} else {
-			if (turn == 1) { // First playable turn, only FirstTurn actions
+			if (turn == 2) { // First playable turn, only FirstTurn actions
 								// (PlaceActions), so nothing to show
 				render.initNormalTurn();
 			} else {
@@ -69,53 +70,59 @@ public class WorldController {
 		JsonValue temp;
 		String action;
 		int x, y;
-		values = ServerDriver.parseJson(values.asString());
-		boolean isEnemy = player != playerNum;
-		for (int i = 0; i < values.size; i++) {
-			child = values.get(i);
+		String strValues = values.asString();
+		if (strValues.equals("ended")) {
 
-			temp = child.get("cell");
-			x = temp.getInt("x");
-			y = temp.getInt("y");
+		} else {
+			values = ServerDriver.parseJson(strValues);
+			boolean isEnemy = player != playerNum;
 
-			Unit unit = new Unit(child.getString("unit_name"), isEnemy, child.getInt("unit_hp"));
-			UnitAction unitA;
-			action = child.getString("action");
+			for (int i = 0; i < values.size; i++) {
+				child = values.get(i);
 
-			if (action.equals("place")) {
-				unitA = new PlaceUnitAction();
-				((PlaceUnitAction) unitA).unitName = child.getString("unit_name");
-			} else if (action.equals("attack")) {
-				unitA = new AttackUnitAction(unit.getRange() == 1);
-				JsonValue cells = child.get("target");
-				int cellX = cells.getInt("x");
-				int cellY = cells.getInt("y");
+				temp = child.get("cell");
+				x = temp.getInt("x");
+				y = temp.getInt("y");
 
-				((AttackUnitAction) unitA).target = cellGrid[cellX][cellY];
-			} else if (action.equals("move")) {
-				unitA = new MoveUnitAction();
-				JsonValue cells = child.get("target");
-				JsonValue pair = null;
-				for (int c = 0; c < cells.size; c++) {
-					pair = cells.get(c);
-					int cellX = pair.getInt("x");
-					int cellY = pair.getInt("y");
+				Unit unit = new Unit(child.getString("unit_name"), isEnemy, child.getInt("unit_hp"));
+				UnitAction unitA;
+				action = child.getString("action");
 
-					((MoveUnitAction) unitA).moves.add(cellGrid[cellX][cellY]);
+				if (action.equals("place")) {
+					unitA = new PlaceUnitAction();
+					((PlaceUnitAction) unitA).unitName = child.getString("unit_name");
+				} else if (action.equals("attack")) {
+					unitA = new AttackUnitAction(unit.getRange() == 1);
+					JsonValue cells = child.get("target");
+					int cellX = cells.getInt("x");
+					int cellY = cells.getInt("y");
+
+					((AttackUnitAction) unitA).target = cellGrid[cellX][cellY];
+				} else if (action.equals("move")) {
+					unitA = new MoveUnitAction();
+					JsonValue cells = child.get("target");
+					JsonValue pair = null;
+					for (int c = 0; c < cells.size; c++) {
+						pair = cells.get(c);
+						int cellX = pair.getInt("x");
+						int cellY = pair.getInt("y");
+
+						((MoveUnitAction) unitA).moves.add(cellGrid[cellX][cellY]);
+					}
+				} else if (action.equals("defense")) {
+					unitA = new DefendUnitAction();
+				} else {
+					unitA = new NoneUnitAction();
 				}
-			} else if (action.equals("defense")) {
-				unitA = new DefendUnitAction();
-			} else {
-				unitA = new NoneUnitAction();
+
+				cellGrid[x][y].setUnit(unit, playerNum);
+				cellGrid[x][y].setAction(unitA, playerNum);
+
+				if (playerNum == player)
+					allysCount++;
+				else
+					enemiesCount++;
 			}
-
-			cellGrid[x][y].setUnit(unit, playerNum);
-			cellGrid[x][y].setAction(unitA, playerNum);
-
-			if (playerNum == player)
-				allysCount++;
-			else
-				enemiesCount++;
 		}
 	}
 
@@ -301,24 +308,36 @@ public class WorldController {
 	}
 
 	public void sendTurn() {
-		StringBuilder builder = new StringBuilder();
+		String data = null;
+		String result = null;
+		if (gameEnded) {
+			if (enemiesCount == 0 && allysCount > 0)
+				result = "victory";
+			else if (enemiesCount > 0 && allysCount == 0)
+				result = "defeat";
+			else if (enemiesCount == 0 && allysCount == 0)
+				result = "draw";
+		} else {
+			StringBuilder builder = new StringBuilder();
+			builder.append("{");
 
-		builder.append("{");
-
-		Cell cell;
-		for (int h = 0; h < 6; h++) {
-			for (int v = 0; v < 9; v++) {
-				cell = cellGrid[v][h];
-				cell.addDataToJson(builder, player);
+			Cell cell;
+			for (int h = 0; h < 6; h++) {
+				for (int v = 0; v < 9; v++) {
+					cell = cellGrid[v][h];
+					cell.addDataToJson(builder, player);
+				}
 			}
-		}
-		// Delete the last comma
-		builder.deleteCharAt(builder.length() - 1);
+			// Delete the last comma
+			builder.deleteCharAt(builder.length() - 1);
 
-		builder.append("}");
+			builder.append("}");
+			data = builder.toString();
+		}
 
 		ServerDriver.sendGameTurn(GameController.getInstancia().getUser().getId(),
-				gameId, player, builder.toString());
+				gameId, player, data, result);
+
 	}
 
 	public WorldRender getRender() {

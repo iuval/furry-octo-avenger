@@ -13,7 +13,7 @@ public class GameListItem extends Group {
 	public final String gameId;
 	public int turn;
 
-	public GameListItem(String gameId, String playerName, String turn,
+	public GameListItem(String gameId, String playerName, String victories, String turn,
 			String state, Skin skin, EventListener surrenderListener,
 			EventListener playListener) {
 		this.gameId = gameId;
@@ -23,20 +23,23 @@ public class GameListItem extends Group {
 		float h = 187;
 		setBounds(52, getY(), w, h);
 
+		TextButton button;
 		if (state.equals("play")) {
-			TextButton buttonPlay = new TextButton(playerName, skin.get(
-					"playStyle", TextButtonStyle.class));
-			buttonPlay.setBounds(0, 0, w, h);
-			buttonPlay.align(Align.center);
-			buttonPlay.addListener(playListener);
-			addActor(buttonPlay);
+			button = new TextButton("", skin.get("playStyle", TextButtonStyle.class));
+			button.addListener(playListener);
 		} else {
-			TextButton buttonWait = new TextButton(playerName, skin.get(
-					"waitStyle", TextButtonStyle.class));
-			buttonWait.setBounds(0, 0, w, h);
-			buttonWait.align(Align.center);
-			addActor(buttonWait);
+			button = new TextButton("", skin.get("waitStyle", TextButtonStyle.class));
 		}
+		button.setText(playerName);
+		button.setBounds(0, 0, w, h);
+		button.align(Align.center);
+		addActor(button);
+
+		Label labelvictories = new Label(victories + " victories" , skin, "font", Color.GREEN);
+		labelvictories.setSize(160, 70);
+		labelvictories.setPosition(w / 2 - labelvictories.getWidth() / 2, 20);
+		labelvictories.setAlignment(Align.center);
+		addActor(labelvictories);
 
 		Label labelTurn = new Label(turn, skin, "font", Color.WHITE);
 		labelTurn.setPosition(14, 14);
@@ -45,8 +48,7 @@ public class GameListItem extends Group {
 		addActor(labelTurn);
 
 		// surrender icon
-		TextButton buttonSurrender = new TextButton("", skin.get(
-				"surrenderStyle", TextButtonStyle.class));
+		TextButton buttonSurrender = new TextButton("", skin.get("surrenderStyle", TextButtonStyle.class));
 		buttonSurrender.setBounds(961, 19, 210, 148);
 		buttonSurrender.align(Align.center);
 		addActor(buttonSurrender);

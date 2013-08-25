@@ -8,16 +8,14 @@ import pruebas.CrystalClash.CrystalClash;
 import pruebas.Entities.Cell;
 import pruebas.Entities.Unit;
 import pruebas.Renders.UnitRender.FACING;
+import pruebas.Renders.helpers.UIHelper;
 import pruebas.Renders.helpers.ui.List;
 import pruebas.Renders.helpers.ui.TabContainer;
 import pruebas.Renders.helpers.ui.ToggleButton;
 import pruebas.Renders.helpers.ui.UnitListItem;
-
 import aurelienribon.tweenengine.Timeline;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -44,9 +42,7 @@ public class SelectUnitsRender extends GameRender {
 	public void init() {
 		GameController.getInstancia().loadUnitsStats();
 
-		BitmapFont font = new BitmapFont(Gdx.files.internal("data/Fonts/font.fnt"), false);
-
-		lblUnitsCount = new Label("", new LabelStyle(font, Color.WHITE));
+		lblUnitsCount = new Label("", new LabelStyle(UIHelper.getFont(), Color.WHITE));
 		lblUnitsCount.setPosition(CrystalClash.WIDTH - 100, 50);
 		resetUnitsCount();
 

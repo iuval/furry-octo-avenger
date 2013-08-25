@@ -15,6 +15,7 @@ import pruebas.Entities.helpers.UnitAction;
 import pruebas.Entities.helpers.UnitAction.UnitActionType;
 import pruebas.Renders.UnitRender.FACING;
 import pruebas.Renders.helpers.CellHelper;
+import pruebas.Renders.helpers.UIHelper;
 import pruebas.Util.Tuple;
 import aurelienribon.tweenengine.BaseTween;
 import aurelienribon.tweenengine.Timeline;
@@ -25,7 +26,6 @@ import aurelienribon.tweenengine.TweenManager;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -46,8 +46,6 @@ public class NormalGame extends GameRender {
 
 	private Unit selectedUnit;
 	private Cell selectedCell;
-
-	private BitmapFont font;
 
 	private Image selectorArrow;
 	private float arrowX;
@@ -120,11 +118,9 @@ public class NormalGame extends GameRender {
 		TextureRegion aux = skin.getRegion("actions_bar");
 		actionsBar = new Image(aux);
 
-		font = new BitmapFont(Gdx.files.internal("data/Fonts/font.fnt"), false);
-
 		TextButtonStyle attackStyle = new TextButtonStyle(
 				skin.getDrawable("action_attack_button"),
-				skin.getDrawable("action_attack_button_pressed"), null, font);
+				skin.getDrawable("action_attack_button_pressed"), null, UIHelper.getFont());
 		btnAttack = new TextButton("", attackStyle);
 		btnAttack.setPosition(actionsBar.getX() + 15, actionsBar.getY() - 20);
 		btnAttack.addListener(new ClickListener() {
@@ -142,7 +138,7 @@ public class NormalGame extends GameRender {
 
 		TextButtonStyle defenseStyle = new TextButtonStyle(
 				skin.getDrawable("action_defensive_button"),
-				skin.getDrawable("action_defensive_button_pressed"), null, font);
+				skin.getDrawable("action_defensive_button_pressed"), null, UIHelper.getFont());
 		btnDefense = new TextButton("", defenseStyle);
 		btnDefense.setPosition(btnAttack.getX() + btnAttack.getWidth() + 15,
 				actionsBar.getY());
@@ -164,7 +160,7 @@ public class NormalGame extends GameRender {
 
 		TextButtonStyle moveStyle = new TextButtonStyle(
 				skin.getDrawable("action_run_button"),
-				skin.getDrawable("action_run_button_pressed"), null, font);
+				skin.getDrawable("action_run_button_pressed"), null, UIHelper.getFont());
 		btnMove = new TextButton("", moveStyle);
 		btnMove.setPosition(btnDefense.getX() + btnDefense.getWidth() + 15,
 				actionsBar.getY() - 20);
@@ -186,7 +182,7 @@ public class NormalGame extends GameRender {
 
 		TextButtonStyle undoStyle = new TextButtonStyle(
 				skin.getDrawable("action_cancel_button"),
-				skin.getDrawable("action_cancel_button_pressed"), null, font);
+				skin.getDrawable("action_cancel_button_pressed"), null, UIHelper.getFont());
 		btnUndo = new TextButton("", undoStyle);
 		btnUndo.setPosition(0, 300); // Afuera de la ventana
 		btnUndo.addListener(new ClickListener() {
@@ -198,12 +194,12 @@ public class NormalGame extends GameRender {
 			}
 		});
 
-		lblAttack = new Label("150", new LabelStyle(font, Color.WHITE));
+		lblAttack = new Label("150", new LabelStyle(UIHelper.getFont(), Color.WHITE));
 		lblAttack.setPosition(btnAttack.getX()
 				+ (btnAttack.getWidth() / 2 - lblAttack.getWidth() / 2),
 				btnAttack.getY() + 3);
 
-		lblMoves = new Label("5", new LabelStyle(font, Color.WHITE));
+		lblMoves = new Label("5", new LabelStyle(UIHelper.getFont(), Color.WHITE));
 		lblMoves.setPosition(btnMove.getX()
 				+ (btnMove.getWidth() / 2 - lblMoves.getWidth() / 2),
 				btnMove.getY() + 3);

@@ -4,6 +4,7 @@ import pruebas.Accessors.ActorAccessor;
 import pruebas.Controllers.GameController;
 import pruebas.Controllers.MenuGames;
 import pruebas.CrystalClash.CrystalClash;
+import pruebas.Renders.helpers.UIHelper;
 import pruebas.Renders.helpers.ui.GameListItem;
 import aurelienribon.tweenengine.Timeline;
 import aurelienribon.tweenengine.Tween;
@@ -12,8 +13,7 @@ import aurelienribon.tweenengine.TweenManager;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
@@ -24,7 +24,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
-import com.badlogic.gdx.scenes.scene2d.utils.Align;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
 public class MenuGamesRender extends MenuRender {
@@ -38,7 +37,6 @@ public class MenuGamesRender extends MenuRender {
 	private VerticalGroup list;
 	private GameListItem[] gamesList;
 
-	private BitmapFont font;
 	private Label lblHeading;
 	private TextButton btnLogOut;
 
@@ -135,16 +133,13 @@ public class MenuGamesRender extends MenuRender {
 	private void load() {
 		initSkin();
 
-		font = new BitmapFont(Gdx.files.internal("data/Fonts/font.fnt"), false);
-
 		lblHeading = new Label("Welcome "
 				+ GameController.getInstancia().getUser().getNick(),
-				new LabelStyle(font, Color.WHITE));
+				new LabelStyle(UIHelper.getFont(), Color.WHITE));
 		lblHeading.setPosition(-CrystalClash.WIDTH, CrystalClash.HEIGHT - 50);
 		addActor(lblHeading);
 
-		btnLogOut = new TextButton("Log Out", listItemSkin.get("innerButtonStyle",
-				TextButtonStyle.class));
+		btnLogOut = new TextButton("Log Out", UIHelper.getButtonStyle());
 		btnLogOut.setPosition(CrystalClash.WIDTH - btnLogOut.getWidth() - 50,
 				CrystalClash.HEIGHT);
 		btnLogOut.addListener(new ClickListener() {
@@ -177,10 +172,11 @@ public class MenuGamesRender extends MenuRender {
 				Gdx.files.internal("data/Images/Menu/new_games_header.png")));
 		list.addActor(menuImage);
 
-		btnNewRandom = new TextButton("New random game", listItemSkin.get(
-				"outterButtonStyle", TextButtonStyle.class));
-		btnNewRandom.setBounds(0, 0, list.getWidth(), 160);
-		btnNewRandom.align(Align.center);
+		Group inviteButtons = new Group();
+		inviteButtons.setBounds(0, 0, list.getWidth(), 160);
+
+		btnNewRandom = new TextButton("New random game", UIHelper.getOuterButtonStyle());
+		btnNewRandom.setBounds(0, 0, inviteButtons.getWidth() / 2, 160);
 		btnNewRandom.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
@@ -188,13 +184,13 @@ public class MenuGamesRender extends MenuRender {
 				controller.enableRandom();
 			}
 		});
-		list.addActorAfter(menuImage, btnNewRandom);
+		inviteButtons.addActor(btnNewRandom);
 
-		btnNewInvite = new TextButton("Invite friend",
-				listItemSkin.get("outterButtonStyle", TextButtonStyle.class));
-		btnNewInvite.setBounds(0, 0, list.getWidth(), 160);
-		btnNewInvite.align(Align.center);
-		list.addActorAfter(menuImage, btnNewInvite);
+		btnNewInvite = new TextButton("Invite friend", UIHelper.getOuterButtonStyle());
+		btnNewInvite.setBounds(inviteButtons.getWidth() / 2, 0, inviteButtons.getWidth() / 2, 160);
+		inviteButtons.addActor(btnNewInvite);
+
+		list.addActorAfter(menuImage, inviteButtons);
 
 		refreshMessagePull = new Image(new Texture(
 				Gdx.files.internal("data/Images/Menu/RefreshList/refresh_message_pull.png")));
@@ -224,7 +220,8 @@ public class MenuGamesRender extends MenuRender {
 		GameListItem listingItem;
 		for (int i = 0, len = games.length; i < len; i++) {
 			listingItem = new GameListItem(games[i][0], games[i][1],
-					games[i][2], games[i][3], listItemSkin, surrenderListener,
+					games[i][2], games[i][3], games[i][4],
+					listItemSkin, surrenderListener,
 					playListener);
 			gamesList[i] = listingItem;
 			list.addActorAfter(gamesImage, listingItem);
@@ -254,13 +251,8 @@ public class MenuGamesRender extends MenuRender {
 			}
 		};
 
-		TextureAtlas listItemButtonAtlas = new TextureAtlas(
-				"data/Images/Buttons/buttons.pack");
-		listItemSkin = new Skin(listItemButtonAtlas);
-		listItemSkin
-				.add("font",
-						new BitmapFont(Gdx.files
-								.internal("data/Fonts/font.fnt"), false));
+		listItemSkin = new Skin();
+		listItemSkin.add("font", UIHelper.getFont());
 		listItemSkin
 				.add("play_up",
 						new Texture(
@@ -305,18 +297,6 @@ public class MenuGamesRender extends MenuRender {
 		surrenderStyle.up = listItemSkin.getDrawable("surrender_up");
 		surrenderStyle.down = listItemSkin.getDrawable("surrender_down");
 		listItemSkin.add("surrenderStyle", surrenderStyle);
-
-		TextButtonStyle innerStyle = new TextButtonStyle();
-		innerStyle.font = listItemSkin.getFont("font");
-		innerStyle.up = listItemSkin.getDrawable("button_orange");
-		innerStyle.down = listItemSkin.getDrawable("button_orange_pressed");
-		listItemSkin.add("innerButtonStyle", innerStyle);
-
-		TextButtonStyle outterStyle = new TextButtonStyle();
-		outterStyle.font = listItemSkin.getFont("font");
-		outterStyle.up = listItemSkin.getDrawable("outer_button_orange");
-		outterStyle.down = listItemSkin.getDrawable("outer_button_orange_pressed");
-		listItemSkin.add("outterButtonStyle", outterStyle);
 	}
 
 	public void listGamesError(String message) {
