@@ -4,6 +4,7 @@ import pruebas.Accessors.ActorAccessor;
 import pruebas.Controllers.WorldController;
 import pruebas.CrystalClash.CrystalClash;
 import pruebas.Renders.helpers.CellHelper;
+import pruebas.Renders.helpers.UIHelper;
 import pruebas.Renders.helpers.UnitHelper;
 import aurelienribon.tweenengine.Timeline;
 import aurelienribon.tweenengine.Tween;
@@ -62,7 +63,7 @@ public class WorldRender implements InputProcessor {
 		showingAnimations = false;
 
 		UnitHelper.init();
-		loadStuff();
+		load();
 	}
 
 	public void initFirstTurn() {
@@ -114,7 +115,7 @@ public class WorldRender implements InputProcessor {
 		}
 	}
 
-	private void loadStuff() {
+	private void load() {
 		TextureAtlas atlas = new TextureAtlas(
 				"data/Images/InGame/options_bar.pack");
 		Skin skin = new Skin(atlas);
@@ -134,11 +135,9 @@ public class WorldRender implements InputProcessor {
 		optionsBar = new Image(aux);
 		optionsBar.setPosition(0 - optionsBar.getWidth() - 75, 0);
 
-		BitmapFont font = new BitmapFont(
-				Gdx.files.internal("data/Fonts/font.fnt"), false);
 		TextButtonStyle sendStyle = new TextButtonStyle(
 				skin.getDrawable("option_send_button"),
-				skin.getDrawable("option_send_button_pressed"), null, font);
+				skin.getDrawable("option_send_button_pressed"), null, UIHelper.getFont());
 		btnSend = new TextButton("", sendStyle);
 		btnSend.setPosition(-sendBar.getWidth(), 0);
 		btnSend.addListener(new ClickListener() {
@@ -150,7 +149,7 @@ public class WorldRender implements InputProcessor {
 
 		TextButtonStyle moreStyle = new TextButtonStyle(
 				skin.getDrawable("option_more_button"),
-				skin.getDrawable("option_more_button_pressed"), null, font);
+				skin.getDrawable("option_more_button_pressed"), null, UIHelper.getFont());
 		btnMoreOptions = new TextButton("", moreStyle);
 		btnMoreOptions.setPosition(-moreOptions.getWidth(), 0);
 		btnMoreOptions.addListener(new ClickListener() {
@@ -163,7 +162,7 @@ public class WorldRender implements InputProcessor {
 
 		TextButtonStyle optionsStyle = new TextButtonStyle(
 				skin.getDrawable("option_button"),
-				skin.getDrawable("option_button_pressed"), null, font);
+				skin.getDrawable("option_button_pressed"), null, UIHelper.getFont());
 
 		btnSurrender = new TextButton("Surrender", optionsStyle);
 		btnSurrender.setPosition(0, 0);
@@ -247,13 +246,13 @@ public class WorldRender implements InputProcessor {
 	public void showHuds() {
 		Timeline.createSequence()
 				.beginParallel()
-				.push(Tween.to(sendBar, ActorAccessor.X, CrystalClash.ANIMATION_SPEED).target(0))
-				.push(Tween.to(btnSend, ActorAccessor.X, CrystalClash.ANIMATION_SPEED).target(0))
+				.push(Tween.to(sendBar, ActorAccessor.X, CrystalClash.FAST_ANIMATION_SPEED).target(0))
+				.push(Tween.to(btnSend, ActorAccessor.X, CrystalClash.FAST_ANIMATION_SPEED).target(0))
 				.end()
 				.beginParallel()
-				.push(Tween.to(moreOptions, ActorAccessor.X, CrystalClash.ANIMATION_SPEED)
+				.push(Tween.to(moreOptions, ActorAccessor.X, CrystalClash.FAST_ANIMATION_SPEED)
 						.target(sendBar.getWidth() - 35))
-				.push(Tween.to(btnMoreOptions, ActorAccessor.X, CrystalClash.ANIMATION_SPEED)
+				.push(Tween.to(btnMoreOptions, ActorAccessor.X, CrystalClash.FAST_ANIMATION_SPEED)
 						.target(sendBar.getWidth() - 35 + moreOptions.getWidth() - btnMoreOptions.getWidth()))
 				.end()
 				.start(tweenManager);
@@ -329,19 +328,19 @@ public class WorldRender implements InputProcessor {
 		t.beginSequence();
 		t.beginParallel();
 		gameRender.pushExitAnimation(t);
-		t.push(Tween.to(optionsBar, ActorAccessor.X, CrystalClash.ANIMATION_SPEED)
+		t.push(Tween.to(optionsBar, ActorAccessor.X, CrystalClash.FAST_ANIMATION_SPEED)
 				.target(-optionsBar.getWidth()))
-				.push(Tween.to(btnMoreOptions, ActorAccessor.X, CrystalClash.ANIMATION_SPEED)
+				.push(Tween.to(btnMoreOptions, ActorAccessor.X, CrystalClash.FAST_ANIMATION_SPEED)
 						.target(-optionsBar.getWidth()))
-				.push(Tween.to(grpMoreOptions, ActorAccessor.X, CrystalClash.ANIMATION_SPEED)
+				.push(Tween.to(grpMoreOptions, ActorAccessor.X, CrystalClash.FAST_ANIMATION_SPEED)
 						.target(-grpMoreOptions.getWidth()))
-				.push(Tween.to(moreOptions, ActorAccessor.X, CrystalClash.ANIMATION_SPEED)
+				.push(Tween.to(moreOptions, ActorAccessor.X, CrystalClash.FAST_ANIMATION_SPEED)
 						.target(-grpMoreOptions.getWidth()))
 				.end()
 				.beginParallel()
-				.push(Tween.to(btnSend, ActorAccessor.X, CrystalClash.ANIMATION_SPEED)
+				.push(Tween.to(btnSend, ActorAccessor.X, CrystalClash.FAST_ANIMATION_SPEED)
 						.target(-sendBar.getWidth()))
-				.push(Tween.to(sendBar, ActorAccessor.X, CrystalClash.ANIMATION_SPEED)
+				.push(Tween.to(sendBar, ActorAccessor.X, CrystalClash.FAST_ANIMATION_SPEED)
 						.target(-sendBar.getWidth()))
 				.end()
 				.end();

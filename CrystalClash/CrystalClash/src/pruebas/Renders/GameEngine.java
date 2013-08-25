@@ -7,6 +7,7 @@ import pruebas.Controllers.WorldController;
 import pruebas.CrystalClash.CrystalClash;
 import pruebas.Enumerators.GameState;
 import pruebas.Renders.UnitRender.FACING;
+import pruebas.Renders.helpers.UIHelper;
 import pruebas.Renders.helpers.ui.SuperAnimatedActor;
 import pruebas.Util.FileUtil;
 import aurelienribon.tweenengine.BaseTween;
@@ -78,6 +79,8 @@ public class GameEngine implements Screen {
 	private void loadInSplash() {
 		loadingTexture = new SuperAnimatedActor(FileUtil.getSuperAnimation("data/Images/Menu/Loading/loading"), true, FACING.right);
 		hideLoading();
+
+		UIHelper.load();
 
 		Gdx.input.setCatchBackKey(true);
 		Gdx.input.setInputProcessor(inputManager);
