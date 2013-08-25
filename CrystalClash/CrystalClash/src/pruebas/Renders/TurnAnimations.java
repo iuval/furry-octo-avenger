@@ -510,4 +510,16 @@ public class TurnAnimations extends GameRender {
 	public boolean pan(float x, float y, float deltaX, float deltaY) {
 		return false;
 	}
+
+	@Override
+	public Timeline pushEnterAnimation(Timeline t) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Timeline pushExitAnimation(Timeline t) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

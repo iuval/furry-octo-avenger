@@ -244,6 +244,7 @@ public class GameEngine implements Screen {
 				}
 			});
 		} else if (state == GameState.InGame) {
+			worldRender.pushExitAnimation(t);
 			t.push(Tween.set(background, ActorAccessor.ALPHA).target(0));
 			t.push(Tween.to(background, ActorAccessor.ALPHA, CrystalClash.ANIMATION_SPEED).target(1));
 			t.setCallback(new TweenCallback() {

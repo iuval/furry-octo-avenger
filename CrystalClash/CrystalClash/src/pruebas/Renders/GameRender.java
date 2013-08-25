@@ -2,6 +2,8 @@ package pruebas.Renders;
 
 import pruebas.Controllers.WorldController;
 
+import aurelienribon.tweenengine.Timeline;
+
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 
@@ -26,4 +28,7 @@ public abstract class GameRender {
 
 	public abstract boolean pan(float x, float y, float deltaX, float deltaY);
 
+	public abstract Timeline pushEnterAnimation(Timeline t);
+
+	public abstract Timeline pushExitAnimation(Timeline t);
 }

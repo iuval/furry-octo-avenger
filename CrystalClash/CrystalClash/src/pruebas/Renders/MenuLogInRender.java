@@ -82,10 +82,11 @@ public class MenuLogInRender extends MenuRender {
 
 	@Override
 	public Timeline pushEnterAnimation(Timeline t) {
+		state = MenuLogInState.Idle;
 		return t.push(Tween.set(groupInitialScreen, ActorAccessor.ALPHA)
 				.target(0))
 				.push(Tween.to(groupInitialScreen, ActorAccessor.ALPHA, CrystalClash.ANIMATION_SPEED)
-				.target(1));
+						.target(1));
 	}
 
 	@Override
