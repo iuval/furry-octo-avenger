@@ -54,9 +54,11 @@ public class TurnAnimations extends GameRender {
 	private TextButton btnPlay;
 	private TextButton btnSkip;
 	private Group grpPanel;
-	private Image victoryMessage;
-	private Image defeatMessage;
-	private Image drawMessage;
+
+	private Texture victoryTexture;
+	private Texture defeatTexture;
+	private Texture drawTexture;
+	private Image gameEndMessage;
 
 	public TurnAnimations(WorldController world) {
 		super(world);
@@ -273,13 +275,22 @@ public class TurnAnimations extends GameRender {
 	private void endTurnAnimations() {
 		world.removeAllDeadUnits();
 		if (world.allysCount == 0 && world.enemiesCount > 0) {
-			grpPanel.addActor(defeatMessage);
+			world.gameEnded = true;
+			gameEndMessage = new Image(defeatTexture);
 		} else if (world.enemiesCount == 0 && world.allysCount > 0) {
-			grpPanel.addActor(victoryMessage);
+			world.gameEnded = true;
+			gameEndMessage = new Image(victoryTexture);
 		} else if (world.allysCount == 0 && world.enemiesCount == 0) {
-			grpPanel.addActor(drawMessage);
+			world.gameEnded = true;
+			gameEndMessage = new Image(drawTexture);
 		}
-		showPanel();
+		if (world.gameEnded) {
+			grpPanel.addActor(new Image());
+			gameEndMessage.setPosition(CrystalClash.WIDTH / 2 - gameEndMessage.getWidth() / 2,
+					CrystalClash.HEIGHT / 2 - gameEndMessage.getHeight() / 2);
+		} else {
+			showPanel();
+		}
 	}
 
 	private void repositionUnit(int player, Cell cellFrom, Cell cellTo) {
@@ -415,20 +426,9 @@ public class TurnAnimations extends GameRender {
 		Texture panelTexture = new Texture(Gdx.files.internal("data/Images/TurnAnimation/games_list_background.png"));
 		panel = new Image(panelTexture);
 
-		Texture victoryTexture = new Texture(Gdx.files.internal("data/Images/TurnAnimation/Messages/victory.png"));
-		victoryMessage = new Image(victoryTexture);
-		victoryMessage.setPosition(CrystalClash.WIDTH / 2 - victoryMessage.getWidth() / 2,
-				CrystalClash.HEIGHT / 2 - victoryMessage.getHeight() / 2);
-
-		Texture defeatTexture = new Texture(Gdx.files.internal("data/Images/TurnAnimation/Messages/defeat.png"));
-		defeatMessage = new Image(defeatTexture);
-		defeatMessage.setPosition(CrystalClash.WIDTH / 2 - defeatMessage.getWidth() / 2,
-				CrystalClash.HEIGHT / 2 - defeatMessage.getHeight() / 2);
-
-		Texture drawTexture = new Texture(Gdx.files.internal("data/Images/TurnAnimation/Messages/defeat.png"));
-		drawMessage = new Image(drawTexture);
-		drawMessage.setPosition(CrystalClash.WIDTH / 2 - drawMessage.getWidth() / 2,
-				CrystalClash.HEIGHT / 2 - drawMessage.getHeight() / 2);
+		victoryTexture = new Texture(Gdx.files.internal("data/Images/TurnAnimation/Messages/victory.png"));
+		defeatTexture = new Texture(Gdx.files.internal("data/Images/TurnAnimation/Messages/defeat.png"));
+		drawTexture = new Texture(Gdx.files.internal("data/Images/TurnAnimation/Messages/defeat.png"));
 
 		BitmapFont font = new BitmapFont(Gdx.files.internal("data/Fonts/font.fnt"), false);
 		TextButtonStyle playStyle = new TextButtonStyle(
@@ -499,9 +499,11 @@ public class TurnAnimations extends GameRender {
 	@Override
 	public void render(float dt, SpriteBatch batch, Stage stage) {
 		tweenManager.update(dt);
-
-		stage.addActor(grpPanel);
-		grpPanel.act(dt);
+		if (world.gameEnded) {
+			stage.addActor(gameEndMessage);
+		} else {
+			stage.addActor(grpPanel);
+		}
 	}
 
 	@Override

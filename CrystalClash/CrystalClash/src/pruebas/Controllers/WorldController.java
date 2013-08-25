@@ -31,6 +31,7 @@ public class WorldController {
 	private boolean firstTurn;
 	public int enemiesCount;
 	public int allysCount;
+	public boolean gameEnded = false;
 
 	public WorldController(JsonValue data, int turn) {
 		this.player = data.getInt("player");
@@ -305,16 +306,24 @@ public class WorldController {
 
 		builder.append("{");
 
-		Cell cell;
-		for (int h = 0; h < 6; h++) {
-			for (int v = 0; v < 9; v++) {
-				cell = cellGrid[v][h];
-				cell.addDataToJson(builder, player);
+		if (gameEnded) {
+			if (enemiesCount == 0 && allysCount > 0)
+				builder.append("\"result\": \"victory\"");
+			else if (enemiesCount > 0 && allysCount == 0)
+				builder.append("\"result\": \"defeat\"");
+			else if (enemiesCount == 0 && allysCount == 0)
+				builder.append("\"result\": \"draw\"");
+		} else {
+			Cell cell;
+			for (int h = 0; h < 6; h++) {
+				for (int v = 0; v < 9; v++) {
+					cell = cellGrid[v][h];
+					cell.addDataToJson(builder, player);
+				}
 			}
+			// Delete the last comma
+			builder.deleteCharAt(builder.length() - 1);
 		}
-		// Delete the last comma
-		builder.deleteCharAt(builder.length() - 1);
-
 		builder.append("}");
 
 		ServerDriver.sendGameTurn(GameController.getInstancia().getUser().getId(),
