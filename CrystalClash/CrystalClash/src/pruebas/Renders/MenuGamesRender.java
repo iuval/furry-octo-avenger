@@ -220,7 +220,8 @@ public class MenuGamesRender extends MenuRender {
 		GameListItem listingItem;
 		for (int i = 0, len = games.length; i < len; i++) {
 			listingItem = new GameListItem(games[i][0], games[i][1],
-					games[i][2], games[i][3], listItemSkin, surrenderListener,
+					games[i][2], games[i][3], games[i][4],
+					listItemSkin, surrenderListener,
 					playListener);
 			gamesList[i] = listingItem;
 			list.addActorAfter(gamesImage, listingItem);
