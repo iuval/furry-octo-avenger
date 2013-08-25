@@ -57,6 +57,8 @@ public class WorldController {
 				&& values.get("data").asString().equals("none")) {
 			firstTurn = true;
 		} else {
+			enemiesCount = 0;
+			allysCount = 0;
 			readPlayerData(values.get("data1"), 1);
 			readPlayerData(values.get("data2"), 2);
 		}
@@ -69,8 +71,6 @@ public class WorldController {
 		int x, y;
 		values = ServerDriver.parseJson(values.asString());
 		boolean isEnemy = player != playerNum;
-		enemiesCount = 0;
-		allysCount = 0;
 		for (int i = 0; i < values.size; i++) {
 			child = values.get(i);
 
@@ -96,7 +96,6 @@ public class WorldController {
 				unitA = new MoveUnitAction();
 				JsonValue cells = child.get("target");
 				JsonValue pair = null;
-				((MoveUnitAction) unitA).moves.add(cellGrid[x][y]);
 				for (int c = 0; c < cells.size; c++) {
 					pair = cells.get(c);
 					int cellX = pair.getInt("x");
