@@ -122,12 +122,18 @@ public class ServerDriver {
 	}
 
 	public static void sendGameTurn(String playerId, String gameId, int player,
-			String turnData) {
+			String turnData, String result) {
 		Map<String, String> data = new HashMap<String, String>();
 		data.put("player_id", playerId);
 		data.put("game_id", gameId);
 		data.put("player", player + "");
-		data.put("data", turnData);
+		if (turnData != null)
+			data.put("result", turnData);
+		else
+			data.put("data", "ended");
+		if (result != null) {
+			data.put("result", result);
+		}
 
 		System.out.println("Sending-> " + turnData);
 		Gdx.net.sendHttpRequest(getPost(ACTION_GAME_TURN, data),

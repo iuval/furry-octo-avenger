@@ -96,7 +96,7 @@ public class TurnAnimations extends GameRender {
 		btnBackToMenu.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
-				world.leaveGame();
+				world.sendTurn();
 			}
 		});
 
