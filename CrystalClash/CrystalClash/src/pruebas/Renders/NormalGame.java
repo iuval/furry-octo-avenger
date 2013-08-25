@@ -120,8 +120,6 @@ public class NormalGame extends GameRender {
 		TextureRegion aux = skin.getRegion("actions_bar");
 		actionsBar = new Image(aux);
 
-		font = new BitmapFont(Gdx.files.internal("data/Fonts/font.fnt"), false);
-
 		TextButtonStyle attackStyle = new TextButtonStyle(
 				skin.getDrawable("action_attack_button"),
 				skin.getDrawable("action_attack_button_pressed"), null, font);

@@ -5,6 +5,7 @@ import pruebas.Controllers.MenuLogIn;
 import pruebas.CrystalClash.CrystalClash;
 import pruebas.Enumerators.MenuLogInState;
 import pruebas.Enumerators.StringWriting;
+import pruebas.Renders.helpers.UIHelper;
 import aurelienribon.tweenengine.Timeline;
 import aurelienribon.tweenengine.Tween;
 import aurelienribon.tweenengine.TweenManager;
@@ -13,8 +14,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
@@ -22,7 +21,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField.TextFieldStyle;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
@@ -34,9 +32,6 @@ public class MenuLogInRender extends MenuRender {
 
 	private MenuLogIn controller;
 
-	private TextureAtlas atlas;
-	private Skin skin;
-	private BitmapFont font;
 	private Label lblHeading;
 	private TextField txtEmail;
 	private TextField txtNick;
@@ -98,22 +93,12 @@ public class MenuLogInRender extends MenuRender {
 	}
 
 	private void loadStuff() {
-		atlas = new TextureAtlas("data/Images/Buttons/buttons.pack");
-		skin = new Skin(atlas);
-
-		font = new BitmapFont(Gdx.files.internal("data/Fonts/font.fnt"), false);
-
 		charactersTexture = new Texture(
 				Gdx.files
 						.internal("data/Images/Menu/menu_login_lobby_characters.png"));
 		characters = new Image(charactersTexture);
 
-		TextButtonStyle outerStyle = new TextButtonStyle();
-		outerStyle.up = skin.getDrawable("outer_button_orange");
-		outerStyle.down = skin.getDrawable("outer_button_orange_pressed");
-		outerStyle.font = font;
-
-		btnLogIn = new TextButton("Log In", outerStyle);
+		btnLogIn = new TextButton("Log In", UIHelper.getOuterButtonStyle());
 		btnLogIn.setPosition(CrystalClash.WIDTH / 4 * 3 - btnLogIn.getWidth()
 				/ 2, CrystalClash.HEIGHT / 2 + 50);
 		btnLogIn.addListener(new ClickListener() {
@@ -124,7 +109,7 @@ public class MenuLogInRender extends MenuRender {
 			}
 		});
 
-		btnSignIn = new TextButton("Sign In", outerStyle);
+		btnSignIn = new TextButton("Sign In", UIHelper.getOuterButtonStyle());
 		btnSignIn.setPosition(CrystalClash.WIDTH / 4 * 3 - btnSignIn.getWidth()
 				/ 2, CrystalClash.HEIGHT / 2 - 50 - btnSignIn.getHeight());
 		btnSignIn.addListener(new ClickListener() {
@@ -147,7 +132,7 @@ public class MenuLogInRender extends MenuRender {
 		popupPanel.setSize(800, 500);
 		popupPanel.setPosition(0, 0);
 
-		lblHeading = new Label("Welcome to Crystal Clash", new LabelStyle(font,
+		lblHeading = new Label("Welcome to Crystal Clash", new LabelStyle(UIHelper.getFont(),
 				Color.WHITE));
 		lblHeading.setPosition(
 				popupPanel.getWidth() / 2 - lblHeading.getWidth() / 2,
@@ -170,7 +155,7 @@ public class MenuLogInRender extends MenuRender {
 								.internal("data/Images/Menu/cursor_1.png")));
 
 		TextFieldStyle textFieldStyle = new TextFieldStyle();
-		textFieldStyle.font = font;
+		textFieldStyle.font = UIHelper.getFont();
 		textFieldStyle.fontColor = Color.WHITE;
 		textFieldStyle.cursor = textFieldSkin.getDrawable("textFieldCursor");
 		// TextFieldStyle textFieldStyle = new TextFieldStyle(font, Color.WHITE,
@@ -201,12 +186,7 @@ public class MenuLogInRender extends MenuRender {
 			}
 		});
 
-		TextButtonStyle style = new TextButtonStyle();
-		style.up = skin.getDrawable("button_orange");
-		style.down = skin.getDrawable("button_orange_pressed");
-		style.font = font;
-
-		btnBack = new TextButton("Back", style);
+		btnBack = new TextButton("Back", UIHelper.getButtonStyle());
 		btnBack.setPosition(50, 50);
 		btnBack.addListener(new ClickListener() {
 			@Override
@@ -218,7 +198,7 @@ public class MenuLogInRender extends MenuRender {
 			}
 		});
 
-		btnConfirm = new TextButton("Confirm", style);
+		btnConfirm = new TextButton("Confirm", UIHelper.getButtonStyle());
 		btnConfirm.setPosition(popupPanel.getWidth() - btnBack.getWidth() - 50,
 				50);
 		btnConfirm.addListener(new ClickListener() {
@@ -311,9 +291,6 @@ public class MenuLogInRender extends MenuRender {
 
 	public void dispose() {
 		popupPanelTexture.dispose();
-		atlas.dispose();
-		skin.dispose();
-		font.dispose();
 	}
 
 	// INPUT PROCESSOR--------------------------------------------
