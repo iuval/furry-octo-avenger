@@ -325,25 +325,25 @@ public class WorldRender implements InputProcessor {
 	}
 
 	public Timeline pushExitAnimation(Timeline t) {
-		return gameRender.pushExitAnimation(t)
-				.beginSequence()
-					.beginParallel()
-						.push(Tween.to(optionsBar, ActorAccessor.X, CrystalClash.ANIMATION_SPEED)
-								.target(-optionsBar.getWidth()))
-						.push(Tween.to(btnMoreOptions, ActorAccessor.X, CrystalClash.ANIMATION_SPEED)
-								.target(-optionsBar.getWidth()))
-						.push(Tween.to(grpMoreOptions, ActorAccessor.X, CrystalClash.ANIMATION_SPEED)
-								.target(-grpMoreOptions.getWidth()))
-						.push(Tween.to(moreOptions, ActorAccessor.X, CrystalClash.ANIMATION_SPEED)
-								.target(-grpMoreOptions.getWidth()))
-					.end()
-					.beginParallel()
-						.push(Tween.to(btnSend, ActorAccessor.X, CrystalClash.ANIMATION_SPEED)
-								.target(-sendBar.getWidth()))
-						.push(Tween.to(sendBar, ActorAccessor.X, CrystalClash.ANIMATION_SPEED)
-								.target(-sendBar.getWidth()))
-					.end()
+		t.beginSequence();
+		t.beginParallel();
+		gameRender.pushExitAnimation(t);
+		t.push(Tween.to(optionsBar, ActorAccessor.X, CrystalClash.ANIMATION_SPEED)
+				.target(-optionsBar.getWidth()))
+				.push(Tween.to(btnMoreOptions, ActorAccessor.X, CrystalClash.ANIMATION_SPEED)
+						.target(-optionsBar.getWidth()))
+				.push(Tween.to(grpMoreOptions, ActorAccessor.X, CrystalClash.ANIMATION_SPEED)
+						.target(-grpMoreOptions.getWidth()))
+				.push(Tween.to(moreOptions, ActorAccessor.X, CrystalClash.ANIMATION_SPEED)
+						.target(-grpMoreOptions.getWidth()))
+				.end()
+				.beginParallel()
+				.push(Tween.to(btnSend, ActorAccessor.X, CrystalClash.ANIMATION_SPEED)
+						.target(-sendBar.getWidth()))
+				.push(Tween.to(sendBar, ActorAccessor.X, CrystalClash.ANIMATION_SPEED)
+						.target(-sendBar.getWidth()))
+				.end()
 				.end();
+		return t;
 	}
-
 }

@@ -753,11 +753,13 @@ public class NormalGame extends GameRender {
 
 	@Override
 	public Timeline pushExitAnimation(Timeline t) {
+		arrowY = CrystalClash.HEIGHT + 20;
+		tweenManager.killAll();
 		return pushHideActionBar(t)
 				.push(Tween.to(grpActionBar, ActorAccessor.X, CrystalClash.ANIMATION_SPEED)
 						.target(-grpActionBar.getHeight()))
 				.push(Tween.to(selectorArrow, ActorAccessor.Y, CrystalClash.ANIMATION_SPEED)
-						.target(CrystalClash.HEIGHT));
+						.target(arrowY));
 	}
 
 }

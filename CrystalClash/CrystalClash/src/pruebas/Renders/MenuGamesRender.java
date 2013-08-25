@@ -115,6 +115,7 @@ public class MenuGamesRender extends MenuRender {
 
 	@Override
 	public Timeline pushEnterAnimation(Timeline t) {
+		lblHeading.setText("Welcome " + GameController.getInstancia().getUser().getNick());
 		return t.beginParallel()
 				.push(Tween.to(lblHeading, ActorAccessor.X, CrystalClash.ANIMATION_SPEED).target(50))
 				.push(Tween.to(btnLogOut, ActorAccessor.Y, CrystalClash.ANIMATION_SPEED).target(CrystalClash.HEIGHT - btnLogOut.getHeight() - 10))
