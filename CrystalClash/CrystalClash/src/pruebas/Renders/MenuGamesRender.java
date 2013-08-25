@@ -4,7 +4,6 @@ import pruebas.Accessors.ActorAccessor;
 import pruebas.Controllers.GameController;
 import pruebas.Controllers.MenuGames;
 import pruebas.CrystalClash.CrystalClash;
-import pruebas.Networking.ServerDriver;
 import pruebas.Renders.helpers.ui.GameListItem;
 import aurelienribon.tweenengine.Timeline;
 import aurelienribon.tweenengine.Tween;
@@ -116,6 +115,7 @@ public class MenuGamesRender extends MenuRender {
 
 	@Override
 	public Timeline pushEnterAnimation(Timeline t) {
+		lblHeading.setText("Welcome " + GameController.getInstancia().getUser().getNick());
 		return t.beginParallel()
 				.push(Tween.to(lblHeading, ActorAccessor.X, CrystalClash.ANIMATION_SPEED).target(50))
 				.push(Tween.to(btnLogOut, ActorAccessor.Y, CrystalClash.ANIMATION_SPEED).target(CrystalClash.HEIGHT - btnLogOut.getHeight() - 10))
@@ -250,7 +250,7 @@ public class MenuGamesRender extends MenuRender {
 			public void clicked(InputEvent event, float x, float y) {
 				controller.getGameTurn(((GameListItem) event.getListenerActor()
 						.getParent()).gameId, ((GameListItem) event.getListenerActor()
-								.getParent()).turn);
+						.getParent()).turn);
 			}
 		};
 
@@ -373,5 +373,11 @@ public class MenuGamesRender extends MenuRender {
 	@Override
 	public boolean scrolled(int amount) {
 		return false;
+	}
+
+	@Override
+	public void dispose() {
+		// TODO Auto-generated method stub
+
 	}
 }

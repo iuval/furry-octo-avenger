@@ -85,7 +85,7 @@ public class NormalGame extends GameRender {
 		selectedCell = null;
 
 		arrowX = 0;
-		arrowY = 0;
+		arrowY = CrystalClash.HEIGHT + 20;
 		undoVisible = false;
 		actionsBarVisible = false;
 
@@ -224,20 +224,23 @@ public class NormalGame extends GameRender {
 
 	private void moveArrow(Unit u) {
 		if (u != null) {
+			System.out.println(arrowY);
+			if (selectorArrow.getY() >= CrystalClash.HEIGHT) {
+				selectorArrow.setPosition(u.getX(), CrystalClash.HEIGHT + 20);
+			}
 			arrowX = u.getX();
 			arrowY = u.getY() + 120;
 		} else {
-			arrowX = 0;
-			arrowY = 0;
+			arrowY = CrystalClash.HEIGHT + 20;
 		}
 
 		tweenManager.killAll();
-		float speed = 1f; // CrystalClash.ANIMATION_SPEED;
 		Timeline.createParallel()
-				.push(Tween.to(selectorArrow, ActorAccessor.X, speed).target(
-						arrowX))
-				.push(Tween.to(selectorArrow, ActorAccessor.Y, speed).target(
-						arrowY)).setCallback(new TweenCallback() {
+				.push(Tween.to(selectorArrow, ActorAccessor.X, CrystalClash.ANIMATION_SPEED)
+						.target(arrowX))
+				.push(Tween.to(selectorArrow, ActorAccessor.Y, CrystalClash.ANIMATION_SPEED)
+						.target(arrowY))
+				.setCallback(new TweenCallback() {
 					@Override
 					public void onEvent(int type, BaseTween<?> source) {
 						selectorArrow.setPosition(arrowX, arrowY);
@@ -247,36 +250,34 @@ public class NormalGame extends GameRender {
 	}
 
 	private void arrowAnimation() {
-		float speed = 1f; // CrystalClash.ANIMATION_SPEED;
 		Timeline.createSequence()
 				.push(Tween.set(selectorArrow, ActorAccessor.Y).target(arrowY))
-				.push(Tween.to(selectorArrow, ActorAccessor.Y, speed).target(
+				.push(Tween.to(selectorArrow, ActorAccessor.Y, CrystalClash.ANIMATION_SPEED).target(
 						arrowY - 10))
-				.push(Tween.to(selectorArrow, ActorAccessor.Y, speed).target(
+				.push(Tween.to(selectorArrow, ActorAccessor.Y, CrystalClash.ANIMATION_SPEED).target(
 						arrowY)).repeat(Tween.INFINITY, 0).start(tweenManager);
 	}
 
 	private void showActionsBar() {
-		float speed = 0.5f; // CrystalClash.ANIMATION_SPEED;
 		Timeline t = Timeline.createSequence();
 		if (450 < selectedUnit.getX() && selectedUnit.getX() < 825) {
 			if (actionsBarVisible) {
-				t.push(Tween.to(grpActionBar, ActorAccessor.X, speed).target(
+				t.push(Tween.to(grpActionBar, ActorAccessor.X, CrystalClash.ANIMATION_SPEED).target(
 						CrystalClash.WIDTH / 4 - grpActionBar.getWidth() / 2));
 			} else {
 				grpActionBar.setX(CrystalClash.WIDTH / 4
 						- grpActionBar.getWidth() / 2);
-				t.push(Tween.to(grpActionBar, ActorAccessor.Y, speed).target(
+				t.push(Tween.to(grpActionBar, ActorAccessor.Y, CrystalClash.ANIMATION_SPEED).target(
 						CrystalClash.HEIGHT - grpActionBar.getHeight()));
 			}
 		} else {
 			if (actionsBarVisible) {
-				t.push(Tween.to(grpActionBar, ActorAccessor.X, speed).target(
+				t.push(Tween.to(grpActionBar, ActorAccessor.X, CrystalClash.ANIMATION_SPEED).target(
 						CrystalClash.WIDTH / 2 - grpActionBar.getWidth() / 2));
 			} else {
 				grpActionBar.setX(CrystalClash.WIDTH / 2
 						- grpActionBar.getWidth() / 2);
-				t.push(Tween.to(grpActionBar, ActorAccessor.Y, speed).target(
+				t.push(Tween.to(grpActionBar, ActorAccessor.Y, CrystalClash.ANIMATION_SPEED).target(
 						CrystalClash.HEIGHT - grpActionBar.getHeight()));
 			}
 		}
@@ -286,10 +287,12 @@ public class NormalGame extends GameRender {
 
 	private void hideActionsBar() {
 		actionsBarVisible = false;
-		float speed = 0.5f; // CrystalClash.ANIMATION_SPEED;
-		Timeline.createSequence()
-				.push(Tween.to(grpActionBar, ActorAccessor.Y, speed).target(
-						CrystalClash.HEIGHT + 50)).start(tweenManager);
+		pushHideActionBar(Timeline.createSequence()).start(tweenManager);
+	}
+
+	private Timeline pushHideActionBar(Timeline t) {
+		return t.push(Tween.to(grpActionBar, ActorAccessor.Y, CrystalClash.ANIMATION_SPEED).target(
+				CrystalClash.HEIGHT + 50));
 	}
 
 	private void showAbleToMoveCells() {
@@ -739,7 +742,24 @@ public class NormalGame extends GameRender {
 
 	@Override
 	public boolean pan(float x, float y, float deltaX, float deltaY) {
+		// TODO Auto-generated method stub
 		return false;
+	}
+
+	@Override
+	public Timeline pushEnterAnimation(Timeline t) {
+		return t;
+	}
+
+	@Override
+	public Timeline pushExitAnimation(Timeline t) {
+		arrowY = CrystalClash.HEIGHT + 20;
+		tweenManager.killAll();
+		return pushHideActionBar(t)
+				.push(Tween.to(grpActionBar, ActorAccessor.X, CrystalClash.ANIMATION_SPEED)
+						.target(-grpActionBar.getHeight()))
+				.push(Tween.to(selectorArrow, ActorAccessor.Y, CrystalClash.ANIMATION_SPEED)
+						.target(arrowY));
 	}
 
 }

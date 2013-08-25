@@ -10,6 +10,11 @@ public class FileUtil {
 
 	public static SuperAnimation getSuperAnimation(String base_file_name) {
 
+		if (base_file_name.equals("data/Units/wind_assassin/die.pref")) {
+			int i = 0;
+			i++;
+			int j = i = 2;
+		}
 		UnitPrefReaderData data = UnitAnimPrefReader.load(base_file_name
 				+ ".pref");
 
@@ -25,8 +30,7 @@ public class FileUtil {
 			}
 		}
 
-		SuperAnimation anim = new SuperAnimation(data.total_time,
-				data.image_times, frames);
+		SuperAnimation anim = new SuperAnimation(data.total_time, data.image_times, frames);
 		anim.handle_x = data.handle_x;
 		anim.handle_y = data.handle_x;
 		return anim;

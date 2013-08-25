@@ -13,6 +13,8 @@ import pruebas.Renders.helpers.ui.TabContainer;
 import pruebas.Renders.helpers.ui.ToggleButton;
 import pruebas.Renders.helpers.ui.UnitListItem;
 
+import aurelienribon.tweenengine.Timeline;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -130,6 +132,7 @@ public class SelectUnitsRender extends GameRender {
 				break;
 			}
 		}
+
 	}
 
 	private boolean canPlaceUnit() {
@@ -170,8 +173,7 @@ public class SelectUnitsRender extends GameRender {
 				UnitListItem item = (UnitListItem) ((List) tabs
 						.getCurrentPanel()).getItemAt(x, y);
 				if (item != null) {
-					Unit u = new Unit(item.getUnitName(), false, GameController
-							.getInstancia().getUnitLife(item.getUnitName()));
+					Unit u = new Unit(item.getUnitName(), false);
 					if (world.player == 2)
 						u.getRender().setFacing(FACING.left);
 					selectedUnit = u;
@@ -213,5 +215,17 @@ public class SelectUnitsRender extends GameRender {
 	public boolean pan(float x, float y, float deltaX, float deltaY) {
 
 		return false;
+	}
+
+	@Override
+	public Timeline pushEnterAnimation(Timeline t) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Timeline pushExitAnimation(Timeline t) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

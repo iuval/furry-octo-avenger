@@ -12,15 +12,17 @@ public class UnitRender {
 		right, left
 	}
 
-	public enum ANIM {
-		idle, fight, walk
+	public enum STATE {
+		idle, fighting, walking, dieing, dead
 	}
 
 	private Unit unit;
+	private STATE state;
 
 	public SuperAnimation idleAnim;
 	public SuperAnimation fightAnim;
 	public SuperAnimation walkAnim;
+	public SuperAnimation dieAnim;
 	public SuperAnimation shieldAnim;
 	private SuperAnimation currnetAnim;
 	private Texture hpBar;
@@ -48,25 +50,38 @@ public class UnitRender {
 		facing = at;
 	}
 
-	public void setAnimation(ANIM anim) {
-		switch (anim) {
+	public STATE getState() {
+		return state;
+	}
+
+	public void setState(STATE state) {
+		this.state = state;
+		switch (state) {
 		case idle: {
 			currnetAnim = idleAnim;
 		}
 			break;
-		case fight: {
+		case fighting: {
 			currnetAnim = fightAnim;
 		}
 			break;
-		case walk: {
+		case walking: {
 			currnetAnim = walkAnim;
+		}
+			break;
+		case dieing: {
+			currnetAnim = dieAnim;
+		}
+			break;
+		case dead: {
+			currnetAnim = null;
 		}
 			break;
 		}
 	}
 
 	public void updateHp() {
-		if (unit.getHP() > 0 && unit.getTotalHP() != 0) {
+		if (unit.isAlive() && unit.getTotalHP() != 0) {
 			hpWidth = (unit.getHP() * UnitHelper.HP_BAR_WIDTH)
 					/ unit.getTotalHP();
 		} else {
@@ -75,14 +90,30 @@ public class UnitRender {
 	}
 
 	public void draw(SpriteBatch batch, float dt) {
-		currnetAnim.update(dt, true, facing);
-		currnetAnim.draw(batch, unit.getX(), unit.getY());
-		batch.draw(hpBar, unit.getX() + UnitHelper.HP_BAR_X, unit.getY()
-				+ UnitHelper.HP_BAR_Y, hpWidth, UnitHelper.HP_BAR_HEIGHT);
+		if (state != STATE.dead) {
+			currnetAnim.update(dt, facing);
+			currnetAnim.draw(batch, unit.getX(), unit.getY());
 
-		if (unit.isInDefensePosition()) {
-			shieldAnim.update(dt, true, facing);
-			shieldAnim.draw(batch, unit.getX(), unit.getY());
+			if (state != STATE.dieing) {
+				batch.draw(UnitHelper.backHPBar,
+						unit.getX() + UnitHelper.HP_BAR_BACK_X,
+						unit.getY() + UnitHelper.HP_BAR_BACK_Y,
+						UnitHelper.HP_BAR_BACK_WIDTH,
+						UnitHelper.HP_BAR_BACK_HEIGHT);
+				batch.draw(hpBar,
+						unit.getX() + UnitHelper.HP_BAR_X,
+						unit.getY() + UnitHelper.HP_BAR_Y,
+						hpWidth,
+						UnitHelper.HP_BAR_HEIGHT);
+
+				if (unit.isInDefensePosition()) {
+					shieldAnim.update(dt, facing);
+					shieldAnim.draw(batch, unit.getX(), unit.getY());
+				}
+			}
+			if (state == STATE.dieing && currnetAnim.isAnimationFinished()) {
+				setState(STATE.dead);
+			}
 		}
 	}
 
@@ -91,7 +122,8 @@ public class UnitRender {
 		ren.idleAnim = idleAnim.clone();
 		ren.fightAnim = fightAnim.clone();
 		ren.walkAnim = walkAnim.clone();
-		ren.setAnimation(ANIM.idle);
+		ren.dieAnim = dieAnim.clone();
+		ren.setState(STATE.idle);
 		return ren;
 	}
 }

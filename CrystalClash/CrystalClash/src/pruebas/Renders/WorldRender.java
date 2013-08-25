@@ -44,7 +44,7 @@ public class WorldRender implements InputProcessor {
 	private TextButton btnClear;
 	private Group grpMoreOptions;
 	private boolean hideMoreOptions;
-	
+
 	private boolean showingAnimations;
 
 	private WorldController world;
@@ -68,11 +68,13 @@ public class WorldRender implements InputProcessor {
 	public void initFirstTurn() {
 		gameRender = new SelectUnitsRender(world);
 		showingAnimations = false;
+		showHuds();
 	}
 
 	public void initNormalTurn() {
 		gameRender = new NormalGame(world);
 		showingAnimations = false;
+		showHuds();
 	}
 
 	public void initTurnAnimations() {
@@ -88,15 +90,18 @@ public class WorldRender implements InputProcessor {
 			}
 		}
 
-		for (int i = 0; i < world.cellGrid.length; i++) {
-			for (int j = world.cellGrid[i].length - 1; j >= 0; j--) {
+		for (int j = 5; j >= 0; j--) {
+			for (int i = 0; i < 9; i += 2) {
+				world.cellGrid[i][j].getRender().drawUnits(dt, batch);
+			}
+			for (int i = 1; i < 9; i += 2) {
 				world.cellGrid[i][j].getRender().drawUnits(dt, batch);
 			}
 		}
 
 		gameRender.render(dt, batch, stage);
 
-		if(!showingAnimations){
+		if (!showingAnimations) {
 			moreOptions.draw(batch, 1);
 			optionsBar.draw(batch, 1);
 
@@ -121,10 +126,10 @@ public class WorldRender implements InputProcessor {
 
 		TextureRegion aux = skin.getRegion("option_send_bar");
 		sendBar = new Image(aux);
-		sendBar.setPosition(0, 0);
+		sendBar.setPosition(-sendBar.getWidth(), 0);
 		aux = skin.getRegion("option_more_bar");
 		moreOptions = new Image(aux);
-		moreOptions.setPosition(sendBar.getWidth() - 35, 0);
+		moreOptions.setPosition(-moreOptions.getWidth(), 0);
 		aux = skin.getRegion("options_bar");
 		optionsBar = new Image(aux);
 		optionsBar.setPosition(0 - optionsBar.getWidth() - 75, 0);
@@ -135,7 +140,7 @@ public class WorldRender implements InputProcessor {
 				skin.getDrawable("option_send_button"),
 				skin.getDrawable("option_send_button_pressed"), null, font);
 		btnSend = new TextButton("", sendStyle);
-		btnSend.setPosition(0, 0);
+		btnSend.setPosition(-sendBar.getWidth(), 0);
 		btnSend.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
@@ -147,8 +152,7 @@ public class WorldRender implements InputProcessor {
 				skin.getDrawable("option_more_button"),
 				skin.getDrawable("option_more_button_pressed"), null, font);
 		btnMoreOptions = new TextButton("", moreStyle);
-		btnMoreOptions.setPosition(moreOptions.getX() + moreOptions.getWidth()
-				- btnMoreOptions.getWidth(), 0);
+		btnMoreOptions.setPosition(-moreOptions.getWidth(), 0);
 		btnMoreOptions.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
@@ -195,8 +199,7 @@ public class WorldRender implements InputProcessor {
 		grpMoreOptions.addActor(btnClear);
 
 		grpMoreOptions.setSize(optionsBar.getWidth(), optionsBar.getHeight());
-		grpMoreOptions.setPosition(0 - grpMoreOptions.getWidth(),
-				optionsBar.getY() + 5);
+		grpMoreOptions.setPosition(0 - grpMoreOptions.getWidth(), optionsBar.getY() + 5);
 	}
 
 	private void showMoreOptions() {
@@ -238,6 +241,21 @@ public class WorldRender implements InputProcessor {
 						0 - optionsBar.getWidth()))
 				.push(Tween.to(grpMoreOptions, ActorAccessor.X, speed).target(
 						0 - grpMoreOptions.getWidth())).end()
+				.start(tweenManager);
+	}
+
+	public void showHuds() {
+		Timeline.createSequence()
+				.beginParallel()
+				.push(Tween.to(sendBar, ActorAccessor.X, CrystalClash.ANIMATION_SPEED).target(0))
+				.push(Tween.to(btnSend, ActorAccessor.X, CrystalClash.ANIMATION_SPEED).target(0))
+				.end()
+				.beginParallel()
+				.push(Tween.to(moreOptions, ActorAccessor.X, CrystalClash.ANIMATION_SPEED)
+						.target(sendBar.getWidth() - 35))
+				.push(Tween.to(btnMoreOptions, ActorAccessor.X, CrystalClash.ANIMATION_SPEED)
+						.target(sendBar.getWidth() - 35 + moreOptions.getWidth() - btnMoreOptions.getWidth()))
+				.end()
 				.start(tweenManager);
 	}
 
@@ -303,4 +321,30 @@ public class WorldRender implements InputProcessor {
 		return false;
 	}
 
+	public Timeline pushEnterAnimation(Timeline t) {
+		return t;
+	}
+
+	public Timeline pushExitAnimation(Timeline t) {
+		t.beginSequence();
+		t.beginParallel();
+		gameRender.pushExitAnimation(t);
+		t.push(Tween.to(optionsBar, ActorAccessor.X, CrystalClash.ANIMATION_SPEED)
+				.target(-optionsBar.getWidth()))
+				.push(Tween.to(btnMoreOptions, ActorAccessor.X, CrystalClash.ANIMATION_SPEED)
+						.target(-optionsBar.getWidth()))
+				.push(Tween.to(grpMoreOptions, ActorAccessor.X, CrystalClash.ANIMATION_SPEED)
+						.target(-grpMoreOptions.getWidth()))
+				.push(Tween.to(moreOptions, ActorAccessor.X, CrystalClash.ANIMATION_SPEED)
+						.target(-grpMoreOptions.getWidth()))
+				.end()
+				.beginParallel()
+				.push(Tween.to(btnSend, ActorAccessor.X, CrystalClash.ANIMATION_SPEED)
+						.target(-sendBar.getWidth()))
+				.push(Tween.to(sendBar, ActorAccessor.X, CrystalClash.ANIMATION_SPEED)
+						.target(-sendBar.getWidth()))
+				.end()
+				.end();
+		return t;
+	}
 }
