@@ -53,6 +53,9 @@ public class TurnAnimations extends GameRender {
 	private TextButton btnPlay;
 	private TextButton btnSkip;
 	private Group grpPanel;
+	private Image victoryMessage;
+	private Image defeatMessage;
+	private Image drawMessage;
 
 	public TurnAnimations(WorldController world) {
 		super(world);
@@ -144,11 +147,18 @@ public class TurnAnimations extends GameRender {
 					int player = Integer.parseInt(((Object[]) source.getUserData())[1].toString());
 					Unit unit = action.origin.getUnit(player);
 					Unit enemy = action.target.getUnit(player == 1 ? 2 : 1);
-					enemy.damage(unit.getDamage());
-					if (!enemy.isAlive()) {
-						deadUnits.add(action.target);
+					if (enemy != null) {
+						enemy.damage(unit.getDamage());
+
+						if (!enemy.isAlive()) {
+							deadUnits.add(action.target);
+							if (player == world.player)
+								world.enemiesCount--;
+							else
+								world.allysCount--;
+						}
+						unit.getRender().setState(STATE.fighting);
 					}
-					unit.getRender().setState(STATE.fighting);
 				}
 			});
 
@@ -273,13 +283,24 @@ public class TurnAnimations extends GameRender {
 		deathTimeline.setCallback(new TweenCallback() {
 			@Override
 			public void onEvent(int type, BaseTween<?> source) {
-				for (int i = 0; i < deadUnits.size; i++) {
-					deadUnits.get(i).removeDeadUnits();
-				}
-				showPanel();
+				endTurnAnimations();
 			}
 		});
 		deathTimeline.start(tweenManager);
+	}
+
+	private void endTurnAnimations() {
+		for (int i = 0; i < deadUnits.size; i++) {
+			deadUnits.get(i).removeDeadUnits();
+		}
+		if (world.allysCount == 0 && world.enemiesCount > 0) {
+			grpPanel.addActor(defeatMessage);
+		} else if (world.enemiesCount == 0 && world.allysCount > 0) {
+			grpPanel.addActor(victoryMessage);
+		} else {
+			grpPanel.addActor(drawMessage);
+		}
+		showPanel();
 	}
 
 	private void repositionUnit(BaseTween<?> source) {
@@ -416,6 +437,15 @@ public class TurnAnimations extends GameRender {
 
 		Texture panelTexture = new Texture(Gdx.files.internal("data/Images/TurnAnimation/games_list_background.png"));
 		panel = new Image(panelTexture);
+
+		Texture victoryTexture = new Texture(Gdx.files.internal("data/Images/TurnAnimation/Messages/victory.png"));
+		victoryMessage = new Image(victoryTexture);
+
+		Texture defeatTexture = new Texture(Gdx.files.internal("data/Images/TurnAnimation/Messages/defeat.png"));
+		defeatMessage = new Image(defeatTexture);
+
+		Texture drawTexture = new Texture(Gdx.files.internal("data/Images/TurnAnimation/Messages/defeat.png"));
+		drawMessage = new Image(drawTexture);
 
 		BitmapFont font = new BitmapFont(Gdx.files.internal("data/Fonts/font.fnt"), false);
 		TextButtonStyle playStyle = new TextButtonStyle(

@@ -68,16 +68,18 @@ public class WorldRender implements InputProcessor {
 	public void initFirstTurn() {
 		gameRender = new SelectUnitsRender(world);
 		showingAnimations = false;
+		showHuds();
 	}
 
 	public void initNormalTurn() {
 		gameRender = new NormalGame(world);
 		showingAnimations = false;
+		showHuds();
 	}
 
 	public void initTurnAnimations() {
 		gameRender = new TurnAnimations(world);
-		showHuds();
+		showingAnimations = true;
 	}
 
 	public void render(float dt, SpriteBatch batch, Stage stage) {
@@ -255,7 +257,6 @@ public class WorldRender implements InputProcessor {
 						.target(sendBar.getWidth() - 35 + moreOptions.getWidth() - btnMoreOptions.getWidth()))
 				.end()
 				.start(tweenManager);
-		showingAnimations = true;
 	}
 
 	public void dispose() {

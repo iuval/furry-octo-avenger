@@ -29,6 +29,8 @@ public class WorldController {
 	public int player;
 	private String gameId;
 	private boolean firstTurn;
+	public int enemiesCount;
+	public int allysCount;
 
 	public WorldController(JsonValue data, int turn) {
 		this.player = data.getInt("player");
@@ -67,6 +69,8 @@ public class WorldController {
 		int x, y;
 		values = ServerDriver.parseJson(values.asString());
 		boolean isEnemy = player != playerNum;
+		enemiesCount = 0;
+		allysCount = 0;
 		for (int i = 0; i < values.size; i++) {
 			child = values.get(i);
 
@@ -77,7 +81,7 @@ public class WorldController {
 			Unit unit = new Unit(child.getString("unit_name"), isEnemy, child.getInt("unit_hp"));
 			UnitAction unitA;
 			action = child.getString("action");
-			
+
 			if (action.equals("place")) {
 				unitA = new PlaceUnitAction();
 				((PlaceUnitAction) unitA).unitName = child.getString("unit_name");
@@ -108,6 +112,11 @@ public class WorldController {
 
 			cellGrid[x][y].setUnit(unit, playerNum);
 			cellGrid[x][y].setAction(unitA, playerNum);
+
+			if (playerNum == player)
+				allysCount++;
+			else
+				enemiesCount++;
 		}
 	}
 
