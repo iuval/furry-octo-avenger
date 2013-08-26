@@ -208,3 +208,7 @@ version.ini
 /.metadata/.plugins/org.eclipse.core.runtime/.settings/org.eclipse.ui.workbench.prefs
 /.metadata/.plugins/org.eclipse.core.runtime/.settings/org.eclipse.wst.sse.ui.prefs
 /.metadata/.plugins/org.eclipse.pde.core/.cache/clean-cache.properties
+
+rpcPolicyManifest
+
+pruebas.CrystalClash.GwtDefinition

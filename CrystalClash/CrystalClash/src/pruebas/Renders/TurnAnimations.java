@@ -88,9 +88,9 @@ public class TurnAnimations extends GameRender {
 		Texture panelTexture = new Texture(Gdx.files.internal("data/Images/TurnAnimation/games_list_background.png"));
 		panel = new Image(panelTexture);
 
-		victoryTexture = new Texture(Gdx.files.internal("data/Images/TurnAnimation/Messages/victory.png"));
-		defeatTexture = new Texture(Gdx.files.internal("data/Images/TurnAnimation/Messages/defeat.png"));
-		drawTexture = new Texture(Gdx.files.internal("data/Images/TurnAnimation/Messages/defeat.png"));
+		victoryTexture = new Texture(Gdx.files.internal("data/Images/TurnAnimation/Messages/banner_victory.png"));
+		defeatTexture = new Texture(Gdx.files.internal("data/Images/TurnAnimation/Messages/banner_defeat.png"));
+		drawTexture = new Texture(Gdx.files.internal("data/Images/TurnAnimation/Messages/banner_draw.png"));
 
 		btnBackToMenu = new TextButton("Back to menu", UIHelper.getButtonStyle());
 		btnBackToMenu.addListener(new ClickListener() {
