@@ -158,9 +158,7 @@ public class MenuLogInRender extends MenuRender {
 		textFieldStyle.font = UIHelper.getFont();
 		textFieldStyle.fontColor = Color.WHITE;
 		textFieldStyle.cursor = textFieldSkin.getDrawable("textFieldCursor");
-		// TextFieldStyle textFieldStyle = new TextFieldStyle(font, Color.WHITE,
-		// null, textFieldSkin.getDrawable("textFieldCursor"), null);
-		txtEmail = new TextField("1@1.com", textFieldStyle);
+		txtEmail = new TextField("", textFieldStyle);
 		txtEmail.setMessageText("Enter your Email...");
 		txtEmail.setMaxLength(30);
 		txtEmail.setSize(700, 50);
@@ -173,8 +171,8 @@ public class MenuLogInRender extends MenuRender {
 			}
 		});
 
-		txtNick = new TextField("pepe", textFieldStyle);
-		txtNick.setMessageText("Enter your Nick...");
+		txtNick = new TextField("", textFieldStyle);
+		txtNick.setMessageText("Enter your User Name...");
 		txtNick.setMaxLength(30);
 		txtNick.setSize(700, 50);
 		txtNick.setPosition(textFieldNick.getX() + 10, textFieldNick.getY());
