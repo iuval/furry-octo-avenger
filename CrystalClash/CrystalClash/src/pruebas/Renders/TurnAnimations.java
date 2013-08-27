@@ -294,6 +294,81 @@ public class TurnAnimations extends GameRender {
 						.target(CellHelper.getUnitY(player, action.moves.get(currentStepIndex + 1))));
 	}
 
+	private void repositionUnit(int player, Cell cellFrom, Cell cellTo) {
+		Unit unit = cellFrom.getUnit(player);
+
+		cellFrom.removeUnit(player);
+		cellTo.setUnit(unit, player);
+
+		unit.getRender().setState(STATE.idle);
+		if (player == 1)
+			unit.getRender().setFacing(FACING.right);
+		else
+			unit.getRender().setFacing(FACING.left);
+
+		String coordsFrom = cellFrom.getGridPosition().getX() + ","
+				+ cellFrom.getGridPosition().getY();
+		String coordsTo = cellTo.getGridPosition().getX() + ","
+				+ cellTo.getGridPosition().getY();
+		System.out.println("step:[" + coordsFrom + "]-->[" + coordsTo + "]");
+	}
+
+	private void rangedAttackUnits() {
+		Timeline t = Timeline.createSequence();
+		t.beginParallel();
+		createRangedAttacks(player1RangedAttacks, 1, t);
+		t.end();
+		t.beginParallel();
+		createRangedAttacks(player2RangedAttacks, 2, t);
+		t.end();
+		t.setCallback(new TweenCallback() {
+			@Override
+			public void onEvent(int type, BaseTween<?> source) {
+				defensiveUnits(false);
+				playDeaths();
+			}
+		}).start(tweenManager);
+	}
+
+	private void createRangedAttacks(Array<AttackUnitAction> attackActions, int player,
+			Timeline attackTimeline) {
+		AttackUnitAction action = null;
+		for (int m = 0; m < attackActions.size; m++) {
+			action = attackActions.get(m);
+			action.origin.getUnit(player).getRender().setState(STATE.fighting);
+			action.target.setState(Cell.State.ATTACK_TARGET_CENTER);
+
+			Timeline stopAnim = Timeline.createSequence();
+			stopAnim.delay(CrystalClash.FIGTH_ANIMATION_SPEED);
+			stopAnim.setUserData(new Object[] { action, player });
+			stopAnim.setCallback(new TweenCallback() {
+				@Override
+				public void onEvent(int type, BaseTween<?> source) {
+					AttackUnitAction action = (AttackUnitAction) (((Object[]) source.getUserData())[0]);
+					int player = Integer.parseInt(((Object[]) source.getUserData())[1].toString());
+					Unit unit = action.origin.getUnit(player);
+
+					Unit enemy = action.target.getUnit(player == 1 ? 2 : 1);
+					if (enemy != null) {
+						enemy.damage(unit.getDamage());
+
+						if (!enemy.isAlive()) {
+							deadUnits.add(enemy);
+							if (player == world.player)
+								world.enemiesCount--;
+							else
+								world.allysCount--;
+						}
+					}
+					unit.getRender().setState(STATE.idle);
+					action.target.setState(Cell.State.NONE);
+				}
+			});
+
+			attackTimeline.push(stopAnim);
+		}
+	}
+
 	private void playDeaths() {
 		Timeline deathTimeline = Timeline.createParallel();
 		if (deadUnits.size > 0) {
@@ -346,80 +421,7 @@ public class TurnAnimations extends GameRender {
 			showPanel();
 		}
 	}
-
-	private void repositionUnit(int player, Cell cellFrom, Cell cellTo) {
-		Unit unit = cellFrom.getUnit(player);
-
-		cellFrom.removeUnit(player);
-		cellTo.setUnit(unit, player);
-
-		unit.getRender().setState(STATE.idle);
-		if (player == 1)
-			unit.getRender().setFacing(FACING.right);
-		else
-			unit.getRender().setFacing(FACING.left);
-
-		String coordsFrom = cellFrom.getGridPosition().getX() + ","
-				+ cellFrom.getGridPosition().getY();
-		String coordsTo = cellTo.getGridPosition().getX() + ","
-				+ cellTo.getGridPosition().getY();
-		System.out.println("step:[" + coordsFrom + "]-->[" + coordsTo + "]");
-	}
-
-	private void rangedAttackUnits() {
-		Timeline t = Timeline.createSequence();
-		t.beginParallel();
-		createRangedAttacks(player1RangedAttacks, 1, t);
-		t.end();
-		t.beginParallel();
-		createRangedAttacks(player2RangedAttacks, 2, t);
-		t.end();
-		t.setCallback(new TweenCallback() {
-			@Override
-			public void onEvent(int type, BaseTween<?> source) {
-				defensiveUnits(false);
-				playDeaths();
-			}
-		}).start(tweenManager);
-	}
-
-	private void createRangedAttacks(Array<AttackUnitAction> attackActions, int player,
-			Timeline attackTimeline) {
-		AttackUnitAction action = null;
-		for (int m = 0; m < attackActions.size; m++) {
-			action = attackActions.get(m);
-			action.origin.getUnit(player).getRender().setState(STATE.fighting);
-
-			Timeline stopAnim = Timeline.createSequence();
-			stopAnim.delay(CrystalClash.FIGTH_ANIMATION_SPEED);
-			stopAnim.setUserData(new Object[] { action, player });
-			stopAnim.setCallback(new TweenCallback() {
-				@Override
-				public void onEvent(int type, BaseTween<?> source) {
-					AttackUnitAction action = (AttackUnitAction) (((Object[]) source.getUserData())[0]);
-					int player = Integer.parseInt(((Object[]) source.getUserData())[1].toString());
-					Unit unit = action.origin.getUnit(player);
-
-					Unit enemy = action.target.getUnit(player == 1 ? 2 : 1);
-					if (enemy != null) {
-						enemy.damage(unit.getDamage());
-
-						if (!enemy.isAlive()) {
-							deadUnits.add(enemy);
-							if (player == world.player)
-								world.enemiesCount--;
-							else
-								world.allysCount--;
-						}
-					}
-					unit.getRender().setState(STATE.idle);
-				}
-			});
-
-			attackTimeline.push(stopAnim);
-		}
-	}
-
+	
 	private void readActions(int player) {
 		for (int row = 0; row < world.cellGrid.length; row++) {
 			for (int col = 0; col < world.cellGrid[0].length; col++) {
