@@ -54,8 +54,6 @@ public class MenuGamesRender extends MenuRender {
 	private boolean showPullDown = false;
 	private boolean showRelease = false;
 
-	public MessageBox msgBoxSurrender;
-
 	public MenuGamesRender(MenuGames menu) {
 		this.controller = menu;
 		tweenManager = new TweenManager();
@@ -113,6 +111,23 @@ public class MenuGamesRender extends MenuRender {
 		}
 		tweenManager.update(delta);
 		super.act(delta);
+	}
+
+	@Override
+	public void init() {
+		MessageBox.create()
+				.setMessage("Surrender?? srsly??")
+				.setTweenManager(tweenManager)
+				.setCallback(new MessageBoxCallback() {
+					@Override
+					public void onEvent(int type, Object data) {
+						if (type == MessageBoxCallback.YES) {
+							System.out.println("surrender: "
+									+ data);
+
+						}
+					}
+				});
 	}
 
 	@Override
@@ -205,21 +220,6 @@ public class MenuGamesRender extends MenuRender {
 				Gdx.files.internal("data/Images/Menu/RefreshList/refresh_message_release.png")));
 		refreshMessageRelease.setVisible(false);
 		addActor(refreshMessageRelease);
-
-		msgBoxSurrender = MessageBox.create()
-				.setMessage("Surrender?? srsly??")
-				.setTweenManager(tweenManager)
-				.setCallback(new MessageBoxCallback() {
-					@Override
-					public void onEvent(int type, Object data) {
-						if (type == MessageBoxCallback.YES) {
-							System.out.println("surrender: "
-									+ data);
-
-						}
-					}
-				});
-		addActor(msgBoxSurrender);
 	}
 
 	private void loadGameList() {
@@ -254,7 +254,7 @@ public class MenuGamesRender extends MenuRender {
 		surrenderListener = new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
-				msgBoxSurrender.show(((GameListItem) event.getListenerActor()
+				MessageBox.show(((GameListItem) event.getListenerActor()
 						.getParent()).gameId);
 			}
 		};

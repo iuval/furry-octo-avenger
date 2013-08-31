@@ -31,7 +31,6 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
@@ -98,12 +97,12 @@ public class NormalGame extends GameRender {
 
 		aActions = new Array<AttackUnitAction>();
 
-		init();
+		load();
 		clearAllChanges();
 		GameEngine.hideLoading();
 	}
 
-	public void init() {
+	public void load() {
 		GameController.getInstancia().loadUnitsStats();
 
 		Texture arrow = new Texture(
@@ -216,6 +215,8 @@ public class NormalGame extends GameRender {
 		grpActionBar.setPosition(
 				CrystalClash.WIDTH / 2 - grpActionBar.getWidth() / 2,
 				CrystalClash.HEIGHT + 50);
+
+		addActor(grpActionBar);
 	}
 
 	private void moveArrow(Unit u) {
@@ -585,7 +586,7 @@ public class NormalGame extends GameRender {
 	}
 
 	@Override
-	public void render(float dt, SpriteBatch batch, Stage stage) {
+	public void render(float dt, SpriteBatch batch) {
 		selectorArrow.draw(batch, 1);
 
 		Unit u = null;
@@ -596,9 +597,6 @@ public class NormalGame extends GameRender {
 			u.getRender().draw(batch, dt);
 		}
 		batch.setColor(batch.getColor().r, batch.getColor().g, batch.getColor().b, 1);
-
-		stage.addActor(grpActionBar);
-		grpActionBar.act(dt);
 
 		tweenManager.update(dt);
 	}

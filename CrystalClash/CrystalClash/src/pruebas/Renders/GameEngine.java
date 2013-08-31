@@ -8,6 +8,7 @@ import pruebas.CrystalClash.CrystalClash;
 import pruebas.Enumerators.GameState;
 import pruebas.Renders.UnitRender.FACING;
 import pruebas.Renders.helpers.ResourceHelper;
+import pruebas.Renders.helpers.ui.MessageBox;
 import pruebas.Renders.helpers.ui.SuperAnimatedActor;
 import pruebas.Util.FileUtil;
 import aurelienribon.tweenengine.BaseTween;
@@ -53,6 +54,7 @@ public class GameEngine implements Screen {
 	private WorldRender worldRender;
 
 	private static TweenManager tweenManager;
+	private static Image txrBlackScreen;
 	private static SuperAnimatedActor loadingTexture;
 
 	private Image background;
@@ -81,7 +83,14 @@ public class GameEngine implements Screen {
 	private void loadInSplash() {
 		ResourceHelper.slowLoad();
 
-		loadingTexture = new SuperAnimatedActor(FileUtil.getSuperAnimation("data/Images/Menu/Loading/loading"), true, FACING.right);
+		txrBlackScreen = new Image(ResourceHelper.getTexture("data/Images/Menu/Loading/background.png"));
+		txrBlackScreen.setColor(txrBlackScreen.getColor().r, txrBlackScreen.getColor().g, txrBlackScreen.getColor().b, 0);
+		txrBlackScreen.setVisible(false);
+
+		MessageBox.create();
+
+		loadingTexture = new SuperAnimatedActor(FileUtil.getSuperAnimation("data/Images/Menu/Loading/loading"),
+				true, FACING.right);
 		hideLoading();
 
 		Gdx.input.setCatchBackKey(true);
@@ -122,7 +131,7 @@ public class GameEngine implements Screen {
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		if (state == GameState.InGame || state == GameState.InTranstionMenuGamesAndGame) {
 			batch.begin();
-			worldRender.render(dt, batch, stage);
+			worldRender.render(dt, batch);
 			batch.end();
 		}
 		stage.draw();
@@ -135,9 +144,6 @@ public class GameEngine implements Screen {
 		stage.addActor(background);
 		inputManager.addProcessor(stage);
 		switch (newState) {
-		case InSplash:
-			stage.addActor(splashRender);
-			break;
 		case InMenuLogIn:
 			stage.addActor(menuLogInRender);
 			break;
@@ -158,8 +164,12 @@ public class GameEngine implements Screen {
 			break;
 		case InGame:
 			inputManager.addProcessor(worldRender);
+			stage.addActor(worldRender);
 			break;
 		}
+		if (txrBlackScreen != null)
+			stage.addActor(txrBlackScreen);
+		stage.addActor(MessageBox.create());
 		if (loadingTexture != null)
 			stage.addActor(loadingTexture);
 	}
@@ -173,6 +183,7 @@ public class GameEngine implements Screen {
 				if (worldRender == null) {
 					world = new WorldController(data, turn);
 					worldRender = world.getRender();
+					worldRender.init();
 				}
 				setState(GameState.InTranstionMenuGamesAndGame);
 				Timeline.createSequence()
@@ -189,11 +200,10 @@ public class GameEngine implements Screen {
 	}
 
 	public void openSplash() {
-		if (splashRender == null) {
-			splashRender = new SplashScreen();
-		}
+		splashRender = new SplashScreen();
+		stage.addActor(splashRender);
 
-		setState(GameState.InSplash);
+		this.state = GameState.InSplash;
 		Timeline t = Timeline.createSequence();
 		splashRender.pushEnterAnimation(t);
 		t.setCallback(new TweenCallback() {
@@ -218,6 +228,7 @@ public class GameEngine implements Screen {
 			public void onEvent(int type, BaseTween<?> source) {
 				if (menuLogInRender == null) {
 					menuLogInRender = MenuLogIn.getInstance().getRender();
+					menuLogInRender.init();
 				}
 				setState(GameState.InMenuLogIn);
 				menuLogInRender.pushEnterAnimation(Timeline.createSequence()).start(tweenManager);
@@ -235,6 +246,7 @@ public class GameEngine implements Screen {
 				public void onEvent(int type, BaseTween<?> source) {
 					if (menuGamesRender == null) {
 						menuGamesRender = MenuGames.getInstance().getRender();
+						menuGamesRender.init();
 					}
 					MenuGames.getInstance().getGamesList();
 					setState(GameState.InTranstionMenuLogInAndMenuGames);
@@ -256,6 +268,7 @@ public class GameEngine implements Screen {
 				public void onEvent(int type, BaseTween<?> source) {
 					if (menuGamesRender == null) {
 						menuGamesRender = MenuGames.getInstance().getRender();
+						menuGamesRender.init();
 					}
 					MenuGames.getInstance().getGamesList();
 					setState(GameState.InTranstionMenuGamesAndGame);
@@ -302,11 +315,31 @@ public class GameEngine implements Screen {
 		return new Vector2(vec.x, vec.y);
 	}
 
+	public static Timeline pushShowBlackScreen(Timeline t) {
+		txrBlackScreen.setVisible(true);
+		return t.push(Tween.to(txrBlackScreen, ActorAccessor.ALPHA, CrystalClash.FAST_ANIMATION_SPEED)
+				.target(1));
+	}
+
+	public static Timeline pushHideBlackScreen(Timeline t) {
+		return t.push(Tween.to(txrBlackScreen, ActorAccessor.ALPHA, CrystalClash.FAST_ANIMATION_SPEED)
+				.target(0))
+				.setCallback(new TweenCallback() {
+
+					@Override
+					public void onEvent(int type, BaseTween<?> source) {
+						txrBlackScreen.setVisible(false);
+					}
+				});
+	}
+
 	public static void showLoading() {
+		// showBlackScreen();
 		loadingTexture.setVisible(true);
 	}
 
 	public static void hideLoading() {
+		// hideBlackScreen();
 		loadingTexture.setVisible(false);
 	}
 

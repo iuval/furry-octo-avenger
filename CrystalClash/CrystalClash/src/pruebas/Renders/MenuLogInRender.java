@@ -76,6 +76,10 @@ public class MenuLogInRender extends MenuRender {
 	}
 
 	@Override
+	public void init() {
+	}
+
+	@Override
 	public Timeline pushEnterAnimation(Timeline t) {
 		state = MenuLogInState.Idle;
 		return t.push(Tween.set(groupInitialScreen, ActorAccessor.ALPHA)

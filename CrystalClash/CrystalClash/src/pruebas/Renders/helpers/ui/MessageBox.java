@@ -2,6 +2,7 @@ package pruebas.Renders.helpers.ui;
 
 import pruebas.Accessors.ActorAccessor;
 import pruebas.CrystalClash.CrystalClash;
+import pruebas.Renders.GameEngine;
 import pruebas.Renders.helpers.ResourceHelper;
 import aurelienribon.tweenengine.Timeline;
 import aurelienribon.tweenengine.Tween;
@@ -18,7 +19,9 @@ import com.badlogic.gdx.scenes.scene2d.utils.Align;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
 public class MessageBox extends Group {
-	private Image imgBackground;
+	private static MessageBox instance;
+
+	private Image imgWindowBackground;
 	private Label lblMessage;
 	private TextButton btnYes;
 	private TextButton btnNo;
@@ -32,10 +35,10 @@ public class MessageBox extends Group {
 		setSize(CrystalClash.WIDTH / 2, CrystalClash.HEIGHT / 2);
 		setPosition(CrystalClash.WIDTH / 4, CrystalClash.HEIGHT + getHeight());
 
-		imgBackground = new Image(ResourceHelper.getTexture("data/Images/Menu/games_list_background.png"));
-		imgBackground.setSize(getWidth(), getHeight());
-		imgBackground.setPosition(0, 0);
-		addActor(imgBackground);
+		imgWindowBackground = new Image(ResourceHelper.getTexture("data/Images/Menu/games_list_background.png"));
+		imgWindowBackground.setSize(getWidth(), getHeight());
+		imgWindowBackground.setPosition(0, 0);
+		addActor(imgWindowBackground);
 
 		lblMessage = new Label("", new LabelStyle(ResourceHelper.getFont(), Color.WHITE));
 		lblMessage.setAlignment(Align.center);
@@ -72,7 +75,9 @@ public class MessageBox extends Group {
 	}
 
 	public static MessageBox create() {
-		return new MessageBox();
+		if (instance == null)
+			instance = new MessageBox();
+		return instance;
 	}
 
 	public MessageBox setCallback(MessageBoxCallback callback) {
@@ -95,18 +100,28 @@ public class MessageBox extends Group {
 		return this;
 	}
 
-	public void show(TweenManager manager, String message, Object userData) {
-		lblMessage.setText(message);
-		this.manager = manager;
+	public MessageBox setUserData(Object data) {
+		userData = data;
+		return this;
+	}
+
+	public static void show(TweenManager manager, String message, Object userData) {
+		create()
+				.setMessage(message)
+				.setTweenManager(manager);
 		show(userData);
 	}
 
-	public void show(Object userData) {
-		this.userData = userData;
+	public static void show(Object userData) {
+		create().setUserData(userData);
 		show();
 	}
 
-	public void show() {
+	public static void show() {
+		create().showBox();
+	}
+
+	private void showBox() {
 		setZIndex(99);
 		getEnterAnimation().start(manager);
 	}
@@ -121,13 +136,13 @@ public class MessageBox extends Group {
 	}
 
 	protected Timeline getEnterAnimation() {
-		return Timeline.createSequence()
+		return GameEngine.pushShowBlackScreen(Timeline.createParallel())
 				.push(Tween.to(this, ActorAccessor.Y, CrystalClash.FAST_ANIMATION_SPEED)
 						.target(CrystalClash.HEIGHT / 4));
 	}
 
 	protected Timeline getExitAnimation() {
-		return Timeline.createSequence()
+		return GameEngine.pushHideBlackScreen(Timeline.createParallel())
 				.push(Tween.to(this, ActorAccessor.Y, CrystalClash.FAST_ANIMATION_SPEED)
 						.target(CrystalClash.HEIGHT + getHeight()));
 	}

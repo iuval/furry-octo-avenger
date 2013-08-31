@@ -18,13 +18,11 @@ import aurelienribon.tweenengine.Timeline;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 
 public class SelectUnitsRender extends GameRender {
-
 	private int unitCount = 0;
 	private Label lblUnitsCount;
 	private Unit selectedUnit = null;
@@ -35,16 +33,17 @@ public class SelectUnitsRender extends GameRender {
 		super(world);
 		world.assignFirstTurnAvailablePlaces();
 
-		init();
+		load();
 		GameEngine.hideLoading();
 	}
 
-	public void init() {
+	public void load() {
 		GameController.getInstancia().loadUnitsStats();
 
 		lblUnitsCount = new Label("", new LabelStyle(ResourceHelper.getFont(), Color.WHITE));
 		lblUnitsCount.setPosition(CrystalClash.WIDTH - 100, 50);
 		resetUnitsCount();
+		addActor(lblUnitsCount);
 
 		TextureAtlas atlas = new TextureAtlas(
 				"data/Images/InGame/FirstTurn/unit_select.pack");
@@ -128,7 +127,6 @@ public class SelectUnitsRender extends GameRender {
 				break;
 			}
 		}
-
 	}
 
 	private boolean canPlaceUnit() {
@@ -153,14 +151,6 @@ public class SelectUnitsRender extends GameRender {
 	public void clearAllChanges() {
 		world.deleteAllUnits();
 		resetUnitsCount();
-	}
-
-	public void render(float dt, SpriteBatch batch, Stage stage) {
-		tabs.draw(dt, batch);
-		if (selectedUnit != null) {
-			selectedUnit.getRender().draw(batch, dt);
-		}
-		stage.addActor(lblUnitsCount);
 	}
 
 	public boolean touchDown(float x, float y, int pointer, int button) {
@@ -223,5 +213,13 @@ public class SelectUnitsRender extends GameRender {
 	public Timeline pushExitAnimation(Timeline t) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public void render(float dt, SpriteBatch batch) {
+		tabs.draw(dt, batch);
+		if (selectedUnit != null) {
+			selectedUnit.getRender().draw(batch, dt);
+		}
 	}
 }

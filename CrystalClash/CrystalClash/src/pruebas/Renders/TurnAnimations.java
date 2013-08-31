@@ -28,7 +28,6 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
@@ -74,14 +73,14 @@ public class TurnAnimations extends GameRender {
 		player2Defend = new Array<DefendUnitAction>();
 		deadUnits = new Array<Unit>();
 
-		init();
+		load();
 
 		readActions(1);
 		readActions(2);
 		GameEngine.hideLoading();
 	}
 
-	public void init() {
+	public void load() {
 		GameController.getInstancia().loadUnitsStats();
 		Tween.registerAccessor(Unit.class, new UnitAccessor());
 
@@ -122,6 +121,8 @@ public class TurnAnimations extends GameRender {
 		grpPanel.addActor(panel);
 		grpPanel.addActor(btnPlay);
 		// grpPanel.addActor(btnSkip);
+
+		addActor(grpPanel);
 	}
 
 	private void play() {
@@ -402,6 +403,10 @@ public class TurnAnimations extends GameRender {
 			gameEndMessage = new Image(drawTexture);
 		}
 		if (world.gameEnded) {
+			grpPanel.remove();
+			addActor(btnBackToMenu);
+			addActor(gameEndMessage);
+
 			gameEndMessage.setPosition(CrystalClash.WIDTH / 2 - gameEndMessage.getWidth() / 2,
 					CrystalClash.HEIGHT);
 			btnBackToMenu.setPosition(gameEndMessage.getX() + gameEndMessage.getWidth() / 2 - btnBackToMenu.getWidth() / 2,
@@ -421,7 +426,7 @@ public class TurnAnimations extends GameRender {
 			showPanel();
 		}
 	}
-	
+
 	private void readActions(int player) {
 		for (int row = 0; row < world.cellGrid.length; row++) {
 			for (int col = 0; col < world.cellGrid[0].length; col++) {
@@ -478,9 +483,8 @@ public class TurnAnimations extends GameRender {
 	}
 
 	private void hidePanel() {
-		float speed = 0.5f; // CrystalClash.ANIMATION_SPEED;
 		Timeline.createSequence()
-				.push(Tween.to(grpPanel, ActorAccessor.Y, speed).target(CrystalClash.HEIGHT))
+				.push(Tween.to(grpPanel, ActorAccessor.Y, CrystalClash.FAST_ANIMATION_SPEED).target(CrystalClash.HEIGHT))
 				.start(tweenManager);
 	}
 
@@ -488,21 +492,14 @@ public class TurnAnimations extends GameRender {
 		grpPanel.removeActor(btnPlay);
 		grpPanel.addActor(btnSkip);
 
-		float speed = 0.5f; // CrystalClash.ANIMATION_SPEED;
 		Timeline.createSequence()
-				.push(Tween.to(grpPanel, ActorAccessor.Y, speed).target(0))
+				.push(Tween.to(grpPanel, ActorAccessor.Y, CrystalClash.FAST_ANIMATION_SPEED).target(0))
 				.start(tweenManager);
 	}
 
 	@Override
-	public void render(float dt, SpriteBatch batch, Stage stage) {
+	public void render(float dt, SpriteBatch batch) {
 		tweenManager.update(dt);
-		if (world.gameEnded) {
-			stage.addActor(btnBackToMenu);
-			stage.addActor(gameEndMessage);
-		} else {
-			stage.addActor(grpPanel);
-		}
 	}
 
 	@Override
