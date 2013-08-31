@@ -4,8 +4,10 @@ import pruebas.Accessors.ActorAccessor;
 import pruebas.Controllers.WorldController;
 import pruebas.CrystalClash.CrystalClash;
 import pruebas.Renders.helpers.CellHelper;
-import pruebas.Renders.helpers.UIHelper;
+import pruebas.Renders.helpers.ResourceHelper;
 import pruebas.Renders.helpers.UnitHelper;
+import pruebas.Renders.helpers.ui.MessageBox;
+import pruebas.Renders.helpers.ui.MessageBoxCallback;
 import aurelienribon.tweenengine.Timeline;
 import aurelienribon.tweenengine.Tween;
 import aurelienribon.tweenengine.TweenManager;
@@ -13,7 +15,6 @@ import aurelienribon.tweenengine.TweenManager;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -45,6 +46,7 @@ public class WorldRender implements InputProcessor {
 	private TextButton btnClear;
 	private Group grpMoreOptions;
 	private boolean hideMoreOptions;
+	public MessageBox msgBoxSurrender;
 
 	private boolean showingAnimations;
 
@@ -75,6 +77,20 @@ public class WorldRender implements InputProcessor {
 	public void initNormalTurn() {
 		gameRender = new NormalGame(world);
 		showingAnimations = false;
+
+		msgBoxSurrender = MessageBox.create()
+				.setMessage("Surrender?? srsly??")
+				.setTweenManager(tweenManager)
+				.setCallback(new MessageBoxCallback() {
+					@Override
+					public void onEvent(int type, Object data) {
+						if (type == MessageBoxCallback.YES) {
+							System.out.println("surrender: "
+									+ data);
+
+						}
+					}
+				});
 		showHuds();
 	}
 
@@ -111,6 +127,7 @@ public class WorldRender implements InputProcessor {
 			stage.addActor(sendBar);
 			stage.addActor(btnSend);
 			grpMoreOptions.act(dt);
+			stage.addActor(msgBoxSurrender);
 			tweenManager.update(dt);
 		}
 	}
@@ -137,7 +154,7 @@ public class WorldRender implements InputProcessor {
 
 		TextButtonStyle sendStyle = new TextButtonStyle(
 				skin.getDrawable("option_send_button"),
-				skin.getDrawable("option_send_button_pressed"), null, UIHelper.getFont());
+				skin.getDrawable("option_send_button_pressed"), null, ResourceHelper.getFont());
 		btnSend = new TextButton("", sendStyle);
 		btnSend.setPosition(-sendBar.getWidth(), 0);
 		btnSend.addListener(new ClickListener() {
@@ -149,7 +166,7 @@ public class WorldRender implements InputProcessor {
 
 		TextButtonStyle moreStyle = new TextButtonStyle(
 				skin.getDrawable("option_more_button"),
-				skin.getDrawable("option_more_button_pressed"), null, UIHelper.getFont());
+				skin.getDrawable("option_more_button_pressed"), null, ResourceHelper.getFont());
 		btnMoreOptions = new TextButton("", moreStyle);
 		btnMoreOptions.setPosition(-moreOptions.getWidth(), 0);
 		btnMoreOptions.addListener(new ClickListener() {
@@ -162,14 +179,14 @@ public class WorldRender implements InputProcessor {
 
 		TextButtonStyle optionsStyle = new TextButtonStyle(
 				skin.getDrawable("option_button"),
-				skin.getDrawable("option_button_pressed"), null, UIHelper.getFont());
+				skin.getDrawable("option_button_pressed"), null, ResourceHelper.getFont());
 
 		btnSurrender = new TextButton("Surrender", optionsStyle);
 		btnSurrender.setPosition(0, 0);
 		btnSurrender.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
-				// TODO: Surrender
+				msgBoxSurrender.show("");
 			}
 		});
 

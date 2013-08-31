@@ -14,7 +14,7 @@ import pruebas.Entities.helpers.UnitAction;
 import pruebas.Renders.UnitRender.FACING;
 import pruebas.Renders.UnitRender.STATE;
 import pruebas.Renders.helpers.CellHelper;
-import pruebas.Renders.helpers.UIHelper;
+import pruebas.Renders.helpers.ResourceHelper;
 import aurelienribon.tweenengine.BaseTween;
 import aurelienribon.tweenengine.Timeline;
 import aurelienribon.tweenengine.Tween;
@@ -92,7 +92,7 @@ public class TurnAnimations extends GameRender {
 		defeatTexture = new Texture(Gdx.files.internal("data/Images/TurnAnimation/Messages/banner_defeat.png"));
 		drawTexture = new Texture(Gdx.files.internal("data/Images/TurnAnimation/Messages/banner_draw.png"));
 
-		btnBackToMenu = new TextButton("Back to menu", UIHelper.getButtonStyle());
+		btnBackToMenu = new TextButton("Back to menu", ResourceHelper.getButtonStyle());
 		btnBackToMenu.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
@@ -100,7 +100,7 @@ public class TurnAnimations extends GameRender {
 			}
 		});
 
-		btnPlay = new TextButton("PLAY", UIHelper.getOuterButtonStyle());
+		btnPlay = new TextButton("PLAY", ResourceHelper.getOuterButtonStyle());
 		btnPlay.setPosition(panel.getWidth() / 2 - btnPlay.getWidth() / 2, panel.getHeight() / 2);
 		btnPlay.addListener(new ClickListener() {
 			@Override
@@ -109,7 +109,7 @@ public class TurnAnimations extends GameRender {
 			}
 		});
 
-		btnSkip = new TextButton("SKIP", UIHelper.getOuterButtonStyle());
+		btnSkip = new TextButton("SKIP", ResourceHelper.getOuterButtonStyle());
 		btnSkip.setPosition(panel.getWidth() / 2 - btnSkip.getWidth() / 2, panel.getHeight() / 2);
 		btnSkip.addListener(new ClickListener() {
 			@Override

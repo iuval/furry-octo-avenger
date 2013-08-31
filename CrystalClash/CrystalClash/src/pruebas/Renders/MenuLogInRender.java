@@ -5,7 +5,7 @@ import pruebas.Controllers.MenuLogIn;
 import pruebas.CrystalClash.CrystalClash;
 import pruebas.Enumerators.MenuLogInState;
 import pruebas.Enumerators.StringWriting;
-import pruebas.Renders.helpers.UIHelper;
+import pruebas.Renders.helpers.ResourceHelper;
 import aurelienribon.tweenengine.Timeline;
 import aurelienribon.tweenengine.Tween;
 import aurelienribon.tweenengine.TweenManager;
@@ -98,7 +98,7 @@ public class MenuLogInRender extends MenuRender {
 						.internal("data/Images/Menu/menu_login_lobby_characters.png"));
 		characters = new Image(charactersTexture);
 
-		btnLogIn = new TextButton("Log In", UIHelper.getOuterButtonStyle());
+		btnLogIn = new TextButton("Log In", ResourceHelper.getOuterButtonStyle());
 		btnLogIn.setPosition(CrystalClash.WIDTH / 4 * 3 - btnLogIn.getWidth()
 				/ 2, CrystalClash.HEIGHT / 2 + 50);
 		btnLogIn.addListener(new ClickListener() {
@@ -109,7 +109,7 @@ public class MenuLogInRender extends MenuRender {
 			}
 		});
 
-		btnSignIn = new TextButton("Sign In", UIHelper.getOuterButtonStyle());
+		btnSignIn = new TextButton("Sign In", ResourceHelper.getOuterButtonStyle());
 		btnSignIn.setPosition(CrystalClash.WIDTH / 4 * 3 - btnSignIn.getWidth()
 				/ 2, CrystalClash.HEIGHT / 2 - 50 - btnSignIn.getHeight());
 		btnSignIn.addListener(new ClickListener() {
@@ -132,7 +132,7 @@ public class MenuLogInRender extends MenuRender {
 		popupPanel.setSize(800, 500);
 		popupPanel.setPosition(0, 0);
 
-		lblHeading = new Label("Welcome to Crystal Clash", new LabelStyle(UIHelper.getFont(),
+		lblHeading = new Label("Welcome to Crystal Clash", new LabelStyle(ResourceHelper.getFont(),
 				Color.WHITE));
 		lblHeading.setPosition(
 				popupPanel.getWidth() / 2 - lblHeading.getWidth() / 2,
@@ -155,7 +155,7 @@ public class MenuLogInRender extends MenuRender {
 								.internal("data/Images/Menu/cursor_1.png")));
 
 		TextFieldStyle textFieldStyle = new TextFieldStyle();
-		textFieldStyle.font = UIHelper.getFont();
+		textFieldStyle.font = ResourceHelper.getFont();
 		textFieldStyle.fontColor = Color.WHITE;
 		textFieldStyle.cursor = textFieldSkin.getDrawable("textFieldCursor");
 		txtEmail = new TextField("", textFieldStyle);
@@ -184,7 +184,7 @@ public class MenuLogInRender extends MenuRender {
 			}
 		});
 
-		btnBack = new TextButton("Back", UIHelper.getButtonStyle());
+		btnBack = new TextButton("Back", ResourceHelper.getButtonStyle());
 		btnBack.setPosition(50, 50);
 		btnBack.addListener(new ClickListener() {
 			@Override
@@ -196,7 +196,7 @@ public class MenuLogInRender extends MenuRender {
 			}
 		});
 
-		btnConfirm = new TextButton("Confirm", UIHelper.getButtonStyle());
+		btnConfirm = new TextButton("Confirm", ResourceHelper.getButtonStyle());
 		btnConfirm.setPosition(popupPanel.getWidth() - btnBack.getWidth() - 50,
 				50);
 		btnConfirm.addListener(new ClickListener() {

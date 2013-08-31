@@ -7,7 +7,7 @@ import pruebas.Controllers.WorldController;
 import pruebas.CrystalClash.CrystalClash;
 import pruebas.Enumerators.GameState;
 import pruebas.Renders.UnitRender.FACING;
-import pruebas.Renders.helpers.UIHelper;
+import pruebas.Renders.helpers.ResourceHelper;
 import pruebas.Renders.helpers.ui.SuperAnimatedActor;
 import pruebas.Util.FileUtil;
 import aurelienribon.tweenengine.BaseTween;
@@ -72,23 +72,24 @@ public class GameEngine implements Screen {
 
 		tweenManager = new TweenManager();
 
+		ResourceHelper.fastLoad();
+
 		load();
 		openSplash();
 	}
 
 	private void loadInSplash() {
+		ResourceHelper.slowLoad();
+
 		loadingTexture = new SuperAnimatedActor(FileUtil.getSuperAnimation("data/Images/Menu/Loading/loading"), true, FACING.right);
 		hideLoading();
-
-		UIHelper.load();
 
 		Gdx.input.setCatchBackKey(true);
 		Gdx.input.setInputProcessor(inputManager);
 	}
 
 	private void load() {
-		Texture backgroundTexture = new Texture(
-				Gdx.files.internal("data/Images/Menu/menu_background.jpg"));
+		Texture backgroundTexture = ResourceHelper.getTexture("data/Images/Menu/menu_background.jpg");
 		background = new Image(backgroundTexture);
 
 		Tween.registerAccessor(Actor.class, new ActorAccessor());

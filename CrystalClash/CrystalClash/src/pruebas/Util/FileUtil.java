@@ -9,12 +9,6 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 public class FileUtil {
 
 	public static SuperAnimation getSuperAnimation(String base_file_name) {
-
-		if (base_file_name.equals("data/Units/wind_assassin/die.pref")) {
-			int i = 0;
-			i++;
-			int j = i = 2;
-		}
 		UnitPrefReaderData data = UnitAnimPrefReader.load(base_file_name
 				+ ".pref");
 
@@ -36,4 +30,11 @@ public class FileUtil {
 		return anim;
 	}
 
+	public static Texture getTexture(String path) {
+		return new Texture(Gdx.files.internal(path));
+	}
+
+	public static TextureRegion getTextureRegion(String path) {
+		return new TextureRegion(getTexture(path));
+	}
 }

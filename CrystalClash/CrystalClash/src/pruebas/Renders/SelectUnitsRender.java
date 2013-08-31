@@ -8,7 +8,7 @@ import pruebas.CrystalClash.CrystalClash;
 import pruebas.Entities.Cell;
 import pruebas.Entities.Unit;
 import pruebas.Renders.UnitRender.FACING;
-import pruebas.Renders.helpers.UIHelper;
+import pruebas.Renders.helpers.ResourceHelper;
 import pruebas.Renders.helpers.ui.List;
 import pruebas.Renders.helpers.ui.TabContainer;
 import pruebas.Renders.helpers.ui.ToggleButton;
@@ -42,7 +42,7 @@ public class SelectUnitsRender extends GameRender {
 	public void init() {
 		GameController.getInstancia().loadUnitsStats();
 
-		lblUnitsCount = new Label("", new LabelStyle(UIHelper.getFont(), Color.WHITE));
+		lblUnitsCount = new Label("", new LabelStyle(ResourceHelper.getFont(), Color.WHITE));
 		lblUnitsCount.setPosition(CrystalClash.WIDTH - 100, 50);
 		resetUnitsCount();
 
