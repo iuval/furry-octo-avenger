@@ -32,8 +32,8 @@ public class MessageBox extends Group {
 	private Object userData;
 
 	private MessageBox() {
-		setSize(CrystalClash.WIDTH / 2, CrystalClash.HEIGHT / 2);
-		setPosition(CrystalClash.WIDTH / 4, CrystalClash.HEIGHT + getHeight());
+		setSize(800, CrystalClash.HEIGHT / 2);
+		setPosition(CrystalClash.WIDTH / 2 - 400, CrystalClash.HEIGHT + getHeight());
 
 		imgWindowBackground = new Image(ResourceHelper.getTexture("data/Images/Menu/games_list_background.png"));
 		imgWindowBackground.setSize(getWidth(), getHeight());
@@ -48,8 +48,8 @@ public class MessageBox extends Group {
 		addActor(lblMessage);
 
 		btnYes = new TextButton("Yeah!!", ResourceHelper.getButtonStyle());
-		btnYes.setSize(250, 70);
-		btnYes.setPosition(getWidth() - btnYes.getWidth() - 50, 50);
+		btnYes.setSize(360, 100);
+		btnYes.setPosition(getWidth() - btnYes.getWidth() - 30, 30);
 		btnYes.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
@@ -61,8 +61,8 @@ public class MessageBox extends Group {
 		addActor(btnYes);
 
 		btnNo = new TextButton("Meh", ResourceHelper.getButtonStyle());
-		btnNo.setSize(250, 70);
-		btnNo.setPosition(50, 50);
+		btnNo.setSize(360, 100);
+		btnNo.setPosition(30, 30);
 		btnNo.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
@@ -95,6 +95,16 @@ public class MessageBox extends Group {
 		return this;
 	}
 
+	public MessageBox setYesText(String text) {
+		btnYes.setText(text);
+		return this;
+	}
+
+	public MessageBox setNoText(String text) {
+		btnNo.setText(text);
+		return this;
+	}
+
 	public MessageBox setTweenManager(TweenManager manager) {
 		this.manager = manager;
 		return this;
@@ -113,15 +123,10 @@ public class MessageBox extends Group {
 	}
 
 	public static void show(Object userData) {
-		create().setUserData(userData);
-		show();
+		create().setUserData(userData).show();
 	}
 
-	public static void show() {
-		create().showBox();
-	}
-
-	private void showBox() {
+	public void show() {
 		setZIndex(99);
 		getEnterAnimation().start(manager);
 	}

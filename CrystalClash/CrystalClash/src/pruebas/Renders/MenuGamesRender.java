@@ -115,19 +115,6 @@ public class MenuGamesRender extends MenuRender {
 
 	@Override
 	public void init() {
-		MessageBox.create()
-				.setMessage("Surrender?? srsly??")
-				.setTweenManager(tweenManager)
-				.setCallback(new MessageBoxCallback() {
-					@Override
-					public void onEvent(int type, Object data) {
-						if (type == MessageBoxCallback.YES) {
-							System.out.println("surrender: "
-									+ data);
-
-						}
-					}
-				});
 	}
 
 	@Override
@@ -249,13 +236,27 @@ public class MenuGamesRender extends MenuRender {
 	}
 
 	private void initSkin() {
+		final MessageBoxCallback surrenderCallback = new MessageBoxCallback() {
+			@Override
+			public void onEvent(int type, Object data) {
+				if (type == MessageBoxCallback.YES) {
+					System.out.println("surrender: "
+							+ data);
 
+				}
+			}
+		};
 		// Listeners
 		surrenderListener = new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
-				MessageBox.show(((GameListItem) event.getListenerActor()
-						.getParent()).gameId);
+				MessageBox.create()
+						.setUserData(((GameListItem) event.getListenerActor().getParent()).gameId)
+						.setMessage("\"The wise warrior avoids the battle.\"\n- Sun Tzu")
+						.setYesText("Surrender")
+						.setNoText("Not yet!")
+						.setCallback(surrenderCallback)
+						.show();
 			}
 		};
 

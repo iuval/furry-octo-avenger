@@ -87,7 +87,8 @@ public class GameEngine implements Screen {
 		txrBlackScreen.setColor(txrBlackScreen.getColor().r, txrBlackScreen.getColor().g, txrBlackScreen.getColor().b, 0);
 		txrBlackScreen.setVisible(false);
 
-		MessageBox.create();
+		MessageBox.create()
+				.setTweenManager(tweenManager);
 
 		loadingTexture = new SuperAnimatedActor(FileUtil.getSuperAnimation("data/Images/Menu/Loading/loading"),
 				true, FACING.right);

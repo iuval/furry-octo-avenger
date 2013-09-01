@@ -150,20 +150,46 @@ public class WorldRender extends Group implements InputProcessor {
 
 		btnSurrender = new TextButton("Surrender", optionsStyle);
 		btnSurrender.setPosition(75, 5);
+		final MessageBoxCallback leaveCallback = new MessageBoxCallback() {
+
+			@Override
+			public void onEvent(int type, Object data) {
+				if (type == MessageBoxCallback.YES)
+					System.out.println("Surrender");
+			}
+		};
 		btnSurrender.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
-				MessageBox.show("");
+				MessageBox.create()
+						.setMessage("\"He who knows when he can fight and when he cannot, will be victorious.\"\n- Sun Tzu")
+						.setYesText("Surrender")
+						.setNoText("Not yet!")
+						.setCallback(leaveCallback)
+						.show();
 			}
 		});
 		grpOptions.addActor(btnSurrender);
 
 		btnBack = new TextButton("Back to Menu", optionsStyle);
 		btnBack.setPosition(btnSurrender.getX() + btnSurrender.getWidth() + 2, 5);
+		final MessageBoxCallback backCallback = new MessageBoxCallback() {
+
+			@Override
+			public void onEvent(int type, Object data) {
+				if (type == MessageBoxCallback.YES)
+					world.leaveGame();
+			}
+		};
 		btnBack.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
-				world.leaveGame();
+				MessageBox.create()
+						.setMessage("If we leave now Commander,\ntroops will lose the given formation!")
+						.setYesText("Do it anyway")
+						.setNoText("Let me think...")
+						.setCallback(backCallback)
+						.show();
 			}
 		});
 		grpOptions.addActor(btnBack);
@@ -216,10 +242,23 @@ public class WorldRender extends Group implements InputProcessor {
 				skin.getDrawable("option_send_button_pressed"), null, ResourceHelper.getFont());
 		btnSend = new TextButton("", sendStyle);
 		btnSend.setPosition(0, 0);
+		final MessageBoxCallback sendTurnCallback = new MessageBoxCallback() {
+
+			@Override
+			public void onEvent(int type, Object data) {
+				if (type == MessageBoxCallback.YES)
+					world.sendTurn();
+			}
+		};
 		btnSend.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
-				world.sendTurn();
+				MessageBox.create()
+						.setMessage("Comander!\nTroops are ready and waiting for battle!\nJust say the word")
+						.setYesText("Charge!!")
+						.setNoText("Hold your horses!")
+						.setCallback(sendTurnCallback)
+						.show();
 			}
 		});
 		grpBtnSend.addActor(btnSend);
@@ -267,19 +306,6 @@ public class WorldRender extends Group implements InputProcessor {
 	}
 
 	public void init() {
-		MessageBox.create()
-				.setMessage("Surrender?? srsly??")
-				.setTweenManager(tweenManager)
-				.setCallback(new MessageBoxCallback() {
-					@Override
-					public void onEvent(int type, Object data) {
-						if (type == MessageBoxCallback.YES) {
-							System.out.println("surrender: "
-									+ data);
-
-						}
-					}
-				});
 	}
 
 	@Override
