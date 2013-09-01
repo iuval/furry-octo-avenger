@@ -343,5 +343,9 @@ public class GameEngine implements Screen {
 		// hideBlackScreen();
 		loadingTexture.setVisible(false);
 	}
+	
+	public static void start(Timeline t){
+		t.start(tweenManager);
+	}
 
 }

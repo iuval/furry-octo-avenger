@@ -10,7 +10,6 @@ import pruebas.Renders.helpers.ui.MessageBox;
 import pruebas.Renders.helpers.ui.MessageBoxCallback;
 import aurelienribon.tweenengine.Timeline;
 import aurelienribon.tweenengine.Tween;
-import aurelienribon.tweenengine.TweenManager;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
@@ -30,7 +29,6 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
 public class MenuGamesRender extends MenuRender {
 	private static MenuGamesRender instance;
-	private TweenManager tweenManager;
 
 	private MenuGames controller;
 	private ScrollPane scrollPane;
@@ -56,7 +54,6 @@ public class MenuGamesRender extends MenuRender {
 
 	public MenuGamesRender(MenuGames menu) {
 		this.controller = menu;
-		tweenManager = new TweenManager();
 
 		load();
 	}
@@ -109,7 +106,6 @@ public class MenuGamesRender extends MenuRender {
 			refreshMessagePull.setVisible(false);
 			refreshMessageRelease.setVisible(false);
 		}
-		tweenManager.update(delta);
 		super.act(delta);
 	}
 

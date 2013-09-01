@@ -20,7 +20,6 @@ import aurelienribon.tweenengine.Timeline;
 import aurelienribon.tweenengine.Tween;
 import aurelienribon.tweenengine.TweenCallback;
 import aurelienribon.tweenengine.TweenEquations;
-import aurelienribon.tweenengine.TweenManager;
 import aurelienribon.tweenengine.equations.Linear;
 
 import com.badlogic.gdx.Gdx;
@@ -34,8 +33,6 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Array;
 
 public class TurnAnimations extends GameRender {
-
-	private TweenManager tweenManager;
 
 	private Array<MoveUnitAction> player1Moves;
 	private Array<MoveUnitAction> player2Moves;
@@ -60,8 +57,6 @@ public class TurnAnimations extends GameRender {
 
 	public TurnAnimations(WorldController world) {
 		super(world);
-
-		tweenManager = new TweenManager();
 
 		player1Moves = new Array<MoveUnitAction>();
 		player2Moves = new Array<MoveUnitAction>();
@@ -113,7 +108,7 @@ public class TurnAnimations extends GameRender {
 		btnSkip.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
-				pushExitAnimation(Timeline.createParallel()).start(tweenManager);
+				GameEngine.start(pushExitAnimation(Timeline.createParallel()));
 			}
 		});
 
@@ -157,7 +152,8 @@ public class TurnAnimations extends GameRender {
 			public void onEvent(int type, BaseTween<?> source) {
 				moveUnits();
 			}
-		}).start(tweenManager);
+		});
+		GameEngine.start(t);
 	}
 
 	private void createMeleeAttacks(Array<AttackUnitAction> attackActions, int player, Timeline attackTimeline) {
@@ -254,7 +250,8 @@ public class TurnAnimations extends GameRender {
 			public void onEvent(int type, BaseTween<?> source) {
 				rangedAttackUnits();
 			}
-		}).start(tweenManager);
+		});
+		GameEngine.start(t);
 	}
 
 	private void createPaths(Array<MoveUnitAction> moveActions, int player, Timeline pathsTimeline) {
@@ -333,7 +330,8 @@ public class TurnAnimations extends GameRender {
 				defensiveUnits(false);
 				playDeaths();
 			}
-		}).start(tweenManager);
+		});
+		GameEngine.start(t);
 	}
 
 	private void createRangedAttacks(Array<AttackUnitAction> attackActions, int player,
@@ -392,7 +390,7 @@ public class TurnAnimations extends GameRender {
 				endTurnAnimations();
 			}
 		});
-		deathTimeline.start(tweenManager);
+		GameEngine.start(deathTimeline);
 	}
 
 	private void endTurnAnimations() {
@@ -416,7 +414,7 @@ public class TurnAnimations extends GameRender {
 					CrystalClash.HEIGHT);
 			btnBackToMenu.setPosition(gameEndMessage.getX() + gameEndMessage.getWidth() / 2 - btnBackToMenu.getWidth() / 2,
 					gameEndMessage.getY() + gameEndMessage.getHeight() / 2 - btnBackToMenu.getHeight() / 2);
-			Timeline.createSequence()
+			GameEngine.start(Timeline.createSequence()
 					.beginParallel()
 					.push(Tween.to(gameEndMessage, ActorAccessor.Y, CrystalClash.ANIMATION_SPEED)
 							.target(CrystalClash.HEIGHT / 2 - gameEndMessage.getHeight() / 2))
@@ -425,8 +423,7 @@ public class TurnAnimations extends GameRender {
 					.end()
 					.push(Tween.to(btnBackToMenu, ActorAccessor.Y, CrystalClash.ANIMATION_SPEED)
 							.target(CrystalClash.HEIGHT / 2 - gameEndMessage.getHeight() / 2 - btnBackToMenu.getHeight())
-							.ease(TweenEquations.easeOutBounce))
-					.start(tweenManager);
+							.ease(TweenEquations.easeOutBounce)));
 		} else {
 			showPanel();
 		}
@@ -488,23 +485,20 @@ public class TurnAnimations extends GameRender {
 	}
 
 	private void hidePanel() {
-		Timeline.createSequence()
-				.push(Tween.to(grpPanel, ActorAccessor.Y, CrystalClash.FAST_ANIMATION_SPEED).target(CrystalClash.HEIGHT))
-				.start(tweenManager);
+		GameEngine.start(Timeline.createSequence()
+				.push(Tween.to(grpPanel, ActorAccessor.Y, CrystalClash.FAST_ANIMATION_SPEED).target(CrystalClash.HEIGHT)));
 	}
 
 	private void showPanel() {
 		grpPanel.removeActor(btnPlay);
 		grpPanel.addActor(btnSkip);
 
-		Timeline.createSequence()
-				.push(Tween.to(grpPanel, ActorAccessor.Y, CrystalClash.FAST_ANIMATION_SPEED).target(0))
-				.start(tweenManager);
+		GameEngine.start(Timeline.createSequence()
+				.push(Tween.to(grpPanel, ActorAccessor.Y, CrystalClash.FAST_ANIMATION_SPEED).target(0)));
 	}
 
 	@Override
 	public void render(float dt, SpriteBatch batch) {
-		tweenManager.update(dt);
 	}
 
 	@Override

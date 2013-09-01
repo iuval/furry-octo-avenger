@@ -11,7 +11,6 @@ import pruebas.Renders.helpers.ui.MessageBoxCallback;
 import aurelienribon.tweenengine.Timeline;
 import aurelienribon.tweenengine.Tween;
 import aurelienribon.tweenengine.TweenEquations;
-import aurelienribon.tweenengine.TweenManager;
 
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.Texture;
@@ -27,8 +26,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
 public class WorldRender extends Group implements InputProcessor {
-
-	private TweenManager tweenManager;
 	public static CellHelper cellHelper;
 
 	private Texture txrTerrain;
@@ -49,8 +46,6 @@ public class WorldRender extends Group implements InputProcessor {
 	private TextButton btnClear;
 	private boolean hideMoreOptions;
 
-	private boolean showingAnimations;
-
 	private WorldController world;
 	GameRender gameRender;
 
@@ -59,13 +54,10 @@ public class WorldRender extends Group implements InputProcessor {
 	public WorldRender(WorldController world) {
 		this.world = world;
 
-		tweenManager = new TweenManager();
-
 		cellHelper = new CellHelper();
 		cellHelper.load();
 
 		hideMoreOptions = false;
-		showingAnimations = false;
 
 		UnitHelper.init();
 		load();
@@ -74,21 +66,18 @@ public class WorldRender extends Group implements InputProcessor {
 	public void initFirstTurn() {
 		gameRender = new SelectUnitsRender(world);
 		addActor(gameRender);
-		showingAnimations = false;
 		showHuds();
 	}
 
 	public void initNormalTurn() {
 		gameRender = new NormalGame(world);
 		addActor(gameRender);
-		showingAnimations = false;
 		showHuds();
 	}
 
 	public void initTurnAnimations() {
 		gameRender = new TurnAnimations(world);
 		addActor(gameRender);
-		showingAnimations = true;
 	}
 
 	public void render(float dt, SpriteBatch batch) {
@@ -109,10 +98,6 @@ public class WorldRender extends Group implements InputProcessor {
 		}
 
 		gameRender.render(dt, batch);
-
-		if (!showingAnimations) {
-			tweenManager.update(dt);
-		}
 	}
 
 	private void load() {
@@ -270,34 +255,31 @@ public class WorldRender extends Group implements InputProcessor {
 	}
 
 	private void showOptions() {
-		Timeline.createSequence()
+		GameEngine.start(Timeline.createSequence()
 				.push(Tween.to(grpBtnOptions, ActorAccessor.X, CrystalClash.FAST_ANIMATION_SPEED)
 						.target(-grpBtnOptions.getWidth()))
 				.push(Tween.to(grpOptions, ActorAccessor.X, CrystalClash.FAST_ANIMATION_SPEED)
 						.target(75)
-						.ease(TweenEquations.easeOutCirc))
-				.start(tweenManager);
+						.ease(TweenEquations.easeOutCirc)));
 	}
 
 	private void hideOptions() {
-		Timeline.createSequence()
+		GameEngine.start(Timeline.createSequence()
 				.push(Tween.to(grpOptions, ActorAccessor.X, CrystalClash.FAST_ANIMATION_SPEED)
 						.target(-grpOptions.getWidth()))
 				.push(Tween.to(grpBtnOptions, ActorAccessor.X, CrystalClash.FAST_ANIMATION_SPEED)
 						.target(grpBtnSend.getWidth() - 35)
-						.ease(TweenEquations.easeOutCirc))
-				.start(tweenManager);
+						.ease(TweenEquations.easeOutCirc)));
 	}
 
 	public void showHuds() {
-		Timeline.createSequence()
+		GameEngine.start(Timeline.createSequence()
 				.push(Tween.to(grpBtnSend, ActorAccessor.X, CrystalClash.FAST_ANIMATION_SPEED)
 						.target(0)
 						.ease(TweenEquations.easeOutCirc))
 				.push(Tween.to(grpBtnOptions, ActorAccessor.X, CrystalClash.FAST_ANIMATION_SPEED)
 						.target(grpBtnSend.getWidth() - 35)
-						.ease(TweenEquations.easeOutCirc))
-				.start(tweenManager);
+						.ease(TweenEquations.easeOutCirc)));
 	}
 
 	public void dispose() {
