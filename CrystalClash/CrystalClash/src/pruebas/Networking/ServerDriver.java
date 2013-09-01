@@ -28,6 +28,7 @@ public class ServerDriver {
 	public static void sendSignIn(final String email, final String password) {
 		Map<String, String> data = new HashMap<String, String>();
 		data.put("email", email);
+		data.put("password", password);
 
 		Gdx.net.sendHttpRequest(getPost(ACTION_SIGN_IN, data),
 				new HttpResponseListener() {
@@ -51,12 +52,12 @@ public class ServerDriver {
 	public static void sendLogIn(final String email, final String password) {
 		Map<String, String> data = new HashMap<String, String>();
 		data.put("email", email);
+		data.put("password", password);
 
 		Gdx.net.sendHttpRequest(getPost(ACTION_LOG_IN, data),
 				new HttpResponseListener() {
 					public void handleHttpResponse(HttpResponse httpResponse) {
-						JsonValue values = ServerDriver
-								.ProcessResponce(httpResponse);
+						JsonValue values = ServerDriver.ProcessResponce(httpResponse);
 						if (values.getString("value").equals("ok")) {
 							JsonValue data = values.get("data");
 							GameController.getInstance().logIn(data.getString("id"), email, password);

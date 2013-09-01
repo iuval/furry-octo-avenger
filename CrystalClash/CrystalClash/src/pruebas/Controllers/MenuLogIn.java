@@ -14,13 +14,13 @@ public class MenuLogIn {
 	}
 
 	private String email;
-	private String nick;
+	private String password;
 	private MenuLogInRender render;
 
 	private MenuLogIn() {
 		render = MenuLogInRender.getInstance(this);
 		email = "";
-		nick = "";
+		password = "";
 	}
 
 	public MenuLogInRender getRender() {
@@ -31,15 +31,15 @@ public class MenuLogIn {
 		return email;
 	}
 
-	public String getNick() {
-		return nick;
+	public String getPassword() {
+		return password;
 	}
 
-	public void sendLogIn(String email, String nick) {
+	public void sendLogIn(String email, String password) {
 		this.email = email;
-		this.nick = nick;
+		this.password = password;
 
-		ServerDriver.sendLogIn(email, nick);
+		ServerDriver.sendLogIn(email, password);
 	}
 
 	public void sendLogInError(String message) {
@@ -50,10 +50,10 @@ public class MenuLogIn {
 		System.out.println(message);
 	}
 
-	public void sendSignIn(String email, String nick) {
+	public void sendSignIn(String email, String password) {
 		this.email = email;
-		this.nick = nick;
+		this.password = password;
 
-		ServerDriver.sendSignIn(email, nick);
+		ServerDriver.sendSignIn(email, password);
 	}
 }

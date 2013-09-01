@@ -34,7 +34,7 @@ public class MenuLogInRender extends MenuRender {
 
 	private Label lblHeading;
 	private TextField txtEmail;
-	private TextField txtNick;
+	private TextField txtPassword;
 	private TextButton btnLogIn;
 	private TextButton btnSignIn;
 	private TextButton btnConfirm;
@@ -43,7 +43,7 @@ public class MenuLogInRender extends MenuRender {
 	private Image popupPanel;
 	private Texture textFieldTexture;
 	private Image textFieldEmail;
-	private Image textFieldNick;
+	private Image textFieldPassword;
 	private Texture charactersTexture;
 	private Image characters;
 
@@ -89,8 +89,8 @@ public class MenuLogInRender extends MenuRender {
 
 	@Override
 	public Timeline pushExitAnimation(Timeline t) {
-		txtNick.setText("");
-		txtNick.setMessageText("");
+		txtPassword.setText("");
+		txtPassword.setMessageText("");
 
 		return t.push(Tween.to(popUp, ActorAccessor.Y, CrystalClash.ANIMATION_SPEED).target(CrystalClash.HEIGHT));
 	}
@@ -147,9 +147,9 @@ public class MenuLogInRender extends MenuRender {
 		textFieldEmail.setPosition(50, popupPanel.getTop() - 200);
 		textFieldEmail.setSize(700, 50);
 
-		textFieldNick = new Image(textFieldTexture);
-		textFieldNick.setPosition(50, popupPanel.getTop() - 300);
-		textFieldNick.setSize(700, 50);
+		textFieldPassword = new Image(textFieldTexture);
+		textFieldPassword.setPosition(50, popupPanel.getTop() - 300);
+		textFieldPassword.setSize(700, 50);
 
 		Skin textFieldSkin = new Skin();
 		textFieldSkin
@@ -174,16 +174,18 @@ public class MenuLogInRender extends MenuRender {
 			}
 		});
 
-		txtNick = new TextField(prof.getUserPassword(), textFieldStyle);
-		txtNick.setMessageText("Enter your User Name...");
-		txtNick.setMaxLength(30);
-		txtNick.setSize(700, 50);
-		txtNick.setPosition(textFieldNick.getX() + 10, textFieldNick.getY());
-		txtNick.addListener(new ClickListener() {
+		txtPassword = new TextField(prof.getUserPassword(), textFieldStyle);
+		txtPassword.setMessageText("Enter your User Name...");
+		txtPassword.setMaxLength(30);
+		txtPassword.setSize(700, 50);
+		txtPassword.setPosition(textFieldPassword.getX() + 10, textFieldPassword.getY());
+		txtPassword.setPasswordCharacter('*');
+		txtPassword.setPasswordMode(true);
+		txtPassword.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
 				adjustToKeyboard(true);
-				stringWriting = StringWriting.Nick;
+				stringWriting = StringWriting.Password;
 			}
 		});
 
@@ -195,7 +197,7 @@ public class MenuLogInRender extends MenuRender {
 				Gdx.input.setOnscreenKeyboardVisible(false);
 				moveUp(MenuLogInState.Idle);
 				txtEmail.setText("");
-				txtNick.setText("");
+				txtPassword.setText("");
 			}
 		});
 
@@ -206,22 +208,22 @@ public class MenuLogInRender extends MenuRender {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
 				String email = txtEmail.getText().trim();
-				String nick = txtNick.getText().trim();
+				String password = txtPassword.getText().trim();
 				switch (state) {
 				case Idle:
 					break;
 				case LogIn:
-					if (!email.isEmpty() && !nick.isEmpty()) {
+					if (!email.isEmpty() && !password.isEmpty()) {
 						GameEngine.showLoading();
 						Gdx.input.setOnscreenKeyboardVisible(false);
-						controller.sendLogIn(email, nick);
+						controller.sendLogIn(email, password);
 					}
 					break;
 				case SignIn:
-					if (!email.isEmpty() && !nick.isEmpty()) {
+					if (!email.isEmpty() && !password.isEmpty()) {
 						GameEngine.showLoading();
 						Gdx.input.setOnscreenKeyboardVisible(false);
-						controller.sendSignIn(email, nick);
+						controller.sendSignIn(email, password);
 					}
 					break;
 				default:
@@ -234,9 +236,9 @@ public class MenuLogInRender extends MenuRender {
 		popUp.addActor(popupPanel);
 		popUp.addActor(lblHeading);
 		popUp.addActor(textFieldEmail);
-		popUp.addActor(textFieldNick);
+		popUp.addActor(textFieldPassword);
 		popUp.addActor(txtEmail);
-		popUp.addActor(txtNick);
+		popUp.addActor(txtPassword);
 		popUp.addActor(btnConfirm);
 		popUp.addActor(btnBack);
 
@@ -303,10 +305,10 @@ public class MenuLogInRender extends MenuRender {
 					txtEmail.setText(aux.substring(0, aux.length() - 1));
 				}
 				break;
-			case Nick:
-				aux = txtNick.getText();
+			case Password:
+				aux = txtPassword.getText();
 				if (aux.length() > 0) {
-					txtNick.setText(aux.substring(0, aux.length() - 1));
+					txtPassword.setText(aux.substring(0, aux.length() - 1));
 				}
 				break;
 			case None:
@@ -337,10 +339,10 @@ public class MenuLogInRender extends MenuRender {
 				txtEmail.setText(txtEmail.getText() + character);
 			}
 			break;
-		case Nick:
-			aux = txtNick.getText();
+		case Password:
+			aux = txtPassword.getText();
 			if (aux.length() < 30) {
-				txtNick.setText(txtNick.getText() + character);
+				txtPassword.setText(txtPassword.getText() + character);
 			}
 			break;
 		case None:
