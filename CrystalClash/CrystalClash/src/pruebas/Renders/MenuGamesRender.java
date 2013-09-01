@@ -246,11 +246,10 @@ public class MenuGamesRender extends MenuRender {
 		surrenderListener = new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
-				MessageBox.create()
+				MessageBox.build()
 						.setUserData(((GameListItem) event.getListenerActor().getParent()).gameId)
 						.setMessage("\"The wise warrior avoids the battle.\"\n- Sun Tzu")
-						.setYesText("Surrender")
-						.setNoText("Not yet!")
+						.twoButtonsLayout("Surrender", "Not yet!")
 						.setCallback(surrenderCallback)
 						.show();
 			}
@@ -314,8 +313,11 @@ public class MenuGamesRender extends MenuRender {
 	}
 
 	public void listGamesError(String message) {
-		System.out.println(message);
-		GameEngine.hideLoading();
+		MessageBox.build()
+				.setMessage(message)
+				.oneButtonsLayout("OK...")
+				.setCallback(null)
+				.show();
 	}
 
 	public void enableRandomSuccess() {
@@ -324,8 +326,11 @@ public class MenuGamesRender extends MenuRender {
 	}
 
 	public void enableRandomError(String message) {
-		System.out.println(message);
-		GameEngine.hideLoading();
+		MessageBox.build()
+				.setMessage(message)
+				.oneButtonsLayout("OK...")
+				.setCallback(null)
+				.show();
 	}
 
 	// INPUT PROCESSOR--------------------------------------------

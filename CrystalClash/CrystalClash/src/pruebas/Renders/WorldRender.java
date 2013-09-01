@@ -137,10 +137,9 @@ public class WorldRender extends Group implements InputProcessor {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
 				setReadInput(false);
-				MessageBox.create()
+				MessageBox.build()
 						.setMessage("\"He who knows when he can fight and when he cannot, will be victorious.\"\n- Sun Tzu")
-						.setYesText("Surrender")
-						.setNoText("Not yet!")
+						.twoButtonsLayout("Surrender", "Not yet!")
 						.setCallback(leaveCallback)
 						.show();
 			}
@@ -163,10 +162,9 @@ public class WorldRender extends Group implements InputProcessor {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
 				setReadInput(false);
-				MessageBox.create()
+				MessageBox.build()
 						.setMessage("If we leave now Commander,\ntroops will lose the given formation!")
-						.setYesText("Do it anyway")
-						.setNoText("Let me think...")
+						.twoButtonsLayout("Do it anyway", "Let me think...")
 						.setCallback(backCallback)
 						.show();
 			}
@@ -237,10 +235,9 @@ public class WorldRender extends Group implements InputProcessor {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
 				setReadInput(false);
-				MessageBox.create()
+				MessageBox.build()
 						.setMessage("Comander!\nTroops are ready and waiting for battle!\nJust say the word")
-						.setYesText("Charge!!")
-						.setNoText("Hold your horses!")
+						.twoButtonsLayout("Charge!!", "Hold your horses!")
 						.setCallback(sendTurnCallback)
 						.show();
 			}

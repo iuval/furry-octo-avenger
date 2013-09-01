@@ -43,7 +43,7 @@ public class MenuLogIn {
 	}
 
 	public void sendLogInError(String message) {
-		render.authenticateError(message);
+		render.logInError(message);
 	}
 
 	public void serverError(String message) {

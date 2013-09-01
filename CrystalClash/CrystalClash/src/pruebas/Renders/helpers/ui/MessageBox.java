@@ -43,13 +43,9 @@ public class MessageBox extends Group {
 		lblMessage = new Label("", new LabelStyle(ResourceHelper.getFont(), Color.WHITE));
 		lblMessage.setAlignment(Align.center);
 		lblMessage.setWrap(true);
-		lblMessage.setSize(getWidth() - 100, getHeight() - 150);
-		lblMessage.setPosition(50, 100);
 		addActor(lblMessage);
 
 		btnYes = new TextButton("Yeah!!", ResourceHelper.getButtonStyle());
-		btnYes.setSize(360, 100);
-		btnYes.setPosition(getWidth() - btnYes.getWidth() - 30, 30);
 		btnYes.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
@@ -58,11 +54,8 @@ public class MessageBox extends Group {
 					hide();
 			}
 		});
-		addActor(btnYes);
 
 		btnNo = new TextButton("Meh", ResourceHelper.getButtonStyle());
-		btnNo.setSize(360, 100);
-		btnNo.setPosition(30, 30);
 		btnNo.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
@@ -71,10 +64,9 @@ public class MessageBox extends Group {
 					hide();
 			}
 		});
-		addActor(btnNo);
 	}
 
-	public static MessageBox create() {
+	public static MessageBox build() {
 		if (instance == null)
 			instance = new MessageBox();
 		return instance;
@@ -95,16 +87,6 @@ public class MessageBox extends Group {
 		return this;
 	}
 
-	public MessageBox setYesText(String text) {
-		btnYes.setText(text);
-		return this;
-	}
-
-	public MessageBox setNoText(String text) {
-		btnNo.setText(text);
-		return this;
-	}
-
 	public MessageBox setTweenManager(TweenManager manager) {
 		this.manager = manager;
 		return this;
@@ -115,15 +97,54 @@ public class MessageBox extends Group {
 		return this;
 	}
 
+	public MessageBox twoButtonsLayout(String yes, String no) {
+		btnYes.setText(yes);
+		btnYes.setSize(360, 100);
+		btnYes.setPosition(getWidth() - btnYes.getWidth() - 30, 30);
+		addActor(btnYes);
+
+		btnNo.setText(no);
+		btnNo.setSize(360, 100);
+		btnNo.setPosition(30, 30);
+		addActor(btnNo);
+
+		lblMessage.setSize(getWidth() - 100, getHeight() - 150);
+		lblMessage.setPosition(50, 100);
+		return this;
+	}
+
+	public MessageBox oneButtonsLayout(String yes) {
+		btnYes.setText(yes);
+		btnYes.setSize(500, 100);
+		btnYes.setPosition(getWidth() / 2 - btnYes.getWidth() / 2, 30);
+		addActor(btnYes);
+
+		btnNo.remove();
+
+		lblMessage.setSize(getWidth() - 100, getHeight() - 150);
+		lblMessage.setPosition(50, 100);
+		return this;
+	}
+
+	public MessageBox noButtonsLayout() {
+		btnYes.remove();
+
+		btnNo.remove();
+
+		lblMessage.setSize(getWidth() - 100, getHeight() - 100);
+		lblMessage.setPosition(50, 50);
+		return this;
+	}
+
 	public static void show(TweenManager manager, String message, Object userData) {
-		create()
+		build()
 				.setMessage(message)
 				.setTweenManager(manager);
 		show(userData);
 	}
 
 	public static void show(Object userData) {
-		create().setUserData(userData).show();
+		build().setUserData(userData).show();
 	}
 
 	public void show() {
@@ -148,7 +169,12 @@ public class MessageBox extends Group {
 
 	protected Timeline getExitAnimation() {
 		return GameEngine.pushHideBlackScreen(Timeline.createParallel())
+				.delay(0.5f)
+				.beginSequence()
 				.push(Tween.to(this, ActorAccessor.Y, CrystalClash.FAST_ANIMATION_SPEED)
-						.target(CrystalClash.HEIGHT + getHeight()));
+						.target(-getHeight()))
+				.push(Tween.set(this, ActorAccessor.Y)
+						.target(CrystalClash.HEIGHT + getHeight()))
+				.end();
 	}
 }

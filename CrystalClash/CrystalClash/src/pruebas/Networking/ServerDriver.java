@@ -188,7 +188,7 @@ public class ServerDriver {
 	}
 
 	public static JsonValue parseJson(String response) {
-		System.out.println("Parseado->" + response);
+		System.out.println("Parseado-> " + response);
 		return new JsonReader().parse(response);
 	}
 

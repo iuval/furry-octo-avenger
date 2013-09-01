@@ -3,6 +3,7 @@ package pruebas.Controllers;
 import pruebas.Networking.ServerDriver;
 import pruebas.Renders.GameEngine;
 import pruebas.Renders.MenuGamesRender;
+import pruebas.Renders.helpers.ui.MessageBox;
 
 import com.badlogic.gdx.utils.JsonValue;
 
@@ -66,7 +67,11 @@ public class MenuGames {
 	}
 
 	public void getGameTurnError(String string) {
-		// TODO Auto-generated method stub
+		MessageBox.build()
+				.setMessage(string)
+				.oneButtonsLayout("OK...")
+				.setCallback(null)
+				.show();
 	}
 
 	public void sendGameTurnSuccess(String data) {
@@ -74,6 +79,10 @@ public class MenuGames {
 	}
 
 	public void sendGameTurnError(String message) {
-		// render.listGamesError(message);
+		MessageBox.build()
+				.setMessage(message)
+				.oneButtonsLayout("OK...")
+				.setCallback(null)
+				.show();
 	}
 }

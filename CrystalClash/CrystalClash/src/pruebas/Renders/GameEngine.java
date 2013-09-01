@@ -6,11 +6,9 @@ import pruebas.Controllers.MenuLogIn;
 import pruebas.Controllers.WorldController;
 import pruebas.CrystalClash.CrystalClash;
 import pruebas.Enumerators.GameState;
-import pruebas.Renders.UnitRender.FACING;
 import pruebas.Renders.helpers.ResourceHelper;
 import pruebas.Renders.helpers.ui.MessageBox;
 import pruebas.Renders.helpers.ui.SuperAnimatedActor;
-import pruebas.Util.FileUtil;
 import aurelienribon.tweenengine.BaseTween;
 import aurelienribon.tweenengine.Timeline;
 import aurelienribon.tweenengine.Tween;
@@ -87,12 +85,13 @@ public class GameEngine implements Screen {
 		txrBlackScreen.setColor(txrBlackScreen.getColor().r, txrBlackScreen.getColor().g, txrBlackScreen.getColor().b, 0);
 		txrBlackScreen.setVisible(false);
 
-		MessageBox.create()
+		MessageBox.build()
 				.setTweenManager(tweenManager);
 
-		loadingTexture = new SuperAnimatedActor(FileUtil.getSuperAnimation("data/Images/Menu/Loading/loading"),
-				true, FACING.right);
-		hideLoading();
+		// loadingTexture = new
+		// SuperAnimatedActor(FileUtil.getSuperAnimation("data/Images/Menu/Loading/loading"),
+		// true, FACING.right);
+		// hideLoading();
 
 		Gdx.input.setCatchBackKey(true);
 		Gdx.input.setInputProcessor(inputManager);
@@ -170,7 +169,7 @@ public class GameEngine implements Screen {
 		}
 		if (txrBlackScreen != null)
 			stage.addActor(txrBlackScreen);
-		stage.addActor(MessageBox.create());
+		stage.addActor(MessageBox.build());
 		if (loadingTexture != null)
 			stage.addActor(loadingTexture);
 	}
@@ -336,15 +335,21 @@ public class GameEngine implements Screen {
 
 	public static void showLoading() {
 		// showBlackScreen();
-		loadingTexture.setVisible(true);
+		// loadingTexture.setVisible(true);
+		MessageBox.build()
+				.setMessage("Loading...")
+				.noButtonsLayout()
+				.setCallback(null)
+				.show();
 	}
 
 	public static void hideLoading() {
 		// hideBlackScreen();
-		loadingTexture.setVisible(false);
+		// loadingTexture.setVisible(false);
+		MessageBox.build().hide();
 	}
-	
-	public static void start(Timeline t){
+
+	public static void start(Timeline t) {
 		t.start(tweenManager);
 	}
 

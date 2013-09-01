@@ -7,6 +7,7 @@ import pruebas.CrystalClash.CrystalClash;
 import pruebas.Enumerators.MenuLogInState;
 import pruebas.Enumerators.StringWriting;
 import pruebas.Renders.helpers.ResourceHelper;
+import pruebas.Renders.helpers.ui.MessageBox;
 import pruebas.Util.Profile;
 import aurelienribon.tweenengine.Timeline;
 import aurelienribon.tweenengine.Tween;
@@ -249,8 +250,12 @@ public class MenuLogInRender extends MenuRender {
 		addActor(popUp);
 	}
 
-	public void authenticateError(String message) {
-		System.out.println(message);
+	public void logInError(String message) {
+		MessageBox.build()
+				.setMessage(message)
+				.oneButtonsLayout("OK...")
+				.setCallback(null)
+				.show();
 	}
 
 	// Solo para el btnBack (Mueve el panel hacia arriba y hace un fade-in de
