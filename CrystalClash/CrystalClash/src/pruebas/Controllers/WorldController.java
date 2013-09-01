@@ -109,7 +109,7 @@ public class WorldController {
 
 						((MoveUnitAction) unitA).moves.add(cellGrid[cellX][cellY]);
 					}
-				} else if (action.equals("defense")) {
+				} else if (action.equals("defend")) {
 					unitA = new DefendUnitAction();
 				} else {
 					unitA = new NoneUnitAction();

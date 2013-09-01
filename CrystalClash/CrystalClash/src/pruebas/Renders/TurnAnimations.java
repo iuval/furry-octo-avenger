@@ -22,7 +22,6 @@ import aurelienribon.tweenengine.TweenCallback;
 import aurelienribon.tweenengine.TweenEquations;
 import aurelienribon.tweenengine.equations.Linear;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Group;
@@ -79,12 +78,12 @@ public class TurnAnimations extends GameRender {
 		GameController.getInstancia().loadUnitsStats();
 		Tween.registerAccessor(Unit.class, new UnitAccessor());
 
-		Texture panelTexture = new Texture(Gdx.files.internal("data/Images/TurnAnimation/games_list_background.png"));
+		Texture panelTexture = ResourceHelper.getTexture("data/Images/TurnAnimation/games_list_background.png");
 		panel = new Image(panelTexture);
 
-		victoryTexture = new Texture(Gdx.files.internal("data/Images/TurnAnimation/Messages/banner_victory.png"));
-		defeatTexture = new Texture(Gdx.files.internal("data/Images/TurnAnimation/Messages/banner_defeat.png"));
-		drawTexture = new Texture(Gdx.files.internal("data/Images/TurnAnimation/Messages/banner_draw.png"));
+		victoryTexture = ResourceHelper.getTexture("data/Images/TurnAnimation/Messages/banner_victory.png");
+		defeatTexture = ResourceHelper.getTexture("data/Images/TurnAnimation/Messages/banner_defeat.png");
+		drawTexture = ResourceHelper.getTexture("data/Images/TurnAnimation/Messages/banner_draw.png");
 
 		btnBackToMenu = new TextButton("Back to menu", ResourceHelper.getButtonStyle());
 		btnBackToMenu.addListener(new ClickListener() {
