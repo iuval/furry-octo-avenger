@@ -180,21 +180,11 @@ public class TurnAnimations extends GameRender {
 					AttackUnitAction action = (AttackUnitAction) (((Object[]) source.getUserData())[0]);
 					int player = Integer.parseInt(((Object[]) source.getUserData())[1].toString());
 					Unit unit = action.origin.getUnit(player);
-					// System.out.println(TweenCallback.BEGIN + " -> " + type);
 					if (type == TweenCallback.COMPLETE) {
 						Unit enemy = action.target.getUnit(player == 1 ? 2 : 1);
-						if (enemy != null) {
-							enemy.damage(unit.getDamage());
-
-							if (!enemy.isAlive()) {
-								deadUnits.add(enemy);
-								if (player == world.player)
-									world.enemiesCount--;
-								else
-									world.allysCount--;
-							}
+						if (doDamage(enemy, unit, player))
 							unit.getRender().setState(STATE.fighting);
-						}
+
 					} else if (type == TweenCallback.BEGIN) {
 						unit.getRender().setState(STATE.walking);
 					}
@@ -352,17 +342,7 @@ public class TurnAnimations extends GameRender {
 					Unit unit = action.origin.getUnit(player);
 
 					Unit enemy = action.target.getUnit(player == 1 ? 2 : 1);
-					if (enemy != null) {
-						enemy.damage(unit.getDamage());
-
-						if (!enemy.isAlive()) {
-							deadUnits.add(enemy);
-							if (player == world.player)
-								world.enemiesCount--;
-							else
-								world.allysCount--;
-						}
-					}
+					doDamage(enemy, unit, player);
 					unit.getRender().setState(STATE.idle);
 					action.target.setState(Cell.State.NONE);
 				}
@@ -370,6 +350,22 @@ public class TurnAnimations extends GameRender {
 
 			attackTimeline.push(stopAnim);
 		}
+	}
+
+	private boolean doDamage(Unit enemy, Unit player, int playerNum) {
+		if (enemy != null && enemy.isAlive()) {
+			enemy.damage(player.getDamage());
+
+			if (!enemy.isAlive()) {
+				deadUnits.add(enemy);
+				if (playerNum == world.player)
+					world.enemiesCount--;
+				else
+					world.allysCount--;
+			}
+			return true;
+		}
+		return false;
 	}
 
 	private void playDeaths() {
