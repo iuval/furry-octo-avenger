@@ -5,6 +5,7 @@ import java.util.Hashtable;
 
 import pruebas.Entities.User;
 import pruebas.Renders.GameEngine;
+import pruebas.Util.ProfileService;
 import pruebas.Util.UnitSharedDataPrefReader;
 import pruebas.Util.UnitStatsPrefReader;
 
@@ -12,7 +13,7 @@ public class GameController {
 
 	private static GameController instancia;
 
-	public static GameController getInstancia() {
+	public static GameController getInstance() {
 		if (instancia == null)
 			instancia = new GameController();
 		return instancia;
@@ -20,12 +21,17 @@ public class GameController {
 
 	private boolean dataLoaded = false;
 	private User currentUser;
+	public ProfileService profileService;
 	private Hashtable<String, int[]> unitValues;
 
 	public float unitMaxLife = 0;
 	public float unitMaxAttack = 0;
 	public float unitMaxSpeed = 0;
 	public int unitsPerPlayer = 0;
+
+	private GameController() {
+		profileService = new ProfileService();
+	}
 
 	public void setUser(User user) {
 		currentUser = user;
@@ -82,6 +88,14 @@ public class GameController {
 
 	public Enumeration<String> getUnitNames() {
 		return unitValues.keys();
+	}
+
+	public void logIn(String userId, String email, String password) {
+		profileService.retrieveProfile().setUserEmail(email);
+		profileService.retrieveProfile().setUserPassword(password);
+		profileService.persist();
+		setUser(new User(userId, email, email));
+		GameEngine.getInstance().openMenuGames();
 	}
 
 	public void logOut() {

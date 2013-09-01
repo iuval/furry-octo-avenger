@@ -3,6 +3,7 @@ package pruebas.Networking;
 import java.util.HashMap;
 import java.util.Map;
 
+import pruebas.Controllers.GameController;
 import pruebas.Controllers.MenuGames;
 import pruebas.Controllers.MenuLogIn;
 
@@ -24,7 +25,7 @@ public class ServerDriver {
 	private final static String ACTION_ENABLE_RANDOM = "enable_random";
 	private final static String ACTION_GAME_TURN = "game_turn";
 
-	public static void sendSignIn(final String email, String password) {
+	public static void sendSignIn(final String email, final String password) {
 		Map<String, String> data = new HashMap<String, String>();
 		data.put("email", email);
 
@@ -35,7 +36,7 @@ public class ServerDriver {
 								.ProcessResponce(httpResponse);
 						if (values.getString("value").equals("ok")) {
 							JsonValue data = values.get("data");
-							MenuLogIn.getInstance().sendLogInSuccess(data.getString("id"), email);
+							GameController.getInstance().logIn(data.getString("id"), email, password);
 						} else {
 							MenuLogIn.getInstance().sendLogInError(values.getString("message"));
 						}
@@ -47,7 +48,7 @@ public class ServerDriver {
 				});
 	}
 
-	public static void sendLogIn(final String email, String password) {
+	public static void sendLogIn(final String email, final String password) {
 		Map<String, String> data = new HashMap<String, String>();
 		data.put("email", email);
 
@@ -58,7 +59,7 @@ public class ServerDriver {
 								.ProcessResponce(httpResponse);
 						if (values.getString("value").equals("ok")) {
 							JsonValue data = values.get("data");
-							MenuLogIn.getInstance().sendLogInSuccess(data.getString("id"), email);
+							GameController.getInstance().logIn(data.getString("id"), email, password);
 						} else {
 							MenuLogIn.getInstance().sendLogInError(values.getString("message"));
 						}

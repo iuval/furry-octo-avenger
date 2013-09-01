@@ -27,13 +27,13 @@ public class MenuGames {
 	}
 
 	public void enableRandom() {
-		ServerDriver.enableRandom(GameController.getInstancia().getUser()
+		ServerDriver.enableRandom(GameController.getInstance().getUser()
 				.getId());
 	}
 
 	public void getGamesList() {
 		GameEngine.showLoading();
-		ServerDriver.getListGames(GameController.getInstancia().getUser().getId());
+		ServerDriver.getListGames(GameController.getInstance().getUser().getId());
 	}
 
 	public void getGamesListSuccess(String[][] games) {
@@ -53,12 +53,12 @@ public class MenuGames {
 	}
 
 	public void logOut() {
-		GameController.getInstancia().logOut();
+		GameController.getInstance().logOut();
 	}
 
 	public void getGameTurn(String gameId, int turn) {
 		GameEngine.showLoading();
-		ServerDriver.getGameTurn(GameController.getInstancia().getUser().getId(), gameId, turn);
+		ServerDriver.getGameTurn(GameController.getInstance().getUser().getId(), gameId, turn);
 	}
 
 	public void getGameTurnSuccess(JsonValue data, int turn) {

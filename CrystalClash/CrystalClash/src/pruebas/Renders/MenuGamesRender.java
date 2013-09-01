@@ -115,7 +115,7 @@ public class MenuGamesRender extends MenuRender {
 
 	@Override
 	public Timeline pushEnterAnimation(Timeline t) {
-		lblHeading.setText("Welcome " + GameController.getInstancia().getUser().getNick());
+		lblHeading.setText("Welcome " + GameController.getInstance().getUser().getNick());
 		return t.beginParallel()
 				.push(Tween.to(lblHeading, ActorAccessor.X, CrystalClash.ANIMATION_SPEED).target(50))
 				.push(Tween.to(btnLogOut, ActorAccessor.Y, CrystalClash.ANIMATION_SPEED).target(CrystalClash.HEIGHT - btnLogOut.getHeight() - 10))
@@ -136,7 +136,7 @@ public class MenuGamesRender extends MenuRender {
 		initSkin();
 
 		lblHeading = new Label("Welcome "
-				+ GameController.getInstancia().getUser().getNick(),
+				+ GameController.getInstance().getUser().getNick(),
 				new LabelStyle(ResourceHelper.getFont(), Color.WHITE));
 		lblHeading.setPosition(-CrystalClash.WIDTH, CrystalClash.HEIGHT - 50);
 		addActor(lblHeading);

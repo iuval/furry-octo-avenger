@@ -103,7 +103,7 @@ public class NormalGame extends GameRender {
 	}
 
 	public void load() {
-		GameController.getInstancia().loadUnitsStats();
+		GameController.getInstance().loadUnitsStats();
 
 		Texture arrow = new Texture(
 				Gdx.files.internal("data/Images/InGame/selector_arrow.png"));
@@ -698,9 +698,9 @@ public class NormalGame extends GameRender {
 						selectedUnit = u;
 						selectedCell = cell;
 
-						lblAttack.setText(GameController.getInstancia()
+						lblAttack.setText(GameController.getInstance()
 								.getUnitAttack(selectedUnit.getName()) + "");
-						maxMoves = GameController.getInstancia().getUnitSpeed(
+						maxMoves = GameController.getInstance().getUnitSpeed(
 								selectedUnit.getName());
 						lblMoves.setText(maxMoves + "");
 

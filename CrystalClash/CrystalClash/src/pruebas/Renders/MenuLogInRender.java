@@ -1,11 +1,13 @@
 package pruebas.Renders;
 
 import pruebas.Accessors.ActorAccessor;
+import pruebas.Controllers.GameController;
 import pruebas.Controllers.MenuLogIn;
 import pruebas.CrystalClash.CrystalClash;
 import pruebas.Enumerators.MenuLogInState;
 import pruebas.Enumerators.StringWriting;
 import pruebas.Renders.helpers.ResourceHelper;
+import pruebas.Util.Profile;
 import aurelienribon.tweenengine.Timeline;
 import aurelienribon.tweenengine.Tween;
 
@@ -56,7 +58,7 @@ public class MenuLogInRender extends MenuRender {
 		stringWriting = StringWriting.None;
 		state = MenuLogInState.Idle;
 
-		loadStuff();
+		load();
 	}
 
 	public static MenuLogInRender getInstance(MenuLogIn menu) {
@@ -93,10 +95,10 @@ public class MenuLogInRender extends MenuRender {
 		return t.push(Tween.to(popUp, ActorAccessor.Y, CrystalClash.ANIMATION_SPEED).target(CrystalClash.HEIGHT));
 	}
 
-	private void loadStuff() {
-		charactersTexture = new Texture(
-				Gdx.files
-						.internal("data/Images/Menu/menu_login_lobby_characters.png"));
+	private void load() {
+		final Profile prof = GameController.getInstance().profileService.retrieveProfile();
+
+		charactersTexture = ResourceHelper.getTexture("data/Images/Menu/menu_login_lobby_characters.png");
 		characters = new Image(charactersTexture);
 
 		btnLogIn = new TextButton("Log In", ResourceHelper.getOuterButtonStyle());
@@ -159,7 +161,7 @@ public class MenuLogInRender extends MenuRender {
 		textFieldStyle.font = ResourceHelper.getFont();
 		textFieldStyle.fontColor = Color.WHITE;
 		textFieldStyle.cursor = textFieldSkin.getDrawable("textFieldCursor");
-		txtEmail = new TextField("", textFieldStyle);
+		txtEmail = new TextField(prof.getUserEmail(), textFieldStyle);
 		txtEmail.setMessageText("Enter your Email...");
 		txtEmail.setMaxLength(30);
 		txtEmail.setSize(700, 50);
@@ -172,7 +174,7 @@ public class MenuLogInRender extends MenuRender {
 			}
 		});
 
-		txtNick = new TextField("", textFieldStyle);
+		txtNick = new TextField(prof.getUserPassword(), textFieldStyle);
 		txtNick.setMessageText("Enter your User Name...");
 		txtNick.setMaxLength(30);
 		txtNick.setSize(700, 50);

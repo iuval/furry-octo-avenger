@@ -1,8 +1,6 @@
 package pruebas.Controllers;
 
-import pruebas.Entities.User;
 import pruebas.Networking.ServerDriver;
-import pruebas.Renders.GameEngine;
 import pruebas.Renders.MenuLogInRender;
 
 public class MenuLogIn {
@@ -42,11 +40,6 @@ public class MenuLogIn {
 		this.nick = nick;
 
 		ServerDriver.sendLogIn(email, nick);
-	}
-
-	public void sendLogInSuccess(String userId, String name) {
-		GameController.getInstancia().setUser(new User(userId, name, name));
-		GameEngine.getInstance().openMenuGames();
 	}
 
 	public void sendLogInError(String message) {
