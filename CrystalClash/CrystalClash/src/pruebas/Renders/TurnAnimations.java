@@ -185,7 +185,7 @@ public class TurnAnimations extends GameRender {
 					AttackUnitAction action = (AttackUnitAction) (((Object[]) source.getUserData())[0]);
 					int player = Integer.parseInt(((Object[]) source.getUserData())[1].toString());
 					Unit unit = action.origin.getUnit(player);
-					System.out.println(TweenCallback.BEGIN + " -> " + type);
+					// System.out.println(TweenCallback.BEGIN + " -> " + type);
 					if (type == TweenCallback.COMPLETE) {
 						Unit enemy = action.target.getUnit(player == 1 ? 2 : 1);
 						if (enemy != null) {
@@ -200,7 +200,7 @@ public class TurnAnimations extends GameRender {
 							}
 							unit.getRender().setState(STATE.fighting);
 						}
-					} else {
+					} else if (type == TweenCallback.BEGIN) {
 						unit.getRender().setState(STATE.walking);
 					}
 				}
