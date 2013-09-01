@@ -124,11 +124,10 @@ public class ServerDriver {
 				});
 	}
 
-	public static void sendGameTurn(String playerId, String gameId, int player, String turnData, String result) {
+	public static void sendGameTurn(String playerId, String gameId, String turnData, String result) {
 		Map<String, String> data = new HashMap<String, String>();
 		data.put("player_id", playerId);
 		data.put("game_id", gameId);
-		data.put("player", player + "");
 		if (turnData == null)
 			turnData = "ended";
 		data.put("data", turnData);

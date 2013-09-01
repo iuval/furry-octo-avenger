@@ -53,6 +53,11 @@ public class MenuGames {
 		render.enableRandomError(message);
 	}
 
+	public void surrenderGame(String gameId) {
+		ServerDriver.sendGameTurn(GameController.getInstance().getUser().getId(),
+				gameId, "ended", "defeat");
+	}
+
 	public void logOut() {
 		GameController.getInstance().logOut();
 	}

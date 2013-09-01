@@ -235,11 +235,8 @@ public class MenuGamesRender extends MenuRender {
 		final MessageBoxCallback surrenderCallback = new MessageBoxCallback() {
 			@Override
 			public void onEvent(int type, Object data) {
-				if (type == MessageBoxCallback.YES) {
-					System.out.println("surrender: "
-							+ data);
-
-				}
+				if (type == MessageBoxCallback.YES)
+					controller.surrenderGame(data.toString());
 			}
 		};
 		// Listeners
@@ -289,9 +286,7 @@ public class MenuGamesRender extends MenuRender {
 						.internal("data/Images/Menu/button_surrender.png")));
 		listItemSkin
 				.add("surrender_down",
-						new Texture(
-								Gdx.files
-										.internal("data/Images/Menu/button_surrender_pressed.png")));
+						ResourceHelper.getTexture("data/Images/Menu/button_surrender_pressed.png"));
 
 		TextButtonStyle playStyle = new TextButtonStyle();
 		playStyle.font = listItemSkin.getFont("font");

@@ -128,7 +128,7 @@ public class WorldRender extends Group implements InputProcessor {
 			@Override
 			public void onEvent(int type, Object data) {
 				if (type == MessageBoxCallback.YES)
-					System.out.println("Surrender");
+					world.surrenderCurrentGame();
 				else
 					setReadInput(true);
 			}
