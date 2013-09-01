@@ -161,13 +161,13 @@ public class MenuGamesRender extends MenuRender {
 
 		// put the table inside a scrollpane
 		scrollPane = new ScrollPane(list);
-		scrollPane
-				.setBounds(CrystalClash.WIDTH, 0, CrystalClash.WIDTH, CrystalClash.HEIGHT - 80);
+		scrollPane.setBounds(CrystalClash.WIDTH, 0, CrystalClash.WIDTH, CrystalClash.HEIGHT - 80);
 		scrollPane.setScrollingDisabled(true, false);
 		scrollPane.setOverscroll(false, true);
 		scrollPane.setSmoothScrolling(true);
-		scrollPane.invalidate();
 		scrollPane.setupOverscroll(CrystalClash.HEIGHT, 4000, 5000);
+		scrollPane.setForceScroll(false, true);
+		scrollPane.invalidate();
 		addActor(scrollPane);
 		gamesImage = new Image(new Texture(
 				Gdx.files.internal("data/Images/Menu/current_games_header.png")));

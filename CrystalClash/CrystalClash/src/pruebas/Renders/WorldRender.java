@@ -276,7 +276,7 @@ public class WorldRender extends Group implements InputProcessor {
 						.target(-grpBtnOptions.getWidth()))
 				.push(Tween.to(grpOptions, ActorAccessor.X, CrystalClash.FAST_ANIMATION_SPEED)
 						.target(75)
-						.ease(TweenEquations.easeOutBounce))
+						.ease(TweenEquations.easeOutCirc))
 				.start(tweenManager);
 	}
 
@@ -286,7 +286,7 @@ public class WorldRender extends Group implements InputProcessor {
 						.target(-grpOptions.getWidth()))
 				.push(Tween.to(grpBtnOptions, ActorAccessor.X, CrystalClash.FAST_ANIMATION_SPEED)
 						.target(grpBtnSend.getWidth() - 35)
-						.ease(TweenEquations.easeOutBounce))
+						.ease(TweenEquations.easeOutCirc))
 				.start(tweenManager);
 	}
 
@@ -294,10 +294,10 @@ public class WorldRender extends Group implements InputProcessor {
 		Timeline.createSequence()
 				.push(Tween.to(grpBtnSend, ActorAccessor.X, CrystalClash.FAST_ANIMATION_SPEED)
 						.target(0)
-						.ease(TweenEquations.easeOutBounce))
+						.ease(TweenEquations.easeOutCirc))
 				.push(Tween.to(grpBtnOptions, ActorAccessor.X, CrystalClash.FAST_ANIMATION_SPEED)
 						.target(grpBtnSend.getWidth() - 35)
-						.ease(TweenEquations.easeOutBounce))
+						.ease(TweenEquations.easeOutCirc))
 				.start(tweenManager);
 	}
 
