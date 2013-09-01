@@ -54,6 +54,8 @@ public class WorldRender extends Group implements InputProcessor {
 	private WorldController world;
 	GameRender gameRender;
 
+	private boolean readInput = true;
+
 	public WorldRender(WorldController world) {
 		this.world = world;
 
@@ -142,11 +144,14 @@ public class WorldRender extends Group implements InputProcessor {
 			public void onEvent(int type, Object data) {
 				if (type == MessageBoxCallback.YES)
 					System.out.println("Surrender");
+				else
+					setReadInput(true);
 			}
 		};
 		btnSurrender.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
+				setReadInput(false);
 				MessageBox.create()
 						.setMessage("\"He who knows when he can fight and when he cannot, will be victorious.\"\n- Sun Tzu")
 						.setYesText("Surrender")
@@ -165,11 +170,14 @@ public class WorldRender extends Group implements InputProcessor {
 			public void onEvent(int type, Object data) {
 				if (type == MessageBoxCallback.YES)
 					world.leaveGame();
+				else
+					setReadInput(true);
 			}
 		};
 		btnBack.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
+				setReadInput(false);
 				MessageBox.create()
 						.setMessage("If we leave now Commander,\ntroops will lose the given formation!")
 						.setYesText("Do it anyway")
@@ -236,11 +244,14 @@ public class WorldRender extends Group implements InputProcessor {
 					GameEngine.showLoading();
 					world.sendTurn();
 				}
+				else
+					setReadInput(true);
 			}
 		};
 		btnSend.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
+				setReadInput(false);
 				MessageBox.create()
 						.setMessage("Comander!\nTroops are ready and waiting for battle!\nJust say the word")
 						.setYesText("Charge!!")
@@ -316,29 +327,34 @@ public class WorldRender extends Group implements InputProcessor {
 
 	@Override
 	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-		Vector2 vec = GameEngine.getRealPosition(screenX, screenY);
+		if (readInput) {
+			Vector2 vec = GameEngine.getRealPosition(screenX, screenY);
 
-		if (hideMoreOptions
-				&& (vec.x > imgOptionsBackground.getX() + imgOptionsBackground.getWidth() || vec.y > btnSurrender
-						.getTop() + 25)) {
-			hideOptions();
+			if (hideMoreOptions
+					&& (vec.x > imgOptionsBackground.getX() + imgOptionsBackground.getWidth() || vec.y > btnSurrender
+							.getTop() + 25)) {
+				hideOptions();
+			}
+			gameRender.touchDown(vec.x, vec.y, pointer, button);
 		}
-		gameRender.touchDown(vec.x, vec.y, pointer, button);
-
 		return false;
 	}
 
 	@Override
 	public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-		Vector2 vec = GameEngine.getRealPosition(screenX, screenY);
-		gameRender.touchUp(vec.x, vec.y, pointer, button);
+		if (readInput) {
+			Vector2 vec = GameEngine.getRealPosition(screenX, screenY);
+			gameRender.touchUp(vec.x, vec.y, pointer, button);
+		}
 		return false;
 	}
 
 	@Override
 	public boolean touchDragged(int screenX, int screenY, int pointer) {
-		Vector2 vec = GameEngine.getRealPosition(screenX, screenY);
-		gameRender.touchDragged(vec.x, vec.y, pointer);
+		if (readInput) {
+			Vector2 vec = GameEngine.getRealPosition(screenX, screenY);
+			gameRender.touchDragged(vec.x, vec.y, pointer);
+		}
 		return false;
 	}
 
@@ -370,5 +386,9 @@ public class WorldRender extends Group implements InputProcessor {
 
 		gameRender.pushExitAnimation(t);
 		return t;
+	}
+
+	public void setReadInput(boolean read) {
+		readInput = read;
 	}
 }
