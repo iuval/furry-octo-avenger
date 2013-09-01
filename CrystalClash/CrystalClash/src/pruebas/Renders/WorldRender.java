@@ -80,20 +80,6 @@ public class WorldRender extends Group implements InputProcessor {
 		gameRender = new NormalGame(world);
 		addActor(gameRender);
 		showingAnimations = false;
-
-		MessageBox.create()
-				.setMessage("Surrender?? srsly??")
-				.setTweenManager(tweenManager)
-				.setCallback(new MessageBoxCallback() {
-					@Override
-					public void onEvent(int type, Object data) {
-						if (type == MessageBoxCallback.YES) {
-							System.out.println("surrender: "
-									+ data);
-
-						}
-					}
-				});
 		showHuds();
 	}
 
@@ -246,8 +232,10 @@ public class WorldRender extends Group implements InputProcessor {
 
 			@Override
 			public void onEvent(int type, Object data) {
-				if (type == MessageBoxCallback.YES)
+				if (type == MessageBoxCallback.YES) {
+					GameEngine.showLoading();
 					world.sendTurn();
+				}
 			}
 		};
 		btnSend.addListener(new ClickListener() {
