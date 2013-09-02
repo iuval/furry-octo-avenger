@@ -101,6 +101,10 @@ public class SplashScreen extends MenuRender {
 	}
 
 	@Override
+	public void init() {
+	}
+
+	@Override
 	public Timeline pushEnterAnimation(Timeline t) {
 		return t.beginParallel()
 				.push(Tween.set(background, ActorAccessor.ALPHA)

@@ -1,14 +1,16 @@
 package pruebas.Renders;
 
 import pruebas.Accessors.ActorAccessor;
+import pruebas.Controllers.GameController;
 import pruebas.Controllers.MenuLogIn;
 import pruebas.CrystalClash.CrystalClash;
 import pruebas.Enumerators.MenuLogInState;
 import pruebas.Enumerators.StringWriting;
-import pruebas.Renders.helpers.UIHelper;
+import pruebas.Renders.helpers.ResourceHelper;
+import pruebas.Renders.helpers.ui.MessageBox;
+import pruebas.Util.Profile;
 import aurelienribon.tweenengine.Timeline;
 import aurelienribon.tweenengine.Tween;
-import aurelienribon.tweenengine.TweenManager;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
@@ -28,13 +30,12 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 public class MenuLogInRender extends MenuRender {
 
 	private static MenuLogInRender instance;
-	private TweenManager tweenManager;
 
 	private MenuLogIn controller;
 
 	private Label lblHeading;
 	private TextField txtEmail;
-	private TextField txtNick;
+	private TextField txtPassword;
 	private TextButton btnLogIn;
 	private TextButton btnSignIn;
 	private TextButton btnConfirm;
@@ -43,7 +44,7 @@ public class MenuLogInRender extends MenuRender {
 	private Image popupPanel;
 	private Texture textFieldTexture;
 	private Image textFieldEmail;
-	private Image textFieldNick;
+	private Image textFieldPassword;
 	private Texture charactersTexture;
 	private Image characters;
 
@@ -55,11 +56,10 @@ public class MenuLogInRender extends MenuRender {
 
 	public MenuLogInRender(MenuLogIn menu) {
 		this.controller = menu;
-		tweenManager = new TweenManager();
 		stringWriting = StringWriting.None;
 		state = MenuLogInState.Idle;
 
-		loadStuff();
+		load();
 	}
 
 	public static MenuLogInRender getInstance(MenuLogIn menu) {
@@ -71,8 +71,12 @@ public class MenuLogInRender extends MenuRender {
 
 	@Override
 	public void act(float delta) {
-		tweenManager.update(delta);
+		// tweenManager.update(delta);
 		super.act(delta);
+	}
+
+	@Override
+	public void init() {
 	}
 
 	@Override
@@ -86,19 +90,19 @@ public class MenuLogInRender extends MenuRender {
 
 	@Override
 	public Timeline pushExitAnimation(Timeline t) {
-		txtNick.setText("");
-		txtNick.setMessageText("");
+		txtPassword.setText("");
+		txtPassword.setMessageText("");
 
 		return t.push(Tween.to(popUp, ActorAccessor.Y, CrystalClash.ANIMATION_SPEED).target(CrystalClash.HEIGHT));
 	}
 
-	private void loadStuff() {
-		charactersTexture = new Texture(
-				Gdx.files
-						.internal("data/Images/Menu/menu_login_lobby_characters.png"));
+	private void load() {
+		final Profile prof = GameController.getInstance().profileService.retrieveProfile();
+
+		charactersTexture = ResourceHelper.getTexture("data/Images/Menu/menu_login_lobby_characters.png");
 		characters = new Image(charactersTexture);
 
-		btnLogIn = new TextButton("Log In", UIHelper.getOuterButtonStyle());
+		btnLogIn = new TextButton("Log In", ResourceHelper.getOuterButtonStyle());
 		btnLogIn.setPosition(CrystalClash.WIDTH / 4 * 3 - btnLogIn.getWidth()
 				/ 2, CrystalClash.HEIGHT / 2 + 50);
 		btnLogIn.addListener(new ClickListener() {
@@ -109,7 +113,7 @@ public class MenuLogInRender extends MenuRender {
 			}
 		});
 
-		btnSignIn = new TextButton("Sign In", UIHelper.getOuterButtonStyle());
+		btnSignIn = new TextButton("Sign In", ResourceHelper.getOuterButtonStyle());
 		btnSignIn.setPosition(CrystalClash.WIDTH / 4 * 3 - btnSignIn.getWidth()
 				/ 2, CrystalClash.HEIGHT / 2 - 50 - btnSignIn.getHeight());
 		btnSignIn.addListener(new ClickListener() {
@@ -132,7 +136,7 @@ public class MenuLogInRender extends MenuRender {
 		popupPanel.setSize(800, 500);
 		popupPanel.setPosition(0, 0);
 
-		lblHeading = new Label("Welcome to Crystal Clash", new LabelStyle(UIHelper.getFont(),
+		lblHeading = new Label("Welcome to Crystal Clash", new LabelStyle(ResourceHelper.getFont(),
 				Color.WHITE));
 		lblHeading.setPosition(
 				popupPanel.getWidth() / 2 - lblHeading.getWidth() / 2,
@@ -144,9 +148,9 @@ public class MenuLogInRender extends MenuRender {
 		textFieldEmail.setPosition(50, popupPanel.getTop() - 200);
 		textFieldEmail.setSize(700, 50);
 
-		textFieldNick = new Image(textFieldTexture);
-		textFieldNick.setPosition(50, popupPanel.getTop() - 300);
-		textFieldNick.setSize(700, 50);
+		textFieldPassword = new Image(textFieldTexture);
+		textFieldPassword.setPosition(50, popupPanel.getTop() - 300);
+		textFieldPassword.setSize(700, 50);
 
 		Skin textFieldSkin = new Skin();
 		textFieldSkin
@@ -155,10 +159,10 @@ public class MenuLogInRender extends MenuRender {
 								.internal("data/Images/Menu/cursor_1.png")));
 
 		TextFieldStyle textFieldStyle = new TextFieldStyle();
-		textFieldStyle.font = UIHelper.getFont();
+		textFieldStyle.font = ResourceHelper.getFont();
 		textFieldStyle.fontColor = Color.WHITE;
 		textFieldStyle.cursor = textFieldSkin.getDrawable("textFieldCursor");
-		txtEmail = new TextField("", textFieldStyle);
+		txtEmail = new TextField(prof.getUserEmail(), textFieldStyle);
 		txtEmail.setMessageText("Enter your Email...");
 		txtEmail.setMaxLength(30);
 		txtEmail.setSize(700, 50);
@@ -171,20 +175,22 @@ public class MenuLogInRender extends MenuRender {
 			}
 		});
 
-		txtNick = new TextField("", textFieldStyle);
-		txtNick.setMessageText("Enter your User Name...");
-		txtNick.setMaxLength(30);
-		txtNick.setSize(700, 50);
-		txtNick.setPosition(textFieldNick.getX() + 10, textFieldNick.getY());
-		txtNick.addListener(new ClickListener() {
+		txtPassword = new TextField(prof.getUserPassword(), textFieldStyle);
+		txtPassword.setMessageText("Enter your User Name...");
+		txtPassword.setMaxLength(30);
+		txtPassword.setSize(700, 50);
+		txtPassword.setPosition(textFieldPassword.getX() + 10, textFieldPassword.getY());
+		txtPassword.setPasswordCharacter('*');
+		txtPassword.setPasswordMode(true);
+		txtPassword.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
 				adjustToKeyboard(true);
-				stringWriting = StringWriting.Nick;
+				stringWriting = StringWriting.Password;
 			}
 		});
 
-		btnBack = new TextButton("Back", UIHelper.getButtonStyle());
+		btnBack = new TextButton("Back", ResourceHelper.getButtonStyle());
 		btnBack.setPosition(50, 50);
 		btnBack.addListener(new ClickListener() {
 			@Override
@@ -192,33 +198,33 @@ public class MenuLogInRender extends MenuRender {
 				Gdx.input.setOnscreenKeyboardVisible(false);
 				moveUp(MenuLogInState.Idle);
 				txtEmail.setText("");
-				txtNick.setText("");
+				txtPassword.setText("");
 			}
 		});
 
-		btnConfirm = new TextButton("Confirm", UIHelper.getButtonStyle());
+		btnConfirm = new TextButton("Confirm", ResourceHelper.getButtonStyle());
 		btnConfirm.setPosition(popupPanel.getWidth() - btnBack.getWidth() - 50,
 				50);
 		btnConfirm.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
 				String email = txtEmail.getText().trim();
-				String nick = txtNick.getText().trim();
+				String password = txtPassword.getText().trim();
 				switch (state) {
 				case Idle:
 					break;
 				case LogIn:
-					if (!email.isEmpty() && !nick.isEmpty()) {
+					if (!email.isEmpty() && !password.isEmpty()) {
 						GameEngine.showLoading();
 						Gdx.input.setOnscreenKeyboardVisible(false);
-						controller.sendLogIn(email, nick);
+						controller.sendLogIn(email, password);
 					}
 					break;
 				case SignIn:
-					if (!email.isEmpty() && !nick.isEmpty()) {
+					if (!email.isEmpty() && !password.isEmpty()) {
 						GameEngine.showLoading();
 						Gdx.input.setOnscreenKeyboardVisible(false);
-						controller.sendSignIn(email, nick);
+						controller.sendSignIn(email, password);
 					}
 					break;
 				default:
@@ -231,9 +237,9 @@ public class MenuLogInRender extends MenuRender {
 		popUp.addActor(popupPanel);
 		popUp.addActor(lblHeading);
 		popUp.addActor(textFieldEmail);
-		popUp.addActor(textFieldNick);
+		popUp.addActor(textFieldPassword);
 		popUp.addActor(txtEmail);
-		popUp.addActor(txtNick);
+		popUp.addActor(txtPassword);
 		popUp.addActor(btnConfirm);
 		popUp.addActor(btnBack);
 
@@ -244,32 +250,34 @@ public class MenuLogInRender extends MenuRender {
 		addActor(popUp);
 	}
 
-	public void authenticateError(String message) {
-		System.out.println(message);
+	public void logInError(String message) {
+		MessageBox.build()
+				.setMessage(message)
+				.oneButtonsLayout("OK...")
+				.setCallback(null)
+				.show();
 	}
 
 	// Solo para el btnBack (Mueve el panel hacia arriba y hace un fade-in de
 	// los otros botones
 	private void moveUp(MenuLogInState state) {
 		float speed = CrystalClash.ANIMATION_SPEED;
-		Timeline.createParallel()
+		GameEngine.start(Timeline.createParallel()
 				.push(Tween.to(popUp, ActorAccessor.ALPHA, speed).target(0))
 				.push(Tween.to(groupInitialScreen, ActorAccessor.ALPHA, speed).target(1))
 				.push(Tween.to(popUp, ActorAccessor.Y, speed).target(
-						popUp.getY() + CrystalClash.HEIGHT))
-				.start(tweenManager);
+						popUp.getY() + CrystalClash.HEIGHT)));
 
 		this.state = state;
 	}
 
 	private void moveDown(MenuLogInState state) {
 		float speed = CrystalClash.ANIMATION_SPEED;
-		Timeline.createParallel()
+		GameEngine.start(Timeline.createParallel()
 				.push(Tween.to(popUp, ActorAccessor.Y, speed).target(
 						CrystalClash.HEIGHT / 2 - popUp.getHeight() / 2))
 				.push(Tween.to(popUp, ActorAccessor.ALPHA, speed).target(1))
-				.push(Tween.to(groupInitialScreen, ActorAccessor.ALPHA, speed).target(0))
-				.start(tweenManager);
+				.push(Tween.to(groupInitialScreen, ActorAccessor.ALPHA, speed).target(0)));
 
 		this.state = state;
 	}
@@ -282,9 +290,8 @@ public class MenuLogInRender extends MenuRender {
 			jump = CrystalClash.HEIGHT / 2 - 30;
 
 		float speed = CrystalClash.ANIMATION_SPEED;
-		Timeline.createParallel()
-				.push(Tween.to(popUp, ActorAccessor.Y, speed).target(jump))
-				.start(tweenManager);
+		GameEngine.start(Timeline.createParallel()
+				.push(Tween.to(popUp, ActorAccessor.Y, speed).target(jump)));
 	}
 
 	public void dispose() {
@@ -303,10 +310,10 @@ public class MenuLogInRender extends MenuRender {
 					txtEmail.setText(aux.substring(0, aux.length() - 1));
 				}
 				break;
-			case Nick:
-				aux = txtNick.getText();
+			case Password:
+				aux = txtPassword.getText();
 				if (aux.length() > 0) {
-					txtNick.setText(aux.substring(0, aux.length() - 1));
+					txtPassword.setText(aux.substring(0, aux.length() - 1));
 				}
 				break;
 			case None:
@@ -337,10 +344,10 @@ public class MenuLogInRender extends MenuRender {
 				txtEmail.setText(txtEmail.getText() + character);
 			}
 			break;
-		case Nick:
-			aux = txtNick.getText();
+		case Password:
+			aux = txtPassword.getText();
 			if (aux.length() < 30) {
-				txtNick.setText(txtNick.getText() + character);
+				txtPassword.setText(txtPassword.getText() + character);
 			}
 			break;
 		case None:

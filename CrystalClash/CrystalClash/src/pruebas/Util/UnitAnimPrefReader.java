@@ -50,7 +50,6 @@ public class UnitAnimPrefReader {
 						for (int i = 0; i < image_count; i++) {
 							image_times[i] = Float
 									.parseFloat(readValue(reader));
-							System.out.println(i);
 						}
 					} else {
 						readTuple(reader);

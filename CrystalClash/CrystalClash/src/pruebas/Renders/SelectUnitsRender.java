@@ -8,7 +8,7 @@ import pruebas.CrystalClash.CrystalClash;
 import pruebas.Entities.Cell;
 import pruebas.Entities.Unit;
 import pruebas.Renders.UnitRender.FACING;
-import pruebas.Renders.helpers.UIHelper;
+import pruebas.Renders.helpers.ResourceHelper;
 import pruebas.Renders.helpers.ui.List;
 import pruebas.Renders.helpers.ui.TabContainer;
 import pruebas.Renders.helpers.ui.ToggleButton;
@@ -18,33 +18,31 @@ import aurelienribon.tweenengine.Timeline;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 
 public class SelectUnitsRender extends GameRender {
-
 	private int unitCount = 0;
 	private Label lblUnitsCount;
 	private Unit selectedUnit = null;
 	private TabContainer tabs;
-	private boolean isSelectedUnitFromTabs = true;
 
 	public SelectUnitsRender(WorldController world) {
 		super(world);
 		world.assignFirstTurnAvailablePlaces();
 
-		init();
+		load();
 		GameEngine.hideLoading();
 	}
 
-	public void init() {
-		GameController.getInstancia().loadUnitsStats();
+	public void load() {
+		GameController.getInstance().loadUnitsStats();
 
-		lblUnitsCount = new Label("", new LabelStyle(UIHelper.getFont(), Color.WHITE));
+		lblUnitsCount = new Label("", new LabelStyle(ResourceHelper.getFont(), Color.WHITE));
 		lblUnitsCount.setPosition(CrystalClash.WIDTH - 100, 50);
 		resetUnitsCount();
+		addActor(lblUnitsCount);
 
 		TextureAtlas atlas = new TextureAtlas(
 				"data/Images/InGame/FirstTurn/unit_select.pack");
@@ -101,13 +99,13 @@ public class SelectUnitsRender extends GameRender {
 		tabs.addTab(headerDarkness, listDarkness);
 
 		// List items
-		Enumeration<String> unit_names = GameController.getInstancia().getUnitNames();
+		Enumeration<String> unit_names = GameController.getInstance().getUnitNames();
 		String unit_name;
 		while (unit_names.hasMoreElements()) {
 			unit_name = unit_names.nextElement();
 			UnitListItem item = new UnitListItem(unit_name,
 					portraitsAtlas.findRegion("portrait_" + unit_name), skin);
-			switch (GameController.getInstancia().getUnitElement(unit_name)) {
+			switch (GameController.getInstance().getUnitElement(unit_name)) {
 			case Unit.ELEMENT_FIRE:
 				listFire.addUnitItem(item);
 				break;
@@ -128,11 +126,10 @@ public class SelectUnitsRender extends GameRender {
 				break;
 			}
 		}
-
 	}
 
 	private boolean canPlaceUnit() {
-		return unitCount < GameController.getInstancia().unitsPerPlayer;
+		return unitCount < GameController.getInstance().unitsPerPlayer;
 	}
 
 	private void changeUnitsCountBy(int du) {
@@ -146,21 +143,13 @@ public class SelectUnitsRender extends GameRender {
 	}
 
 	private void updateUnitsCountLabel() {
-		lblUnitsCount.setText(unitCount + "/" + GameController.getInstancia().unitsPerPlayer);
+		lblUnitsCount.setText(unitCount + "/" + GameController.getInstance().unitsPerPlayer);
 	}
 
 	@Override
 	public void clearAllChanges() {
 		world.deleteAllUnits();
 		resetUnitsCount();
-	}
-
-	public void render(float dt, SpriteBatch batch, Stage stage) {
-		tabs.draw(dt, batch);
-		if (selectedUnit != null) {
-			selectedUnit.getRender().draw(batch, dt);
-		}
-		stage.addActor(lblUnitsCount);
 	}
 
 	public boolean touchDown(float x, float y, int pointer, int button) {
@@ -174,7 +163,6 @@ public class SelectUnitsRender extends GameRender {
 						u.getRender().setFacing(FACING.left);
 					selectedUnit = u;
 					selectedUnit.setPosition(x, y);
-					isSelectedUnitFromTabs = true;
 				}
 			} else {
 				Cell cell = world.cellAt(x, y);
@@ -223,5 +211,13 @@ public class SelectUnitsRender extends GameRender {
 	public Timeline pushExitAnimation(Timeline t) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public void render(float dt, SpriteBatch batch) {
+		tabs.draw(dt, batch);
+		if (selectedUnit != null) {
+			selectedUnit.getRender().draw(batch, dt);
+		}
 	}
 }

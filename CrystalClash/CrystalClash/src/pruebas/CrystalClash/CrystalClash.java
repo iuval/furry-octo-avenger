@@ -3,9 +3,13 @@ package pruebas.CrystalClash;
 import pruebas.Renders.GameEngine;
 
 import com.badlogic.gdx.Game;
+import com.badlogic.gdx.graphics.FPSLogger;
 import com.badlogic.gdx.graphics.Texture;
 
 public class CrystalClash extends Game {
+	// constant useful for logging
+	public static final String LOG = CrystalClash.class.getSimpleName();
+	private FPSLogger fpsLogger;
 
 	public static final String TITLE = "Crystal Clash";
 	public static final String VERSION = "0.1";
@@ -21,6 +25,7 @@ public class CrystalClash extends Game {
 	@Override
 	public void create() {
 		Texture.setEnforcePotImages(false);
+		fpsLogger = new FPSLogger();
 		setScreen(GameEngine.getInstance());
 	}
 
@@ -30,8 +35,12 @@ public class CrystalClash extends Game {
 	}
 
 	@Override
-	public void render() {
+	public void render()
+	{
 		super.render();
+
+		// output the current FPS
+		fpsLogger.log();
 	}
 
 	@Override

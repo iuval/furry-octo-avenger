@@ -1,15 +1,15 @@
 package pruebas.Renders;
 
 import pruebas.Accessors.ActorAccessor;
+import pruebas.Controllers.GameController;
 import pruebas.Controllers.MenuGames;
 import pruebas.Controllers.MenuLogIn;
 import pruebas.Controllers.WorldController;
 import pruebas.CrystalClash.CrystalClash;
 import pruebas.Enumerators.GameState;
-import pruebas.Renders.UnitRender.FACING;
-import pruebas.Renders.helpers.UIHelper;
+import pruebas.Renders.helpers.ResourceHelper;
+import pruebas.Renders.helpers.ui.MessageBox;
 import pruebas.Renders.helpers.ui.SuperAnimatedActor;
-import pruebas.Util.FileUtil;
 import aurelienribon.tweenengine.BaseTween;
 import aurelienribon.tweenengine.Timeline;
 import aurelienribon.tweenengine.Tween;
@@ -53,6 +53,7 @@ public class GameEngine implements Screen {
 	private WorldRender worldRender;
 
 	private static TweenManager tweenManager;
+	private static Image txrBlackScreen;
 	private static SuperAnimatedActor loadingTexture;
 
 	private Image background;
@@ -72,23 +73,33 @@ public class GameEngine implements Screen {
 
 		tweenManager = new TweenManager();
 
+		ResourceHelper.fastLoad();
+
 		load();
 		openSplash();
 	}
 
 	private void loadInSplash() {
-		loadingTexture = new SuperAnimatedActor(FileUtil.getSuperAnimation("data/Images/Menu/Loading/loading"), true, FACING.right);
-		hideLoading();
+		ResourceHelper.slowLoad();
 
-		UIHelper.load();
+		txrBlackScreen = new Image(ResourceHelper.getTexture("data/Images/Menu/Loading/background.png"));
+		txrBlackScreen.setColor(txrBlackScreen.getColor().r, txrBlackScreen.getColor().g, txrBlackScreen.getColor().b, 0);
+		txrBlackScreen.setVisible(false);
+
+		MessageBox.build()
+				.setTweenManager(tweenManager);
+
+		// loadingTexture = new
+		// SuperAnimatedActor(FileUtil.getSuperAnimation("data/Images/Menu/Loading/loading"),
+		// true, FACING.right);
+		// hideLoading();
 
 		Gdx.input.setCatchBackKey(true);
 		Gdx.input.setInputProcessor(inputManager);
 	}
 
 	private void load() {
-		Texture backgroundTexture = new Texture(
-				Gdx.files.internal("data/Images/Menu/menu_background.jpg"));
+		Texture backgroundTexture = ResourceHelper.getTexture("data/Images/Menu/menu_background.jpg");
 		background = new Image(backgroundTexture);
 
 		Tween.registerAccessor(Actor.class, new ActorAccessor());
@@ -121,7 +132,7 @@ public class GameEngine implements Screen {
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		if (state == GameState.InGame || state == GameState.InTranstionMenuGamesAndGame) {
 			batch.begin();
-			worldRender.render(dt, batch, stage);
+			worldRender.render(dt, batch);
 			batch.end();
 		}
 		stage.draw();
@@ -134,14 +145,16 @@ public class GameEngine implements Screen {
 		stage.addActor(background);
 		inputManager.addProcessor(stage);
 		switch (newState) {
-		case InSplash:
-			stage.addActor(splashRender);
-			break;
 		case InMenuLogIn:
 			stage.addActor(menuLogInRender);
 			break;
 		case InTranstionMenuLogInAndMenuGames:
 			stage.addActor(menuLogInRender);
+			stage.addActor(menuGamesRender);
+			break;
+		case InTranstionSplashAndMenuGames:
+			stage.addActor(background);
+			stage.addActor(splashRender);
 			stage.addActor(menuGamesRender);
 			break;
 		case InMenuGames:
@@ -157,8 +170,12 @@ public class GameEngine implements Screen {
 			break;
 		case InGame:
 			inputManager.addProcessor(worldRender);
+			stage.addActor(worldRender);
 			break;
 		}
+		if (txrBlackScreen != null)
+			stage.addActor(txrBlackScreen);
+		stage.addActor(MessageBox.build());
 		if (loadingTexture != null)
 			stage.addActor(loadingTexture);
 	}
@@ -172,6 +189,7 @@ public class GameEngine implements Screen {
 				if (worldRender == null) {
 					world = new WorldController(data, turn);
 					worldRender = world.getRender();
+					worldRender.init();
 				}
 				setState(GameState.InTranstionMenuGamesAndGame);
 				Timeline.createSequence()
@@ -188,18 +206,18 @@ public class GameEngine implements Screen {
 	}
 
 	public void openSplash() {
-		if (splashRender == null) {
-			splashRender = new SplashScreen();
-		}
+		splashRender = new SplashScreen();
+		stage.addActor(splashRender);
 
-		setState(GameState.InSplash);
+		this.state = GameState.InSplash;
 		Timeline t = Timeline.createSequence();
 		splashRender.pushEnterAnimation(t);
 		t.setCallback(new TweenCallback() {
 			@Override
 			public void onEvent(int type, BaseTween<?> source) {
 				loadInSplash();
-				openMenuLogIn();
+				if (!GameController.getInstance().willTryToLogin())
+					openMenuLogIn();
 			}
 		});
 		t.start(tweenManager);
@@ -217,6 +235,7 @@ public class GameEngine implements Screen {
 			public void onEvent(int type, BaseTween<?> source) {
 				if (menuLogInRender == null) {
 					menuLogInRender = MenuLogIn.getInstance().getRender();
+					menuLogInRender.init();
 				}
 				setState(GameState.InMenuLogIn);
 				menuLogInRender.pushEnterAnimation(Timeline.createSequence()).start(tweenManager);
@@ -227,13 +246,34 @@ public class GameEngine implements Screen {
 
 	public void openMenuGames() {
 		Timeline t = Timeline.createSequence();
-		if (state == GameState.InMenuLogIn) {
+		if (state == GameState.InSplash) {
+			splashRender.pushExitAnimation(t);
+			t.setCallback(new TweenCallback() {
+				@Override
+				public void onEvent(int type, BaseTween<?> source) {
+					if (menuGamesRender == null) {
+						menuGamesRender = MenuGames.getInstance().getRender();
+						menuGamesRender.init();
+					}
+					MenuGames.getInstance().getGamesList();
+					setState(GameState.InTranstionSplashAndMenuGames);
+					menuGamesRender.pushEnterAnimation(Timeline.createSequence())
+							.setCallback(new TweenCallback() {
+								@Override
+								public void onEvent(int type, BaseTween<?> source) {
+									setState(GameState.InMenuGames);
+								}
+							}).start(tweenManager);
+				}
+			});
+		} else if (state == GameState.InMenuLogIn) {
 			menuLogInRender.pushExitAnimation(t);
 			t.setCallback(new TweenCallback() {
 				@Override
 				public void onEvent(int type, BaseTween<?> source) {
 					if (menuGamesRender == null) {
 						menuGamesRender = MenuGames.getInstance().getRender();
+						menuGamesRender.init();
 					}
 					MenuGames.getInstance().getGamesList();
 					setState(GameState.InTranstionMenuLogInAndMenuGames);
@@ -255,6 +295,7 @@ public class GameEngine implements Screen {
 				public void onEvent(int type, BaseTween<?> source) {
 					if (menuGamesRender == null) {
 						menuGamesRender = MenuGames.getInstance().getRender();
+						menuGamesRender.init();
 					}
 					MenuGames.getInstance().getGamesList();
 					setState(GameState.InTranstionMenuGamesAndGame);
@@ -269,6 +310,18 @@ public class GameEngine implements Screen {
 			});
 		}
 		t.start(tweenManager);
+	}
+
+	public void logInError(String message) {
+		if (state == GameState.InMenuLogIn) {
+			MessageBox.build()
+					.setMessage("Log in failed...\nAre you trying to login with your ex's account to lose all their games?")
+					.oneButtonsLayout("Nop...")
+					.setCallback(null)
+					.show();
+		} else {
+			openMenuLogIn();
+		}
 	}
 
 	@Override
@@ -301,12 +354,42 @@ public class GameEngine implements Screen {
 		return new Vector2(vec.x, vec.y);
 	}
 
+	public static Timeline pushShowBlackScreen(Timeline t) {
+		txrBlackScreen.setVisible(true);
+		return t.push(Tween.to(txrBlackScreen, ActorAccessor.ALPHA, CrystalClash.FAST_ANIMATION_SPEED)
+				.target(1));
+	}
+
+	public static Timeline pushHideBlackScreen(Timeline t) {
+		return t.push(Tween.to(txrBlackScreen, ActorAccessor.ALPHA, CrystalClash.FAST_ANIMATION_SPEED)
+				.target(0))
+				.setCallback(new TweenCallback() {
+
+					@Override
+					public void onEvent(int type, BaseTween<?> source) {
+						txrBlackScreen.setVisible(false);
+					}
+				});
+	}
+
 	public static void showLoading() {
-		loadingTexture.setVisible(true);
+		// showBlackScreen();
+		// loadingTexture.setVisible(true);
+		MessageBox.build()
+				.setMessage("Loading...")
+				.noButtonsLayout()
+				.setCallback(null)
+				.show();
 	}
 
 	public static void hideLoading() {
-		loadingTexture.setVisible(false);
+		// hideBlackScreen();
+		// loadingTexture.setVisible(false);
+		MessageBox.build().hide();
+	}
+
+	public static void start(Timeline t) {
+		t.start(tweenManager);
 	}
 
 }

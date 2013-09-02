@@ -4,7 +4,11 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 
 import pruebas.Entities.User;
+import pruebas.Networking.ServerDriver;
 import pruebas.Renders.GameEngine;
+import pruebas.Renders.helpers.ui.MessageBox;
+import pruebas.Util.Profile;
+import pruebas.Util.ProfileService;
 import pruebas.Util.UnitSharedDataPrefReader;
 import pruebas.Util.UnitStatsPrefReader;
 
@@ -12,7 +16,7 @@ public class GameController {
 
 	private static GameController instancia;
 
-	public static GameController getInstancia() {
+	public static GameController getInstance() {
 		if (instancia == null)
 			instancia = new GameController();
 		return instancia;
@@ -20,12 +24,17 @@ public class GameController {
 
 	private boolean dataLoaded = false;
 	private User currentUser;
+	public ProfileService profileService;
 	private Hashtable<String, int[]> unitValues;
 
 	public float unitMaxLife = 0;
 	public float unitMaxAttack = 0;
 	public float unitMaxSpeed = 0;
 	public int unitsPerPlayer = 0;
+
+	private GameController() {
+		profileService = new ProfileService();
+	}
 
 	public void setUser(User user) {
 		currentUser = user;
@@ -84,7 +93,35 @@ public class GameController {
 		return unitValues.keys();
 	}
 
+	public boolean willTryToLogin() {
+		Profile p = profileService.retrieveProfile();
+		if (p.hasUserAndPassword()) {
+			logIn(p.getUserEmail(), p.getUserPassword());
+			return true;
+		}
+		return false;
+	}
+
+	public void logIn(String email, String password) {
+		MessageBox.build()
+				.setMessage("Authenticating...\nIn this last step we will require the blood of a virgin.")
+				.noButtonsLayout()
+				.setCallback(null)
+				.show();
+		ServerDriver.sendLogIn(email, password);
+	}
+
+	public void logInSuccess(String userId, String email, String password) {
+		profileService.retrieveProfile().setUserEmail(email);
+		profileService.retrieveProfile().setUserPassword(password);
+		profileService.persist();
+		setUser(new User(userId, email, email));
+		GameEngine.getInstance().openMenuGames();
+	}
+
 	public void logOut() {
+		profileService.retrieveProfile().setUserPassword("");
+		profileService.persist();
 		this.currentUser = null;
 		GameEngine.getInstance().openMenuLogIn();
 	}

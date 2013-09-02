@@ -10,6 +10,8 @@ public abstract class MenuRender extends Group implements InputProcessor {
 	public MenuRender() {
 	}
 
+	public abstract void init();
+
 	public abstract Timeline pushEnterAnimation(Timeline t);
 
 	public abstract Timeline pushExitAnimation(Timeline t);

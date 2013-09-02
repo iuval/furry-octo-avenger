@@ -103,6 +103,8 @@ public class SuperAnimation {
 
 		if (at == FACING.left && !current.isFlipX()) {
 			current.flip(true, false);
+		} else if (at == FACING.right && current.isFlipX()) {
+			current.flip(true, false);
 		}
 	}
 

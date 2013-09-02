@@ -1,13 +1,12 @@
 package pruebas.Renders;
 
 import pruebas.Controllers.WorldController;
-
 import aurelienribon.tweenengine.Timeline;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.Group;
 
-public abstract class GameRender {
+public abstract class GameRender extends Group {
 	protected WorldController world;
 
 	public GameRender(WorldController world) {
@@ -16,7 +15,7 @@ public abstract class GameRender {
 
 	public abstract void clearAllChanges();
 
-	public abstract void render(float dt, SpriteBatch batch, Stage stage);
+	public abstract void render(float dt, SpriteBatch batch);
 
 	public abstract boolean touchDown(float x, float y, int pointer, int button);
 

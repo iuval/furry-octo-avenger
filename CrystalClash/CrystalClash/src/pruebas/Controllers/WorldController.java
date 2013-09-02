@@ -28,7 +28,6 @@ public class WorldController {
 
 	public int player;
 	private String gameId;
-	private boolean firstTurn;
 	public int enemiesCount;
 	public int allysCount;
 	public boolean gameEnded = false;
@@ -40,12 +39,13 @@ public class WorldController {
 
 		render = new WorldRender(this);
 
-		readData(data);
-		if (firstTurn) {
+		if (data.get("data") != null && data.get("data").asString().equals("none")) {
 			render.initFirstTurn();
 		} else {
-			if (turn == 2) { // First playable turn, only FirstTurn actions
-								// (PlaceActions), so nothing to show
+			readData(data);
+			if (!gameEnded && turn == 2) { // First playable turn, only
+											// FirstTurn actions
+				// (PlaceActions), so nothing to show
 				render.initNormalTurn();
 			} else {
 				render.initTurnAnimations();
@@ -54,15 +54,10 @@ public class WorldController {
 	}
 
 	private void readData(JsonValue values) {
-		if (values.get("data") != null
-				&& values.get("data").asString().equals("none")) {
-			firstTurn = true;
-		} else {
-			enemiesCount = 0;
-			allysCount = 0;
-			readPlayerData(values.get("data1"), 1);
-			readPlayerData(values.get("data2"), 2);
-		}
+		enemiesCount = 0;
+		allysCount = 0;
+		readPlayerData(values.get("data1"), 1);
+		readPlayerData(values.get("data2"), 2);
 	}
 
 	private void readPlayerData(JsonValue values, int playerNum) {
@@ -72,7 +67,7 @@ public class WorldController {
 		int x, y;
 		String strValues = values.asString();
 		if (strValues.equals("ended")) {
-
+			gameEnded = true;
 		} else {
 			values = ServerDriver.parseJson(strValues);
 			boolean isEnemy = player != playerNum;
@@ -109,7 +104,7 @@ public class WorldController {
 
 						((MoveUnitAction) unitA).moves.add(cellGrid[cellX][cellY]);
 					}
-				} else if (action.equals("defense")) {
+				} else if (action.equals("defend")) {
 					unitA = new DefendUnitAction();
 				} else {
 					unitA = new NoneUnitAction();
@@ -308,6 +303,7 @@ public class WorldController {
 	}
 
 	public void sendTurn() {
+		GameEngine.showLoading();
 		String data = null;
 		String result = null;
 		if (gameEnded) {
@@ -335,9 +331,13 @@ public class WorldController {
 			data = builder.toString();
 		}
 
-		ServerDriver.sendGameTurn(GameController.getInstancia().getUser().getId(),
-				gameId, player, data, result);
+		ServerDriver.sendGameTurn(GameController.getInstance().getUser().getId(),
+				gameId, data, result);
+	}
 
+	public void surrenderCurrentGame() {
+		ServerDriver.sendGameTurn(GameController.getInstance().getUser().getId(),
+				gameId, "ended", "defeat");
 	}
 
 	public WorldRender getRender() {
