@@ -47,6 +47,13 @@ public class Profile implements Serializable {
 		return userPassword;
 	}
 
+	public boolean hasUserAndPassword() {
+		return userPassword != null
+				&& !userPassword.isEmpty()
+				&& userEmail != null
+				&& !userEmail.isEmpty();
+	}
+
 	// Serializable implementation
 
 	@Override

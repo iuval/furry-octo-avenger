@@ -239,6 +239,7 @@ public class WorldRender extends Group implements InputProcessor {
 						.setMessage("Comander!\nTroops are ready and waiting for battle!\nJust say the word")
 						.twoButtonsLayout("Charge!!", "Hold your horses!")
 						.setCallback(sendTurnCallback)
+						.setHideOnAction(false)
 						.show();
 			}
 		});

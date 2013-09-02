@@ -38,12 +38,7 @@ public class MenuLogIn {
 	public void sendLogIn(String email, String password) {
 		this.email = email;
 		this.password = password;
-
-		ServerDriver.sendLogIn(email, password);
-	}
-
-	public void sendLogInError(String message) {
-		render.logInError(message);
+		GameController.getInstance().logIn(email, password);
 	}
 
 	public void serverError(String message) {

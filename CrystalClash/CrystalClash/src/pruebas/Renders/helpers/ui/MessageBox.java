@@ -69,6 +69,7 @@ public class MessageBox extends Group {
 	public static MessageBox build() {
 		if (instance == null)
 			instance = new MessageBox();
+		instance.setHideOnAction(true);
 		return instance;
 	}
 

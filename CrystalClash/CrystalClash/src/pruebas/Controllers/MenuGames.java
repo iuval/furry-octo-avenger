@@ -4,6 +4,7 @@ import pruebas.Networking.ServerDriver;
 import pruebas.Renders.GameEngine;
 import pruebas.Renders.MenuGamesRender;
 import pruebas.Renders.helpers.ui.MessageBox;
+import pruebas.Renders.helpers.ui.MessageBoxCallback;
 
 import com.badlogic.gdx.utils.JsonValue;
 
@@ -58,8 +59,21 @@ public class MenuGames {
 				gameId, "ended", "defeat");
 	}
 
+	private MessageBoxCallback logoutCallback = new MessageBoxCallback() {
+
+		@Override
+		public void onEvent(int type, Object data) {
+			if (type == YES)
+				GameController.getInstance().logOut();
+		}
+	};
+
 	public void logOut() {
-		GameController.getInstance().logOut();
+		MessageBox.build()
+				.setMessage("Farewell Commander, we await your return to the fields.")
+				.twoButtonsLayout("I'll be back", "I'm not leaving")
+				.setCallback(logoutCallback)
+				.show();
 	}
 
 	public void getGameTurn(String gameId, int turn) {

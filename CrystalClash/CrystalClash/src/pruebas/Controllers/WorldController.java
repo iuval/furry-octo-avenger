@@ -303,6 +303,7 @@ public class WorldController {
 	}
 
 	public void sendTurn() {
+		GameEngine.showLoading();
 		String data = null;
 		String result = null;
 		if (gameEnded) {

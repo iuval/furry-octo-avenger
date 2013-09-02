@@ -12,6 +12,7 @@ import aurelienribon.tweenengine.Timeline;
 import aurelienribon.tweenengine.Tween;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.Group;
@@ -331,7 +332,11 @@ public class MenuGamesRender extends MenuRender {
 	// INPUT PROCESSOR--------------------------------------------
 	@Override
 	public boolean keyDown(int keycode) {
-		return false;
+
+		if (keycode == Keys.BACK) {
+			controller.logOut();
+		}
+		return true;
 	}
 
 	@Override

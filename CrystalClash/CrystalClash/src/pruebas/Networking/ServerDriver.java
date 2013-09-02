@@ -5,7 +5,8 @@ import java.util.Map;
 
 import pruebas.Controllers.GameController;
 import pruebas.Controllers.MenuGames;
-import pruebas.Controllers.MenuLogIn;
+import pruebas.Renders.GameEngine;
+import pruebas.Renders.helpers.ui.MessageBox;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Net.HttpMethods;
@@ -37,14 +38,14 @@ public class ServerDriver {
 								.ProcessResponce(httpResponse);
 						if (values.getString("value").equals("ok")) {
 							JsonValue data = values.get("data");
-							GameController.getInstance().logIn(data.getString("id"), email, password);
+							GameController.getInstance().logInSuccess(data.getString("id"), email, password);
 						} else {
-							MenuLogIn.getInstance().sendLogInError(values.getString("message"));
+							GameEngine.getInstance().logInError(values.getString("message"));
 						}
 					}
 
 					public void failed(Throwable t) {
-						MenuLogIn.getInstance().serverError("PANIC!");
+						exceptionMessage();
 					}
 				});
 	}
@@ -60,14 +61,14 @@ public class ServerDriver {
 						JsonValue values = ServerDriver.ProcessResponce(httpResponse);
 						if (values.getString("value").equals("ok")) {
 							JsonValue data = values.get("data");
-							GameController.getInstance().logIn(data.getString("id"), email, password);
+							GameController.getInstance().logInSuccess(data.getString("id"), email, password);
 						} else {
-							MenuLogIn.getInstance().sendLogInError(values.getString("message"));
+							GameEngine.getInstance().logInError(values.getString("message"));
 						}
 					}
 
 					public void failed(Throwable t) {
-						MenuLogIn.getInstance().serverError("PANIC!");
+						exceptionMessage();
 					}
 				});
 	}
@@ -97,7 +98,7 @@ public class ServerDriver {
 					}
 
 					public void failed(Throwable t) {
-						MenuLogIn.getInstance().serverError("PANIC!");
+						exceptionMessage();
 					}
 				});
 	}
@@ -119,7 +120,7 @@ public class ServerDriver {
 					}
 
 					public void failed(Throwable t) {
-						MenuLogIn.getInstance().serverError("PANIC!");
+						exceptionMessage();
 					}
 				});
 	}
@@ -149,7 +150,7 @@ public class ServerDriver {
 					}
 
 					public void failed(Throwable t) {
-						MenuLogIn.getInstance().serverError("PANIC!");
+						exceptionMessage();
 					}
 				});
 	}
@@ -168,9 +169,17 @@ public class ServerDriver {
 			}
 
 			public void failed(Throwable t) {
-				MenuLogIn.getInstance().serverError("PANIC!");
+				exceptionMessage();
 			}
 		});
+	}
+
+	private static void exceptionMessage() {
+		MessageBox.build()
+				.setMessage("Something went wrong, but I think we will survive. You should go play outside, get some sun and stuff. Try later.")
+				.oneButtonsLayout("LOL ok :p")
+				.setCallback(null)
+				.show();
 	}
 
 	private static HttpRequest getPost(String url, Map<String, String> data) {

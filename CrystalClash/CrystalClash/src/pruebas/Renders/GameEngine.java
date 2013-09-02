@@ -1,6 +1,7 @@
 package pruebas.Renders;
 
 import pruebas.Accessors.ActorAccessor;
+import pruebas.Controllers.GameController;
 import pruebas.Controllers.MenuGames;
 import pruebas.Controllers.MenuLogIn;
 import pruebas.Controllers.WorldController;
@@ -151,6 +152,11 @@ public class GameEngine implements Screen {
 			stage.addActor(menuLogInRender);
 			stage.addActor(menuGamesRender);
 			break;
+		case InTranstionSplashAndMenuGames:
+			stage.addActor(background);
+			stage.addActor(splashRender);
+			stage.addActor(menuGamesRender);
+			break;
 		case InMenuGames:
 			stage.addActor(background);
 			stage.addActor(menuGamesRender);
@@ -210,7 +216,8 @@ public class GameEngine implements Screen {
 			@Override
 			public void onEvent(int type, BaseTween<?> source) {
 				loadInSplash();
-				openMenuLogIn();
+				if (!GameController.getInstance().willTryToLogin())
+					openMenuLogIn();
 			}
 		});
 		t.start(tweenManager);
@@ -239,7 +246,27 @@ public class GameEngine implements Screen {
 
 	public void openMenuGames() {
 		Timeline t = Timeline.createSequence();
-		if (state == GameState.InMenuLogIn) {
+		if (state == GameState.InSplash) {
+			splashRender.pushExitAnimation(t);
+			t.setCallback(new TweenCallback() {
+				@Override
+				public void onEvent(int type, BaseTween<?> source) {
+					if (menuGamesRender == null) {
+						menuGamesRender = MenuGames.getInstance().getRender();
+						menuGamesRender.init();
+					}
+					MenuGames.getInstance().getGamesList();
+					setState(GameState.InTranstionSplashAndMenuGames);
+					menuGamesRender.pushEnterAnimation(Timeline.createSequence())
+							.setCallback(new TweenCallback() {
+								@Override
+								public void onEvent(int type, BaseTween<?> source) {
+									setState(GameState.InMenuGames);
+								}
+							}).start(tweenManager);
+				}
+			});
+		} else if (state == GameState.InMenuLogIn) {
 			menuLogInRender.pushExitAnimation(t);
 			t.setCallback(new TweenCallback() {
 				@Override
@@ -283,6 +310,18 @@ public class GameEngine implements Screen {
 			});
 		}
 		t.start(tweenManager);
+	}
+
+	public void logInError(String message) {
+		if (state == GameState.InMenuLogIn) {
+			MessageBox.build()
+					.setMessage("Log in failed...\nAre you trying to login with your ex's account to lose all their games?")
+					.oneButtonsLayout("Nop...")
+					.setCallback(null)
+					.show();
+		} else {
+			openMenuLogIn();
+		}
 	}
 
 	@Override
