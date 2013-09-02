@@ -4,13 +4,15 @@ import pruebas.Accessors.ActorAccessor;
 import pruebas.Controllers.GameController;
 import pruebas.Controllers.MenuGames;
 import pruebas.CrystalClash.CrystalClash;
-import pruebas.Renders.helpers.UIHelper;
+import pruebas.Renders.helpers.ResourceHelper;
 import pruebas.Renders.helpers.ui.GameListItem;
+import pruebas.Renders.helpers.ui.MessageBox;
+import pruebas.Renders.helpers.ui.MessageBoxCallback;
 import aurelienribon.tweenengine.Timeline;
 import aurelienribon.tweenengine.Tween;
-import aurelienribon.tweenengine.TweenManager;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.Group;
@@ -28,7 +30,6 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
 public class MenuGamesRender extends MenuRender {
 	private static MenuGamesRender instance;
-	private TweenManager tweenManager;
 
 	private MenuGames controller;
 	private ScrollPane scrollPane;
@@ -54,7 +55,6 @@ public class MenuGamesRender extends MenuRender {
 
 	public MenuGamesRender(MenuGames menu) {
 		this.controller = menu;
-		tweenManager = new TweenManager();
 
 		load();
 	}
@@ -107,13 +107,16 @@ public class MenuGamesRender extends MenuRender {
 			refreshMessagePull.setVisible(false);
 			refreshMessageRelease.setVisible(false);
 		}
-		tweenManager.update(delta);
 		super.act(delta);
 	}
 
 	@Override
+	public void init() {
+	}
+
+	@Override
 	public Timeline pushEnterAnimation(Timeline t) {
-		lblHeading.setText("Welcome " + GameController.getInstancia().getUser().getNick());
+		lblHeading.setText("Welcome " + GameController.getInstance().getUser().getNick());
 		return t.beginParallel()
 				.push(Tween.to(lblHeading, ActorAccessor.X, CrystalClash.ANIMATION_SPEED).target(50))
 				.push(Tween.to(btnLogOut, ActorAccessor.Y, CrystalClash.ANIMATION_SPEED).target(CrystalClash.HEIGHT - btnLogOut.getHeight() - 10))
@@ -134,12 +137,12 @@ public class MenuGamesRender extends MenuRender {
 		initSkin();
 
 		lblHeading = new Label("Welcome "
-				+ GameController.getInstancia().getUser().getNick(),
-				new LabelStyle(UIHelper.getFont(), Color.WHITE));
+				+ GameController.getInstance().getUser().getNick(),
+				new LabelStyle(ResourceHelper.getFont(), Color.WHITE));
 		lblHeading.setPosition(-CrystalClash.WIDTH, CrystalClash.HEIGHT - 50);
 		addActor(lblHeading);
 
-		btnLogOut = new TextButton("Log Out", UIHelper.getButtonStyle());
+		btnLogOut = new TextButton("Log Out", ResourceHelper.getButtonStyle());
 		btnLogOut.setPosition(CrystalClash.WIDTH - btnLogOut.getWidth() - 50,
 				CrystalClash.HEIGHT);
 		btnLogOut.addListener(new ClickListener() {
@@ -155,13 +158,13 @@ public class MenuGamesRender extends MenuRender {
 
 		// put the table inside a scrollpane
 		scrollPane = new ScrollPane(list);
-		scrollPane
-				.setBounds(CrystalClash.WIDTH, 0, CrystalClash.WIDTH, CrystalClash.HEIGHT - 80);
+		scrollPane.setBounds(CrystalClash.WIDTH, 0, CrystalClash.WIDTH, CrystalClash.HEIGHT - 80);
 		scrollPane.setScrollingDisabled(true, false);
 		scrollPane.setOverscroll(false, true);
 		scrollPane.setSmoothScrolling(true);
-		scrollPane.invalidate();
 		scrollPane.setupOverscroll(CrystalClash.HEIGHT, 4000, 5000);
+		scrollPane.setForceScroll(false, true);
+		scrollPane.invalidate();
 		addActor(scrollPane);
 		gamesImage = new Image(new Texture(
 				Gdx.files.internal("data/Images/Menu/current_games_header.png")));
@@ -175,7 +178,7 @@ public class MenuGamesRender extends MenuRender {
 		Group inviteButtons = new Group();
 		inviteButtons.setBounds(0, 0, list.getWidth(), 160);
 
-		btnNewRandom = new TextButton("New random game", UIHelper.getOuterButtonStyle());
+		btnNewRandom = new TextButton("New random game", ResourceHelper.getOuterButtonStyle());
 		btnNewRandom.setBounds(0, 0, inviteButtons.getWidth() / 2, 160);
 		btnNewRandom.addListener(new ClickListener() {
 			@Override
@@ -186,7 +189,7 @@ public class MenuGamesRender extends MenuRender {
 		});
 		inviteButtons.addActor(btnNewRandom);
 
-		btnNewInvite = new TextButton("Invite friend", UIHelper.getOuterButtonStyle());
+		btnNewInvite = new TextButton("Invite friend", ResourceHelper.getOuterButtonStyle());
 		btnNewInvite.setBounds(inviteButtons.getWidth() / 2, 0, inviteButtons.getWidth() / 2, 160);
 		inviteButtons.addActor(btnNewInvite);
 
@@ -230,15 +233,23 @@ public class MenuGamesRender extends MenuRender {
 	}
 
 	private void initSkin() {
+		final MessageBoxCallback surrenderCallback = new MessageBoxCallback() {
+			@Override
+			public void onEvent(int type, Object data) {
+				if (type == MessageBoxCallback.YES)
+					controller.surrenderGame(data.toString());
+			}
+		};
 		// Listeners
 		surrenderListener = new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
-				// GameEngine.showLoading();
-				System.out
-						.println("surrender: "
-								+ ((GameListItem) event.getListenerActor()
-										.getParent()).gameId);
+				MessageBox.build()
+						.setUserData(((GameListItem) event.getListenerActor().getParent()).gameId)
+						.setMessage("\"The wise warrior avoids the battle.\"\n- Sun Tzu")
+						.twoButtonsLayout("Surrender", "Not yet!")
+						.setCallback(surrenderCallback)
+						.show();
 			}
 		};
 
@@ -252,7 +263,7 @@ public class MenuGamesRender extends MenuRender {
 		};
 
 		listItemSkin = new Skin();
-		listItemSkin.add("font", UIHelper.getFont());
+		listItemSkin.add("font", ResourceHelper.getFont());
 		listItemSkin
 				.add("play_up",
 						new Texture(
@@ -276,9 +287,7 @@ public class MenuGamesRender extends MenuRender {
 						.internal("data/Images/Menu/button_surrender.png")));
 		listItemSkin
 				.add("surrender_down",
-						new Texture(
-								Gdx.files
-										.internal("data/Images/Menu/button_surrender_pressed.png")));
+						ResourceHelper.getTexture("data/Images/Menu/button_surrender_pressed.png"));
 
 		TextButtonStyle playStyle = new TextButtonStyle();
 		playStyle.font = listItemSkin.getFont("font");
@@ -300,8 +309,11 @@ public class MenuGamesRender extends MenuRender {
 	}
 
 	public void listGamesError(String message) {
-		System.out.println(message);
-		GameEngine.hideLoading();
+		MessageBox.build()
+				.setMessage(message)
+				.oneButtonsLayout("OK...")
+				.setCallback(null)
+				.show();
 	}
 
 	public void enableRandomSuccess() {
@@ -310,14 +322,21 @@ public class MenuGamesRender extends MenuRender {
 	}
 
 	public void enableRandomError(String message) {
-		System.out.println(message);
-		GameEngine.hideLoading();
+		MessageBox.build()
+				.setMessage(message)
+				.oneButtonsLayout("OK...")
+				.setCallback(null)
+				.show();
 	}
 
 	// INPUT PROCESSOR--------------------------------------------
 	@Override
 	public boolean keyDown(int keycode) {
-		return false;
+
+		if (keycode == Keys.BACK) {
+			controller.logOut();
+		}
+		return true;
 	}
 
 	@Override

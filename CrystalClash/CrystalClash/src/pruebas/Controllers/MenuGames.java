@@ -3,6 +3,8 @@ package pruebas.Controllers;
 import pruebas.Networking.ServerDriver;
 import pruebas.Renders.GameEngine;
 import pruebas.Renders.MenuGamesRender;
+import pruebas.Renders.helpers.ui.MessageBox;
+import pruebas.Renders.helpers.ui.MessageBoxCallback;
 
 import com.badlogic.gdx.utils.JsonValue;
 
@@ -27,13 +29,13 @@ public class MenuGames {
 	}
 
 	public void enableRandom() {
-		ServerDriver.enableRandom(GameController.getInstancia().getUser()
+		ServerDriver.enableRandom(GameController.getInstance().getUser()
 				.getId());
 	}
 
 	public void getGamesList() {
 		GameEngine.showLoading();
-		ServerDriver.getListGames(GameController.getInstancia().getUser().getId());
+		ServerDriver.getListGames(GameController.getInstance().getUser().getId());
 	}
 
 	public void getGamesListSuccess(String[][] games) {
@@ -52,13 +54,31 @@ public class MenuGames {
 		render.enableRandomError(message);
 	}
 
+	public void surrenderGame(String gameId) {
+		ServerDriver.sendGameTurn(GameController.getInstance().getUser().getId(),
+				gameId, "ended", "defeat");
+	}
+
+	private MessageBoxCallback logoutCallback = new MessageBoxCallback() {
+
+		@Override
+		public void onEvent(int type, Object data) {
+			if (type == YES)
+				GameController.getInstance().logOut();
+		}
+	};
+
 	public void logOut() {
-		GameController.getInstancia().logOut();
+		MessageBox.build()
+				.setMessage("Farewell Commander, we await your return to the fields.")
+				.twoButtonsLayout("I'll be back", "I'm not leaving")
+				.setCallback(logoutCallback)
+				.show();
 	}
 
 	public void getGameTurn(String gameId, int turn) {
 		GameEngine.showLoading();
-		ServerDriver.getGameTurn(GameController.getInstancia().getUser().getId(), gameId, turn);
+		ServerDriver.getGameTurn(GameController.getInstance().getUser().getId(), gameId, turn);
 	}
 
 	public void getGameTurnSuccess(JsonValue data, int turn) {
@@ -66,7 +86,11 @@ public class MenuGames {
 	}
 
 	public void getGameTurnError(String string) {
-		// TODO Auto-generated method stub
+		MessageBox.build()
+				.setMessage(string)
+				.oneButtonsLayout("OK...")
+				.setCallback(null)
+				.show();
 	}
 
 	public void sendGameTurnSuccess(String data) {
@@ -74,6 +98,10 @@ public class MenuGames {
 	}
 
 	public void sendGameTurnError(String message) {
-		// render.listGamesError(message);
+		MessageBox.build()
+				.setMessage(message)
+				.oneButtonsLayout("OK...")
+				.setCallback(null)
+				.show();
 	}
 }

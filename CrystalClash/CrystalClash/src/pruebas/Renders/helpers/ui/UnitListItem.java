@@ -33,13 +33,13 @@ public class UnitListItem extends Panel {
 		speedIcon.setPosition(463, 90);
 
 		lifeValueIcon = new Sprite(skin.getRegion("stat_bar_"
-				+ GameController.getInstancia().getUnitLifeInScale(unitName)));
+				+ GameController.getInstance().getUnitLifeInScale(unitName)));
 		lifeValueIcon.setPosition(170, 40);
 		attackValueIcon = new Sprite(skin.getRegion("stat_bar_"
-				+ GameController.getInstancia().getUnitAttackInScale(unitName)));
+				+ GameController.getInstance().getUnitAttackInScale(unitName)));
 		attackValueIcon.setPosition(300, 40);
 		speedValueIcon = new Sprite(skin.getRegion("stat_bar_"
-				+ GameController.getInstancia().getUnitSpeedInScale(unitName)));
+				+ GameController.getInstance().getUnitSpeedInScale(unitName)));
 		speedValueIcon.setPosition(430, 40);
 	}
 
