@@ -231,18 +231,23 @@ public class WorldRender extends Group implements InputProcessor {
 					setReadInput(true);
 			}
 		};
-		btnSend.addListener(new ClickListener() {
+		ClickListener sendListener = new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
-				setReadInput(false);
-				MessageBox.build()
-						.setMessage("Comander!\nTroops are ready and waiting for battle!\nJust say the word")
-						.twoButtonsLayout("Charge!!", "Hold your horses!")
-						.setCallback(sendTurnCallback)
-						.setHideOnAction(false)
-						.show();
+				if (gameRender.canSend()) {
+					setReadInput(false);
+					MessageBox.build()
+							.setMessage("Comander!\nTroops are ready and waiting for battle!\nJust say the word")
+							.twoButtonsLayout("Charge!!", "Hold your horses!")
+							.setCallback(sendTurnCallback)
+							.setHideOnAction(false)
+							.show();
+				} else {
+					gameRender.onSend();
+				}
 			}
-		});
+		};
+		btnSend.addListener(sendListener);
 		grpBtnSend.addActor(btnSend);
 		grpBtnSend.setSize(imgBtnSendBackground.getWidth(), imgBtnSendBackground.getHeight());
 		grpBtnSend.setPosition(-grpBtnSend.getWidth(), 0);
