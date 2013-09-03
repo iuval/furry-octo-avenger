@@ -785,4 +785,15 @@ public class NormalGame extends GameRender {
 			break;
 		}
 	}
+	
+	public void pause() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void resume() {
+		// TODO Auto-generated method stub
+		
+	}
 }

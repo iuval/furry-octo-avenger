@@ -12,6 +12,7 @@ import aurelienribon.tweenengine.Timeline;
 import aurelienribon.tweenengine.Tween;
 import aurelienribon.tweenengine.TweenEquations;
 
+import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -50,6 +51,8 @@ public class WorldRender extends Group implements InputProcessor {
 	GameRender gameRender;
 
 	private boolean readInput = true;
+
+	private MessageBoxCallback backCallback;
 
 	public WorldRender(WorldController world) {
 		this.world = world;
@@ -129,13 +132,16 @@ public class WorldRender extends Group implements InputProcessor {
 			public void onEvent(int type, Object data) {
 				if (type == MessageBoxCallback.YES)
 					world.surrenderCurrentGame();
-				else
+				else {
 					setReadInput(true);
+					resume();
+				}
 			}
 		};
 		btnSurrender.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
+				pause();
 				setReadInput(false);
 				MessageBox.build()
 						.setMessage("\"He who knows when he can fight and when he cannot, will be victorious.\"\n- Sun Tzu")
@@ -145,28 +151,26 @@ public class WorldRender extends Group implements InputProcessor {
 			}
 		});
 		grpOptions.addActor(btnSurrender);
-
-		btnBack = new TextButton("Back to Menu", optionsStyle);
-		btnBack.setPosition(btnSurrender.getX() + btnSurrender.getWidth() + 2, 5);
-		final MessageBoxCallback backCallback = new MessageBoxCallback() {
+		backCallback = new MessageBoxCallback() {
 
 			@Override
 			public void onEvent(int type, Object data) {
 				if (type == MessageBoxCallback.YES)
 					world.leaveGame();
-				else
+				else {
 					setReadInput(true);
+					resume();
+				}
 			}
 		};
+		btnBack = new TextButton("Back to Menu", optionsStyle);
+		btnBack.setPosition(btnSurrender.getX() + btnSurrender.getWidth() + 2, 5);
+
 		btnBack.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
 				setReadInput(false);
-				MessageBox.build()
-						.setMessage("If we leave now Commander,\ntroops will lose the given formation!")
-						.twoButtonsLayout("Do it anyway", "Let me think...")
-						.setCallback(backCallback)
-						.show();
+				back();
 			}
 		});
 		grpOptions.addActor(btnBack);
@@ -257,6 +261,15 @@ public class WorldRender extends Group implements InputProcessor {
 		addActor(grpBtnSend);
 	}
 
+	private void back() {
+		pause();
+		MessageBox.build()
+				.setMessage("If we leave now Commander,\ntroops will lose the given formation!")
+				.twoButtonsLayout("Do it anyway", "Let me think...")
+				.setCallback(backCallback)
+				.show();
+	}
+
 	private void showOptions() {
 		GameEngine.start(Timeline.createSequence()
 				.push(Tween.to(grpBtnOptions, ActorAccessor.X, CrystalClash.FAST_ANIMATION_SPEED)
@@ -294,8 +307,9 @@ public class WorldRender extends Group implements InputProcessor {
 
 	@Override
 	public boolean keyDown(int keycode) {
-		// TODO Auto-generated method stub
-		return false;
+		if (keycode == Keys.BACK)
+			back();
+		return true;
 	}
 
 	@Override
@@ -375,5 +389,13 @@ public class WorldRender extends Group implements InputProcessor {
 
 	public void setReadInput(boolean read) {
 		readInput = read;
+	}
+
+	public void pause() {
+		gameRender.pause();
+	}
+
+	public void resume() {
+		gameRender.resume();
 	}
 }
