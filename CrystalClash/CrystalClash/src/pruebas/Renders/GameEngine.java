@@ -398,6 +398,7 @@ public class GameEngine implements Screen {
 		MessageBox.build()
 				.setMessage("Loading...")
 				.noButtonsLayout()
+				.setHideOnAction(false)
 				.setCallback(null)
 				.show();
 	}

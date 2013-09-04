@@ -1,5 +1,7 @@
 package pruebas.Renders;
 
+import java.util.Random;
+
 import pruebas.Accessors.ActorAccessor;
 import pruebas.Accessors.UnitAccessor;
 import pruebas.Controllers.GameController;
@@ -57,6 +59,8 @@ public class TurnAnimations extends GameRender {
 	private Image gameEndMessage;
 	private TextButton btnBackToMenu;
 
+	private Random rand;
+
 	public TurnAnimations(WorldController world) {
 		super(world);
 
@@ -69,6 +73,8 @@ public class TurnAnimations extends GameRender {
 		player1Defend = new Array<DefendUnitAction>();
 		player2Defend = new Array<DefendUnitAction>();
 		deadUnits = new Array<Unit>();
+
+		rand = new Random();
 
 		load();
 
@@ -174,12 +180,13 @@ public class TurnAnimations extends GameRender {
 			sameCellOriginTarget = action.origin.Equals(action.target);
 			Timeline move = Timeline.createParallel();
 			if (!sameCellOriginTarget) {
-				move.push(Tween
-						.to(action.origin.getUnit(player), UnitAccessor.X, CrystalClash.WALK_ANIMATION_SPEED)
-						.target(CellHelper.getUnitX(player, action.target)));
-				move.push(Tween
-						.to(action.origin.getUnit(player), UnitAccessor.Y, CrystalClash.WALK_ANIMATION_SPEED)
-						.target(CellHelper.getUnitY(player, action.target)));
+				move.delay(rand.nextFloat())
+						.push(Tween
+								.to(action.origin.getUnit(player), UnitAccessor.X, CrystalClash.WALK_ANIMATION_SPEED)
+								.target(getXForMeeleTarget(player, action.target, action.origin.getUnit(player))))
+						.push(Tween
+								.to(action.origin.getUnit(player), UnitAccessor.Y, CrystalClash.WALK_ANIMATION_SPEED)
+								.target(getYForMeeleTarget(player, action.target, action.origin.getUnit(player))));
 			}
 			move.setUserData(new Object[] { action, player });
 			move.setCallbackTriggers(TweenCallback.BEGIN | TweenCallback.COMPLETE);
@@ -235,6 +242,28 @@ public class TurnAnimations extends GameRender {
 		}
 	}
 
+	private float getXForMeeleTarget(int player, Cell target, Unit attacker) {
+		float resultX = CellHelper.getUnitCenterX(player, target);
+
+		if (attacker.getX() > resultX) {
+			resultX += 10 + rand.nextInt(30);
+		} else {
+			resultX -= 10 + rand.nextInt(30);
+		}
+		return resultX;
+	}
+
+	private float getYForMeeleTarget(int player, Cell target, Unit attacker) {
+		float resultY = CellHelper.getUnitY(player, target);
+
+		if (attacker.getY() > resultY) {
+			resultY += 10 + rand.nextInt(30);
+		} else {
+			resultY -= 10 + rand.nextInt(30);
+		}
+		return resultY;
+	}
+
 	private void moveUnits() {
 		Timeline t = Timeline.createSequence();
 		t.beginParallel();
@@ -257,24 +286,25 @@ public class TurnAnimations extends GameRender {
 		for (int m = 0; m < moveActions.size; m++) {
 			action = moveActions.get(m);
 
-			Timeline path = Timeline.createSequence();
-			path.setUserData(new Object[] { player, action.origin, action.moves.get(action.moves.size - 1) });
-			path.setCallbackTriggers(TweenCallback.BEGIN | TweenCallback.COMPLETE);
-			path.setCallback(new TweenCallback() {
-				@Override
-				public void onEvent(int type, BaseTween<?> source) {
-					int player = (Integer) (((Object[]) source.getUserData())[0]);
-					Cell cellFrom = (Cell) (((Object[]) source.getUserData())[1]);
-					Cell cellTo = (Cell) (((Object[]) source.getUserData())[2]);
+			Timeline path = Timeline.createSequence()
+					.delay(rand.nextFloat())
+					.setUserData(new Object[] { player, action.origin, action.moves.get(action.moves.size - 1) })
+					.setCallbackTriggers(TweenCallback.BEGIN | TweenCallback.COMPLETE)
+					.setCallback(new TweenCallback() {
+						@Override
+						public void onEvent(int type, BaseTween<?> source) {
+							int player = (Integer) (((Object[]) source.getUserData())[0]);
+							Cell cellFrom = (Cell) (((Object[]) source.getUserData())[1]);
+							Cell cellTo = (Cell) (((Object[]) source.getUserData())[2]);
 
-					if (type == TweenCallback.COMPLETE)
-						repositionUnit(player, cellFrom, cellTo);
-					else {
-						Unit unit = cellFrom.getUnit(player);
-						unit.getRender().setState(STATE.walking);
-					}
-				}
-			});
+							if (type == TweenCallback.COMPLETE)
+								repositionUnit(player, cellFrom, cellTo);
+							else {
+								Unit unit = cellFrom.getUnit(player);
+								unit.getRender().setState(STATE.walking);
+							}
+						}
+					});
 
 			for (int i = 0; i + 1 < action.moves.size; i++) {
 				path.push(createStep(action, i, action.moves.size, player));
@@ -288,11 +318,17 @@ public class TurnAnimations extends GameRender {
 				.push(Tween
 						.to(action.origin.getUnit(player), UnitAccessor.X, CrystalClash.WALK_ANIMATION_SPEED)
 						.ease(Linear.INOUT)
-						.target(CellHelper.getUnitX(player, action.moves.get(currentStepIndex + 1))))
+						.target(currentStepIndex == stepsCount ?
+								CellHelper.getUnitX(player, action.moves.get(currentStepIndex + 1)) :
+								rand(CellHelper.getUnitX(player, action.moves.get(currentStepIndex + 1)))))
 				.push(Tween
 						.to(action.origin.getUnit(player), UnitAccessor.Y, CrystalClash.WALK_ANIMATION_SPEED)
 						.ease(Linear.INOUT)
-						.target(CellHelper.getUnitY(player, action.moves.get(currentStepIndex + 1))));
+						.target(rand(CellHelper.getUnitY(player, action.moves.get(currentStepIndex + 1)))));
+	}
+
+	private float rand(float value) {
+		return value + rand.nextInt(100) - 50;
 	}
 
 	private void repositionUnit(int player, Cell cellFrom, Cell cellTo) {

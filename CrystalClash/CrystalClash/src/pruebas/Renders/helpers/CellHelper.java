@@ -13,8 +13,10 @@ public class CellHelper {
 
 	public static final float UNIT_PLAYER_1_X = 10f;
 	public static final float UNIT_PLAYER_1_Y = 50f;
+	public static final float UNIT_PLAYER_1_CENTER_X = 30f;
 	public static final float UNIT_PLAYER_2_X = 71f;
 	public static final float UNIT_PLAYER_2_Y = 50f;
+	public static final float UNIT_PLAYER_2_CENTER_X = 51f;
 
 	TextureAtlas atlas;
 
@@ -71,6 +73,10 @@ public class CellHelper {
 
 	public static float getUnitX(int player, Cell cell) {
 		return cell.getX() + (player == 1 ? CellHelper.UNIT_PLAYER_1_X : CellHelper.UNIT_PLAYER_2_X);
+	}
+
+	public static float getUnitCenterX(int player, Cell cell) {
+		return cell.getX() + (player == 1 ? CellHelper.UNIT_PLAYER_1_CENTER_X : CellHelper.UNIT_PLAYER_2_CENTER_X);
 	}
 
 	public static float getUnitY(int player, Cell cell) {
