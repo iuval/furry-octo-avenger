@@ -1,7 +1,7 @@
 animation
   sheet: 3, 6
   handle: 24, 7
-  total-time: 4.5
+  total-time: 4.4167
   image-count: 18
 images-time
   0001: 0
