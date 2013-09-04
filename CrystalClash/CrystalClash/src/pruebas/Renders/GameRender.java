@@ -13,6 +13,10 @@ public abstract class GameRender extends Group {
 		this.world = world;
 	}
 
+	public abstract boolean canSend();
+
+	public abstract void onSend();
+
 	public abstract void clearAllChanges();
 
 	public abstract void render(float dt, SpriteBatch batch);

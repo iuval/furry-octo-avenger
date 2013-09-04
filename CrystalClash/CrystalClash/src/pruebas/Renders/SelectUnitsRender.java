@@ -220,4 +220,16 @@ public class SelectUnitsRender extends GameRender {
 			selectedUnit.getRender().draw(batch, dt);
 		}
 	}
+
+	@Override
+	public boolean canSend() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public void onSend() {
+		// TODO Auto-generated method stub
+		
+	}
 }

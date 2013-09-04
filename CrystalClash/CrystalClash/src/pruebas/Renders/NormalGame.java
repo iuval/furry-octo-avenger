@@ -613,21 +613,11 @@ public class NormalGame extends GameRender {
 					cell.setState(Cell.State.ATTACK_TARGET_CENTER);
 					((AttackUnitAction) unitAction).target = cell;
 				} else {
-					if (((AttackUnitAction) unitAction).target != null) {
-						aActions.add((AttackUnitAction) unitAction);
-					} else {
-						unitAction = new NoneUnitAction();
-					}
-					selectedCell.setAction(unitAction, world.player);
-					clearCells();
-					clearSelection();
-					showAssignedActions();
+					saveAttack();
 				}
 				break;
 			case DEFENSE:
-				selectedCell.setAction(unitAction, world.player);
-				clearSelection();
-				actionType = UnitActionType.NONE;
+				saveDefense();
 				break;
 			case MOVE:
 				if (cell.getState() == Cell.State.ABLE_TO_MOVE) {
@@ -652,47 +642,14 @@ public class NormalGame extends GameRender {
 					clearCells();
 					showAction(unitAction, true);
 				} else {
-					clearMoveAction();
-					clearCells();
-
-					MoveUnitAction action = (MoveUnitAction) unitAction;
-					if (action.moves.size > 1) {
-						mActions.add(action);
-
-						Unit ghost = new Unit(selectedUnit.getName());
-						if (world.player == 2)
-							ghost.getRender().setFacing(FACING.left);
-
-						Cell ghostCell = action.moves
-								.get(action.moves.size - 1);
-
-						float offSetX = CellHelper.UNIT_PLAYER_1_X;
-						float offSetY = CellHelper.UNIT_PLAYER_1_Y;
-
-						if (world.player == 2) {
-							offSetX = CellHelper.UNIT_PLAYER_2_X;
-							offSetY = CellHelper.UNIT_PLAYER_2_Y;
-						}
-						ghost.setPosition(ghostCell.getX() + offSetX,
-								ghostCell.getY() + offSetY);
-
-						ghostlyUnits.add(new Tuple<Unit, MoveUnitAction>(ghost,
-								action));
-						alreadyAssigned.add(ghostCell);
-					} else {
-						unitAction = new NoneUnitAction();
-					}
-					selectedCell.setAction(unitAction, world.player);
-
-					clearSelection();
-					showAssignedActions();
+					saveMove();
 				}
 				break;
 			case NONE:
 				showAssignedActions();
+				clearSelection();
 				Unit u = cell.getUnit(world.player);
 				if (u != null) {
-					clearSelection();
 					if (selectedUnit != u) {
 						selectedUnit = u;
 						selectedCell = cell;
@@ -713,8 +670,6 @@ public class NormalGame extends GameRender {
 						showActionsBar();
 						System.out.println(selectedUnit.getName());
 					}
-				} else {
-					clearSelection();
 				}
 				break;
 			default:
@@ -756,4 +711,78 @@ public class NormalGame extends GameRender {
 						.target(arrowY));
 	}
 
+	@Override
+	public boolean canSend() {
+		return selectedUnit == null;
+	}
+
+	private void saveAttack() {
+		if (((AttackUnitAction) unitAction).target != null) {
+			aActions.add((AttackUnitAction) unitAction);
+		} else {
+			unitAction = new NoneUnitAction();
+		}
+		selectedCell.setAction(unitAction, world.player);
+		clearCells();
+		clearSelection();
+		showAssignedActions();
+	}
+
+	private void saveDefense() {
+		selectedCell.setAction(unitAction, world.player);
+		clearSelection();
+		actionType = UnitActionType.NONE;
+	}
+
+	private void saveMove() {
+		clearMoveAction();
+		clearCells();
+
+		MoveUnitAction action = (MoveUnitAction) unitAction;
+		if (action.moves.size > 1) {
+			mActions.add(action);
+
+			Unit ghost = new Unit(selectedUnit.getName());
+			if (world.player == 2)
+				ghost.getRender().setFacing(FACING.left);
+
+			Cell ghostCell = action.moves
+					.get(action.moves.size - 1);
+
+			float offSetX = CellHelper.UNIT_PLAYER_1_X;
+			float offSetY = CellHelper.UNIT_PLAYER_1_Y;
+
+			if (world.player == 2) {
+				offSetX = CellHelper.UNIT_PLAYER_2_X;
+				offSetY = CellHelper.UNIT_PLAYER_2_Y;
+			}
+			ghost.setPosition(ghostCell.getX() + offSetX,
+					ghostCell.getY() + offSetY);
+
+			ghostlyUnits.add(new Tuple<Unit, MoveUnitAction>(ghost,
+					action));
+			alreadyAssigned.add(ghostCell);
+		} else {
+			unitAction = new NoneUnitAction();
+		}
+		selectedCell.setAction(unitAction, world.player);
+
+		clearSelection();
+		showAssignedActions();
+	}
+
+	@Override
+	public void onSend() {
+		switch (actionType) {
+		case ATTACK:
+			saveAttack();
+			break;
+		case DEFENSE:
+			saveDefense();
+			break;
+		case MOVE:
+			saveMove();
+			break;
+		}
+	}
 }
