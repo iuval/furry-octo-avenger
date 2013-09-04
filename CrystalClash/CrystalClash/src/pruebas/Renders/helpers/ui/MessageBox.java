@@ -170,12 +170,7 @@ public class MessageBox extends Group {
 
 	protected Timeline getExitAnimation() {
 		return GameEngine.pushHideBlackScreen(Timeline.createParallel())
-				.delay(0.5f)
-				.beginSequence()
 				.push(Tween.to(this, ActorAccessor.Y, CrystalClash.FAST_ANIMATION_SPEED)
-						.target(-getHeight()))
-				.push(Tween.set(this, ActorAccessor.Y)
-						.target(CrystalClash.HEIGHT + getHeight()))
-				.end();
+						.target(CrystalClash.HEIGHT + getHeight()));
 	}
 }
