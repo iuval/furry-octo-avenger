@@ -224,12 +224,21 @@ public class SelectUnitsRender extends GameRender {
 	@Override
 	public boolean canSend() {
 		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
 	@Override
 	public void onSend() {
+	}
+
+	public void pause() {
 		// TODO Auto-generated method stub
-		
+
+	}
+
+	@Override
+	public void resume() {
+		// TODO Auto-generated method stub
+
 	}
 }

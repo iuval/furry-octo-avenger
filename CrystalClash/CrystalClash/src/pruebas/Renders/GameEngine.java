@@ -9,6 +9,7 @@ import pruebas.CrystalClash.CrystalClash;
 import pruebas.Enumerators.GameState;
 import pruebas.Renders.helpers.ResourceHelper;
 import pruebas.Renders.helpers.ui.MessageBox;
+import pruebas.Renders.helpers.ui.MessageBoxCallback;
 import pruebas.Renders.helpers.ui.SuperAnimatedActor;
 import aurelienribon.tweenengine.BaseTween;
 import aurelienribon.tweenengine.Timeline;
@@ -44,7 +45,7 @@ public class GameEngine implements Screen {
 	private Stage stage;
 	public static OrthographicCamera camera;
 
-	private GameState state = GameState.InSplash;
+	private static GameState state = GameState.InSplash;
 
 	private SplashScreen splashRender;
 	private MenuLogInRender menuLogInRender;
@@ -96,6 +97,10 @@ public class GameEngine implements Screen {
 
 		Gdx.input.setCatchBackKey(true);
 		Gdx.input.setInputProcessor(inputManager);
+	}
+
+	public static GameState getState() {
+		return state;
 	}
 
 	private void load() {
@@ -210,7 +215,7 @@ public class GameEngine implements Screen {
 		splashRender = new SplashScreen();
 		stage.addActor(splashRender);
 
-		this.state = GameState.InSplash;
+		GameEngine.state = GameState.InSplash;
 		Timeline t = Timeline.createSequence();
 		splashRender.pushEnterAnimation(t);
 		t.setCallback(new TweenCallback() {
@@ -335,10 +340,24 @@ public class GameEngine implements Screen {
 
 	@Override
 	public void pause() {
+		if (state == GameState.InGame)
+			worldRender.pause();
 	}
 
 	@Override
 	public void resume() {
+		if (state == GameState.InGame) {
+			MessageBox.build()
+					.setMessage("You are back!! Hurray!!")
+					.oneButtonsLayout("Let's get them")
+					.setCallback(new MessageBoxCallback() {
+						@Override
+						public void onEvent(int type, Object data) {
+							worldRender.resume();
+						}
+					})
+					.show();
+		}
 	}
 
 	@Override

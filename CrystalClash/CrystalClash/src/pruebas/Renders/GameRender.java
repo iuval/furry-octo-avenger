@@ -34,4 +34,8 @@ public abstract class GameRender extends Group {
 	public abstract Timeline pushEnterAnimation(Timeline t);
 
 	public abstract Timeline pushExitAnimation(Timeline t);
+
+	public abstract void pause();
+
+	public abstract void resume();
 }

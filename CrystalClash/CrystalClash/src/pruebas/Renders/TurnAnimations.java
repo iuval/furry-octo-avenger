@@ -20,6 +20,7 @@ import aurelienribon.tweenengine.Timeline;
 import aurelienribon.tweenengine.Tween;
 import aurelienribon.tweenengine.TweenCallback;
 import aurelienribon.tweenengine.TweenEquations;
+import aurelienribon.tweenengine.TweenManager;
 import aurelienribon.tweenengine.equations.Linear;
 
 import com.badlogic.gdx.graphics.Texture;
@@ -42,6 +43,8 @@ public class TurnAnimations extends GameRender {
 	private Array<DefendUnitAction> player1Defend;
 	private Array<DefendUnitAction> player2Defend;
 	private Array<Unit> deadUnits;
+
+	private static TweenManager tweenManager;
 
 	private Image panel;
 	private TextButton btnPlay;
@@ -75,6 +78,8 @@ public class TurnAnimations extends GameRender {
 	}
 
 	public void load() {
+		tweenManager = new TweenManager();
+
 		GameController.getInstance().loadUnitsStats();
 		Tween.registerAccessor(Unit.class, new UnitAccessor());
 
@@ -107,7 +112,7 @@ public class TurnAnimations extends GameRender {
 		btnSkip.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
-				GameEngine.start(pushExitAnimation(Timeline.createParallel()));
+				start(pushExitAnimation(Timeline.createParallel()));
 			}
 		});
 
@@ -117,6 +122,10 @@ public class TurnAnimations extends GameRender {
 		// grpPanel.addActor(btnSkip);
 
 		addActor(grpPanel);
+	}
+
+	private void start(Timeline t) {
+		t.start(tweenManager);
 	}
 
 	private void play() {
@@ -152,7 +161,7 @@ public class TurnAnimations extends GameRender {
 				moveUnits();
 			}
 		});
-		GameEngine.start(t);
+		start(t);
 	}
 
 	private void createMeleeAttacks(Array<AttackUnitAction> attackActions, int player, Timeline attackTimeline) {
@@ -240,7 +249,7 @@ public class TurnAnimations extends GameRender {
 				rangedAttackUnits();
 			}
 		});
-		GameEngine.start(t);
+		start(t);
 	}
 
 	private void createPaths(Array<MoveUnitAction> moveActions, int player, Timeline pathsTimeline) {
@@ -320,7 +329,7 @@ public class TurnAnimations extends GameRender {
 				playDeaths();
 			}
 		});
-		GameEngine.start(t);
+		start(t);
 	}
 
 	private void createRangedAttacks(Array<AttackUnitAction> attackActions, int player,
@@ -342,7 +351,7 @@ public class TurnAnimations extends GameRender {
 					action.target.setState(Cell.State.ATTACK_TARGET_CENTER);
 				}
 			});
-			
+
 			Timeline stopAnim = Timeline.createSequence();
 			stopAnim.delay(CrystalClash.FIGTH_ANIMATION_SPEED);
 			stopAnim.setUserData(new Object[] { action, player });
@@ -359,7 +368,7 @@ public class TurnAnimations extends GameRender {
 					action.target.setState(Cell.State.NONE);
 				}
 			});
-			
+
 			attackTimeline.push(startAnim);
 			attackTimeline.push(stopAnim);
 		}
@@ -398,7 +407,7 @@ public class TurnAnimations extends GameRender {
 				endTurnAnimations();
 			}
 		});
-		GameEngine.start(deathTimeline);
+		start(deathTimeline);
 	}
 
 	private void endTurnAnimations() {
@@ -422,7 +431,7 @@ public class TurnAnimations extends GameRender {
 					CrystalClash.HEIGHT);
 			btnBackToMenu.setPosition(gameEndMessage.getX() + gameEndMessage.getWidth() / 2 - btnBackToMenu.getWidth() / 2,
 					gameEndMessage.getY() + gameEndMessage.getHeight() / 2 - btnBackToMenu.getHeight() / 2);
-			GameEngine.start(Timeline.createSequence()
+			start(Timeline.createSequence()
 					.beginParallel()
 					.push(Tween.to(gameEndMessage, ActorAccessor.Y, CrystalClash.ANIMATION_SPEED)
 							.target(CrystalClash.HEIGHT / 2 - gameEndMessage.getHeight() / 2))
@@ -493,7 +502,7 @@ public class TurnAnimations extends GameRender {
 	}
 
 	private void hidePanel() {
-		GameEngine.start(Timeline.createSequence()
+		start(Timeline.createSequence()
 				.push(Tween.to(grpPanel, ActorAccessor.Y, CrystalClash.FAST_ANIMATION_SPEED).target(CrystalClash.HEIGHT)));
 	}
 
@@ -501,12 +510,13 @@ public class TurnAnimations extends GameRender {
 		grpPanel.removeActor(btnPlay);
 		grpPanel.addActor(btnSkip);
 
-		GameEngine.start(Timeline.createSequence()
+		start(Timeline.createSequence()
 				.push(Tween.to(grpPanel, ActorAccessor.Y, CrystalClash.FAST_ANIMATION_SPEED).target(0)));
 	}
 
 	@Override
 	public void render(float dt, SpriteBatch batch) {
+		tweenManager.update(dt);
 	}
 
 	@Override
@@ -570,6 +580,15 @@ public class TurnAnimations extends GameRender {
 	@Override
 	public void onSend() {
 		// TODO Auto-generated method stub
-		
+
+	}
+
+	public void pause() {
+		tweenManager.pause();
+	}
+
+	@Override
+	public void resume() {
+		tweenManager.resume();
 	}
 }
