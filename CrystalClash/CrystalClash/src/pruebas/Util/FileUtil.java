@@ -15,12 +15,13 @@ public class FileUtil {
 		Texture sheet = new Texture(Gdx.files.internal(base_file_name + ".png"));
 		TextureRegion[][] tmp = TextureRegion.split(sheet, sheet.getWidth()
 				/ data.cols, sheet.getHeight() / data.rows);
-		TextureRegion[] frames = new TextureRegion[data.cols * data.rows];
+		TextureRegion[] frames = new TextureRegion[data.image_count];
 
 		int index = 0;
 		for (int i = 0; i < data.rows; i++) {
 			for (int j = 0; j < data.cols; j++) {
-				frames[index++] = tmp[i][j];
+				if(index < data.image_count)
+					frames[index++] = tmp[i][j];
 			}
 		}
 
