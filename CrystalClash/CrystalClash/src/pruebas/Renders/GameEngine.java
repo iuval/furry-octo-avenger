@@ -146,6 +146,7 @@ public class GameEngine implements Screen {
 		inputManager.addProcessor(stage);
 		switch (newState) {
 		case InMenuLogIn:
+			inputManager.addProcessor(menuLogInRender);
 			stage.addActor(menuLogInRender);
 			break;
 		case InTranstionMenuLogInAndMenuGames:

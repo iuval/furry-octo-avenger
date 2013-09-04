@@ -328,9 +328,21 @@ public class TurnAnimations extends GameRender {
 		AttackUnitAction action = null;
 		for (int m = 0; m < attackActions.size; m++) {
 			action = attackActions.get(m);
-			action.origin.getUnit(player).getRender().setState(STATE.fighting);
-			action.target.setState(Cell.State.ATTACK_TARGET_CENTER);
 
+			Timeline startAnim = Timeline.createSequence();
+			startAnim.setUserData(new Object[] { action, player });
+			startAnim.setCallback(new TweenCallback() {
+				@Override
+				public void onEvent(int type, BaseTween<?> source) {
+					AttackUnitAction action = (AttackUnitAction) (((Object[]) source.getUserData())[0]);
+					int player = Integer.parseInt(((Object[]) source.getUserData())[1].toString());
+					Unit unit = action.origin.getUnit(player);
+
+					unit.getRender().setState(STATE.fighting);
+					action.target.setState(Cell.State.ATTACK_TARGET_CENTER);
+				}
+			});
+			
 			Timeline stopAnim = Timeline.createSequence();
 			stopAnim.delay(CrystalClash.FIGTH_ANIMATION_SPEED);
 			stopAnim.setUserData(new Object[] { action, player });
@@ -347,7 +359,8 @@ public class TurnAnimations extends GameRender {
 					action.target.setState(Cell.State.NONE);
 				}
 			});
-
+			
+			attackTimeline.push(startAnim);
 			attackTimeline.push(stopAnim);
 		}
 	}
