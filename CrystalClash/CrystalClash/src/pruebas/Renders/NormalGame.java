@@ -614,11 +614,11 @@ public class NormalGame extends GameRender {
 					cell.setState(Cell.State.ATTACK_TARGET_CENTER);
 					((AttackUnitAction) unitAction).target = cell;
 				} else {
-					cancelAttack();
+					saveAttack();
 				}
 				break;
 			case DEFENSE:
-				cancelDefense();
+				saveDefense();
 				break;
 			case MOVE:
 				if (cell.getState() == Cell.State.ABLE_TO_MOVE) {
@@ -643,7 +643,7 @@ public class NormalGame extends GameRender {
 					clearCells();
 					showAction(unitAction, true);
 				} else {
-					cancelMove();
+					saveMove();
 				}
 				break;
 			case NONE:
@@ -717,7 +717,7 @@ public class NormalGame extends GameRender {
 		return selectedUnit == null;
 	}
 
-	private void cancelAttack() {
+	private void saveAttack() {
 		if (((AttackUnitAction) unitAction).target != null) {
 			aActions.add((AttackUnitAction) unitAction);
 		} else {
@@ -729,13 +729,13 @@ public class NormalGame extends GameRender {
 		showAssignedActions();
 	}
 
-	private void cancelDefense() {
+	private void saveDefense() {
 		selectedCell.setAction(unitAction, world.player);
 		clearSelection();
 		actionType = UnitActionType.NONE;
 	}
 
-	private void cancelMove() {
+	private void saveMove() {
 		clearMoveAction();
 		clearCells();
 
@@ -776,13 +776,13 @@ public class NormalGame extends GameRender {
 	public void onSend() {
 		switch (actionType) {
 		case ATTACK:
-			cancelAttack();
+			saveAttack();
 			break;
 		case DEFENSE:
-			cancelDefense();
+			saveDefense();
 			break;
 		case MOVE:
-			cancelMove();
+			saveMove();
 			break;
 		}
 	}
