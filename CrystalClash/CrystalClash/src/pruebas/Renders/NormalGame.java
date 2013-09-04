@@ -587,8 +587,6 @@ public class NormalGame extends GameRender {
 
 	@Override
 	public void render(float dt, SpriteBatch batch) {
-		selectorArrow.draw(batch, 1);
-
 		Unit u = null;
 		for (int i = 0; i < ghostlyUnits.size; i++) {
 			u = ghostlyUnits.get(i).getFirst();
@@ -598,6 +596,7 @@ public class NormalGame extends GameRender {
 		}
 		batch.setColor(batch.getColor().r, batch.getColor().g, batch.getColor().b, 1);
 
+		selectorArrow.draw(batch, 1);
 		tweenManager.update(dt);
 	}
 
