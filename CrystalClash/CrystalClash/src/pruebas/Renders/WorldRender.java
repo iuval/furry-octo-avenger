@@ -127,12 +127,13 @@ public class WorldRender extends Group implements InputProcessor {
 		btnSurrender = new TextButton("Surrender", optionsStyle);
 		btnSurrender.setPosition(75, 5);
 		final MessageBoxCallback leaveCallback = new MessageBoxCallback() {
-
 			@Override
 			public void onEvent(int type, Object data) {
-				if (type == MessageBoxCallback.YES)
+				if (type == MessageBoxCallback.YES) {
+					GameEngine.showLoading();
 					world.surrenderCurrentGame();
-				else {
+				} else {
+					MessageBox.build().hide();
 					setReadInput(true);
 					resume();
 				}
@@ -146,18 +147,20 @@ public class WorldRender extends Group implements InputProcessor {
 				MessageBox.build()
 						.setMessage("\"He who knows when he can fight and when he cannot, will be victorious.\"\n- Sun Tzu")
 						.twoButtonsLayout("Surrender", "Not yet!")
+						.setHideOnAction(false)
 						.setCallback(leaveCallback)
 						.show();
 			}
 		});
 		grpOptions.addActor(btnSurrender);
 		backCallback = new MessageBoxCallback() {
-
 			@Override
 			public void onEvent(int type, Object data) {
-				if (type == MessageBoxCallback.YES)
+				if (type == MessageBoxCallback.YES) {
+					GameEngine.showLoading();
 					world.leaveGame();
-				else {
+				} else {
+					MessageBox.build().hide();
 					setReadInput(true);
 					resume();
 				}
@@ -224,15 +227,16 @@ public class WorldRender extends Group implements InputProcessor {
 		btnSend = new TextButton("", sendStyle);
 		btnSend.setPosition(0, 0);
 		final MessageBoxCallback sendTurnCallback = new MessageBoxCallback() {
-
 			@Override
 			public void onEvent(int type, Object data) {
 				if (type == MessageBoxCallback.YES) {
 					GameEngine.showLoading();
 					world.sendTurn();
 				}
-				else
+				else {
+					MessageBox.build().hide();
 					setReadInput(true);
+				}
 			}
 		};
 		ClickListener sendListener = new ClickListener() {
@@ -247,6 +251,7 @@ public class WorldRender extends Group implements InputProcessor {
 							.setHideOnAction(false)
 							.show();
 				} else {
+					GameEngine.showLoading();
 					gameRender.onSend();
 				}
 			}
@@ -267,6 +272,7 @@ public class WorldRender extends Group implements InputProcessor {
 				.setMessage("If we leave now Commander,\ntroops will lose the given formation!")
 				.twoButtonsLayout("Do it anyway", "Let me think...")
 				.setCallback(backCallback)
+				.setHideOnAction(false)
 				.show();
 	}
 
