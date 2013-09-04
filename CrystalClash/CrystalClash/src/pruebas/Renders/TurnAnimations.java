@@ -198,8 +198,8 @@ public class TurnAnimations extends GameRender {
 					Unit unit = action.origin.getUnit(player);
 					if (type == TweenCallback.COMPLETE) {
 						Unit enemy = action.target.getUnit(player == 1 ? 2 : 1);
-						if (doDamage(enemy, unit, player))
-							unit.getRender().setState(STATE.fighting);
+						doDamage(enemy, unit, player);
+						unit.getRender().setState(STATE.fighting);
 
 					} else if (type == TweenCallback.BEGIN) {
 						unit.getRender().setState(STATE.walking);
@@ -318,13 +318,13 @@ public class TurnAnimations extends GameRender {
 				.push(Tween
 						.to(action.origin.getUnit(player), UnitAccessor.X, CrystalClash.WALK_ANIMATION_SPEED)
 						.ease(Linear.INOUT)
-						.target(currentStepIndex == stepsCount ?
-								CellHelper.getUnitX(player, action.moves.get(currentStepIndex + 1)) :
-								rand(CellHelper.getUnitX(player, action.moves.get(currentStepIndex + 1)))))
+						.target(CellHelper.getUnitX(player, action.moves.get(currentStepIndex + 1))))
 				.push(Tween
 						.to(action.origin.getUnit(player), UnitAccessor.Y, CrystalClash.WALK_ANIMATION_SPEED)
 						.ease(Linear.INOUT)
-						.target(rand(CellHelper.getUnitY(player, action.moves.get(currentStepIndex + 1)))));
+						.target(currentStepIndex + 1 == stepsCount - 1 ?
+								CellHelper.getUnitY(player, action.moves.get(currentStepIndex + 1)) :
+								rand(CellHelper.getUnitY(player, action.moves.get(currentStepIndex + 1)))));
 	}
 
 	private float rand(float value) {
@@ -411,10 +411,10 @@ public class TurnAnimations extends GameRender {
 	}
 
 	private boolean doDamage(Unit enemy, Unit player, int playerNum) {
-		if (enemy != null && enemy.isAlive()) {
+		if (enemy != null) {
 			enemy.damage(player.getDamage());
 
-			if (!enemy.isAlive()) {
+			if (!enemy.isAlive() && !deadUnits.contains(enemy, true)) {
 				deadUnits.add(enemy);
 				if (playerNum == world.player)
 					world.enemiesCount--;
