@@ -186,7 +186,7 @@ public class TurnAnimations extends GameRender {
 								.target(getXForMeeleTarget(player, action.target, action.origin.getUnit(player))))
 						.push(Tween
 								.to(action.origin.getUnit(player), UnitAccessor.Y, CrystalClash.WALK_ANIMATION_SPEED)
-								.target(rand(CellHelper.getUnitY(player, action.target))));
+								.target(getYForMeeleTarget(player, action.target, action.origin.getUnit(player))));
 			}
 			move.setUserData(new Object[] { action, player });
 			move.setCallbackTriggers(TweenCallback.BEGIN | TweenCallback.COMPLETE);
@@ -251,6 +251,17 @@ public class TurnAnimations extends GameRender {
 			resultX -= 10 + rand.nextInt(30);
 		}
 		return resultX;
+	}
+
+	private float getYForMeeleTarget(int player, Cell target, Unit attacker) {
+		float resultY = CellHelper.getUnitY(player, target);
+
+		if (attacker.getY() > resultY) {
+			resultY += 10 + rand.nextInt(30);
+		} else {
+			resultY -= 10 + rand.nextInt(30);
+		}
+		return resultY;
 	}
 
 	private void moveUnits() {
