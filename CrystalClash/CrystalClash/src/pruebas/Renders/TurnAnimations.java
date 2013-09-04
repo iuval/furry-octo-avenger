@@ -560,4 +560,16 @@ public class TurnAnimations extends GameRender {
 		}
 		return t;
 	}
+
+	@Override
+	public boolean canSend() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public void onSend() {
+		// TODO Auto-generated method stub
+		
+	}
 }
