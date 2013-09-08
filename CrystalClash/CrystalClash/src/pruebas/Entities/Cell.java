@@ -40,7 +40,7 @@ public class Cell extends GameObject {
 	}
 
 	public void setUnit(Unit unit) {
-		unit = unit;
+		this.unit = unit;
 		unit.setPosition(getX() + CellHelper.UNIT_PLAYER_1_X, getY()
 				+ CellHelper.UNIT_PLAYER_1_Y);
 
@@ -65,7 +65,7 @@ public class Cell extends GameObject {
 
 	public void setAction(UnitAction action) {
 		action.origin = this;
-		action = action;
+		this.action = action;
 	}
 
 	public void addDataToJson(StringBuilder builder) {

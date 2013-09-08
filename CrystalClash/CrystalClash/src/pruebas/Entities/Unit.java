@@ -14,28 +14,31 @@ public class Unit extends GameObject {
 
 	private int hitPoints;
 	private int totalHitPoints;
-
 	private int damage;
-	private int velicity;
+	private int movement;
 	private int range;
+
 	private String unitName;
 	private boolean enemy;
+	private int playerNumber;
+
 	private boolean inDefensePosition;
 	private UnitRender render;
 
 	public Unit(String unitName, boolean enemy) {
-		this(unitName, enemy, GameController.getInstance().getUnitLife(unitName));
+		this(unitName, 1, enemy, GameController.getInstance().getUnitLife(unitName));
 	}
 
-	public Unit(String unitName, boolean enemy, int hp) {
+	public Unit(String unitName, int num, boolean enemy, int hp) {
 		this.enemy = enemy;
+		this.playerNumber = num;
 		this.unitName = unitName;
 
 		GameController.getInstance().loadUnitsStats();
 		this.hitPoints = hp;
 		this.totalHitPoints = GameController.getInstance().getUnitLife(unitName);
 		this.damage = GameController.getInstance().getUnitAttack(unitName);
-		this.velicity = GameController.getInstance().getUnitSpeed(unitName);
+		this.movement = GameController.getInstance().getUnitSpeed(unitName);
 		this.range = GameController.getInstance().getUnitRange(unitName);
 		inDefensePosition = false;
 
@@ -47,7 +50,7 @@ public class Unit extends GameObject {
 	}
 
 	public Unit(String unitName) {
-		this(unitName, false, 0);
+		this(unitName, 1, false, 0);
 	}
 
 	public UnitRender getRender() {
@@ -73,9 +76,9 @@ public class Unit extends GameObject {
 	}
 
 	public void damage(float damage) {
-		if(inDefensePosition)
+		if (inDefensePosition)
 			damage /= 2;
-		
+
 		hitPoints -= damage;
 		getRender().updateHp();
 	}
@@ -106,5 +109,17 @@ public class Unit extends GameObject {
 
 	public boolean isAlive() {
 		return hitPoints > 0;
+	}
+
+	public void setPlayerNumber(int num) {
+		this.playerNumber = num;
+	}
+
+	public boolean isPlayerNumber(int num) {
+		return this.playerNumber == num;
+	}
+
+	public boolean isPlayerOne() {
+		return this.playerNumber == 1;
 	}
 }

@@ -82,8 +82,7 @@ public class UnitRender {
 
 	public void updateHp() {
 		if (unit.isAlive() && unit.getTotalHP() != 0) {
-			hpWidth = (unit.getHP() * UnitHelper.HP_BAR_WIDTH)
-					/ unit.getTotalHP();
+			hpWidth = (unit.getHP() * UnitHelper.HP_BAR_WIDTH) / unit.getTotalHP();
 		} else {
 			hpWidth = 0;
 		}

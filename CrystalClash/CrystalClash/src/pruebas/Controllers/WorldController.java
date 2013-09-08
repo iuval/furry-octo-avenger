@@ -79,7 +79,7 @@ public class WorldController {
 				x = temp.getInt("x");
 				y = temp.getInt("y");
 
-				Unit unit = new Unit(child.getString("unit_name"), isEnemy, child.getInt("unit_hp"));
+				Unit unit = new Unit(child.getString("unit_name"), playerNum, isEnemy, child.getInt("unit_hp"));
 				UnitAction unitA;
 				action = child.getString("action");
 
@@ -222,6 +222,7 @@ public class WorldController {
 	}
 
 	public boolean placeUnit(float x, float y, Unit unit) {
+		unit.setPlayerNumber(player);
 		Cell cell = cellAt(x, y);
 		if (cell != null && cell.getState() == Cell.State.ABLE_TO_PLACE && cell.getUnit() == null) {
 			cell.placeUnit(unit);
@@ -318,10 +319,13 @@ public class WorldController {
 			builder.append("{");
 
 			Cell cell;
+			Unit unit;
 			for (int h = 0; h < 6; h++) {
 				for (int v = 0; v < 9; v++) {
 					cell = cellGrid[v][h];
-					cell.addDataToJson(builder);
+					unit = cellGrid[v][h].getUnit();
+					if (unit != null && !unit.isEnemy())
+						cell.addDataToJson(builder);
 				}
 			}
 			// Delete the last comma
