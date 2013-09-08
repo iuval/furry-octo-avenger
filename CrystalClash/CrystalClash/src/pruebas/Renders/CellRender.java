@@ -18,11 +18,7 @@ public class CellRender {
 	}
 
 	public void drawUnits(float dt, SpriteBatch batch) {
-		Unit u = cell.getUnit(1);
-		if (u != null) {
-			u.getRender().draw(batch, dt);
-		}
-		u = cell.getUnit(2);
+		Unit u = cell.getUnit();
 		if (u != null) {
 			u.getRender().draw(batch, dt);
 		}
