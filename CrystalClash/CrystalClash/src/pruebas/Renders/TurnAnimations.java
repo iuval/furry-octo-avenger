@@ -13,6 +13,7 @@ import pruebas.Entities.helpers.AttackUnitAction;
 import pruebas.Entities.helpers.DefendUnitAction;
 import pruebas.Entities.helpers.MoveUnitAction;
 import pruebas.Entities.helpers.UnitAction;
+import pruebas.Renders.UnitRender.FACING;
 import pruebas.Renders.UnitRender.STATE;
 import pruebas.Renders.helpers.CellHelper;
 import pruebas.Renders.helpers.ResourceHelper;
@@ -222,13 +223,11 @@ public class TurnAnimations extends GameRender {
 				public void onEvent(int type, BaseTween<?> source) {
 					Unit unit = (Unit) (((Object[]) source.getUserData())[0]);
 					if (type == TweenCallback.COMPLETE) {
-						// int player = (Integer) (((Object[])
-						// source.getUserData())[1]);
 						unit.getRender().setState(STATE.idle);
-						// if (player == 1)
-						// unit.getRender().setFacing(FACING.right);
-						// else
-						// unit.getRender().setFacing(FACING.left);
+						if (unit.isPlayerOne())
+							unit.getRender().setFacing(FACING.right);
+						else
+							unit.getRender().setFacing(FACING.left);
 					} else {
 						unit.getRender().setState(STATE.walking);
 					}
@@ -321,7 +320,7 @@ public class TurnAnimations extends GameRender {
 						.ease(Linear.INOUT)
 						.target(currentStepIndex + 1 == stepsCount - 1 ?
 								CellHelper.getUnitY(action.moves.get(currentStepIndex + 1)) :
-								rand(CellHelper.getUnitY( action.moves.get(currentStepIndex + 1)))));
+								rand(CellHelper.getUnitY(action.moves.get(currentStepIndex + 1)))));
 	}
 
 	private float rand(float value) {
@@ -335,10 +334,10 @@ public class TurnAnimations extends GameRender {
 		cellTo.setUnit(unit);
 
 		unit.getRender().setState(STATE.idle);
-		// if (player == 1)
-		// unit.getRender().setFacing(FACING.right);
-		// else
-		// unit.getRender().setFacing(FACING.left);
+		if (unit.isPlayerOne())
+			unit.getRender().setFacing(FACING.right);
+		else
+			unit.getRender().setFacing(FACING.left);
 
 		String coordsFrom = cellFrom.getGridPosition().getX() + ","
 				+ cellFrom.getGridPosition().getY();
