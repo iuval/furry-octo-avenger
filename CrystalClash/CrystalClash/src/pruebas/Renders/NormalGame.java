@@ -13,6 +13,7 @@ import pruebas.Entities.helpers.MoveUnitAction;
 import pruebas.Entities.helpers.NoneUnitAction;
 import pruebas.Entities.helpers.UnitAction;
 import pruebas.Entities.helpers.UnitAction.UnitActionType;
+import pruebas.Renders.UnitRender.FACING;
 import pruebas.Renders.helpers.CellHelper;
 import pruebas.Renders.helpers.ResourceHelper;
 import pruebas.Util.Tuple;
@@ -736,8 +737,8 @@ public class NormalGame extends GameRender {
 			mActions.add(action);
 
 			Unit ghost = new Unit(selectedUnit.getName());
-			// if (world.player == 2)
-			// ghost.getRender().setFacing(FACING.left);
+			if (ghost.isPlayerNumber(2))
+				ghost.getRender().setFacing(FACING.left);
 
 			Cell ghostCell = action.moves
 					.get(action.moves.size - 1);

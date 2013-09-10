@@ -26,7 +26,7 @@ public class Unit extends GameObject {
 	private UnitRender render;
 
 	public Unit(String unitName, boolean enemy) {
-		this(unitName, 1, enemy, GameController.getInstance().getUnitLife(unitName));
+		this(unitName, -1, enemy, GameController.getInstance().getUnitLife(unitName));
 	}
 
 	public Unit(String unitName, int num, boolean enemy, int hp) {
