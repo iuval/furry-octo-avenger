@@ -79,7 +79,7 @@ public class WorldController {
 				x = temp.getInt("x");
 				y = temp.getInt("y");
 
-				Unit unit = new Unit(child.getString("unit_name"), isEnemy, child.getInt("unit_hp"));
+				Unit unit = new Unit(child.getString("unit_name"), playerNum, isEnemy, child.getInt("unit_hp"));
 				UnitAction unitA;
 				action = child.getString("action");
 
@@ -110,8 +110,8 @@ public class WorldController {
 					unitA = new NoneUnitAction();
 				}
 
-				cellGrid[x][y].setUnit(unit, playerNum);
-				cellGrid[x][y].setAction(unitA, playerNum);
+				cellGrid[x][y].setUnit(unit);
+				cellGrid[x][y].setAction(unitA);
 
 				if (playerNum == player)
 					allysCount++;
@@ -188,7 +188,7 @@ public class WorldController {
 
 	public void addUnit(Unit unit, int x, int y) {
 		Cell cell = cellAt(x, y);
-		cell.placeUnit(unit, player);
+		cell.placeUnit(unit);
 	}
 
 	public Cell cellAt(float x, float y) {
@@ -222,9 +222,10 @@ public class WorldController {
 	}
 
 	public boolean placeUnit(float x, float y, Unit unit) {
+		unit.setPlayerNumber(player);
 		Cell cell = cellAt(x, y);
-		if (cell != null && cell.getState() == Cell.State.ABLE_TO_PLACE && cell.getUnit(player) == null) {
-			cell.placeUnit(unit, player);
+		if (cell != null && cell.getState() == Cell.State.ABLE_TO_PLACE && cell.getUnit() == null) {
+			cell.placeUnit(unit);
 			return true;
 		}
 		return false;
@@ -289,7 +290,7 @@ public class WorldController {
 	public void deleteAllUnits() {
 		for (int h = 0; h < 6; h++) {
 			for (int v = 0; v < 9; v++) {
-				cellGrid[v][h].removeUnit(player);
+				cellGrid[v][h].removeUnit();
 			}
 		}
 	}
@@ -318,10 +319,13 @@ public class WorldController {
 			builder.append("{");
 
 			Cell cell;
+			Unit unit;
 			for (int h = 0; h < 6; h++) {
 				for (int v = 0; v < 9; v++) {
 					cell = cellGrid[v][h];
-					cell.addDataToJson(builder, player);
+					unit = cellGrid[v][h].getUnit();
+					if (unit != null && !unit.isEnemy())
+						cell.addDataToJson(builder);
 				}
 			}
 			// Delete the last comma

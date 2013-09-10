@@ -3,7 +3,6 @@ package pruebas.Entities;
 import pruebas.Entities.helpers.PlaceUnitAction;
 import pruebas.Entities.helpers.UnitAction;
 import pruebas.Renders.CellRender;
-import pruebas.Renders.UnitRender.FACING;
 import pruebas.Renders.helpers.CellHelper;
 
 public class Cell extends GameObject {
@@ -11,10 +10,8 @@ public class Cell extends GameObject {
 		NONE, ABLE_TO_ATTACK, ABLE_TO_MOVE, ABLE_TO_PLACE, ATTACK_TARGET_CENTER, ATTACK_TARGET_RADIUS, MOVE_TARGET
 	}
 
-	private Unit unitsPlayer1;
-	private Unit unitsPlayer2;
-	private UnitAction actionPlayer1;
-	private UnitAction actionPlayer2;
+	private Unit unit;
+	private UnitAction action;
 	private State state = State.NONE;
 	public int[][] neigbours;
 	private CellRender render;
@@ -35,89 +32,48 @@ public class Cell extends GameObject {
 		state = s;
 	}
 
-	public void placeUnit(Unit unit, int player) {
-		setUnit(unit, player);
-		if (player == 1) {
-			actionPlayer1 = new PlaceUnitAction();
-			actionPlayer1.origin = this;
-			((PlaceUnitAction) actionPlayer1).unitName = unit.getName();
-		} else {
-			actionPlayer2 = new PlaceUnitAction();
-			actionPlayer2.origin = this;
-			((PlaceUnitAction) actionPlayer2).unitName = unit.getName();
-		}
+	public void placeUnit(Unit unit) {
+		setUnit(unit);
+		action = new PlaceUnitAction();
+		action.origin = this;
+		((PlaceUnitAction) action).unitName = unit.getName();
 	}
 
-	public void setUnit(Unit unit, int player) {
-		if (player == 1) {
-			unitsPlayer1 = unit;
-			unit.setPosition(getX() + CellHelper.UNIT_PLAYER_1_X, getY()
-					+ CellHelper.UNIT_PLAYER_1_Y);
-		} else {
-			unitsPlayer2 = unit;
-			unit.setPosition(getX() + CellHelper.UNIT_PLAYER_2_X, getY()
-					+ CellHelper.UNIT_PLAYER_2_Y);
-			unit.getRender().setFacing(FACING.left);
-		}
+	public void setUnit(Unit unit) {
+		this.unit = unit;
+		unit.setPosition(getX() + CellHelper.UNIT_PLAYER_1_X, getY()
+				+ CellHelper.UNIT_PLAYER_1_Y);
+
 	}
 
-	public Unit getUnit(int player) {
-		if (player == 1) {
-			return unitsPlayer1;
-		} else {
-			return unitsPlayer2;
-		}
+	public Unit getUnit() {
+		return unit;
 	}
 
-	public void removeUnit(int player) {
-		if (player == 1) {
-			unitsPlayer1 = null;
-		} else {
-			unitsPlayer2 = null;
-		}
+	public void removeUnit() {
+		unit = null;
 	}
 
 	public void removeDeadUnits() {
-		if (unitsPlayer1 != null && !unitsPlayer1.isAlive()) {
-			unitsPlayer1 = null;
-		}
-		if (unitsPlayer2 != null && !unitsPlayer2.isAlive()) {
-			unitsPlayer2 = null;
-		}
+		if (unit != null && !unit.isAlive())
+			unit = null;
 	}
 
-	public UnitAction getAction(int player) {
-		if (player == 1) {
-			return actionPlayer1;
-		} else {
-			return actionPlayer2;
-		}
+	public UnitAction getAction() {
+		return action;
 	}
 
-	public void setAction(UnitAction action, int player) {
+	public void setAction(UnitAction action) {
 		action.origin = this;
-		if (player == 1) {
-			actionPlayer1 = action;
-		} else {
-			actionPlayer2 = action;
-		}
+		this.action = action;
 	}
 
-	public void addDataToJson(StringBuilder builder, int player) {
-		if (player == 1 && unitsPlayer1 != null) {
+	public void addDataToJson(StringBuilder builder) {
+		if (unit != null) {
 			builder.append("\"unit\":{");
-			addUnitStatsToJson(builder, unitsPlayer1);
-			if (actionPlayer1 != null) {
-				actionPlayer1.addDataToJson(builder);
-			} else {
-				builder.append(",\"action\":\"none\"");
-			}
-			builder.append("},");
-		} else if (player == 2 && unitsPlayer2 != null) {
-			builder.append("\"unit\":{");
-			addUnitStatsToJson(builder, unitsPlayer2);
-			if (actionPlayer2 != null) {
-				actionPlayer2.addDataToJson(builder);
+			addUnitStatsToJson(builder, unit);
+			if (action != null) {
+				action.addDataToJson(builder);
 			} else {
 				builder.append(",\"action\":\"none\"");
 			}
