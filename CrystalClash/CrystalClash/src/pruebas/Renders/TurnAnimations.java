@@ -78,8 +78,7 @@ public class TurnAnimations extends GameRender {
 
 		load();
 
-		readActions(1);
-		readActions(2);
+		readActions();
 		GameEngine.hideLoading();
 	}
 
@@ -144,12 +143,12 @@ public class TurnAnimations extends GameRender {
 		DefendUnitAction action = null;
 		for (int i = 0; i < player1Defend.size; i++) {
 			action = player1Defend.get(i);
-			action.origin.getUnit(1).setDefendingPosition(active);
+			action.origin.getUnit().setDefendingPosition(active);
 		}
 
 		for (int i = 0; i < player2Defend.size; i++) {
 			action = player2Defend.get(i);
-			action.origin.getUnit(2).setDefendingPosition(active);
+			action.origin.getUnit().setDefendingPosition(active);
 		}
 	}
 
@@ -182,23 +181,22 @@ public class TurnAnimations extends GameRender {
 			if (!sameCellOriginTarget) {
 				move.delay(rand.nextFloat())
 						.push(Tween
-								.to(action.origin.getUnit(player), UnitAccessor.X, CrystalClash.WALK_ANIMATION_SPEED)
-								.target(getXForMeeleTarget(player, action.target, action.origin.getUnit(player))))
+								.to(action.origin.getUnit(), UnitAccessor.X, CrystalClash.WALK_ANIMATION_SPEED)
+								.target(getXForMeeleTarget(player, action.target, action.origin.getUnit())))
 						.push(Tween
-								.to(action.origin.getUnit(player), UnitAccessor.Y, CrystalClash.WALK_ANIMATION_SPEED)
-								.target(getYForMeeleTarget(player, action.target, action.origin.getUnit(player))));
+								.to(action.origin.getUnit(), UnitAccessor.Y, CrystalClash.WALK_ANIMATION_SPEED)
+								.target(getYForMeeleTarget(player, action.target, action.origin.getUnit())));
 			}
-			move.setUserData(new Object[] { action, player });
+			move.setUserData(new Object[] { action });
 			move.setCallbackTriggers(TweenCallback.BEGIN | TweenCallback.COMPLETE);
 			move.setCallback(new TweenCallback() {
 				@Override
 				public void onEvent(int type, BaseTween<?> source) {
 					AttackUnitAction action = (AttackUnitAction) (((Object[]) source.getUserData())[0]);
-					int player = Integer.parseInt(((Object[]) source.getUserData())[1].toString());
-					Unit unit = action.origin.getUnit(player);
+					Unit unit = action.origin.getUnit();
 					if (type == TweenCallback.COMPLETE) {
-						Unit enemy = action.target.getUnit(player == 1 ? 2 : 1);
-						doDamage(enemy, unit, player);
+						Unit enemy = action.target.getUnit();
+						doDamage(enemy, unit);
 						unit.getRender().setState(STATE.fighting);
 
 					} else if (type == TweenCallback.BEGIN) {
@@ -212,22 +210,21 @@ public class TurnAnimations extends GameRender {
 			moveBack.delay(CrystalClash.FIGTH_ANIMATION_SPEED);
 			if (!sameCellOriginTarget) {
 				moveBack.push(Tween
-						.to(action.origin.getUnit(player), UnitAccessor.X, CrystalClash.WALK_ANIMATION_SPEED)
-						.target(CellHelper.getUnitX(player, action.origin)));
+						.to(action.origin.getUnit(), UnitAccessor.X, CrystalClash.WALK_ANIMATION_SPEED)
+						.target(CellHelper.getUnitX(action.origin)));
 				moveBack.push(Tween
-						.to(action.origin.getUnit(player), UnitAccessor.Y, CrystalClash.WALK_ANIMATION_SPEED)
-						.target(CellHelper.getUnitY(player, action.origin)));
+						.to(action.origin.getUnit(), UnitAccessor.Y, CrystalClash.WALK_ANIMATION_SPEED)
+						.target(CellHelper.getUnitY(action.origin)));
 			}
-			moveBack.setUserData(new Object[] { action.origin.getUnit(player), player });
+			moveBack.setUserData(new Object[] { action.origin.getUnit() });
 			moveBack.setCallbackTriggers(TweenCallback.BEGIN | TweenCallback.COMPLETE);
 			moveBack.setCallback(new TweenCallback() {
 				@Override
 				public void onEvent(int type, BaseTween<?> source) {
 					Unit unit = (Unit) (((Object[]) source.getUserData())[0]);
 					if (type == TweenCallback.COMPLETE) {
-						int player = (Integer) (((Object[]) source.getUserData())[1]);
 						unit.getRender().setState(STATE.idle);
-						if (player == 1)
+						if (unit.isPlayerOne())
 							unit.getRender().setFacing(FACING.right);
 						else
 							unit.getRender().setFacing(FACING.left);
@@ -243,7 +240,7 @@ public class TurnAnimations extends GameRender {
 	}
 
 	private float getXForMeeleTarget(int player, Cell target, Unit attacker) {
-		float resultX = CellHelper.getUnitCenterX(player, target);
+		float resultX = CellHelper.getUnitCenterX(target);
 
 		if (attacker.getX() > resultX) {
 			resultX += 10 + rand.nextInt(30);
@@ -254,7 +251,7 @@ public class TurnAnimations extends GameRender {
 	}
 
 	private float getYForMeeleTarget(int player, Cell target, Unit attacker) {
-		float resultY = CellHelper.getUnitY(player, target);
+		float resultY = CellHelper.getUnitY(target);
 
 		if (attacker.getY() > resultY) {
 			resultY += 10 + rand.nextInt(30);
@@ -288,19 +285,18 @@ public class TurnAnimations extends GameRender {
 
 			Timeline path = Timeline.createSequence()
 					.delay(rand.nextFloat())
-					.setUserData(new Object[] { player, action.origin, action.moves.get(action.moves.size - 1) })
+					.setUserData(new Object[] { action.origin, action.moves.get(action.moves.size - 1) })
 					.setCallbackTriggers(TweenCallback.BEGIN | TweenCallback.COMPLETE)
 					.setCallback(new TweenCallback() {
 						@Override
 						public void onEvent(int type, BaseTween<?> source) {
-							int player = (Integer) (((Object[]) source.getUserData())[0]);
-							Cell cellFrom = (Cell) (((Object[]) source.getUserData())[1]);
-							Cell cellTo = (Cell) (((Object[]) source.getUserData())[2]);
+							Cell cellFrom = (Cell) (((Object[]) source.getUserData())[0]);
+							Cell cellTo = (Cell) (((Object[]) source.getUserData())[1]);
 
 							if (type == TweenCallback.COMPLETE)
-								repositionUnit(player, cellFrom, cellTo);
+								repositionUnit(cellFrom, cellTo);
 							else {
-								Unit unit = cellFrom.getUnit(player);
+								Unit unit = cellFrom.getUnit();
 								unit.getRender().setState(STATE.walking);
 							}
 						}
@@ -316,29 +312,29 @@ public class TurnAnimations extends GameRender {
 	private Timeline createStep(MoveUnitAction action, int currentStepIndex, int stepsCount, int player) {
 		return Timeline.createParallel()
 				.push(Tween
-						.to(action.origin.getUnit(player), UnitAccessor.X, CrystalClash.WALK_ANIMATION_SPEED)
+						.to(action.origin.getUnit(), UnitAccessor.X, CrystalClash.WALK_ANIMATION_SPEED)
 						.ease(Linear.INOUT)
-						.target(CellHelper.getUnitX(player, action.moves.get(currentStepIndex + 1))))
+						.target(CellHelper.getUnitX(action.moves.get(currentStepIndex + 1))))
 				.push(Tween
-						.to(action.origin.getUnit(player), UnitAccessor.Y, CrystalClash.WALK_ANIMATION_SPEED)
+						.to(action.origin.getUnit(), UnitAccessor.Y, CrystalClash.WALK_ANIMATION_SPEED)
 						.ease(Linear.INOUT)
 						.target(currentStepIndex + 1 == stepsCount - 1 ?
-								CellHelper.getUnitY(player, action.moves.get(currentStepIndex + 1)) :
-								rand(CellHelper.getUnitY(player, action.moves.get(currentStepIndex + 1)))));
+								CellHelper.getUnitY(action.moves.get(currentStepIndex + 1)) :
+								rand(CellHelper.getUnitY(action.moves.get(currentStepIndex + 1)))));
 	}
 
 	private float rand(float value) {
 		return value + rand.nextInt(100) - 50;
 	}
 
-	private void repositionUnit(int player, Cell cellFrom, Cell cellTo) {
-		Unit unit = cellFrom.getUnit(player);
+	private void repositionUnit(Cell cellFrom, Cell cellTo) {
+		Unit unit = cellFrom.getUnit();
 
-		cellFrom.removeUnit(player);
-		cellTo.setUnit(unit, player);
+		cellFrom.removeUnit();
+		cellTo.setUnit(unit);
 
 		unit.getRender().setState(STATE.idle);
-		if (player == 1)
+		if (unit.isPlayerOne())
 			unit.getRender().setFacing(FACING.right);
 		else
 			unit.getRender().setFacing(FACING.left);
@@ -375,13 +371,12 @@ public class TurnAnimations extends GameRender {
 			action = attackActions.get(m);
 
 			Timeline startAnim = Timeline.createSequence();
-			startAnim.setUserData(new Object[] { action, player });
+			startAnim.setUserData(new Object[] { action });
 			startAnim.setCallback(new TweenCallback() {
 				@Override
 				public void onEvent(int type, BaseTween<?> source) {
 					AttackUnitAction action = (AttackUnitAction) (((Object[]) source.getUserData())[0]);
-					int player = Integer.parseInt(((Object[]) source.getUserData())[1].toString());
-					Unit unit = action.origin.getUnit(player);
+					Unit unit = action.origin.getUnit();
 
 					unit.getRender().setState(STATE.fighting);
 					action.target.setState(Cell.State.ATTACK_TARGET_CENTER);
@@ -390,16 +385,15 @@ public class TurnAnimations extends GameRender {
 
 			Timeline stopAnim = Timeline.createSequence();
 			stopAnim.delay(CrystalClash.FIGTH_ANIMATION_SPEED);
-			stopAnim.setUserData(new Object[] { action, player });
+			stopAnim.setUserData(new Object[] { action });
 			stopAnim.setCallback(new TweenCallback() {
 				@Override
 				public void onEvent(int type, BaseTween<?> source) {
 					AttackUnitAction action = (AttackUnitAction) (((Object[]) source.getUserData())[0]);
-					int player = Integer.parseInt(((Object[]) source.getUserData())[1].toString());
-					Unit unit = action.origin.getUnit(player);
+					Unit unit = action.origin.getUnit();
 
-					Unit enemy = action.target.getUnit(player == 1 ? 2 : 1);
-					doDamage(enemy, unit, player);
+					Unit enemy = action.target.getUnit();
+					doDamage(enemy, unit);
 					unit.getRender().setState(STATE.idle);
 					action.target.setState(Cell.State.NONE);
 				}
@@ -410,13 +404,13 @@ public class TurnAnimations extends GameRender {
 		}
 	}
 
-	private boolean doDamage(Unit enemy, Unit player, int playerNum) {
+	private boolean doDamage(Unit enemy, Unit player) {
 		if (enemy != null) {
 			enemy.damage(player.getDamage());
 
 			if (!enemy.isAlive() && !deadUnits.contains(enemy, true)) {
 				deadUnits.add(enemy);
-				if (playerNum == world.player)
+				if (enemy.isEnemy())
 					world.enemiesCount--;
 				else
 					world.allysCount--;
@@ -482,17 +476,18 @@ public class TurnAnimations extends GameRender {
 		}
 	}
 
-	private void readActions(int player) {
+	private void readActions() {
 		for (int row = 0; row < world.cellGrid.length; row++) {
 			for (int col = 0; col < world.cellGrid[0].length; col++) {
 
-				UnitAction action = world.cellGrid[row][col].getAction(player);
+				UnitAction action = world.cellGrid[row][col].getAction();
+				Unit unit = world.cellGrid[row][col].getUnit();
 
 				if (action != null) {
 					switch (action.getActionType()) {
 					case ATTACK:
 						AttackUnitAction aux = (AttackUnitAction) action;
-						if (player == 1) {
+						if (unit.isPlayerOne()) {
 							if (aux.meleeAttack) {
 								player1MeleeAttacks.add(aux);
 							} else {
@@ -507,14 +502,14 @@ public class TurnAnimations extends GameRender {
 						}
 						break;
 					case DEFENSE:
-						if (player == 1) {
+						if (unit.isPlayerOne()) {
 							player1Defend.add((DefendUnitAction) action);
 						} else {
 							player2Defend.add((DefendUnitAction) action);
 						}
 						break;
 					case MOVE:
-						if (player == 1) {
+						if (unit.isPlayerOne()) {
 							player1Moves.add((MoveUnitAction) action);
 						} else {
 							player2Moves.add((MoveUnitAction) action);

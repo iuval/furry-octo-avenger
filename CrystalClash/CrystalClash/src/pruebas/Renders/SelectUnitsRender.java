@@ -167,9 +167,9 @@ public class SelectUnitsRender extends GameRender {
 			} else {
 				Cell cell = world.cellAt(x, y);
 				if (cell != null) {
-					selectedUnit = cell.getUnit(world.player);
+					selectedUnit = cell.getUnit();
 					if (selectedUnit != null) {
-						cell.removeUnit(world.player);
+						cell.removeUnit();
 						changeUnitsCountBy(-1);
 					}
 				}
