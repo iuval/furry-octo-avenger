@@ -1,6 +1,7 @@
 package pruebas.Renders;
 
 import pruebas.Accessors.ActorAccessor;
+import pruebas.Audio.AudioManager;
 import pruebas.Controllers.GameController;
 import pruebas.Controllers.MenuGames;
 import pruebas.Controllers.MenuLogIn;
@@ -75,6 +76,8 @@ public class GameEngine implements Screen {
 		tweenManager = new TweenManager();
 
 		ResourceHelper.fastLoad();
+		AudioManager.load();
+		AudioManager.playMusic("To Battle!");
 
 		load();
 		openSplash();
