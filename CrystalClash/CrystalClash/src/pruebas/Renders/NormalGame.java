@@ -736,7 +736,7 @@ public class NormalGame extends GameRender {
 		if (action.moves.size > 1) {
 			mActions.add(action);
 
-			Unit ghost = new Unit(selectedUnit.getName());
+			Unit ghost = new Unit(selectedUnit.getName(), world.player);
 			if (ghost.isPlayerNumber(2))
 				ghost.getRender().setFacing(FACING.left);
 

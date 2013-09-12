@@ -155,14 +155,14 @@ public class ServerDriver {
 				});
 	}
 
-	public static void getGameTurn(String playerId, String gameId, final int turn) {
+	public static void getGameTurn(String playerId, String gameId) {
 		Gdx.net.sendHttpRequest(getGet(ACTION_GAME_TURN + "/p/" + playerId
 				+ "/g/" + gameId), new HttpResponseListener() {
 			public void handleHttpResponse(HttpResponse httpResponse) {
 				JsonValue values =
 						ServerDriver.ProcessResponce(httpResponse);
 				if (values.getString("value").equals("ok")) {
-					MenuGames.getInstance().getGameTurnSuccess(values.get("data"), turn);
+					MenuGames.getInstance().getGameTurnSuccess(values.get("data"));
 				} else {
 					MenuGames.getInstance().getGameTurnError(values.getString("message"));
 				}

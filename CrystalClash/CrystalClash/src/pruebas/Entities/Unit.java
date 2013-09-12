@@ -52,6 +52,10 @@ public class Unit extends GameObject {
 	public Unit(String unitName) {
 		this(unitName, 1, false, 0);
 	}
+	
+	public Unit(String unitName, int num) {
+		this(unitName, num, false, 0);
+	}
 
 	public UnitRender getRender() {
 		return render;
