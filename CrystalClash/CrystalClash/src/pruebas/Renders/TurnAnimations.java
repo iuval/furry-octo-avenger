@@ -151,12 +151,12 @@ public class TurnAnimations extends GameRender {
 		PlaceUnitAction action = null;
 		for (int m = 0; m < player1Places.size; m++) {
 			action = player1Places.get(m);
-			action.origin.getUnit().setPosition(-100, CrystalClash.HEIGHT / 2 + rand.nextInt(30));
+			action.origin.getUnit().setPosition(-100, 354 + rand.nextInt(100));
 		}
 		
 		for (int m = 0; m < player2Places.size; m++) {
 			action = player2Places.get(m);
-			action.origin.getUnit().setPosition(CrystalClash.WIDTH + 100, CrystalClash.HEIGHT / 2 + rand.nextInt(30));
+			action.origin.getUnit().setPosition(CrystalClash.WIDTH + 100, 354 + rand.nextInt(100));
 		}
 	}
 	
@@ -199,7 +199,7 @@ public class TurnAnimations extends GameRender {
 			move.delay(rand.nextFloat())
 					.push(Tween
 							.to(action.origin.getUnit(), UnitAccessor.X, CrystalClash.ENTRANCE_ANIMATION_SPEED)
-							.target(CellHelper.getUnitCenterX(action.origin)))
+							.target(CellHelper.getUnitX(action.origin)))
 					.push(Tween
 							.to(action.origin.getUnit(), UnitAccessor.Y, CrystalClash.ENTRANCE_ANIMATION_SPEED)
 							.target(CellHelper.getUnitY(action.origin)));
