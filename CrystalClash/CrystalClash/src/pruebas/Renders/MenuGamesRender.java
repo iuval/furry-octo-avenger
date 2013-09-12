@@ -236,8 +236,10 @@ public class MenuGamesRender extends MenuRender {
 		final MessageBoxCallback surrenderCallback = new MessageBoxCallback() {
 			@Override
 			public void onEvent(int type, Object data) {
-				if (type == MessageBoxCallback.YES)
+				if (type == MessageBoxCallback.YES){
 					controller.surrenderGame(data.toString());
+					loadGameList();
+				}
 			}
 		};
 		// Listeners

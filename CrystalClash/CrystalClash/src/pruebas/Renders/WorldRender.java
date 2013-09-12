@@ -251,7 +251,6 @@ public class WorldRender extends Group implements InputProcessor {
 							.setHideOnAction(false)
 							.show();
 				} else {
-					GameEngine.showLoading();
 					gameRender.onSend();
 				}
 			}
