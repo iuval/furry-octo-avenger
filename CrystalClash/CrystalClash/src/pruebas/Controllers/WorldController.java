@@ -12,6 +12,7 @@ import pruebas.Entities.helpers.PlaceUnitAction;
 import pruebas.Entities.helpers.UnitAction;
 import pruebas.Networking.ServerDriver;
 import pruebas.Renders.GameEngine;
+import pruebas.Renders.UnitRender.FACING;
 import pruebas.Renders.WorldRender;
 import pruebas.Renders.helpers.CellHelper;
 
@@ -74,6 +75,10 @@ public class WorldController {
 				y = temp.getInt("y");
 
 				Unit unit = new Unit(child.getString("unit_name"), playerNum, isEnemy, child.getInt("unit_hp"));
+				if (unit.isPlayerNumber(2)){
+					unit.getRender().setFacing(FACING.left);
+				}
+					
 				UnitAction unitA;
 				action = child.getString("action");
 

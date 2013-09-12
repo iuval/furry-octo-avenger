@@ -22,6 +22,7 @@ import aurelienribon.tweenengine.BaseTween;
 import aurelienribon.tweenengine.Timeline;
 import aurelienribon.tweenengine.Tween;
 import aurelienribon.tweenengine.TweenCallback;
+import aurelienribon.tweenengine.TweenEquation;
 import aurelienribon.tweenengine.TweenEquations;
 import aurelienribon.tweenengine.TweenManager;
 import aurelienribon.tweenengine.equations.Linear;
@@ -199,10 +200,10 @@ public class TurnAnimations extends GameRender {
 			move.delay(rand.nextFloat())
 					.push(Tween
 							.to(action.origin.getUnit(), UnitAccessor.X, CrystalClash.ENTRANCE_ANIMATION_SPEED)
-							.target(CellHelper.getUnitX(action.origin)))
+							.target(CellHelper.getUnitX(action.origin)).ease(TweenEquations.easeNone))
 					.push(Tween
 							.to(action.origin.getUnit(), UnitAccessor.Y, CrystalClash.ENTRANCE_ANIMATION_SPEED)
-							.target(CellHelper.getUnitY(action.origin)));
+							.target(CellHelper.getUnitY(action.origin)).ease(TweenEquations.easeNone));
 			move.setUserData(new Object[] { action });
 			move.setCallbackTriggers(TweenCallback.BEGIN | TweenCallback.COMPLETE);
 			move.setCallback(new TweenCallback() {
