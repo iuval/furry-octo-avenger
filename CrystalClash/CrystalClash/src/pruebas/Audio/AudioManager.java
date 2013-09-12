@@ -50,11 +50,12 @@ public class AudioManager {
 			playing.stop();
 		
 		playing = getMusic("data/Audio/" + name + ".mp3");
+		playing.setVolume(volume);
 		playing.play();
 	}
 	
 	public static void playSound(String name) {
-		getSound("data/SFX/" + name + ".mp3").play();
+		getSound("data/SFX/" + name + ".mp3").play(1);
 	}
 	
 	public static void VolumeUp() {
