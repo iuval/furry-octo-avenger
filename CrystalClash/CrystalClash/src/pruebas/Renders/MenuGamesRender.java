@@ -258,8 +258,7 @@ public class MenuGamesRender extends MenuRender {
 		playListener = new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
-				controller.getGameTurn(((GameListItem) event.getListenerActor().getParent()).gameId,
-						((GameListItem) event.getListenerActor().getParent()).turn);
+				controller.getGameTurn(((GameListItem) event.getListenerActor().getParent()).gameId);
 			}
 		};
 

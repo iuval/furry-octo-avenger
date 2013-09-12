@@ -32,7 +32,7 @@ public class WorldController {
 	public int allysCount;
 	public boolean gameEnded = false;
 
-	public WorldController(JsonValue data, int turn) {
+	public WorldController(JsonValue data) {
 		this.player = data.getInt("player");
 		this.gameId = data.getString("game_id");
 		init();
@@ -43,13 +43,7 @@ public class WorldController {
 			render.initFirstTurn();
 		} else {
 			readData(data);
-			if (!gameEnded && turn == 2) { // First playable turn, only
-											// FirstTurn actions
-				// (PlaceActions), so nothing to show
-				render.initNormalTurn();
-			} else {
-				render.initTurnAnimations();
-			}
+			render.initTurnAnimations();
 		}
 	}
 

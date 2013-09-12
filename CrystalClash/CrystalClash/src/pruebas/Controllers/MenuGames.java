@@ -76,13 +76,13 @@ public class MenuGames {
 				.show();
 	}
 
-	public void getGameTurn(String gameId, int turn) {
+	public void getGameTurn(String gameId) {
 		GameEngine.showLoading();
-		ServerDriver.getGameTurn(GameController.getInstance().getUser().getId(), gameId, turn);
+		ServerDriver.getGameTurn(GameController.getInstance().getUser().getId(), gameId);
 	}
 
-	public void getGameTurnSuccess(JsonValue data, int turn) {
-		GameEngine.getInstance().openGame(data, turn);
+	public void getGameTurnSuccess(JsonValue data) {
+		GameEngine.getInstance().openGame(data);
 	}
 
 	public void getGameTurnError(String string) {

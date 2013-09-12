@@ -186,14 +186,14 @@ public class GameEngine implements Screen {
 			stage.addActor(loadingTexture);
 	}
 
-	public void openGame(final JsonValue data, final int turn) {
+	public void openGame(final JsonValue data) {
 		Timeline t = Timeline.createSequence();
 		menuGamesRender.pushExitAnimation(t);
 		t.setCallback(new TweenCallback() {
 			@Override
 			public void onEvent(int type, BaseTween<?> source) {
 				if (worldRender == null) {
-					world = new WorldController(data, turn);
+					world = new WorldController(data);
 					worldRender = world.getRender();
 					worldRender.init();
 				}
