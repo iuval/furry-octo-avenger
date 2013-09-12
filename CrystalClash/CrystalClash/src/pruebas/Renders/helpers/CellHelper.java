@@ -8,12 +8,12 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 
 public class CellHelper {
 
-	public final static float CELL_HEIGHT = 109.0F;
-	public final static float CELL_WIDTH = 162.0F;
+	public final static float CELL_HEIGHT = 106.0F;
+	public final static float CELL_WIDTH = 122.0F;
 
-	public static final float UNIT_PLAYER_1_X = 10f;
-	public static final float UNIT_PLAYER_1_Y = 50f;
-	public static final float UNIT_PLAYER_1_CENTER_X = 30f;
+	public static final float UNIT_PLAYER_1_X = 30f;
+	public static final float UNIT_PLAYER_1_Y = 25f;
+	public static final float UNIT_PLAYER_1_CENTER_X = 61f;
 
 	TextureAtlas atlas;
 
@@ -24,7 +24,7 @@ public class CellHelper {
 
 	TextureRegion attack_target_center;
 	TextureRegion attack_target_radius;
-	TextureRegion move_target;
+	TextureRegion path;
 
 	public void load() {
 		atlas = new TextureAtlas("data/Images/InGame/cells.pack");
@@ -35,8 +35,8 @@ public class CellHelper {
 		able_to_move = skin.getRegion("able_to_move");
 		able_to_place = skin.getRegion("able_to_move");
 		attack_target_center = skin.getRegion("attack_target_center");
-		attack_target_radius = skin.getRegion("attack_target_radius");
-		move_target = skin.getRegion("move_target");
+		attack_target_radius = skin.getRegion("attack_target_center");
+		path = skin.getRegion("path");
 	}
 
 	public TextureRegion getCellTexture(Cell cell) {
@@ -60,7 +60,7 @@ public class CellHelper {
 			return attack_target_radius;
 		}
 		case MOVE_TARGET: {
-			return move_target;
+			return path;
 		}
 		default: {
 			return none;

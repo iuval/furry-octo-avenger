@@ -12,6 +12,7 @@ import pruebas.Entities.helpers.PlaceUnitAction;
 import pruebas.Entities.helpers.UnitAction;
 import pruebas.Networking.ServerDriver;
 import pruebas.Renders.GameEngine;
+import pruebas.Renders.UnitRender.FACING;
 import pruebas.Renders.WorldRender;
 import pruebas.Renders.helpers.CellHelper;
 
@@ -22,9 +23,9 @@ public class WorldController {
 	private WorldRender render;
 
 	public Cell[][] cellGrid;
-	private final float deltaX = 122.0F;
-	private final float gridX = 70.0F;
-	private final float gridY = 20.0F;
+	private final float deltaX = 93F; // (float) ((3f / 4f) * hexaWidht);
+	private final float gridX = 202.0F;
+	private final float gridY = 59.0F;
 
 	public int player;
 	private String gameId;
@@ -32,7 +33,7 @@ public class WorldController {
 	public int allysCount;
 	public boolean gameEnded = false;
 
-	public WorldController(JsonValue data, int turn) {
+	public WorldController(JsonValue data) {
 		this.player = data.getInt("player");
 		this.gameId = data.getString("game_id");
 		init();
@@ -43,13 +44,7 @@ public class WorldController {
 			render.initFirstTurn();
 		} else {
 			readData(data);
-			if (!gameEnded && turn == 2) { // First playable turn, only
-											// FirstTurn actions
-				// (PlaceActions), so nothing to show
-				render.initNormalTurn();
-			} else {
-				render.initTurnAnimations();
-			}
+			render.initTurnAnimations();
 		}
 	}
 
@@ -80,6 +75,10 @@ public class WorldController {
 				y = temp.getInt("y");
 
 				Unit unit = new Unit(child.getString("unit_name"), playerNum, isEnemy, child.getInt("unit_hp"));
+				if (unit.isPlayerNumber(2)){
+					unit.getRender().setFacing(FACING.left);
+				}
+					
 				UnitAction unitA;
 				action = child.getString("action");
 
@@ -135,9 +134,8 @@ public class WorldController {
 				{ 1, -1 }, { -1, 0 } };
 
 		float yoffset = 0f;
-		float dx = deltaX;// (float) ((3f / 4f) * hexaWidht);
-		float dy = CellHelper.CELL_HEIGHT + 1;// (float) ((Math.sqrt(3f) / 2f) *
-												// hexaWidht);
+		float dx = deltaX;
+		float dy = CellHelper.CELL_HEIGHT + 3; // (float) ((Math.sqrt(3f) / 2f) * hexaWidht);
 
 		ArrayList<int[]> temp = new ArrayList<int[]>();
 		for (int h = 0; h < 6; h++) {

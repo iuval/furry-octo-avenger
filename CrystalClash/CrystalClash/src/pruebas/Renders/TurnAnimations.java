@@ -12,6 +12,7 @@ import pruebas.Entities.Unit;
 import pruebas.Entities.helpers.AttackUnitAction;
 import pruebas.Entities.helpers.DefendUnitAction;
 import pruebas.Entities.helpers.MoveUnitAction;
+import pruebas.Entities.helpers.PlaceUnitAction;
 import pruebas.Entities.helpers.UnitAction;
 import pruebas.Renders.UnitRender.FACING;
 import pruebas.Renders.UnitRender.STATE;
@@ -21,6 +22,7 @@ import aurelienribon.tweenengine.BaseTween;
 import aurelienribon.tweenengine.Timeline;
 import aurelienribon.tweenengine.Tween;
 import aurelienribon.tweenengine.TweenCallback;
+import aurelienribon.tweenengine.TweenEquation;
 import aurelienribon.tweenengine.TweenEquations;
 import aurelienribon.tweenengine.TweenManager;
 import aurelienribon.tweenengine.equations.Linear;
@@ -35,7 +37,9 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Array;
 
 public class TurnAnimations extends GameRender {
-
+	
+	private Array<PlaceUnitAction> player1Places;
+	private Array<PlaceUnitAction> player2Places;
 	private Array<MoveUnitAction> player1Moves;
 	private Array<MoveUnitAction> player2Moves;
 	private Array<AttackUnitAction> player1MeleeAttacks;
@@ -64,6 +68,8 @@ public class TurnAnimations extends GameRender {
 	public TurnAnimations(WorldController world) {
 		super(world);
 
+		player1Places = new Array<PlaceUnitAction>();
+		player2Places = new Array<PlaceUnitAction>();
 		player1Moves = new Array<MoveUnitAction>();
 		player2Moves = new Array<MoveUnitAction>();
 		player1MeleeAttacks = new Array<AttackUnitAction>();
@@ -79,6 +85,9 @@ public class TurnAnimations extends GameRender {
 		load();
 
 		readActions();
+		if(player1Places.size > 0 || player2Places.size > 0)
+			setFirstTurnAnimation();
+		
 		GameEngine.hideLoading();
 	}
 
@@ -136,9 +145,22 @@ public class TurnAnimations extends GameRender {
 	private void play() {
 		hidePanel();
 		defensiveUnits(true);
-		meleeAttackUnits();
+		placeUnits();
 	}
 
+	private void setFirstTurnAnimation(){
+		PlaceUnitAction action = null;
+		for (int m = 0; m < player1Places.size; m++) {
+			action = player1Places.get(m);
+			action.origin.getUnit().setPosition(-100, 354 + rand.nextInt(100));
+		}
+		
+		for (int m = 0; m < player2Places.size; m++) {
+			action = player2Places.get(m);
+			action.origin.getUnit().setPosition(CrystalClash.WIDTH + 100, 354 + rand.nextInt(100));
+		}
+	}
+	
 	private void defensiveUnits(boolean active) {
 		DefendUnitAction action = null;
 		for (int i = 0; i < player1Defend.size; i++) {
@@ -152,6 +174,55 @@ public class TurnAnimations extends GameRender {
 		}
 	}
 
+	private void placeUnits() {
+		Timeline t = Timeline.createSequence();
+		t.beginParallel();
+		createPlacingPath(player1Places, 1, t);
+		t.end();
+		t.beginParallel();
+		createPlacingPath(player2Places, 2, t);
+		t.end();
+		t.setCallback(new TweenCallback() {
+			@Override
+			public void onEvent(int type, BaseTween<?> source) {
+				meleeAttackUnits();
+			}
+		});
+		start(t);
+	}
+	
+	private void createPlacingPath(Array<PlaceUnitAction> placeActions, int player, Timeline placeTimeline) {
+		PlaceUnitAction action = null;
+		for (int m = 0; m < placeActions.size; m++) {
+			action = placeActions.get(m);
+
+			Timeline move = Timeline.createParallel();
+			move.delay(rand.nextFloat())
+					.push(Tween
+							.to(action.origin.getUnit(), UnitAccessor.X, CrystalClash.ENTRANCE_ANIMATION_SPEED)
+							.target(CellHelper.getUnitX(action.origin)).ease(TweenEquations.easeNone))
+					.push(Tween
+							.to(action.origin.getUnit(), UnitAccessor.Y, CrystalClash.ENTRANCE_ANIMATION_SPEED)
+							.target(CellHelper.getUnitY(action.origin)).ease(TweenEquations.easeNone));
+			move.setUserData(new Object[] { action });
+			move.setCallbackTriggers(TweenCallback.BEGIN | TweenCallback.COMPLETE);
+			move.setCallback(new TweenCallback() {
+				@Override
+				public void onEvent(int type, BaseTween<?> source) {
+					PlaceUnitAction action = (PlaceUnitAction) (((Object[]) source.getUserData())[0]);
+					Unit unit = action.origin.getUnit();
+					
+					if (type == TweenCallback.COMPLETE) {
+						unit.getRender().setState(STATE.idle);
+					} else if (type == TweenCallback.BEGIN) {
+						unit.getRender().setState(STATE.walking);
+					}
+				}
+			});
+			placeTimeline.push(move);
+		}
+	}
+	
 	private void meleeAttackUnits() {
 		Timeline t = Timeline.createSequence();
 		t.beginParallel();
@@ -518,6 +589,11 @@ public class TurnAnimations extends GameRender {
 					case NONE:
 						break;
 					case PLACE:
+						if (unit.isPlayerOne()) {
+							player1Places.add((PlaceUnitAction) action);
+						} else {
+							player2Places.add((PlaceUnitAction) action);
+						}
 						break;
 					default:
 						break;
