@@ -43,7 +43,6 @@ public class Cell extends GameObject {
 		this.unit = unit;
 		unit.setPosition(getX() + CellHelper.UNIT_PLAYER_1_X, getY()
 				+ CellHelper.UNIT_PLAYER_1_Y);
-
 	}
 
 	public Unit getUnit() {

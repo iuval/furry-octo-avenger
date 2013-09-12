@@ -22,9 +22,9 @@ public class WorldController {
 	private WorldRender render;
 
 	public Cell[][] cellGrid;
-	private final float deltaX = 122.0F;
-	private final float gridX = 70.0F;
-	private final float gridY = 20.0F;
+	private final float deltaX = 93F; // (float) ((3f / 4f) * hexaWidht);
+	private final float gridX = 202.0F;
+	private final float gridY = 59.0F;
 
 	public int player;
 	private String gameId;
@@ -129,9 +129,8 @@ public class WorldController {
 				{ 1, -1 }, { -1, 0 } };
 
 		float yoffset = 0f;
-		float dx = deltaX;// (float) ((3f / 4f) * hexaWidht);
-		float dy = CellHelper.CELL_HEIGHT + 1;// (float) ((Math.sqrt(3f) / 2f) *
-												// hexaWidht);
+		float dx = deltaX;
+		float dy = CellHelper.CELL_HEIGHT + 3; // (float) ((Math.sqrt(3f) / 2f) * hexaWidht);
 
 		ArrayList<int[]> temp = new ArrayList<int[]>();
 		for (int h = 0; h < 6; h++) {
