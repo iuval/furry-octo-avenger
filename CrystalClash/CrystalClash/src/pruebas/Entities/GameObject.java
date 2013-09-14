@@ -26,11 +26,11 @@ public class GameObject {
 	}
 
 	public float getCenterX() {
-		return position.x + CellHelper.CELL_WIDTH / 2;
+		return position.x + CellHelper.CELL_CENTER_X;
 	}
 
 	public float getCenterY() {
-		return position.y + CellHelper.CELL_HEIGHT / 2;
+		return position.y + CellHelper.CELL_CENTER_Y;
 	}
 
 	public void setGrisPosition(int x, int y) {

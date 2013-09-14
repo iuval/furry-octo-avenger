@@ -311,7 +311,7 @@ public class TurnAnimations extends GameRender {
 	}
 
 	private float getXForMeeleTarget(int player, Cell target, Unit attacker) {
-		float resultX = CellHelper.getUnitCenterX(target);
+		float resultX = CellHelper.getUnitX(target);
 
 		if (attacker.getX() > resultX) {
 			resultX += 10 + rand.nextInt(30);

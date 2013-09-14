@@ -613,11 +613,17 @@ public class NormalGame extends GameRender {
 					Path p = paths.getOrCreatePath(selectedUnit);
 
 					if (moves.size == 0) {
-						paths.addRect(p, selectedCell.getCenterX(), selectedCell.getCenterY(),
-								cell.getCenterX(), cell.getCenterY());
+						paths.addRect(p, 
+										selectedCell.getCenterX(),
+										selectedCell.getCenterY(),
+										cell.getCenterX(),
+										cell.getCenterY());
 					} else {
-						paths.addRect(p, moves.get(moves.size - 1).getCenterX(), moves.get(moves.size - 1).getCenterY(),
-								cell.getCenterX(), cell.getCenterY());
+						paths.addRect(p, 
+										moves.get(moves.size - 1).getCenterX(), 
+										moves.get(moves.size - 1).getCenterY(),
+										cell.getCenterX(), 
+										cell.getCenterY());
 					}
 
 					lblMoves.setText(maxMoves - moves.size + "");

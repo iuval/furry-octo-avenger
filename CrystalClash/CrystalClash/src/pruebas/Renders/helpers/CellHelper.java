@@ -7,13 +7,14 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 
 public class CellHelper {
-
-	public final static float CELL_HEIGHT = 106.0F;
 	public final static float CELL_WIDTH = 122.0F;
+	public final static float CELL_HEIGHT = 106.0F;
 
-	public static final float UNIT_PLAYER_1_X = 30f;
-	public static final float UNIT_PLAYER_1_Y = 25f;
-	public static final float UNIT_PLAYER_1_CENTER_X = 61f;
+	public static final float CELL_CENTER_X = 61f;
+	public static final float CELL_CENTER_Y = 53f;
+
+	public static final float CELL_UNIT_X = 30f;
+	public static final float CELL_UNIT_Y = 25f;
 
 	TextureAtlas atlas;
 
@@ -36,7 +37,7 @@ public class CellHelper {
 		able_to_place = skin.getRegion("able_to_move");
 		attack_target_center = skin.getRegion("attack_target_center");
 		attack_target_radius = skin.getRegion("attack_target_center");
-		path = skin.getRegion("path");
+		path = none;// skin.getRegion("path");
 	}
 
 	public TextureRegion getCellTexture(Cell cell) {
@@ -69,14 +70,10 @@ public class CellHelper {
 	}
 
 	public static float getUnitX(Cell cell) {
-		return cell.getX() + CellHelper.UNIT_PLAYER_1_X;
-	}
-
-	public static float getUnitCenterX(Cell cell) {
-		return cell.getX() + CellHelper.UNIT_PLAYER_1_CENTER_X;
+		return cell.getX() + CellHelper.CELL_UNIT_X;
 	}
 
 	public static float getUnitY(Cell cell) {
-		return cell.getY() + CellHelper.UNIT_PLAYER_1_Y;
+		return cell.getY() + CellHelper.CELL_UNIT_Y;
 	}
 }
