@@ -6,35 +6,35 @@ repeat: none
 able_to_attack
   rotate: false
   xy: 0, 0
-  size: 122, 106
-  orig: 122, 106
+  size: 106, 122
+  orig: 106, 122
   offset: 0, 0
   index: -1
 able_to_move
   rotate: false
-  xy: 122, 0
-  size: 122, 106
-  orig: 122, 106
+  xy: 106, 0
+  size: 106, 122
+  orig: 106, 122
   offset: 0, 0
   index: -1
 attack_target_center
   rotate: false
-  xy: 244, 0
-  size: 122, 106
-  orig: 122, 106
+  xy: 212, 0
+  size: 106, 122
+  orig: 106, 122
   offset: 0, 0
   index: -1
 none
   rotate: false
-  xy: 366, 0
-  size: 122, 106
-  orig: 122, 106
+  xy: 318, 0
+  size: 106, 122
+  orig: 106, 122
   offset: 0, 0
   index: -1
 path
   rotate: false
-  xy: 488, 0
-  size: 122, 106
-  orig: 122, 106
+  xy: 424, 0
+  size: 106, 122
+  orig: 106, 122
   offset: 0, 0
   index: -1

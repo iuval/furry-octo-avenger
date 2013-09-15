@@ -8,11 +8,11 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 
 public class CellHelper {
 
-	public final static float CELL_HEIGHT = 106.0F;
-	public final static float CELL_WIDTH = 122.0F;
+	public final static float CELL_HEIGHT = 122.0F;
+	public final static float CELL_WIDTH = 106.0F;
 
-	public static final float UNIT_PLAYER_1_X = 30f;
-	public static final float UNIT_PLAYER_1_Y = 25f;
+	public static final float UNIT_PLAYER_1_X = 10f;
+	public static final float UNIT_PLAYER_1_Y = 35f;
 	public static final float UNIT_PLAYER_1_CENTER_X = 61f;
 
 	TextureAtlas atlas;

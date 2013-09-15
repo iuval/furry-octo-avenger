@@ -23,9 +23,9 @@ public class WorldController {
 	private WorldRender render;
 
 	public Cell[][] cellGrid;
-	private final float deltaX = 93F; // (float) ((3f / 4f) * hexaWidht);
-	private final float gridX = 202.0F;
-	private final float gridY = 59.0F;
+	private final float deltaY = 93F; // (float) ((3f / 4f) * hexaWidht);
+	private final float gridX = 130.0F;
+	private final float gridY = 120.0F;
 
 	public int player;
 	private String gameId;
@@ -75,10 +75,10 @@ public class WorldController {
 				y = temp.getInt("y");
 
 				Unit unit = new Unit(child.getString("unit_name"), playerNum, isEnemy, child.getInt("unit_hp"));
-				if (unit.isPlayerNumber(2)){
+				if (unit.isPlayerNumber(2)) {
 					unit.getRender().setFacing(FACING.left);
 				}
-					
+
 				UnitAction unitA;
 				action = child.getString("action");
 
@@ -121,21 +121,13 @@ public class WorldController {
 	}
 
 	private void createMap() {
-		/*
-		 * x x x o x x x
-		 */
-		int[][] oddNeighbours = { { 0, -1 }, { -1, 1 }, { 1, 0 }, { 1, 1 },
-				{ 0, 1 }, { -1, 0 } };
+		int[][] oddNeighbours = { { 1, 0 }, { 1, 1 }, { 0, 1 }, { -1, 0 }, { 0, -1 }, { 1, -1 } };
 
-		/*
-		 * x x x o x x x
-		 */
-		int[][] evenNeighbours = { { -1, -1 }, { 0, -1 }, { 1, 0 }, { 0, 1 },
-				{ 1, -1 }, { -1, 0 } };
+		int[][] evenNeighbours = { { 0, 1 }, { -1, 1 }, { -1, 0 }, { -1, -1 }, { 0, -1 }, { 1, 0 } };
 
-		float yoffset = 0f;
-		float dx = deltaX;
-		float dy = CellHelper.CELL_HEIGHT + 3; // (float) ((Math.sqrt(3f) / 2f) * hexaWidht);
+		float xoffset = 0f;
+		float dx = CellHelper.CELL_WIDTH + 3;
+		float dy = deltaY;
 
 		ArrayList<int[]> temp = new ArrayList<int[]>();
 		for (int h = 0; h < 6; h++) {
@@ -144,32 +136,29 @@ public class WorldController {
 				c.setVisible(true);
 				temp.clear();
 
-				if (v % 2 == 0) {
-					yoffset = dy / 2;
+				if (h % 2 == 0) {
+					xoffset = dx / 2;
 
 					for (int i = 0; i < 6; i++) {
-						if (inMap(v + oddNeighbours[i][0], h
-								+ oddNeighbours[i][1])) {
-							temp.add(new int[] { v + oddNeighbours[i][0],
-									h + oddNeighbours[i][1] });
+						if (inMap(v + oddNeighbours[i][0], h + oddNeighbours[i][1])) {
+							temp.add(new int[] { v + oddNeighbours[i][0], h + oddNeighbours[i][1] });
 						}
 					}
 				} else {
-					yoffset = 0;
+					xoffset = 0;
 
 					for (int i = 0; i < 6; i++) {
-						if (inMap(v + evenNeighbours[i][0], h
-								+ evenNeighbours[i][1])) {
-							temp.add(new int[] { v + evenNeighbours[i][0],
-									h + evenNeighbours[i][1] });
+						if (inMap(v + evenNeighbours[i][0], h + evenNeighbours[i][1])) {
+							temp.add(new int[] { v + evenNeighbours[i][0], h + evenNeighbours[i][1] });
 						}
 					}
 				}
+
 				c.neigbours = new int[temp.size()][2];
 				for (int i = 0; i < temp.size(); i++) {
 					c.neigbours[i] = temp.get(i);
 				}
-				c.setPosition(gridX + v * dx, gridY + yoffset + (h * dy));
+				c.setPosition(gridX + xoffset + (v * dx), gridY + (h * dy));
 				c.setGrisPosition(v, h);
 
 				cellGrid[v][h] = c;
@@ -193,19 +182,19 @@ public class WorldController {
 		int cellX = 0, cellY = 0;
 		Cell cell = this.cellGrid[cellX][cellY];
 
-		while (cell.getX() < x && ++cellX < 9) {
-			cell = this.cellGrid[cellX][cellY];
-		}
-		if (!inMap(--cellX, cellY))
-			return null;
-
-		cell = this.cellGrid[cellX][cellY];
 		while (cell.getY() < y && ++cellY < 6) {
 			cell = this.cellGrid[cellX][cellY];
 		}
 		if (!inMap(cellX, --cellY))
 			return null;
 
+		cell = this.cellGrid[cellX][cellY];
+		while (cell.getX() < x && ++cellX < 9) {
+			cell = this.cellGrid[cellX][cellY];
+		}
+		if (!inMap(--cellX, cellY))
+			return null;
+		System.out.println(cellX + ", " + cellY);
 		return this.cellGrid[cellX][cellY];
 	}
 
