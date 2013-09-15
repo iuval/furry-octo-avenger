@@ -37,7 +37,7 @@ public class CellHelper {
 		able_to_place = skin.getRegion("able_to_move");
 		attack_target_center = skin.getRegion("attack_target_center");
 		attack_target_radius = skin.getRegion("attack_target_center");
-		path = none;// skin.getRegion("path");
+		path = skin.getRegion("path");
 	}
 
 	public TextureRegion getCellTexture(Cell cell) {
