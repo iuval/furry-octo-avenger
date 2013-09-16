@@ -104,8 +104,7 @@ public class WorldRender extends Group implements InputProcessor {
 	}
 
 	private void load() {
-		TextureAtlas atlas = new TextureAtlas(
-				"data/Images/InGame/options_bar.pack");
+		TextureAtlas atlas = new TextureAtlas("data/Images/InGame/options_bar.pack");
 		Skin skin = new Skin(atlas);
 
 		// Terrain

@@ -23,7 +23,6 @@ import aurelienribon.tweenengine.Tween;
 import aurelienribon.tweenengine.TweenCallback;
 import aurelienribon.tweenengine.TweenManager;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -111,13 +110,11 @@ public class NormalGame extends GameRender {
 
 		PathManager.load();
 
-		Texture arrow = new Texture(
-				Gdx.files.internal("data/Images/InGame/selector_arrow.png"));
+		Texture arrow = ResourceHelper.getTexture("data/Images/InGame/selector_arrow.png");
 		selectorArrow = new Image(arrow);
 		selectorArrow.setPosition(arrowX, arrowY);
 
-		TextureAtlas atlas = new TextureAtlas(
-				"data/Images/InGame/options_bar.pack");
+		TextureAtlas atlas = new TextureAtlas("data/Images/InGame/options_bar.pack");
 		Skin skin = new Skin(atlas);
 
 		TextureRegion aux = skin.getRegion("actions_bar");
