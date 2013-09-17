@@ -2,29 +2,33 @@ package pruebas.Audio;
 
 import java.util.Hashtable;
 
+import pruebas.Accessors.MusicAccessor;
+import pruebas.Renders.GameEngine;
 import pruebas.Util.FileUtil;
+import aurelienribon.tweenengine.BaseTween;
+import aurelienribon.tweenengine.Timeline;
+import aurelienribon.tweenengine.Tween;
+import aurelienribon.tweenengine.TweenCallback;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.audio.AudioDevice;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 
 public class AudioManager {
-	
+
 	private static Hashtable<String, Music> musicMap;
 	private static Hashtable<String, Sound> soundMap;
 	private static float volume;
-	
+
 	private static Music playing;
-	
+
 	public static void load() {
 		volume = 0.5f;
 		playing = null;
-		
+
 		musicMap = new Hashtable<String, Music>();
 		soundMap = new Hashtable<String, Sound>();
 	}
-	
+
 	public static Music getMusic(String path) {
 		if (musicMap.contains(path)) {
 			return musicMap.get(path);
@@ -34,7 +38,7 @@ public class AudioManager {
 			return m;
 		}
 	}
-	
+
 	public static Sound getSound(String path) {
 		if (soundMap.contains(path)) {
 			return soundMap.get(path);
@@ -44,30 +48,59 @@ public class AudioManager {
 			return s;
 		}
 	}
-	
+
 	public static void playMusic(String name) {
-		if (playing != null)
-			playing.stop();
-		
-		playing = getMusic("data/Audio/" + name + ".mp3");
-		playing.setVolume(volume);
-		playing.play();
+		if (playing != null && playing.isPlaying())
+			fadeOut(name);
+		else
+			fadeIn(name);
 	}
-	
+
 	public static void playSound(String name) {
-		getSound("data/SFX/" + name + ".mp3").play(1);
+		getSound("data/SFX/" + name + ".mp3").play(volume);
 	}
-	
-	public static void VolumeUp() {
+
+	public static void volumeUp() {
 		volume += 0.05;
 		if (volume > 1)
 			volume = 1;
 
 	}
 
-	public static void VolumeDown() {
+	public static void volumeDown() {
 		volume -= 0.05;
 		if (volume < 0)
 			volume = 0;
+
+		if (playing != null)
+			playing.setVolume(volume);
+	}
+
+	public static void setVolume(float vol) {
+		volume = vol;
+
+		if (playing != null)
+			playing.setVolume(volume);
+	}
+
+	private static void fadeOut(final String name) {
+		GameEngine.start(Timeline.createSequence()
+				.push(Tween.to(playing, MusicAccessor.VOLUME, 1f).target(0))
+				.setCallback(new TweenCallback() {
+					@Override
+					public void onEvent(int type, BaseTween<?> source) {
+						playing.stop();
+						fadeIn(name);
+					}
+				}));
+	}
+
+	private static void fadeIn(String name) {
+		playing = getMusic("data/Audio/" + name + ".mp3");
+		playing.setVolume(0);
+		playing.play();
+
+		GameEngine.start(Timeline.createSequence()
+				.push(Tween.to(playing, MusicAccessor.VOLUME, 1f).target(1)));
 	}
 }

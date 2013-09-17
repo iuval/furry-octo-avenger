@@ -1,6 +1,7 @@
 package pruebas.Renders;
 
 import pruebas.Accessors.ActorAccessor;
+import pruebas.Accessors.MusicAccessor;
 import pruebas.Audio.AudioManager;
 import pruebas.Controllers.GameController;
 import pruebas.Controllers.MenuGames;
@@ -21,6 +22,7 @@ import aurelienribon.tweenengine.TweenManager;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -63,6 +65,7 @@ public class GameEngine implements Screen {
 	@Override
 	public void show() {
 		Tween.registerAccessor(Actor.class, new ActorAccessor());
+		Tween.registerAccessor(Music.class, new MusicAccessor());
 
 		inputManager = new InputMultiplexer();
 		batch = new SpriteBatch();
@@ -77,7 +80,6 @@ public class GameEngine implements Screen {
 
 		ResourceHelper.fastLoad();
 		AudioManager.load();
-		AudioManager.playMusic("To Battle!");
 
 		load();
 		openSplash();
@@ -166,6 +168,7 @@ public class GameEngine implements Screen {
 			stage.addActor(menuGamesRender);
 			break;
 		case InMenuGames:
+			AudioManager.playMusic("March For Glory");
 			stage.addActor(background);
 			stage.addActor(menuGamesRender);
 			if (worldRender != null) {
@@ -177,6 +180,7 @@ public class GameEngine implements Screen {
 			stage.addActor(menuGamesRender);
 			break;
 		case InGame:
+			AudioManager.playMusic("To Battle!");
 			inputManager.addProcessor(worldRender);
 			stage.addActor(worldRender);
 			break;
