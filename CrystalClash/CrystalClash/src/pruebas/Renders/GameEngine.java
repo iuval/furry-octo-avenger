@@ -64,6 +64,7 @@ public class GameEngine implements Screen {
 
 	@Override
 	public void show() {
+		tweenManager = new TweenManager();
 		Tween.registerAccessor(Actor.class, new ActorAccessor());
 		Tween.registerAccessor(Music.class, new MusicAccessor());
 
@@ -75,8 +76,6 @@ public class GameEngine implements Screen {
 
 		batch.setProjectionMatrix(camera.combined);
 		stage.setCamera(camera);
-
-		tweenManager = new TweenManager();
 
 		ResourceHelper.fastLoad();
 		AudioManager.load();
@@ -111,7 +110,6 @@ public class GameEngine implements Screen {
 		Texture backgroundTexture = ResourceHelper.getTexture("data/Images/Menu/menu_background.jpg");
 		background = new Image(backgroundTexture);
 
-		Tween.registerAccessor(Actor.class, new ActorAccessor());
 		Timeline.createSequence()
 				.push(Tween.set(background, ActorAccessor.ALPHA).target(0))
 				.push(Tween.to(background, ActorAccessor.ALPHA, 2).target(1))

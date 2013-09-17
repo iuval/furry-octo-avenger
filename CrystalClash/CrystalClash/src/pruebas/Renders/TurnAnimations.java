@@ -92,9 +92,9 @@ public class TurnAnimations extends GameRender {
 
 	public void load() {
 		tweenManager = new TweenManager();
-
-		GameController.getInstance().loadUnitsStats();
 		Tween.registerAccessor(Unit.class, new UnitAccessor());
+		
+		GameController.getInstance().loadUnitsStats();
 
 		Texture panelTexture = ResourceHelper.getTexture("data/Images/TurnAnimation/games_list_background.png");
 		panel = new Image(panelTexture);
