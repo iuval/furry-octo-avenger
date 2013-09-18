@@ -151,14 +151,25 @@ public class MenuGamesRender extends MenuRender {
 
 	@Override
 	public Timeline pushExitAnimation(Timeline t) {
-		return t.beginParallel()
-				.push(Tween.to(lblHeading, ActorAccessor.X, CrystalClash.ANIMATION_SPEED).target(-CrystalClash.WIDTH))
-				.push(Tween.to(btnLogOut, ActorAccessor.Y, CrystalClash.ANIMATION_SPEED).target(CrystalClash.HEIGHT))
-				.push(Tween.to(scrollPane, ActorAccessor.X, CrystalClash.ANIMATION_SPEED).target(CrystalClash.WIDTH))
-				.end();
+		Timeline aux = Timeline.createParallel();
+
+		if (GameController.getInstance().isTutorialDone()) {
+			aux.push(Tween.to(lblHeading, ActorAccessor.X, CrystalClash.ANIMATION_SPEED).target(-CrystalClash.WIDTH))
+			.push(Tween.to(btnLogOut, ActorAccessor.Y, CrystalClash.ANIMATION_SPEED).target(CrystalClash.HEIGHT))
+			.push(Tween.to(scrollPane, ActorAccessor.X, CrystalClash.ANIMATION_SPEED).target(CrystalClash.WIDTH));
+		} else {
+			aux.push(Tween.to(fireArcher, ActorAccessor.X, CrystalClash.ANIMATION_SPEED).target(-fireArcher.getWidth()))
+			.push(Tween.to(balloon, ActorAccessor.Y, CrystalClash.ANIMATION_SPEED).target(CrystalClash.HEIGHT + balloon.getHeight()))
+			.push(Tween.to(btnPlayTutorial, ActorAccessor.Y, CrystalClash.ANIMATION_SPEED)
+					.target(0 - btnPlayTutorial.getHeight()))
+			.push(Tween.to(btnSkipTutorial, ActorAccessor.Y, CrystalClash.ANIMATION_SPEED).target(0- btnSkipTutorial.getHeight()));
+		}
+		return t.push(aux);
 	}
 
 	private void load() {
+		GameController.getInstance().setTutorialNotDone();
+		
 		initSkin();
 		if (!GameController.getInstance().isTutorialDone()) {
 			loadTutorial();
@@ -245,7 +256,7 @@ public class MenuGamesRender extends MenuRender {
 
 		lblMessage = new Label("Welcome " + GameController.getInstance().getUser().getNick() + 
 							   "\n\nI can help you learn the basics...\nDo you want me to?", new LabelStyle(ResourceHelper.getFont(), Color.WHITE));
-		lblMessage.setPosition(balloon.getX() + 50, balloon.getTop() - 150);
+		lblMessage.setPosition(balloon.getX() + 50, balloon.getTop() - 50);
 		addActor(lblMessage);
 		
 		btnPlayTutorial = new TextButton("Lets Do It!", ResourceHelper.getOuterButtonStyle());
@@ -254,6 +265,7 @@ public class MenuGamesRender extends MenuRender {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
 				System.out.println("Do Toturial");
+				lblMessage.setText("");
 				controller.openTutorial();
 			}
 		});
@@ -265,6 +277,7 @@ public class MenuGamesRender extends MenuRender {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
 				System.out.println("Skip Toturial");
+				lblMessage.setText("");
 				goToNormalMenu();
 			}
 		});

@@ -55,6 +55,14 @@ public class Profile implements Serializable {
 	{
 		this.tutorialDone = true;
 	}
+	
+	/**
+	 * TODO: BORRAR, es solo pa probar
+	 */
+	public void setTutorialNotDone()
+	{
+		this.tutorialDone = false;
+	}
 
 	/**
 	 * Retrieves true if the user has already done the turorial.

@@ -82,6 +82,12 @@ public class WorldRender extends Group implements InputProcessor {
 		gameRender = new TurnAnimations(world);
 		addActor(gameRender);
 	}
+	
+	public void initTutorial() {
+		gameRender = new Tutorial(world);
+		addActor(gameRender);
+		showHuds();
+	}
 
 	public void render(float dt, SpriteBatch batch) {
 		imgTerrain.draw(batch, 1);
