@@ -101,6 +101,16 @@ public class GameController {
 		}
 		return false;
 	}
+	
+	public boolean isTutorialDone() {
+		Profile p = profileService.retrieveProfile();
+		return p.isTutorialDone();
+	}
+	
+	public void setTutorialDone() {
+		Profile p = profileService.retrieveProfile();
+		p.setTutorialDone();
+	}
 
 	public void logIn(String email, String password) {
 		MessageBox.build()
