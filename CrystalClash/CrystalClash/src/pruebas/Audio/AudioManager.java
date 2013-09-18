@@ -98,6 +98,7 @@ public class AudioManager {
 	private static void fadeIn(String name) {
 		playing = getMusic("data/Audio/" + name + ".mp3");
 		playing.setVolume(0);
+		playing.setLooping(true);
 		playing.play();
 
 		GameEngine.start(Timeline.createSequence()
