@@ -10,29 +10,14 @@ import com.badlogic.gdx.utils.JsonValue;
 public class Profile implements Serializable {
 	private String userEmail;
 	private String userPassword;
+	private boolean tutorialDone;
 
 	public Profile()
 	{
 	}
 
 	/**
-	 * Retrieves the user email.
-	 */
-	public String getUserEmail()
-	{
-		return userEmail;
-	}
-
-	/**
-	 * Retrieves the user email.
-	 */
-	public void setUserPassword(String userPassword)
-	{
-		this.userPassword = userPassword;
-	}
-
-	/**
-	 * Retrieves the user email.
+	 * Sets the user email.
 	 */
 	public void setUserEmail(String userEmail)
 	{
@@ -42,11 +27,43 @@ public class Profile implements Serializable {
 	/**
 	 * Retrieves the user email.
 	 */
+	public String getUserEmail()
+	{
+		return userEmail;
+	}
+	
+	/**
+	 * Sets the user password.
+	 */
+	public void setUserPassword(String userPassword)
+	{
+		this.userPassword = userPassword;
+	}
+
+	/**
+	 * Retrieves the user password.
+	 */
 	public String getUserPassword()
 	{
 		return userPassword;
 	}
+	
+	/**
+	 * Sets the tutorial as done.
+	 */
+	public void setTutorialDone()
+	{
+		this.tutorialDone = true;
+	}
 
+	/**
+	 * Retrieves true if the user has already done the turorial.
+	 */
+	public boolean isTutorialDone()
+	{
+		return tutorialDone;
+	}
+	
 	public boolean hasUserAndPassword() {
 		return userPassword != null
 				&& !userPassword.isEmpty()
@@ -61,6 +78,7 @@ public class Profile implements Serializable {
 	{
 		json.writeValue("user_email", userEmail);
 		json.writeValue("user_password", userPassword);
+		json.writeValue("tutorial_done", String.valueOf(tutorialDone));
 	}
 
 	@Override
@@ -72,5 +90,11 @@ public class Profile implements Serializable {
 		userPassword = json.readValue("user_password", String.class, jsonData);
 		if (userPassword == null)
 			userPassword = "";
+		
+		String s = json.readValue("tutorial_done", String.class, jsonData);
+		if (s == null)
+			tutorialDone = false;
+		else
+			tutorialDone = Boolean.parseBoolean(s);
 	}
 }
