@@ -271,20 +271,37 @@ public class MenuGamesRender extends MenuRender {
 		});
 		addActor(btnPlayTutorial);
 		
+		final MessageBoxCallback confirmation = new MessageBoxCallback() {
+			@Override
+			public void onEvent(int type, Object data) {
+				if (type == MessageBoxCallback.YES) {
+					System.out.println("Skip Toturial");
+					lblMessage.setText("");
+					goToNormalMenu();
+					
+				} else {
+					MessageBox.build().hide();
+				}
+			}
+		};
 		btnSkipTutorial = new TextButton("Meh...", ResourceHelper.getButtonStyle());
 		btnSkipTutorial.setPosition(CrystalClash.WIDTH - btnSkipTutorial.getWidth(), 0 - btnSkipTutorial.getHeight());
 		btnSkipTutorial.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
-				System.out.println("Skip Toturial");
-				lblMessage.setText("");
-				goToNormalMenu();
+				MessageBox.build()
+						.setMessage("It's not safe going to the battle field without training...\nAre you sure you don't want to try?")
+						.twoButtonsLayout("Yes, i'm sure", "Wait, let me think")
+						.setCallback(confirmation)
+						.setHideOnAction(false)
+						.show();
 			}
 		});
 		addActor(btnSkipTutorial);
 	}
 	
 	private void goToNormalMenu(){
+		loadGameList();
 		GameController.getInstance().setTutorialDone();
 		GameEngine.start(Timeline.createParallel()
 				.push(Tween.to(fireArcher, ActorAccessor.X, CrystalClash.ANIMATION_SPEED).target(-fireArcher.getWidth()))

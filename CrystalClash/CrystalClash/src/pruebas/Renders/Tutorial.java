@@ -1,10 +1,16 @@
 package pruebas.Renders;
 
+import javax.sound.midi.ControllerEventListener;
+
 import pruebas.Accessors.ActorAccessor;
+import pruebas.Controllers.GameController;
 import pruebas.Controllers.WorldController;
 import pruebas.CrystalClash.CrystalClash;
+import pruebas.Entities.Unit;
+import pruebas.Renders.UnitRender.FACING;
 import pruebas.Renders.helpers.ResourceHelper;
-import sun.font.CreatedFontTracker;
+import pruebas.Renders.helpers.ui.MessageBox;
+import pruebas.Renders.helpers.ui.MessageBoxCallback;
 import aurelienribon.tweenengine.BaseTween;
 import aurelienribon.tweenengine.Timeline;
 import aurelienribon.tweenengine.Tween;
@@ -32,6 +38,9 @@ public class Tutorial extends GameRender {
 	private TextButton btnSkip;
 
 	private Image arrow;
+	private float arrowX;
+	private float arrowY;
+	
 	private Image pointingHand;
 
 	private Array<String> messages;
@@ -40,10 +49,14 @@ public class Tutorial extends GameRender {
 	public Tutorial(WorldController world) {
 		super(world);
 		messageIndex = 0;
+		arrowX = 0;
+		arrowY = CrystalClash.HEIGHT + 20;
+		
 		load();
 		readTutorialScript();
 		GameEngine.hideLoading();
 		pushEnterAnimation(Timeline.createParallel()).start(tweenManager);
+		GameController.getInstance().loadUnitsStats();
 	}
 
 	public void load() {
@@ -66,26 +79,47 @@ public class Tutorial extends GameRender {
 				next();
 			}
 		});
-
+		
+		final MessageBoxCallback confirmation = new MessageBoxCallback() {
+			@Override
+			public void onEvent(int type, Object data) {
+				if (type == MessageBoxCallback.YES) {
+					
+				} else {
+					MessageBox.build().hide();
+				}
+			}
+		};
 		btnSkip = new TextButton("Skip", ResourceHelper.getButtonStyle());
 		btnSkip.setPosition(-btnSkip.getWidth(), CrystalClash.HEIGHT - btnSkip.getHeight());
 		btnSkip.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
+				String text = "We have just started...";
+				if(messageIndex >= messages.size / 2)
+					text = "We are half road down...";
+				if(messageIndex >= messages.size - 8)
+					text = "We are almost finished...";
+				
+				MessageBox.build()
+						.setMessage("Are you sure you want to leave?\n" + text)
+						.twoButtonsLayout("Yes, i got it", "No, let's go on")
+						.setCallback(confirmation)
+						.setHideOnAction(false)
+						.show();
 			}
 		});
 
-		// arrow = new
-		// Image(ResourceHelper.getTexture("data/Images/Tutorial/fire_archer.png"));
-		// pointingHand = new
-		// Image(ResourceHelper.getTexture("data/Images/Tutorial/message_balloon.png"));
+		arrow = new Image(ResourceHelper.getTexture("data/Images/InGame/selector_arrow.png"));
+		arrow.setPosition(arrowX, arrowY);
+		// pointingHand = new Image(ResourceHelper.getTexture("data/Images/Tutorial/message_balloon.png"));
 
 		addActor(fireArcher);
 		addActor(balloon);
 		addActor(lblMessage);
 		addActor(btnNext);
 		addActor(btnSkip);
-		// addActor(arrow);
+		addActor(arrow);
 		// addActor(pointingHand);
 
 	}
@@ -135,12 +169,65 @@ public class Tutorial extends GameRender {
 		} else {
 			lblMessage.setText("");
 			Timeline.createParallel()
-			.push(Tween.to(fireArcher, ActorAccessor.X, CrystalClash.ANIMATION_SPEED).target(-fireArcher.getWidth()))
-			.push(Tween.to(balloon, ActorAccessor.Y, CrystalClash.ANIMATION_SPEED).target(-balloon.getHeight()))
-			.push(Tween.to(lblMessage, ActorAccessor.Y, CrystalClash.ANIMATION_SPEED).target(-balloon.getHeight()))
-			.push(Tween.to(btnNext, ActorAccessor.Y, CrystalClash.ANIMATION_SPEED).target(-btnNext.getHeight()))
-			.start(tweenManager);
+					.push(Tween.to(fireArcher, ActorAccessor.X, CrystalClash.ANIMATION_SPEED).target(-fireArcher.getWidth()))
+					.push(Tween.to(balloon, ActorAccessor.Y, CrystalClash.ANIMATION_SPEED).target(-balloon.getHeight()))
+					.push(Tween.to(lblMessage, ActorAccessor.Y, CrystalClash.ANIMATION_SPEED).target(-balloon.getHeight()))
+					.push(Tween.to(btnNext, ActorAccessor.Y, CrystalClash.ANIMATION_SPEED).target(-btnNext.getHeight()))
+					.start(tweenManager);
 		}
+		action(messageIndex);
+	}
+	
+	private void action(int index){
+		switch(index){
+		case 2:
+			Unit assassin = new Unit("wind_assassin", false);
+			world.addUnit(assassin, 500, 500);
+			moveArrow(assassin);
+			break;
+		case 7:
+			Unit tank = new Unit("earth_tank", true);
+			tank.getRender().setFacing(FACING.left);
+			world.addUnit(tank, 900, 500);
+			break;
+		case 16:
+			Unit archer = new Unit("fire_archer", false);
+			world.addUnit(archer, 250, 500);
+			break;
+		}
+	}
+	
+	private void moveArrow(Unit u) {
+		if (u != null) {
+			if (arrow.getY() >= CrystalClash.HEIGHT) {
+				arrow.setPosition(u.getX(), CrystalClash.HEIGHT + 20);
+			}
+			arrowX = u.getX();
+			arrowY = u.getY() + 120;
+		} else {
+			arrowY = CrystalClash.HEIGHT + 20;
+		}
+
+		tweenManager.killAll();
+		Timeline.createParallel()
+				.push(Tween.to(arrow, ActorAccessor.X, CrystalClash.ANIMATION_SPEED)
+						.target(arrowX))
+				.push(Tween.to(arrow, ActorAccessor.Y, CrystalClash.ANIMATION_SPEED)
+						.target(arrowY))
+				.setCallback(new TweenCallback() {
+					@Override
+					public void onEvent(int type, BaseTween<?> source) {
+						arrow.setPosition(arrowX, arrowY);
+						arrowAnimation();
+					}
+				}).start(tweenManager);
+	}
+
+	private void arrowAnimation() {
+		Timeline.createSequence()
+				.push(Tween.set(arrow, ActorAccessor.Y).target(arrowY))
+				.push(Tween.to(arrow, ActorAccessor.Y, CrystalClash.ANIMATION_SPEED).target(arrowY - 10))
+				.push(Tween.to(arrow, ActorAccessor.Y, CrystalClash.ANIMATION_SPEED).target(arrowY)).repeat(Tween.INFINITY, 0).start(tweenManager);
 	}
 	
 	private void start(Timeline t) {
