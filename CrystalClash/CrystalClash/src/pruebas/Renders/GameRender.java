@@ -19,7 +19,9 @@ public abstract class GameRender extends Group {
 
 	public abstract void clearAllChanges();
 
-	public abstract void render(float dt, SpriteBatch batch);
+	public abstract void renderInTheBack(float dt, SpriteBatch batch);
+
+	public abstract void renderInTheFront(float dt, SpriteBatch batch);
 
 	public abstract boolean touchDown(float x, float y, int pointer, int button);
 

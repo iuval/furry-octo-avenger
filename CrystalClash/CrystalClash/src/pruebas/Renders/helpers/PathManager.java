@@ -101,8 +101,7 @@ public class PathManager {
 				}
 			}
 		}
-
-		while (Math.abs(endY - iniY) > 5) {
+		while (Math.abs(endY - iniY) > 5 || Math.abs(endX - iniX) > 5) {
 			p.add(iniX - POINT_CENTER_X, iniY - POINT_CENTER_Y);
 			iniX += dx;
 			iniY += dy;

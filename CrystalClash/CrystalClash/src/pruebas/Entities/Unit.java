@@ -2,6 +2,7 @@ package pruebas.Entities;
 
 import pruebas.Controllers.GameController;
 import pruebas.Renders.UnitRender;
+import pruebas.Renders.UnitRender.FACING;
 import pruebas.Renders.helpers.UnitHelper;
 
 public class Unit extends GameObject {
@@ -46,13 +47,16 @@ public class Unit extends GameObject {
 			this.render = UnitHelper.getUnitRender(unitName);
 			this.render.setUnit(this);
 			this.render.updateHp();
+
+			if (isPlayerNumber(2))
+				this.render.setFacing(FACING.left);
 		}
 	}
 
 	public Unit(String unitName) {
 		this(unitName, 1, false, 0);
 	}
-	
+
 	public Unit(String unitName, int num) {
 		this(unitName, num, false, 0);
 	}

@@ -85,11 +85,14 @@ public class WorldRender extends Group implements InputProcessor {
 
 	public void render(float dt, SpriteBatch batch) {
 		imgTerrain.draw(batch, 1);
+
 		for (int i = 0; i < world.cellGrid.length; i++) {
 			for (int j = world.cellGrid[i].length - 1; j >= 0; j--) {
 				world.cellGrid[i][j].getRender().draw(dt, batch);
 			}
 		}
+
+		gameRender.renderInTheBack(dt, batch);
 
 		for (int j = 5; j >= 0; j--) {
 			for (int i = 0; i < 9; i += 2) {
@@ -100,7 +103,7 @@ public class WorldRender extends Group implements InputProcessor {
 			}
 		}
 
-		gameRender.render(dt, batch);
+		gameRender.renderInTheFront(dt, batch);
 	}
 
 	private void load() {
