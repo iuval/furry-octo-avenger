@@ -205,6 +205,8 @@ public class GameEngine implements Screen {
 								setState(GameState.InGame);
 							};
 						}).start(tweenManager);
+				
+				world.getRender().pushEnterAnimation(Timeline.createParallel()).start(tweenManager);
 			};
 		});
 		t.start(tweenManager);

@@ -137,12 +137,12 @@ public class MenuGamesRender extends MenuRender {
 					.push(Tween.to(balloon, ActorAccessor.Y, CrystalClash.ANIMATION_SPEED).target(CrystalClash.HEIGHT / 2))
 					.push(Tween.to(btnPlayTutorial, ActorAccessor.Y, CrystalClash.ANIMATION_SPEED)
 							.target(CrystalClash.HEIGHT / 2 - btnPlayTutorial.getHeight()))
-					.push(Tween.to(btnSkipTutorial, ActorAccessor.Y, CrystalClash.ANIMATION_SPEED).target(0))
+					.push(Tween.to(btnSkipTutorial, ActorAccessor.Y, CrystalClash.ANIMATION_SPEED).target(100))
 					.setCallbackTriggers(TweenCallback.COMPLETE)
 					.setCallback(new TweenCallback() {
 						@Override
 						public void onEvent(int type, BaseTween<?> source) {
-							lblMessage.setPosition(balloon.getX() + 50, balloon.getTop() - 150);
+							lblMessage.setPosition(balloon.getX() + 145, balloon.getTop() -200);
 						}
 					});
 		}
@@ -162,7 +162,8 @@ public class MenuGamesRender extends MenuRender {
 			.push(Tween.to(balloon, ActorAccessor.Y, CrystalClash.ANIMATION_SPEED).target(CrystalClash.HEIGHT + balloon.getHeight()))
 			.push(Tween.to(btnPlayTutorial, ActorAccessor.Y, CrystalClash.ANIMATION_SPEED)
 					.target(0 - btnPlayTutorial.getHeight()))
-			.push(Tween.to(btnSkipTutorial, ActorAccessor.Y, CrystalClash.ANIMATION_SPEED).target(0- btnSkipTutorial.getHeight()));
+			.push(Tween.to(btnSkipTutorial, ActorAccessor.Y, CrystalClash.ANIMATION_SPEED)
+					.target(0 - btnPlayTutorial.getHeight() - btnSkipTutorial.getHeight()));
 		}
 		return t.push(aux);
 	}
@@ -251,16 +252,16 @@ public class MenuGamesRender extends MenuRender {
 		addActor(fireArcher);
 		
 		balloon = new Image(new Texture(Gdx.files.internal("data/Images/Tutorial/message_balloon.png")));
-		balloon.setBounds(CrystalClash.WIDTH / 3, CrystalClash.HEIGHT + balloon.getHeight(), CrystalClash.WIDTH / 3 * 2 - 50, CrystalClash.HEIGHT / 2 - 50);
+		balloon.setPosition(CrystalClash.WIDTH / 3, CrystalClash.HEIGHT + balloon.getHeight());
 		addActor(balloon);
 
 		lblMessage = new Label("Welcome " + GameController.getInstance().getUser().getNick() + 
-							   "\n\nI can help you learn the basics...\nDo you want me to?", new LabelStyle(ResourceHelper.getFont(), Color.WHITE));
-		lblMessage.setPosition(balloon.getX() + 50, balloon.getTop() - 50);
+							   "\n\nI can help you learn the\nbasics... Do you want me to?", new LabelStyle(ResourceHelper.getFont(), Color.BLACK));
+		lblMessage.setPosition(balloon.getX() + 145, balloon.getTop() - 65);
 		addActor(lblMessage);
 		
 		btnPlayTutorial = new TextButton("Lets Do It!", ResourceHelper.getOuterButtonStyle());
-		btnPlayTutorial.setPosition(CrystalClash.WIDTH / 3 * 2 - btnPlayTutorial.getWidth() / 2, 0 - btnPlayTutorial.getHeight());
+		btnPlayTutorial.setPosition(CrystalClash.WIDTH / 3 * 2 - btnPlayTutorial.getWidth() / 2 + 130, 0 - btnPlayTutorial.getHeight());
 		btnPlayTutorial.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
@@ -284,8 +285,8 @@ public class MenuGamesRender extends MenuRender {
 				}
 			}
 		};
-		btnSkipTutorial = new TextButton("Meh...", ResourceHelper.getButtonStyle());
-		btnSkipTutorial.setPosition(CrystalClash.WIDTH - btnSkipTutorial.getWidth(), 0 - btnSkipTutorial.getHeight());
+		btnSkipTutorial = new TextButton("No, thx", ResourceHelper.getOuterSmallButtonStyle());
+		btnSkipTutorial.setPosition(CrystalClash.WIDTH / 3 * 2 - btnSkipTutorial.getWidth() / 2 + 130, 0 - btnPlayTutorial.getHeight() - btnSkipTutorial.getHeight());
 		btnSkipTutorial.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {

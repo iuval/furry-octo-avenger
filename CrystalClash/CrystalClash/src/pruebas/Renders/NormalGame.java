@@ -226,7 +226,7 @@ public class NormalGame extends GameRender {
 			arrowY = CrystalClash.HEIGHT + 20;
 		}
 
-		tweenManager.killAll();
+		tweenManager.killTarget(selectorArrow);
 		Timeline.createParallel()
 				.push(Tween.to(selectorArrow, ActorAccessor.X, CrystalClash.ANIMATION_SPEED)
 						.target(arrowX))
