@@ -38,10 +38,14 @@ public class PathManager {
 		BIG_DOT_ATTACK_TEXTURE = ResourceHelper.getTexture("data/Images/InGame/ActionDots/attack_big_dot.png");
 	}
 
-	public void render(SpriteBatch batch, float dt) {
+	public void render(SpriteBatch batch, float dt, Path.TYPE type) {
 		Enumeration<Path> en = paths.elements();
-		while (en.hasMoreElements())
-			en.nextElement().draw(batch, dt);
+		Path p;
+		while (en.hasMoreElements()) {
+			p = en.nextElement();
+			if (p.getType() == type)
+				p.draw(batch, dt);
+		}
 	}
 
 	public Path getOrCreatePath(Unit u, Path.TYPE type) {
@@ -113,14 +117,28 @@ public class PathManager {
 		double b = 0;
 		double c = 0;
 		double v = 2;
-		a = (endY - iniY - v * (endX - iniX)) / ((Math.pow(endX, 2) - Math.pow(iniX, 2)) - 2 * iniX * (endX - iniX));
-		b = v - 2 * a * iniX;
-		c = iniY - a * Math.pow(iniX, 2) - b * iniX;
 
 		float y = 0;
-		for (float x = iniX; x < endX; x += 25) {
-			y = (float) (a * Math.pow(x, 2) + b * x + c);
-			p.add(x, y);
+		float dx = Math.abs(iniX - endX) / 10;
+
+		if (iniX < endX) {
+			a = (endY - iniY - v * (endX - iniX)) / ((Math.pow(endX, 2) - Math.pow(iniX, 2)) - 2 * iniX * (endX - iniX));
+			b = v - 2 * a * iniX;
+			c = iniY - a * Math.pow(iniX, 2) - b * iniX;
+
+			for (float x = iniX; x < endX; x += dx) {
+				y = (float) (a * Math.pow(x, 2) + b * x + c);
+				p.add(x, y);
+			}
+		} else {
+			a = (iniY - endY - v * (iniX - endX)) / ((Math.pow(iniX, 2) - Math.pow(endX, 2)) - 2 * endX * (iniX - endX));
+			b = v - 2 * a * endX;
+			c = endY - a * Math.pow(endX, 2) - b * endX;
+
+			for (float x = iniX; x > endX; x -= dx) {
+				y = (float) (a * Math.pow(x, 2) + b * x + c);
+				p.add(x, y);
+			}
 		}
 	}
 

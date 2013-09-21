@@ -328,7 +328,7 @@ public class NormalGame extends GameRender {
 				Cell aux = null;
 				for (int i = 0; i < top.neigbours.length; i++) {
 					aux = world.cellAtByGrid(cells[i][0], cells[i][1]);
-					if (aux.getState() != State.MOVE_TARGET && aux.getUnit() == null)
+					if (aux.getState() == State.NONE && aux.getUnit() == null)
 						aux.setState(Cell.State.ABLE_TO_MOVE);
 				}
 			}
@@ -337,7 +337,6 @@ public class NormalGame extends GameRender {
 
 	private void showAbleToAttackCells() {
 		clearAvailableCells();
-		actionType = UnitActionType.ATTACK;
 
 		showAbleToAttackCellRecursive(selectedCell, selectedUnit.isMelee(), selectedUnit.getRange(), false);
 	}
@@ -352,9 +351,10 @@ public class NormalGame extends GameRender {
 		for (int i = 0; i < cells.length; i++) {
 			neigbourCell = world.cellAtByGrid(cells[i][0], cells[i][1]);
 			unit = neigbourCell.getUnit();
-			if ((onlyCellsWithUnit && (unit == null || !unit.isEnemy())) || hide)
+			if ((neigbourCell.getState() != State.MOVE_TARGET && neigbourCell.getState() != State.ATTACK_TARGET_CENTER) &&
+					(hide || (onlyCellsWithUnit && (unit == null || !unit.isEnemy())))) {
 				neigbourCell.setState(Cell.State.NONE);
-			else
+			} else if (neigbourCell.getState() != State.MOVE_TARGET && neigbourCell.getState() != State.ATTACK_TARGET_CENTER)
 				neigbourCell.setState(Cell.State.ABLE_TO_ATTACK);
 
 			if (range > 1)
@@ -551,11 +551,12 @@ public class NormalGame extends GameRender {
 
 	@Override
 	public void renderInTheBack(float dt, SpriteBatch batch) {
-		paths.render(batch, dt);
+		paths.render(batch, dt, Path.TYPE.MOVE);
 	}
 
 	@Override
 	public void renderInTheFront(float dt, SpriteBatch batch) {
+		paths.render(batch, dt, Path.TYPE.ATTACK);
 		selectorArrow.draw(batch, 1);
 
 		tweenManager.update(dt);
@@ -570,7 +571,8 @@ public class NormalGame extends GameRender {
 				break;
 			case ATTACK:
 				if (cell.getState() == Cell.State.ABLE_TO_ATTACK) {
-					showAbleToAttackCells();
+					if (unitAction != null && ((AttackUnitAction) unitAction).target != null)
+						((AttackUnitAction) unitAction).target.setState(State.ABLE_TO_ATTACK);
 					cell.setState(Cell.State.ATTACK_TARGET_CENTER);
 					((AttackUnitAction) unitAction).target = cell;
 
@@ -746,13 +748,13 @@ public class NormalGame extends GameRender {
 	}
 
 	private void saveAttack() {
+		clearAvailableCells();
 		if (((AttackUnitAction) unitAction).target != null) {
 			aActions.add((AttackUnitAction) unitAction);
 		} else {
 			setUnitAction(new NoneUnitAction());
 		}
 		selectedCell.setAction(unitAction);
-		clearAvailableCells();
 		clearSelection();
 	}
 

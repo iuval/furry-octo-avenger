@@ -17,13 +17,19 @@ public class Path {
 	public int bigDotIndex;
 	private Texture smallBall;
 	private Texture bigBall;
+	private TYPE type;
 
 	public Path(TYPE type) {
+		this.type = type;
 		smallBall = PathManager.getSmallBallTexture(type);
 		bigBall = PathManager.getBigBallTexture(type);
 
 		dots = new Array<Vector2>();
 		bigDotIndex = 0;
+	}
+
+	public TYPE getType() {
+		return type;
 	}
 
 	public void add(float x, float y) {

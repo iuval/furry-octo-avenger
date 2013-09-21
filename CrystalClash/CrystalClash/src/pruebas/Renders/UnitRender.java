@@ -80,6 +80,7 @@ public class UnitRender {
 			break;
 		case ghost: {
 			currnetAnim = walkAnim;
+			
 		}
 			break;
 		}
