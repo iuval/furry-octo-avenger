@@ -241,22 +241,16 @@ public class TurnAnimations extends GameRender {
 
 	private void createMeleeAttacks(Array<AttackUnitAction> attackActions, int player, Timeline attackTimeline) {
 		AttackUnitAction action = null;
-		boolean sameCellOriginTarget = false;
 		for (int m = 0; m < attackActions.size; m++) {
 			action = attackActions.get(m);
 
 			Timeline attack = Timeline.createSequence();
-			sameCellOriginTarget = action.origin.Equals(action.target);
 			Timeline move = Timeline.createParallel();
-			if (!sameCellOriginTarget) {
-				move.delay(rand.nextFloat())
-						.push(Tween
-								.to(action.origin.getUnit(), UnitAccessor.X, CrystalClash.WALK_ANIMATION_SPEED)
-								.target(getXForMeeleTarget(player, action.target, action.origin.getUnit())))
-						.push(Tween
-								.to(action.origin.getUnit(), UnitAccessor.Y, CrystalClash.WALK_ANIMATION_SPEED)
-								.target(getYForMeeleTarget(player, action.target, action.origin.getUnit())));
-			}
+			move.delay(rand.nextFloat())
+					.push(Tween.to(action.origin.getUnit(), UnitAccessor.X, CrystalClash.WALK_ANIMATION_SPEED)
+							.target(getXForMeeleTarget(player, action.target, action.origin.getUnit())))
+					.push(Tween.to(action.origin.getUnit(), UnitAccessor.Y, CrystalClash.WALK_ANIMATION_SPEED)
+							.target(getYForMeeleTarget(player, action.target, action.origin.getUnit())));
 			move.setUserData(new Object[] { action });
 			move.setCallbackTriggers(TweenCallback.BEGIN | TweenCallback.COMPLETE);
 			move.setCallback(new TweenCallback() {
@@ -278,14 +272,12 @@ public class TurnAnimations extends GameRender {
 
 			Timeline moveBack = Timeline.createParallel();
 			moveBack.delay(CrystalClash.FIGTH_ANIMATION_SPEED);
-			if (!sameCellOriginTarget) {
-				moveBack.push(Tween
-						.to(action.origin.getUnit(), UnitAccessor.X, CrystalClash.WALK_ANIMATION_SPEED)
-						.target(CellHelper.getUnitX(action.origin)));
-				moveBack.push(Tween
-						.to(action.origin.getUnit(), UnitAccessor.Y, CrystalClash.WALK_ANIMATION_SPEED)
-						.target(CellHelper.getUnitY(action.origin)));
-			}
+			moveBack.push(Tween
+					.to(action.origin.getUnit(), UnitAccessor.X, CrystalClash.WALK_ANIMATION_SPEED)
+					.target(CellHelper.getUnitX(action.origin)));
+			moveBack.push(Tween
+					.to(action.origin.getUnit(), UnitAccessor.Y, CrystalClash.WALK_ANIMATION_SPEED)
+					.target(CellHelper.getUnitY(action.origin)));
 			moveBack.setUserData(new Object[] { action.origin.getUnit() });
 			moveBack.setCallbackTriggers(TweenCallback.BEGIN | TweenCallback.COMPLETE);
 			moveBack.setCallback(new TweenCallback() {
@@ -313,9 +305,9 @@ public class TurnAnimations extends GameRender {
 		float resultX = CellHelper.getUnitX(target);
 
 		if (attacker.getX() > resultX) {
-			resultX += 10 + rand.nextInt(30);
+			resultX += 30 + rand.nextInt(25);
 		} else {
-			resultX -= 10 + rand.nextInt(30);
+			resultX -= 75 + rand.nextInt(25);
 		}
 		return resultX;
 	}
@@ -651,8 +643,7 @@ public class TurnAnimations extends GameRender {
 
 	@Override
 	public Timeline pushEnterAnimation(Timeline t) {
-		// TODO Auto-generated method stub
-		return null;
+		return t;
 	}
 
 	@Override
