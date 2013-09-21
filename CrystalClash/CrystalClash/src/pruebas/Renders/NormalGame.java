@@ -64,13 +64,11 @@ public class NormalGame extends GameRender {
 	private UnitActionType actionType;
 	private int maxMoves;
 
+	private Array<MoveUnitAction> moveActions;
+	private Array<AttackUnitAction> attackActions;
 	private UnitAction unitAction;
-	private Array<MoveUnitAction> mActions;
 	private Array<Cell> ghostlyCells;
-
 	private Array<Unit> defensiveUnits;
-
-	private Array<AttackUnitAction> aActions;
 
 	private PathManager paths;
 
@@ -90,12 +88,12 @@ public class NormalGame extends GameRender {
 		actionType = UnitActionType.NONE;
 		maxMoves = 0;
 
-		mActions = new Array<MoveUnitAction>();
+		moveActions = new Array<MoveUnitAction>();
 		ghostlyCells = new Array<Cell>();
 
 		defensiveUnits = new Array<Unit>();
 
-		aActions = new Array<AttackUnitAction>();
+		attackActions = new Array<AttackUnitAction>();
 
 		paths = new PathManager();
 
@@ -476,7 +474,7 @@ public class NormalGame extends GameRender {
 		case ATTACK:
 			clearAvailableCells();
 			hideAction(unitAction);
-			aActions.removeValue((AttackUnitAction) unitAction, false);
+			attackActions.removeValue((AttackUnitAction) unitAction, false);
 
 			setUnitAction(new NoneUnitAction());
 			selectedCell.setAction(unitAction);
@@ -531,9 +529,9 @@ public class NormalGame extends GameRender {
 	public void clearAllChanges() {
 		clearSelection();
 
-		mActions.clear();
+		moveActions.clear();
 		ghostlyCells.clear();
-		aActions.clear();
+		attackActions.clear();
 
 		for (int i = 0; i < defensiveUnits.size; i++) {
 			defensiveUnits.get(i).setDefendingPosition(false);
@@ -750,7 +748,7 @@ public class NormalGame extends GameRender {
 	private void saveAttack() {
 		clearAvailableCells();
 		if (((AttackUnitAction) unitAction).target != null) {
-			aActions.add((AttackUnitAction) unitAction);
+			attackActions.add((AttackUnitAction) unitAction);
 		} else {
 			setUnitAction(new NoneUnitAction());
 		}
@@ -769,7 +767,7 @@ public class NormalGame extends GameRender {
 
 		MoveUnitAction action = (MoveUnitAction) unitAction;
 		if (action.moves.size > 1) {
-			mActions.add(action);
+			moveActions.add(action);
 		} else {
 			setUnitAction(new NoneUnitAction());
 		}
