@@ -266,7 +266,7 @@ public class NormalGame extends GameRender {
 	}
 
 	private Timeline pushHideActionBar(Timeline t) {
-		return t.push(Tween.to(grpActionBar, ActorAccessor.Y, CrystalClash.ANIMATION_SPEED).target(CrystalClash.HEIGHT + grpActionBar.getHeight()))
+		return t.push(Tween.to(grpActionBar, ActorAccessor.Y, CrystalClash.ANIMATION_SPEED).target(CrystalClash.HEIGHT + grpActionBar.getHeight()));
 	}
 
 	private void showAbleToActionCells() {
