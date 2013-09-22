@@ -50,12 +50,13 @@ public class CellHelper {
 			batch.draw(able_to_move, cell.getX(), cell.getY());
 		} else if (cell.hasState(Cell.ABLE_TO_PLACE)) {
 			batch.draw(able_to_place, cell.getX(), cell.getY());
-		} else if (cell.hasState(Cell.MOVE_TARGET)) {
-			batch.draw(path, cell.getX(), cell.getY());
 		} else {
 			batch.draw(none, cell.getX(), cell.getY());
 		}
 
+		if (cell.hasState(Cell.MOVE_TARGET)) {
+			batch.draw(path, cell.getX(), cell.getY());
+		}
 		if (cell.hasState(Cell.ATTACK_TARGET_CENTER)) {
 			batch.draw(attack_target_center, cell.getX(), cell.getY());
 		}

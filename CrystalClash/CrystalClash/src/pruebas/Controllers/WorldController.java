@@ -122,26 +122,21 @@ public class WorldController {
 	}
 
 	private void createMap() {
-		/*
-		 * x x x o x x x
-		 */
-		int[][] oddNeighbours = { { 0, -1 }, { -1, 1 }, { 1, 0 }, { 1, 1 },
-				{ 0, 1 }, { -1, 0 } };
+		int[][] oddNeighbours = { { 0, -1 }, { -1, 1 }, { 1, 0 }, { 1, 1 }, { 0, 1 }, { -1, 0 } };
 
-		/*
-		 * x x x o x x x
-		 */
-		int[][] evenNeighbours = { { -1, -1 }, { 0, -1 }, { 1, 0 }, { 0, 1 },
-				{ 1, -1 }, { -1, 0 } };
+		int[][] evenNeighbours = { { -1, -1 }, { 0, -1 }, { 1, 0 }, { 0, 1 }, { 1, -1 }, { -1, 0 } };
 
 		float yoffset = 0f;
 		float dx = deltaX;
-		float dy = CellHelper.CELL_HEIGHT + 3; // (float) ((Math.sqrt(3f) / 2f)
-												// * hexaWidht);
+		float dy = CellHelper.CELL_HEIGHT + 3;
 
 		ArrayList<int[]> temp = new ArrayList<int[]>();
 		for (int h = 0; h < 6; h++) {
 			for (int v = 0; v < 9; v++) {
+				if(h == 5){
+					int kk = 0;
+					System.out.print(kk);
+				}
 				Cell c = new Cell();
 				c.setVisible(true);
 				temp.clear();
@@ -149,21 +144,17 @@ public class WorldController {
 				if (v % 2 == 0) {
 					yoffset = dy / 2;
 
-					for (int i = 0; i < 6; i++) {
-						if (inMap(v + oddNeighbours[i][0], h
-								+ oddNeighbours[i][1])) {
-							temp.add(new int[] { v + oddNeighbours[i][0],
-									h + oddNeighbours[i][1] });
+					for (int i = 0; i < oddNeighbours.length; i++) {
+						if (inMap(v + oddNeighbours[i][0], h + oddNeighbours[i][1])) {
+							temp.add(new int[] { v + oddNeighbours[i][0], h + oddNeighbours[i][1] });
 						}
 					}
 				} else {
 					yoffset = 0;
 
-					for (int i = 0; i < 6; i++) {
-						if (inMap(v + evenNeighbours[i][0], h
-								+ evenNeighbours[i][1])) {
-							temp.add(new int[] { v + evenNeighbours[i][0],
-									h + evenNeighbours[i][1] });
+					for (int i = 0; i < evenNeighbours.length; i++) {
+						if (inMap(v + evenNeighbours[i][0], h + evenNeighbours[i][1])) {
+							temp.add(new int[] { v + evenNeighbours[i][0], h + evenNeighbours[i][1] });
 						}
 					}
 				}
@@ -215,12 +206,6 @@ public class WorldController {
 		return (x >= 0) && (x < 9) && (y >= 0) && (y < 6);
 	}
 
-	public void tap(float x, float y) {
-		Cell cell = cellAt(x, y);
-		if (cell != null)
-			cell.state = Cell.MOVE_TARGET;
-	}
-
 	public boolean placeUnit(float x, float y, Unit unit) {
 		unit.setPlayerNumber(player);
 		Cell cell = cellAt(x, y);
@@ -244,10 +229,6 @@ public class WorldController {
 
 	public Cell cellAtByGrid(int x, int y) {
 		return cellGrid[x][y];
-	}
-
-	public void setCellStateByGridPos(int x, int y, int state) {
-		cellGrid[x][y].state = state;
 	}
 
 	public void assignFirstTurnAvailablePlaces() {

@@ -325,7 +325,7 @@ public class NormalGame extends GameRender {
 				Cell aux = null;
 				for (int i = 0; i < top.neigbours.length; i++) {
 					aux = world.cellAtByGrid(cells[i][0], cells[i][1]);
-					if (aux.getUnit() == null)
+					if (!aux.hasState(Cell.MOVE_TARGET) && aux.getUnit() == null)
 						aux.addState(Cell.ABLE_TO_MOVE);
 				}
 			}
@@ -375,9 +375,7 @@ public class NormalGame extends GameRender {
 				cell = ((MoveUnitAction) unitAction).moves.get(i);
 				int[][] cells = cell.neigbours;
 				for (int j = 0; j < cell.neigbours.length; j++) {
-					cell = world.cellGrid[cells[j][0]][cells[j][1]];
-					if (cell.hasState(Cell.ABLE_TO_MOVE))
-						cell.removeState(Cell.ABLE_TO_MOVE);
+					world.cellAtByGrid(cells[j][0], cells[j][1]).removeState(Cell.ABLE_TO_MOVE);
 				}
 			}
 			break;
@@ -390,7 +388,7 @@ public class NormalGame extends GameRender {
 
 	private void clearPathCells(Array<Cell> cells) {
 		for (int i = 0; i < cells.size; i++) {
-			cells.get(i).state = Cell.NONE;
+			cells.get(i).removeState(Cell.MOVE_TARGET);
 		}
 	}
 
@@ -411,7 +409,7 @@ public class NormalGame extends GameRender {
 
 			if (((AttackUnitAction) unitAction).target != null) {
 				g = ((AttackUnitAction) unitAction).target.getGridPosition();
-				world.setCellStateByGridPos(g.getX(), g.getY(), Cell.ATTACK_TARGET_CENTER);
+				world.cellAtByGrid(g.getX(), g.getY()).addState(Cell.ATTACK_TARGET_CENTER);
 			}
 			break;
 		case DEFENSE:
@@ -424,7 +422,7 @@ public class NormalGame extends GameRender {
 
 			for (int i = 0; i < ((MoveUnitAction) unitAction).moves.size; i++) {
 				g = ((MoveUnitAction) unitAction).moves.get(i).getGridPosition();
-				world.setCellStateByGridPos(g.getX(), g.getY(), Cell.MOVE_TARGET);
+				world.cellGrid[g.getX()][g.getY()].addState(Cell.MOVE_TARGET);
 			}
 
 			lblMoves.setText(maxMoves + 1 - ((MoveUnitAction) unitAction).moves.size + "");
@@ -443,37 +441,10 @@ public class NormalGame extends GameRender {
 		}
 	}
 
-	private void hideAction(UnitAction action) {
-		GridPos g = null;
-		switch (action.getActionType()) {
-		case ATTACK:
-			if (((AttackUnitAction) action).target != null) {
-				g = ((AttackUnitAction) action).target.getGridPosition();
-				world.setCellStateByGridPos(g.getX(), g.getY(), Cell.NONE);
-			}
-			break;
-		case DEFENSE:
-			break;
-		case MOVE:
-			for (int i = 0; i < ((MoveUnitAction) action).moves.size; i++) {
-				g = ((MoveUnitAction) action).moves.get(i).getGridPosition();
-				world.setCellStateByGridPos(g.getX(), g.getY(), Cell.NONE);
-			}
-			break;
-		case NONE:
-			break;
-		case PLACE:
-			break;
-		default:
-			break;
-		}
-	}
-
 	private void undoAction() {
 		switch (actionType) {
 		case ATTACK:
 			clearAvailableCells();
-			hideAction(unitAction);
 			attackActions.removeValue((AttackUnitAction) unitAction, false);
 
 			setUnitAction(new NoneUnitAction());
@@ -575,11 +546,19 @@ public class NormalGame extends GameRender {
 					((AttackUnitAction) unitAction).target = cell;
 
 					Path p = paths.createOrResetPath(selectedUnit, Path.TYPE.ATTACK);
-					PathManager.addArc(p,
-							selectedCell.getCenterX(),
-							selectedCell.getCenterY(),
-							cell.getCenterX(),
-							cell.getCenterY());
+					if (selectedUnit.isMelee()) {
+						PathManager.addLine(p,
+								selectedCell.getCenterX(),
+								selectedCell.getCenterY(),
+								cell.getCenterX(),
+								cell.getCenterY());
+					} else {
+						PathManager.addArc(p,
+								selectedCell.getCenterX(),
+								selectedCell.getCenterY(),
+								cell.getCenterX(),
+								cell.getCenterY());
+					}
 				} else {
 					saveAttack();
 				}
@@ -615,7 +594,8 @@ public class NormalGame extends GameRender {
 						ghostlyCells.add(cell);
 					}
 					cell.setUnit(ghost);
-					cell.state = Cell.MOVE_TARGET;
+					cell.addState(Cell.MOVE_TARGET);
+					cell.removeState(Cell.ABLE_TO_MOVE);
 
 					lblMoves.setText(maxMoves - moves.size + "");
 					moves.add(cell);
@@ -769,7 +749,7 @@ public class NormalGame extends GameRender {
 		if (action.moves.size > 1) {
 			moveActions.add(action);
 		} else {
-			setUnitAction(new NoneUnitAction());
+			undoAction();
 		}
 		selectedCell.setAction(unitAction);
 
