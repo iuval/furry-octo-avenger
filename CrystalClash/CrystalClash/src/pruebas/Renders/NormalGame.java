@@ -5,15 +5,15 @@ import pruebas.Controllers.GameController;
 import pruebas.Controllers.WorldController;
 import pruebas.CrystalClash.CrystalClash;
 import pruebas.Entities.Cell;
+import pruebas.Entities.GridPos;
 import pruebas.Entities.Path;
 import pruebas.Entities.Unit;
 import pruebas.Entities.helpers.AttackUnitAction;
-import pruebas.Entities.helpers.DefendUnitAction;
 import pruebas.Entities.helpers.MoveUnitAction;
 import pruebas.Entities.helpers.NoneUnitAction;
 import pruebas.Entities.helpers.UnitAction;
 import pruebas.Entities.helpers.UnitAction.UnitActionType;
-import pruebas.Renders.UnitRender.STATE;
+import pruebas.Renders.helpers.CellHelper;
 import pruebas.Renders.helpers.PathManager;
 import pruebas.Renders.helpers.ResourceHelper;
 import aurelienribon.tweenengine.BaseTween;
@@ -22,7 +22,6 @@ import aurelienribon.tweenengine.Tween;
 import aurelienribon.tweenengine.TweenCallback;
 import aurelienribon.tweenengine.TweenManager;
 
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
@@ -30,8 +29,6 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
@@ -54,10 +51,9 @@ public class NormalGame extends GameRender {
 	private TextButton btnDefense;
 	private TextButton btnUndo;
 	private Group grpActionBar;
-	private Label lblMoves;
-	private Label lblAttack;
+	//private Label lblMoves;
+	//private Label lblAttack;
 	private boolean actionsBarVisible;
-	private boolean undoVisible;
 
 	private UnitActionType actionType;
 	private int maxMoves;
@@ -80,7 +76,6 @@ public class NormalGame extends GameRender {
 
 		arrowX = 0;
 		arrowY = CrystalClash.HEIGHT + 20;
-		undoVisible = false;
 		actionsBarVisible = false;
 
 		actionType = UnitActionType.NONE;
@@ -119,16 +114,12 @@ public class NormalGame extends GameRender {
 				skin.getDrawable("action_attack_button"),
 				skin.getDrawable("action_attack_button_pressed"), null, ResourceHelper.getFont());
 		btnAttack = new TextButton("", attackStyle);
-		btnAttack.setPosition(actionsBar.getX() + 15, actionsBar.getY() - 20);
+		btnAttack.setPosition(actionsBar.getX(), actionsBar.getY() + 155);
 		btnAttack.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
-				btnUndo.setPosition(btnAttack.getX(), btnDefense.getY());
-				undoVisible = true;
-				updateActionsBar();
 				setUnitAction(new AttackUnitAction(selectedUnit.isMelee()));
 				unitAction.origin = selectedCell;
-
 				showAbleToAttackCells();
 			}
 		});
@@ -137,14 +128,10 @@ public class NormalGame extends GameRender {
 				skin.getDrawable("action_defensive_button"),
 				skin.getDrawable("action_defensive_button_pressed"), null, ResourceHelper.getFont());
 		btnDefense = new TextButton("", defenseStyle);
-		btnDefense.setPosition(btnAttack.getX() + btnAttack.getWidth() + 15,
-				actionsBar.getY());
+		btnDefense.setPosition(actionsBar.getX() + 5, actionsBar.getY() + 13);
 		btnDefense.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
-				btnUndo.setPosition(btnDefense.getX(), btnDefense.getY());
-				undoVisible = true;
-				updateActionsBar();
 				setUnitAction(new DefendUnitAction());
 				unitAction.origin = selectedCell;
 				defensiveUnits.add(selectedUnit);
@@ -156,15 +143,10 @@ public class NormalGame extends GameRender {
 				skin.getDrawable("action_run_button"),
 				skin.getDrawable("action_run_button_pressed"), null, ResourceHelper.getFont());
 		btnMove = new TextButton("", moveStyle);
-		btnMove.setPosition(btnDefense.getX() + btnDefense.getWidth() + 15,
-				actionsBar.getY() - 20);
+		btnMove.setPosition(actionsBar.getX() + 233, actionsBar.getY() + 155);
 		btnMove.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
-				btnUndo.setPosition(btnMove.getX(), btnDefense.getY());
-				undoVisible = true;
-				updateActionsBar();
-
 				setUnitAction(new MoveUnitAction());
 				unitAction.origin = selectedCell;
 				((MoveUnitAction) unitAction).moves.add(selectedCell);
@@ -178,45 +160,35 @@ public class NormalGame extends GameRender {
 				skin.getDrawable("action_cancel_button"),
 				skin.getDrawable("action_cancel_button_pressed"), null, ResourceHelper.getFont());
 		btnUndo = new TextButton("", undoStyle);
-		btnUndo.setPosition(0, 300); // Afuera de la ventana
+		btnUndo.setPosition(actionsBar.getX() + 231, actionsBar.getY() + 9);
 		btnUndo.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
 				undoAction();
-				undoVisible = false;
-				updateActionsBar();
 			}
 		});
 
-		lblAttack = new Label("150", new LabelStyle(ResourceHelper.getFont(), Color.WHITE));
-		lblAttack.setPosition(btnAttack.getX()
-				+ (btnAttack.getWidth() / 2 - lblAttack.getWidth() / 2),
-				btnAttack.getY() + 3);
+		//lblAttack = new Label("150", new LabelStyle(ResourceHelper.getFont(), Color.WHITE));
+		//lblAttack.setPosition(btnAttack.getX() + (btnAttack.getWidth() / 2 - lblAttack.getWidth() / 2), btnAttack.getY() + 3);
 
-		lblMoves = new Label("5", new LabelStyle(ResourceHelper.getFont(), Color.WHITE));
-		lblMoves.setPosition(btnMove.getX()
-				+ (btnMove.getWidth() / 2 - lblMoves.getWidth() / 2),
-				btnMove.getY() + 3);
+		//lblMoves = new Label("5", new LabelStyle(ResourceHelper.getFont(), Color.WHITE));
+		//lblMoves.setPosition(btnMove.getX() + (btnMove.getWidth() / 2 - lblMoves.getWidth() / 2), btnMove.getY() + 3);
 
 		grpActionBar = new Group();
 		grpActionBar.addActor(actionsBar);
 		grpActionBar.addActor(btnAttack);
-		grpActionBar.addActor(lblAttack);
 		grpActionBar.addActor(btnMove);
-		grpActionBar.addActor(lblMoves);
 		grpActionBar.addActor(btnDefense);
+		grpActionBar.addActor(btnUndo);
 
 		grpActionBar.setSize(actionsBar.getWidth(), actionsBar.getHeight());
-		grpActionBar.setPosition(
-				CrystalClash.WIDTH / 2 - grpActionBar.getWidth() / 2,
-				CrystalClash.HEIGHT + 50);
+		grpActionBar.setPosition(CrystalClash.WIDTH / 2 - grpActionBar.getWidth() / 2, CrystalClash.HEIGHT + 50);
 
 		addActor(grpActionBar);
 	}
 
 	private void moveArrow(Unit u) {
 		if (u != null) {
-			System.out.println(arrowY);
 			if (selectorArrow.getY() >= CrystalClash.HEIGHT) {
 				selectorArrow.setPosition(u.getX(), CrystalClash.HEIGHT + 20);
 			}
@@ -250,41 +222,51 @@ public class NormalGame extends GameRender {
 						arrowY)).repeat(Tween.INFINITY, 0).start(tweenManager);
 	}
 
-	private void showActionsBar() {
-		Timeline t = Timeline.createSequence();
-		if (450 < selectedUnit.getX() && selectedUnit.getX() < 825) {
-			if (actionsBarVisible) {
-				t.push(Tween.to(grpActionBar, ActorAccessor.X, CrystalClash.ANIMATION_SPEED).target(
-						CrystalClash.WIDTH / 4 - grpActionBar.getWidth() / 2));
+	private void moveActionsBar(Unit u) {
+		if (u != null) {
+			UnitActionType type = selectedCell.getAction().getActionType();
+			if(type.equals(UnitActionType.PLACE) || type.equals(UnitActionType.NONE)) {
+				//btnAttack.setDisabled(false);
+				//btnDefense.setDisabled(false);
+				//btnMove.setDisabled(false);
+				//btnUndo.setDisabled(true);
+				grpActionBar.addActor(btnAttack);
+				grpActionBar.addActor(btnDefense);
+				grpActionBar.addActor(btnMove);
+				grpActionBar.removeActor(btnUndo);
 			} else {
-				grpActionBar.setX(CrystalClash.WIDTH / 4
-						- grpActionBar.getWidth() / 2);
-				t.push(Tween.to(grpActionBar, ActorAccessor.Y, CrystalClash.ANIMATION_SPEED).target(
-						CrystalClash.HEIGHT - grpActionBar.getHeight()));
+				//btnAttack.setDisabled(true);
+				//btnDefense.setDisabled(true);
+				//btnMove.setDisabled(true);
+				//btnUndo.setDisabled(false);
+				grpActionBar.removeActor(btnAttack);
+				grpActionBar.removeActor(btnDefense);
+				grpActionBar.removeActor(btnMove);
+				grpActionBar.addActor(btnUndo);
 			}
-		} else {
-			if (actionsBarVisible) {
-				t.push(Tween.to(grpActionBar, ActorAccessor.X, CrystalClash.ANIMATION_SPEED).target(
-						CrystalClash.WIDTH / 2 - grpActionBar.getWidth() / 2));
-			} else {
-				grpActionBar.setX(CrystalClash.WIDTH / 2
-						- grpActionBar.getWidth() / 2);
-				t.push(Tween.to(grpActionBar, ActorAccessor.Y, CrystalClash.ANIMATION_SPEED).target(
-						CrystalClash.HEIGHT - grpActionBar.getHeight()));
-			}
+			
+			if (!actionsBarVisible)
+				grpActionBar.setPosition(CellHelper.getUnitCenterX(selectedCell) - actionsBar.getWidth() / 2, CrystalClash.HEIGHT + grpActionBar.getHeight());
+
+			tweenManager.killTarget(grpActionBar);
+			Timeline.createParallel()
+					.push(Tween.to(grpActionBar, ActorAccessor.X, CrystalClash.ANIMATION_SPEED).target(CellHelper.getUnitCenterX(selectedCell) - actionsBar.getWidth() / 2))
+					.push(Tween.to(grpActionBar, ActorAccessor.Y, CrystalClash.ANIMATION_SPEED).target(selectedCell.getY() - 80))
+					.start(tweenManager);
+
+			actionsBarVisible = true;
 		}
-		t.start(tweenManager);
-		actionsBarVisible = true;
 	}
 
 	private void hideActionsBar() {
 		actionsBarVisible = false;
-		pushHideActionBar(Timeline.createSequence()).start(tweenManager);
+		Timeline.createParallel()
+				.push(Tween.to(grpActionBar, ActorAccessor.Y, CrystalClash.ANIMATION_SPEED).target(CrystalClash.HEIGHT + grpActionBar.getHeight()))
+				.start(tweenManager);
 	}
 
 	private Timeline pushHideActionBar(Timeline t) {
-		return t.push(Tween.to(grpActionBar, ActorAccessor.Y, CrystalClash.ANIMATION_SPEED).target(
-				CrystalClash.HEIGHT + 50));
+		return t.push(Tween.to(grpActionBar, ActorAccessor.Y, CrystalClash.ANIMATION_SPEED).target(CrystalClash.HEIGHT + grpActionBar.getHeight()))
 	}
 
 	private void showAbleToActionCells() {
@@ -333,10 +315,10 @@ public class NormalGame extends GameRender {
 		clearAvailableCells();
 
 		showAbleToAttackCellRecursive(selectedCell, selectedUnit.isMelee(), selectedUnit.getRange(), false);
+		selectedCell.setState(Cell.State.NONE);
 	}
 
-	// Method that actually "shows" (change state) the cell where units can
-	// attack
+	// Method that actually "shows" (change state) the cell where units can attack
 	private void showAbleToAttackCellRecursive(Cell cell, boolean onlyCellsWithUnit, int range, boolean hide) {
 		int[][] cells = cell.neigbours;
 
@@ -399,6 +381,11 @@ public class NormalGame extends GameRender {
 	}
 
 	private void undoAction() {
+		grpActionBar.addActor(btnAttack);
+		grpActionBar.addActor(btnDefense);
+		grpActionBar.addActor(btnMove);
+		grpActionBar.removeActor(btnUndo);
+		
 		switch (actionType) {
 		case ATTACK:
 			clearAvailableCells();
@@ -423,7 +410,8 @@ public class NormalGame extends GameRender {
 			if (moves.size > 1)
 				popUnitFromPath(moves);
 
-			lblMoves.setText(maxMoves + "");
+			//TODO: popup
+			//lblMoves.setText(maxMoves + "");
 
 			setUnitAction(new NoneUnitAction());
 			selectedCell.setAction(unitAction);
@@ -557,7 +545,8 @@ public class NormalGame extends GameRender {
 					cell.addState(Cell.MOVE_TARGET);
 					cell.removeState(Cell.ABLE_TO_MOVE);
 
-					lblMoves.setText(maxMoves - moves.size + "");
+					//TODO: popup
+					//lblMoves.setText(maxMoves - moves.size + "");
 					moves.add(cell);
 
 					showAbleToMoveCells();
@@ -598,7 +587,6 @@ public class NormalGame extends GameRender {
 						}
 
 						lblMoves.setText(maxMoves + 1 - ((MoveUnitAction) unitAction).moves.size + "");
-
 						showAbleToMoveCells();
 					}
 				} else {
@@ -613,9 +601,10 @@ public class NormalGame extends GameRender {
 						selectedUnit = u;
 						selectedCell = cell;
 
-						lblAttack.setText(GameController.getInstance().getUnitAttack(selectedUnit.getName()) + "");
-						maxMoves = GameController.getInstance().getUnitSpeed(selectedUnit.getName());
-						lblMoves.setText(maxMoves + "");
+						// TODO: popup
+//						lblAttack.setText(GameController.getInstance().getUnitAttack(selectedUnit.getName()) + "");
+//						maxMoves = GameController.getInstance().getUnitSpeed(selectedUnit.getName());
+//						lblMoves.setText(maxMoves + "");
 
 						moveArrow(selectedUnit);
 
@@ -629,11 +618,12 @@ public class NormalGame extends GameRender {
 							} else {
 								undoVisible = false;
 							}
-
-							updateActionsBar();
-							showActionsBar();
+							moveActionsBar(selectedUnit);
 						}
 					}
+				} else {
+					showAssignedActions();
+					clearSelection();
 				}
 				break;
 			default:
