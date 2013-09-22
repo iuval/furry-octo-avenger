@@ -51,6 +51,7 @@ public class WorldRender extends Group implements InputProcessor {
 	GameRender gameRender;
 
 	private boolean readInput = true;
+	private boolean blockButtons = false;
 
 	private MessageBoxCallback backCallback;
 
@@ -213,8 +214,10 @@ public class WorldRender extends Group implements InputProcessor {
 		btnOptions.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
-				hideMoreOptions = true;
-				showOptions();
+				if(!blockButtons){
+					hideMoreOptions = true;
+					showOptions();
+				}
 			}
 		});
 		grpBtnOptions.addActor(btnOptions);
@@ -250,16 +253,18 @@ public class WorldRender extends Group implements InputProcessor {
 		ClickListener sendListener = new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
-				if (gameRender.canSend()) {
-					setReadInput(false);
-					MessageBox.build()
-							.setMessage("Comander!\nTroops are ready and waiting for battle!\nJust say the word")
-							.twoButtonsLayout("Charge!!", "Hold your horses!")
-							.setCallback(sendTurnCallback)
-							.setHideOnAction(false)
-							.show();
-				} else {
-					gameRender.onSend();
+				if (!blockButtons) {
+					if (gameRender.canSend()) {
+						setReadInput(false);
+						MessageBox.build()
+								.setMessage("Comander!\nTroops are ready and waiting for battle!\nJust say the word")
+								.twoButtonsLayout("Charge!!", "Hold your horses!")
+								.setCallback(sendTurnCallback)
+								.setHideOnAction(false)
+								.show();
+					} else {
+						gameRender.onSend();
+					}
 				}
 			}
 		};
@@ -383,7 +388,7 @@ public class WorldRender extends Group implements InputProcessor {
 	}
 
 	public Timeline pushEnterAnimation(Timeline t) {
-		return t;
+		return gameRender.pushEnterAnimation(t);
 	}
 
 	public Timeline pushExitAnimation(Timeline t) {
@@ -402,6 +407,13 @@ public class WorldRender extends Group implements InputProcessor {
 
 	public void setReadInput(boolean read) {
 		readInput = read;
+	}
+
+	public void setBlockButtons(boolean block) {
+		blockButtons = block;
+
+		btnSend.setDisabled(block);
+		btnOptions.setDisabled(block);
 	}
 
 	public void pause() {
