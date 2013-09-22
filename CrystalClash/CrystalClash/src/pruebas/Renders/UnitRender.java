@@ -4,6 +4,7 @@ import pruebas.Entities.Unit;
 import pruebas.Renders.helpers.UnitHelper;
 import pruebas.Util.SuperAnimation;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
@@ -13,7 +14,7 @@ public class UnitRender {
 	}
 
 	public enum STATE {
-		idle, fighting, walking, dieing, dead
+		idle, fighting, walking, dieing, dead, ghost
 	}
 
 	private Unit unit;
@@ -77,6 +78,11 @@ public class UnitRender {
 			currnetAnim = null;
 		}
 			break;
+		case ghost: {
+			currnetAnim = walkAnim;
+			
+		}
+			break;
 		}
 	}
 
@@ -91,27 +97,34 @@ public class UnitRender {
 	public void draw(SpriteBatch batch, float dt) {
 		if (state != STATE.dead) {
 			currnetAnim.update(dt, facing);
-			currnetAnim.draw(batch, unit.getX(), unit.getY());
 
-			if (state != STATE.dieing) {
-				batch.draw(UnitHelper.backHPBar,
-						unit.getX() + UnitHelper.HP_BAR_BACK_X,
-						unit.getY() + UnitHelper.HP_BAR_BACK_Y,
-						UnitHelper.HP_BAR_BACK_WIDTH,
-						UnitHelper.HP_BAR_BACK_HEIGHT);
-				batch.draw(hpBar,
-						unit.getX() + UnitHelper.HP_BAR_X,
-						unit.getY() + UnitHelper.HP_BAR_Y,
-						hpWidth,
-						UnitHelper.HP_BAR_HEIGHT);
+			if (state == STATE.ghost) {
+				Color c = batch.getColor();
+				batch.setColor(c.r, c.g, c.b, 0.4f);
+				currnetAnim.draw(batch, unit.getX(), unit.getY());
+				batch.setColor(c.r, c.g, c.b, 1f);
+			} else {
+				currnetAnim.draw(batch, unit.getX(), unit.getY());
+				if (state != STATE.dieing) {
+					batch.draw(UnitHelper.backHPBar,
+							unit.getX() + UnitHelper.HP_BAR_BACK_X,
+							unit.getY() + UnitHelper.HP_BAR_BACK_Y,
+							UnitHelper.HP_BAR_BACK_WIDTH,
+							UnitHelper.HP_BAR_BACK_HEIGHT);
+					batch.draw(hpBar,
+							unit.getX() + UnitHelper.HP_BAR_X,
+							unit.getY() + UnitHelper.HP_BAR_Y,
+							hpWidth,
+							UnitHelper.HP_BAR_HEIGHT);
 
-				if (unit.isInDefensePosition()) {
-					shieldAnim.update(dt, facing);
-					shieldAnim.draw(batch, unit.getX(), unit.getY());
+					if (unit.isInDefensePosition()) {
+						shieldAnim.update(dt, facing);
+						shieldAnim.draw(batch, unit.getX(), unit.getY());
+					}
 				}
-			}
-			if (state == STATE.dieing && currnetAnim.isAnimationFinished()) {
-				setState(STATE.dead);
+				if (state == STATE.dieing && currnetAnim.isAnimationFinished()) {
+					setState(STATE.dead);
+				}
 			}
 		}
 	}
