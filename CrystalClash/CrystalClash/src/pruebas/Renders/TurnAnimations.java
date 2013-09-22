@@ -449,7 +449,7 @@ public class TurnAnimations extends GameRender {
 					Unit unit = action.origin.getUnit();
 
 					unit.getRender().setState(STATE.fighting);
-					action.target.setState(Cell.State.ATTACK_TARGET_CENTER);
+					action.target.state = Cell.ATTACK_TARGET_CENTER;
 				}
 			});
 
@@ -465,7 +465,7 @@ public class TurnAnimations extends GameRender {
 					Unit enemy = action.target.getUnit();
 					doDamage(enemy, unit);
 					unit.getRender().setState(STATE.idle);
-					action.target.setState(Cell.State.NONE);
+					action.target.state = Cell.NONE;
 				}
 			});
 

@@ -13,6 +13,7 @@ import pruebas.Entities.helpers.UnitAction;
 import pruebas.Networking.ServerDriver;
 import pruebas.Renders.GameEngine;
 import pruebas.Renders.UnitRender.FACING;
+import pruebas.Renders.UnitRender.STATE;
 import pruebas.Renders.WorldRender;
 import pruebas.Renders.helpers.CellHelper;
 
@@ -75,10 +76,10 @@ public class WorldController {
 				y = temp.getInt("y");
 
 				Unit unit = new Unit(child.getString("unit_name"), playerNum, isEnemy, child.getInt("unit_hp"));
-				if (unit.isPlayerNumber(2)){
+				if (unit.isPlayerNumber(2)) {
 					unit.getRender().setFacing(FACING.left);
 				}
-					
+
 				UnitAction unitA;
 				action = child.getString("action");
 
@@ -135,7 +136,8 @@ public class WorldController {
 
 		float yoffset = 0f;
 		float dx = deltaX;
-		float dy = CellHelper.CELL_HEIGHT + 3; // (float) ((Math.sqrt(3f) / 2f) * hexaWidht);
+		float dy = CellHelper.CELL_HEIGHT + 3; // (float) ((Math.sqrt(3f) / 2f)
+												// * hexaWidht);
 
 		ArrayList<int[]> temp = new ArrayList<int[]>();
 		for (int h = 0; h < 6; h++) {
@@ -216,13 +218,13 @@ public class WorldController {
 	public void tap(float x, float y) {
 		Cell cell = cellAt(x, y);
 		if (cell != null)
-			cell.setState(Cell.State.MOVE_TARGET);
+			cell.state = Cell.MOVE_TARGET;
 	}
 
 	public boolean placeUnit(float x, float y, Unit unit) {
 		unit.setPlayerNumber(player);
 		Cell cell = cellAt(x, y);
-		if (cell != null && cell.getState() == Cell.State.ABLE_TO_PLACE && cell.getUnit() == null) {
+		if (cell != null && cell.hasState(Cell.ABLE_TO_PLACE) && cell.getUnit() == null) {
 			cell.placeUnit(unit);
 			return true;
 		}
@@ -233,10 +235,10 @@ public class WorldController {
 	}
 
 	// -------------Para poder poner una unidad para probar
-	public void setCellState(float x, float y, Cell.State state) {
+	public void setCellState(float x, float y, int state) {
 		Cell cell = cellAt(x, y);
 		if (cell != null) {
-			cell.setState(state);
+			cell.state = state;
 		}
 	}
 
@@ -244,44 +246,44 @@ public class WorldController {
 		return cellGrid[x][y];
 	}
 
-	public void setCellStateByGridPos(int x, int y, Cell.State state) {
-		cellGrid[x][y].setState(state);
+	public void setCellStateByGridPos(int x, int y, int state) {
+		cellGrid[x][y].state = state;
 	}
 
 	public void assignFirstTurnAvailablePlaces() {
 		if (player == 1) {
-			cellGrid[0][5].setState(Cell.State.ABLE_TO_PLACE);
-			cellGrid[0][4].setState(Cell.State.ABLE_TO_PLACE);
-			cellGrid[0][3].setState(Cell.State.ABLE_TO_PLACE);
-			cellGrid[0][2].setState(Cell.State.ABLE_TO_PLACE);
-			cellGrid[0][1].setState(Cell.State.ABLE_TO_PLACE);
-			cellGrid[0][0].setState(Cell.State.ABLE_TO_PLACE);
-			cellGrid[1][5].setState(Cell.State.ABLE_TO_PLACE);
-			cellGrid[1][4].setState(Cell.State.ABLE_TO_PLACE);
-			cellGrid[1][3].setState(Cell.State.ABLE_TO_PLACE);
-			cellGrid[1][3].setState(Cell.State.ABLE_TO_PLACE);
-			cellGrid[1][2].setState(Cell.State.ABLE_TO_PLACE);
-			cellGrid[1][1].setState(Cell.State.ABLE_TO_PLACE);
-			cellGrid[2][1].setState(Cell.State.ABLE_TO_PLACE);
-			cellGrid[2][2].setState(Cell.State.ABLE_TO_PLACE);
-			cellGrid[2][3].setState(Cell.State.ABLE_TO_PLACE);
-			cellGrid[2][4].setState(Cell.State.ABLE_TO_PLACE);
+			cellGrid[0][5].state = Cell.ABLE_TO_PLACE;
+			cellGrid[0][4].state = Cell.ABLE_TO_PLACE;
+			cellGrid[0][3].state = Cell.ABLE_TO_PLACE;
+			cellGrid[0][2].state = Cell.ABLE_TO_PLACE;
+			cellGrid[0][1].state = Cell.ABLE_TO_PLACE;
+			cellGrid[0][0].state = Cell.ABLE_TO_PLACE;
+			cellGrid[1][5].state = Cell.ABLE_TO_PLACE;
+			cellGrid[1][4].state = Cell.ABLE_TO_PLACE;
+			cellGrid[1][3].state = Cell.ABLE_TO_PLACE;
+			cellGrid[1][3].state = Cell.ABLE_TO_PLACE;
+			cellGrid[1][2].state = Cell.ABLE_TO_PLACE;
+			cellGrid[1][1].state = Cell.ABLE_TO_PLACE;
+			cellGrid[2][1].state = Cell.ABLE_TO_PLACE;
+			cellGrid[2][2].state = Cell.ABLE_TO_PLACE;
+			cellGrid[2][3].state = Cell.ABLE_TO_PLACE;
+			cellGrid[2][4].state = Cell.ABLE_TO_PLACE;
 		} else {
-			cellGrid[6][4].setState(Cell.State.ABLE_TO_PLACE);
-			cellGrid[6][3].setState(Cell.State.ABLE_TO_PLACE);
-			cellGrid[6][2].setState(Cell.State.ABLE_TO_PLACE);
-			cellGrid[6][1].setState(Cell.State.ABLE_TO_PLACE);
-			cellGrid[7][5].setState(Cell.State.ABLE_TO_PLACE);
-			cellGrid[7][4].setState(Cell.State.ABLE_TO_PLACE);
-			cellGrid[7][3].setState(Cell.State.ABLE_TO_PLACE);
-			cellGrid[7][2].setState(Cell.State.ABLE_TO_PLACE);
-			cellGrid[7][1].setState(Cell.State.ABLE_TO_PLACE);
-			cellGrid[8][5].setState(Cell.State.ABLE_TO_PLACE);
-			cellGrid[8][4].setState(Cell.State.ABLE_TO_PLACE);
-			cellGrid[8][3].setState(Cell.State.ABLE_TO_PLACE);
-			cellGrid[8][2].setState(Cell.State.ABLE_TO_PLACE);
-			cellGrid[8][1].setState(Cell.State.ABLE_TO_PLACE);
-			cellGrid[8][0].setState(Cell.State.ABLE_TO_PLACE);
+			cellGrid[6][4].state = Cell.ABLE_TO_PLACE;
+			cellGrid[6][3].state = Cell.ABLE_TO_PLACE;
+			cellGrid[6][2].state = Cell.ABLE_TO_PLACE;
+			cellGrid[6][1].state = Cell.ABLE_TO_PLACE;
+			cellGrid[7][5].state = Cell.ABLE_TO_PLACE;
+			cellGrid[7][4].state = Cell.ABLE_TO_PLACE;
+			cellGrid[7][3].state = Cell.ABLE_TO_PLACE;
+			cellGrid[7][2].state = Cell.ABLE_TO_PLACE;
+			cellGrid[7][1].state = Cell.ABLE_TO_PLACE;
+			cellGrid[8][5].state = Cell.ABLE_TO_PLACE;
+			cellGrid[8][4].state = Cell.ABLE_TO_PLACE;
+			cellGrid[8][3].state = Cell.ABLE_TO_PLACE;
+			cellGrid[8][2].state = Cell.ABLE_TO_PLACE;
+			cellGrid[8][1].state = Cell.ABLE_TO_PLACE;
+			cellGrid[8][0].state = Cell.ABLE_TO_PLACE;
 		}
 	}
 
@@ -322,7 +324,7 @@ public class WorldController {
 				for (int v = 0; v < 9; v++) {
 					cell = cellGrid[v][h];
 					unit = cellGrid[v][h].getUnit();
-					if (unit != null && !unit.isEnemy())
+					if (unit != null && unit.getRender().getState() != STATE.ghost && !unit.isEnemy())
 						cell.addDataToJson(builder);
 				}
 			}

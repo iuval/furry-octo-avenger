@@ -5,7 +5,6 @@ import pruebas.Controllers.GameController;
 import pruebas.Controllers.WorldController;
 import pruebas.CrystalClash.CrystalClash;
 import pruebas.Entities.Cell;
-import pruebas.Entities.Cell.State;
 import pruebas.Entities.GridPos;
 import pruebas.Entities.Path;
 import pruebas.Entities.Unit;
@@ -326,8 +325,8 @@ public class NormalGame extends GameRender {
 				Cell aux = null;
 				for (int i = 0; i < top.neigbours.length; i++) {
 					aux = world.cellAtByGrid(cells[i][0], cells[i][1]);
-					if (aux.getState() == State.NONE && aux.getUnit() == null)
-						aux.setState(Cell.State.ABLE_TO_MOVE);
+					if (aux.getUnit() == null)
+						aux.addState(Cell.ABLE_TO_MOVE);
 				}
 			}
 		}
@@ -349,11 +348,12 @@ public class NormalGame extends GameRender {
 		for (int i = 0; i < cells.length; i++) {
 			neigbourCell = world.cellAtByGrid(cells[i][0], cells[i][1]);
 			unit = neigbourCell.getUnit();
-			if ((neigbourCell.getState() != State.MOVE_TARGET && neigbourCell.getState() != State.ATTACK_TARGET_CENTER) &&
+			if (!neigbourCell.hasState(Cell.MOVE_TARGET | Cell.ATTACK_TARGET_CENTER) &&
 					(hide || (onlyCellsWithUnit && (unit == null || !unit.isEnemy())))) {
-				neigbourCell.setState(Cell.State.NONE);
-			} else if (neigbourCell.getState() != State.MOVE_TARGET && neigbourCell.getState() != State.ATTACK_TARGET_CENTER)
-				neigbourCell.setState(Cell.State.ABLE_TO_ATTACK);
+				neigbourCell.removeState(Cell.ABLE_TO_ATTACK);
+			} else if (neigbourCell != selectedCell && (unit == null || unit.isEnemy()) &&
+					!neigbourCell.hasState(Cell.MOVE_TARGET | Cell.ATTACK_TARGET_CENTER))
+				neigbourCell.addState(Cell.ABLE_TO_ATTACK);
 
 			if (range > 1)
 				showAbleToAttackCellRecursive(neigbourCell, onlyCellsWithUnit, range - 1, hide);
@@ -370,14 +370,14 @@ public class NormalGame extends GameRender {
 		case DEFENSE:
 			break;
 		case MOVE:
-			Cell top = null;
+			Cell cell = null;
 			for (int i = 0; i < ((MoveUnitAction) unitAction).moves.size; i++) {
-				top = ((MoveUnitAction) unitAction).moves.get(i);
-				int[][] cells = top.neigbours;
-				for (int j = 0; j < top.neigbours.length; j++) {
-					if (world.cellGrid[cells[j][0]][cells[j][1]].getState() == State.ABLE_TO_MOVE)
-						world.setCellStateByGridPos(cells[j][0], cells[j][1],
-								Cell.State.NONE);
+				cell = ((MoveUnitAction) unitAction).moves.get(i);
+				int[][] cells = cell.neigbours;
+				for (int j = 0; j < cell.neigbours.length; j++) {
+					cell = world.cellGrid[cells[j][0]][cells[j][1]];
+					if (cell.hasState(Cell.ABLE_TO_MOVE))
+						cell.removeState(Cell.ABLE_TO_MOVE);
 				}
 			}
 			break;
@@ -390,7 +390,7 @@ public class NormalGame extends GameRender {
 
 	private void clearPathCells(Array<Cell> cells) {
 		for (int i = 0; i < cells.size; i++) {
-			cells.get(i).setState(State.NONE);
+			cells.get(i).state = Cell.NONE;
 		}
 	}
 
@@ -411,7 +411,7 @@ public class NormalGame extends GameRender {
 
 			if (((AttackUnitAction) unitAction).target != null) {
 				g = ((AttackUnitAction) unitAction).target.getGridPosition();
-				world.setCellStateByGridPos(g.getX(), g.getY(), Cell.State.ATTACK_TARGET_CENTER);
+				world.setCellStateByGridPos(g.getX(), g.getY(), Cell.ATTACK_TARGET_CENTER);
 			}
 			break;
 		case DEFENSE:
@@ -424,7 +424,7 @@ public class NormalGame extends GameRender {
 
 			for (int i = 0; i < ((MoveUnitAction) unitAction).moves.size; i++) {
 				g = ((MoveUnitAction) unitAction).moves.get(i).getGridPosition();
-				world.setCellStateByGridPos(g.getX(), g.getY(), Cell.State.MOVE_TARGET);
+				world.setCellStateByGridPos(g.getX(), g.getY(), Cell.MOVE_TARGET);
 			}
 
 			lblMoves.setText(maxMoves + 1 - ((MoveUnitAction) unitAction).moves.size + "");
@@ -449,7 +449,7 @@ public class NormalGame extends GameRender {
 		case ATTACK:
 			if (((AttackUnitAction) action).target != null) {
 				g = ((AttackUnitAction) action).target.getGridPosition();
-				world.setCellStateByGridPos(g.getX(), g.getY(), Cell.State.NONE);
+				world.setCellStateByGridPos(g.getX(), g.getY(), Cell.NONE);
 			}
 			break;
 		case DEFENSE:
@@ -457,7 +457,7 @@ public class NormalGame extends GameRender {
 		case MOVE:
 			for (int i = 0; i < ((MoveUnitAction) action).moves.size; i++) {
 				g = ((MoveUnitAction) action).moves.get(i).getGridPosition();
-				world.setCellStateByGridPos(g.getX(), g.getY(), Cell.State.NONE);
+				world.setCellStateByGridPos(g.getX(), g.getY(), Cell.NONE);
 			}
 			break;
 		case NONE:
@@ -542,7 +542,7 @@ public class NormalGame extends GameRender {
 		for (int i = 0; i < world.cellGrid.length; i++) {
 			for (int j = 0; j < world.cellGrid[0].length; j++) {
 				world.cellGrid[i][j].setAction(unitAction);
-				world.cellGrid[i][j].setState(Cell.State.NONE);
+				world.cellGrid[i][j].state = Cell.NONE;
 			}
 		}
 	}
@@ -568,10 +568,10 @@ public class NormalGame extends GameRender {
 			case PLACE:
 				break;
 			case ATTACK:
-				if (cell.getState() == Cell.State.ABLE_TO_ATTACK) {
+				if (cell.hasState(Cell.ABLE_TO_ATTACK)) {
 					if (unitAction != null && ((AttackUnitAction) unitAction).target != null)
-						((AttackUnitAction) unitAction).target.setState(State.ABLE_TO_ATTACK);
-					cell.setState(Cell.State.ATTACK_TARGET_CENTER);
+						((AttackUnitAction) unitAction).target.removeState(Cell.ATTACK_TARGET_CENTER);
+					cell.addState(Cell.ATTACK_TARGET_CENTER);
 					((AttackUnitAction) unitAction).target = cell;
 
 					Path p = paths.createOrResetPath(selectedUnit, Path.TYPE.ATTACK);
@@ -588,7 +588,7 @@ public class NormalGame extends GameRender {
 				saveDefense();
 				break;
 			case MOVE:
-				if (cell.getState() == Cell.State.ABLE_TO_MOVE) {
+				if (cell.hasState(Cell.ABLE_TO_MOVE)) {
 					clearAvailableCells();
 					Array<Cell> moves = ((MoveUnitAction) unitAction).moves;
 					Path p = paths.getOrCreatePath(selectedUnit, Path.TYPE.MOVE);
@@ -615,13 +615,13 @@ public class NormalGame extends GameRender {
 						ghostlyCells.add(cell);
 					}
 					cell.setUnit(ghost);
-					cell.setState(State.MOVE_TARGET);
+					cell.state = Cell.MOVE_TARGET;
 
 					lblMoves.setText(maxMoves - moves.size + "");
 					moves.add(cell);
 
 					showAbleToMoveCells();
-				} else if (cell.getState() == Cell.State.MOVE_TARGET) {
+				} else if (cell.hasState(Cell.MOVE_TARGET)) {
 					clearAvailableCells();
 					Array<Cell> moves = ((MoveUnitAction) unitAction).moves;
 					if (moves.size > 0) {

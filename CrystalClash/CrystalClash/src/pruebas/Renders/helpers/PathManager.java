@@ -113,31 +113,31 @@ public class PathManager {
 	}
 
 	public static void addArc(Path p, float iniX, float iniY, float endX, float endY) {
-		double a = 0;
-		double b = 0;
-		double c = 0;
-		double v = 2;
+		if (iniX == endX)
+			addLine(p, iniX, iniY, endX, endY);
+		else {
+			double a = 0;
+			double b = 0;
+			double c = 0;
+			double v = iniX < endX ? 2 : -2;
 
-		float y = 0;
-		float dx = Math.abs(iniX - endX) / 10;
+			float y = 0;
+			float dx = Math.abs(iniX - endX) / 10;
 
-		if (iniX < endX) {
 			a = (endY - iniY - v * (endX - iniX)) / ((Math.pow(endX, 2) - Math.pow(iniX, 2)) - 2 * iniX * (endX - iniX));
 			b = v - 2 * a * iniX;
 			c = iniY - a * Math.pow(iniX, 2) - b * iniX;
 
-			for (float x = iniX; x < endX; x += dx) {
-				y = (float) (a * Math.pow(x, 2) + b * x + c);
-				p.add(x, y);
-			}
-		} else {
-			a = (iniY - endY - v * (iniX - endX)) / ((Math.pow(iniX, 2) - Math.pow(endX, 2)) - 2 * endX * (iniX - endX));
-			b = v - 2 * a * endX;
-			c = endY - a * Math.pow(endX, 2) - b * endX;
-
-			for (float x = iniX; x > endX; x -= dx) {
-				y = (float) (a * Math.pow(x, 2) + b * x + c);
-				p.add(x, y);
+			if (iniX < endX) {
+				for (float x = iniX; x < endX; x += dx) {
+					y = (float) (a * Math.pow(x, 2) + b * x + c);
+					p.add(x, y);
+				}
+			} else {
+				for (float x = iniX; x > endX; x -= dx) {
+					y = (float) (a * Math.pow(x, 2) + b * x + c);
+					p.add(x, y);
+				}
 			}
 		}
 	}

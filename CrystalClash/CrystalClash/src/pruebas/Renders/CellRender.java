@@ -13,7 +13,7 @@ public class CellRender {
 	}
 
 	public void draw(float dt, SpriteBatch batch) {
-		batch.draw(WorldRender.cellHelper.getCellTexture(cell), cell.getX(), cell.getY());
+		WorldRender.cellHelper.drawCellTextures(batch, cell);
 	}
 
 	public void drawUnits(float dt, SpriteBatch batch) {
