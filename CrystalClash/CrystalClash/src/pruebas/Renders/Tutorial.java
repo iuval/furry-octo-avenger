@@ -24,10 +24,13 @@ import aurelienribon.tweenengine.TweenManager;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Array;
@@ -41,6 +44,7 @@ public class Tutorial extends GameRender {
 	private Label lblMessage;
 	private TextButton btnNext;
 	private TextButton btnSkip;
+	private Image imgBtnSkipBackground;
 
 	private Image arrow;
 	private Image pointingHand;
@@ -78,6 +82,10 @@ public class Tutorial extends GameRender {
 	}
 
 	public void load() {
+		TextureAtlas atlas = new TextureAtlas(
+				"data/Images/InGame/options_bar.pack");
+		Skin skin = new Skin(atlas);
+		
 		tweenManager = new TweenManager();
 		Tween.registerAccessor(Unit.class, new UnitAccessor());
 
@@ -112,8 +120,14 @@ public class Tutorial extends GameRender {
 				}
 			}
 		};
-		btnSkip = new TextButton("Skip", ResourceHelper.getButtonStyle());
-		btnSkip.setPosition(-btnSkip.getWidth(), CrystalClash.HEIGHT - btnSkip.getHeight());
+		
+		imgBtnSkipBackground = new Image(skin.getRegion("exit_hud"));
+		imgBtnSkipBackground.setPosition(CrystalClash.WIDTH, CrystalClash.HEIGHT - imgBtnSkipBackground.getHeight());
+		TextButtonStyle skipStyle = new TextButtonStyle(
+				skin.getDrawable("exit_button"),
+				skin.getDrawable("exit_button_pressed"), null, ResourceHelper.getFont());
+		btnSkip = new TextButton("", skipStyle);
+		btnSkip.setPosition(CrystalClash.WIDTH, CrystalClash.HEIGHT - btnSkip.getHeight());
 		btnSkip.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
@@ -143,6 +157,7 @@ public class Tutorial extends GameRender {
 		addActor(balloon);
 		addActor(lblMessage);
 		addActor(btnNext);
+		addActor(imgBtnSkipBackground);
 		addActor(btnSkip);
 		addActor(arrow);
 		addActor(pointingHand);
@@ -469,7 +484,8 @@ public class Tutorial extends GameRender {
 				.push(Tween.to(fireArcher, ActorAccessor.X, CrystalClash.ENTRANCE_ANIMATION_SPEED).target(200))
 				.push(Tween.to(balloon, ActorAccessor.Y, CrystalClash.ENTRANCE_ANIMATION_SPEED).target(0))
 				.push(Tween.to(btnNext, ActorAccessor.Y, CrystalClash.ENTRANCE_ANIMATION_SPEED).target(20))
-				.push(Tween.to(btnSkip, ActorAccessor.X, CrystalClash.ENTRANCE_ANIMATION_SPEED).target(0))
+				.push(Tween.to(imgBtnSkipBackground, ActorAccessor.X, CrystalClash.ENTRANCE_ANIMATION_SPEED).target(CrystalClash.WIDTH - imgBtnSkipBackground.getWidth()))
+				.push(Tween.to(btnSkip, ActorAccessor.X, CrystalClash.ENTRANCE_ANIMATION_SPEED).target(CrystalClash.WIDTH - btnSkip.getWidth()))
 				.setCallbackTriggers(TweenCallback.COMPLETE)
 				.setCallback(new TweenCallback() {
 					@Override

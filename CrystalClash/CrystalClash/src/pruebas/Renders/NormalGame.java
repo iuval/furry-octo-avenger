@@ -112,7 +112,7 @@ public class NormalGame extends GameRender {
 		TextureAtlas atlas = new TextureAtlas("data/Images/InGame/options_bar.pack");
 		Skin skin = new Skin(atlas);
 
-		TextureRegion aux = skin.getRegion("actions_bar");
+		TextureRegion aux = skin.getRegion("actions_hud");
 		actionsBar = new Image(aux);
 
 		TextButtonStyle attackStyle = new TextButtonStyle(
