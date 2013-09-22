@@ -149,8 +149,6 @@ public class NormalGame extends GameRender {
 				unitAction.origin = selectedCell;
 				defensiveUnits.add(selectedUnit);
 				selectedUnit.setDefendingPosition(true);
-
-				showTargetCells(false);
 			}
 		});
 
@@ -170,9 +168,9 @@ public class NormalGame extends GameRender {
 				setUnitAction(new MoveUnitAction());
 				unitAction.origin = selectedCell;
 				((MoveUnitAction) unitAction).moves.add(selectedCell);
+				selectedCell.addState(Cell.MOVE_TARGET);
 
 				showAbleToMoveCells();
-				showTargetCells(true);
 			}
 		});
 
@@ -400,43 +398,6 @@ public class NormalGame extends GameRender {
 		hideActionsBar();
 	}
 
-	private void showTargetCells(boolean stillAssigning) {
-		switch (unitAction.getActionType()) {
-		case ATTACK:
-			btnUndo.setPosition(btnAttack.getX(), btnDefense.getY());
-
-			if (((AttackUnitAction) unitAction).target != null) {
-				((AttackUnitAction) unitAction).target.addState(Cell.ATTACK_TARGET_CENTER);
-			}
-			break;
-		case DEFENSE:
-			actionType = UnitActionType.DEFENSE;
-			btnUndo.setPosition(btnDefense.getX(), btnDefense.getY());
-			break;
-		case MOVE:
-			actionType = UnitActionType.MOVE;
-			btnUndo.setPosition(btnMove.getX(), btnDefense.getY());
-
-			for (int i = 0; i < ((MoveUnitAction) unitAction).moves.size; i++) {
-				((MoveUnitAction) unitAction).moves.get(i).addState(Cell.MOVE_TARGET);
-			}
-
-			lblMoves.setText(maxMoves + 1 - ((MoveUnitAction) unitAction).moves.size + "");
-			undoVisible = true;
-			break;
-		case NONE:
-			undoVisible = false;
-			actionType = UnitActionType.NONE;
-			break;
-		case PLACE:
-			undoVisible = false;
-			actionType = UnitActionType.NONE;
-			break;
-		default:
-			break;
-		}
-	}
-
 	private void undoAction() {
 		switch (actionType) {
 		case ATTACK:
@@ -661,10 +622,12 @@ public class NormalGame extends GameRender {
 						if (u.isEnemy()) {
 							hideActionsBar();
 						} else {
-							if (cell.getAction() != null) {
+							if (cell.getAction() != null && cell.getAction().getActionType() != UnitActionType.NONE) {
 								setUnitAction(cell.getAction());
-								showTargetCells(true);
 								showAbleToActionCells();
+								undoVisible = true;
+							} else {
+								undoVisible = false;
 							}
 
 							updateActionsBar();
