@@ -46,11 +46,6 @@ public class Tutorial extends GameRender {
 	private TextButton btnSkip;
 	private Image imgBtnSkipBackground;
 
-	private Image arrow;
-	private Image pointingHand;
-	private float selectorX;
-	private float selectorY;
-
 	private Array<String> messages;
 	private int messageIndex;
 	
@@ -64,8 +59,6 @@ public class Tutorial extends GameRender {
 	public Tutorial(WorldController world) {
 		super(world);
 		messageIndex = 0;
-		selectorX = 0;
-		selectorY = CrystalClash.HEIGHT + 20;
 		
 		load();
 		readTutorialScript();
@@ -82,8 +75,7 @@ public class Tutorial extends GameRender {
 	}
 
 	public void load() {
-		TextureAtlas atlas = new TextureAtlas(
-				"data/Images/InGame/options_bar.pack");
+		TextureAtlas atlas = new TextureAtlas("data/Images/InGame/options_bar.pack");
 		Skin skin = new Skin(atlas);
 		
 		tweenManager = new TweenManager();
@@ -146,12 +138,6 @@ public class Tutorial extends GameRender {
 						.show();
 			}}
 		});
-
-		arrow = new Image(ResourceHelper.getTexture("data/Images/InGame/selector_arrow.png"));
-		arrow.setPosition(selectorX, selectorY);
-		
-		pointingHand = new Image(ResourceHelper.getTexture("data/Images/Tutorial/pointing_hand.png"));
-		pointingHand.setPosition(selectorX, selectorY);
 		
 		addActor(fireArcher);
 		addActor(balloon);
@@ -159,9 +145,6 @@ public class Tutorial extends GameRender {
 		addActor(btnNext);
 		addActor(imgBtnSkipBackground);
 		addActor(btnSkip);
-		addActor(arrow);
-		addActor(pointingHand);
-
 	}
 
 	private void readTutorialScript(){
@@ -246,7 +229,7 @@ public class Tutorial extends GameRender {
 	private void action(int index){
 		switch(index){
 		case 2:
-			moveSelector(pointingHand, assassin);
+			world.getRender().moveHand(assassin);
 			break;
 		case 3:
 			world.getRender().setReadInput(true);
@@ -257,13 +240,13 @@ public class Tutorial extends GameRender {
 			showNext();
 			break;
 		case 7:
-			moveSelector(arrow, tank);
+			world.getRender().moveArrow(tank);
 			break;
 		case 8:
-			moveSelector(arrow, arrow.getX(), CrystalClash.HEIGHT + 20);
+			world.getRender().hideArrow();
 			break;
 		case 9:
-			moveSelector(pointingHand, 675, CrystalClash.HEIGHT - 150);
+			world.getRender().moveHand(675, CrystalClash.HEIGHT - 150);
 			world.setCellStateByGridPos(5, 5, State.MOVE_TARGET);
 			showNext();
 			break;
@@ -272,17 +255,17 @@ public class Tutorial extends GameRender {
 			//hideNext();
 			break;
 		case 11:
-			moveSelector(pointingHand, 0, 125);
+			world.getRender().moveHand(0, 125);
 			world.getRender().setBlockButtons(false);
 			break;
 		case 12:
 			world.getRender().setBlockButtons(true);
-			moveSelector(pointingHand, pointingHand.getX(), CrystalClash.HEIGHT + 20);
+			world.getRender().hideHand();
 			showNext();
 			break;
 		case 14:
 			world.getRender().setBlockButtons(false);
-			moveSelector(pointingHand, 0, 125);
+			world.getRender().moveHand(0, 125);
 			//hideNext();
 			break;
 		case 16:
@@ -302,7 +285,7 @@ public class Tutorial extends GameRender {
 			break;
 		case 18:
 			world.getRender().setReadInput(true);
-			moveSelector(pointingHand, assassin);
+			world.getRender().moveHand(assassin);
 			//hideNext();
 			break;
 		case 22:
@@ -319,71 +302,6 @@ public class Tutorial extends GameRender {
 			showNext();
 			break;
 		}
-	}
-	
-	private void moveSelector(final Image selector, Unit u) {
-		blockButtons = true;
-		btnNext.setDisabled(true);
-		
-		selectorX = u.getX();
-		if(selector == pointingHand)
-			selectorX -= 30;
-		
-		selectorY = u.getY() + 120;
-		
-		if (selector.getY() >= CrystalClash.HEIGHT) {
-			selector.setPosition(selectorX, CrystalClash.HEIGHT + 20);
-		}
-
-		tweenManager.killTarget(selector);
-		Timeline.createParallel()
-				.push(Tween.to(selector, ActorAccessor.X, CrystalClash.FAST_ANIMATION_SPEED)
-						.target(selectorX))
-				.push(Tween.to(selector, ActorAccessor.Y, CrystalClash.FAST_ANIMATION_SPEED)
-						.target(selectorY))
-				.setCallbackTriggers(TweenCallback.COMPLETE)
-				.setCallback(new TweenCallback() {
-					@Override
-					public void onEvent(int type, BaseTween<?> source) {
-						selector.setPosition(selectorX, selectorY);
-						selectorAnimation(selector);
-
-						blockButtons = false;
-						btnNext.setDisabled(false);
-					}
-				}).start(tweenManager);
-	}
-	
-	private void moveSelector(final Image selector, float x, float y) {
-		blockButtons = true;
-		btnNext.setDisabled(true);
-		selectorX = x;
-		selectorY = y;
-
-		tweenManager.killTarget(selector);
-		Timeline.createParallel()
-				.push(Tween.to(selector, ActorAccessor.X, CrystalClash.FAST_ANIMATION_SPEED)
-						.target(selectorX))
-				.push(Tween.to(selector, ActorAccessor.Y, CrystalClash.FAST_ANIMATION_SPEED)
-						.target(selectorY))
-				.setCallbackTriggers(TweenCallback.COMPLETE)
-				.setCallback(new TweenCallback() {
-					@Override
-					public void onEvent(int type, BaseTween<?> source) {
-						selector.setPosition(selectorX, selectorY);
-						selectorAnimation(selector);
-
-						blockButtons = false;
-						btnNext.setDisabled(false);
-					}
-				}).start(tweenManager);
-	}
-
-	private void selectorAnimation(Image selector) {
-		Timeline.createSequence()
-				.push(Tween.set(selector, ActorAccessor.Y).target(selector.getY()))
-				.push(Tween.to(selector, ActorAccessor.Y, CrystalClash.ANIMATION_SPEED).target(selector.getY() - 10))
-				.push(Tween.to(selector, ActorAccessor.Y, CrystalClash.ANIMATION_SPEED).target(selector.getY())).repeat(Tween.INFINITY, 0).start(tweenManager);
 	}
 	
 	private void hideNext() {
@@ -426,8 +344,7 @@ public class Tutorial extends GameRender {
 			if (u != null) {
 				if (!u.isEnemy()) {
 					//showHUD
-					System.out.println("toched");
-					moveSelector(pointingHand, pointingHand.getX(), CrystalClash.HEIGHT + 20);
+					world.getRender().hideHand();
 					next();
 				}
 			}
@@ -523,5 +440,41 @@ public class Tutorial extends GameRender {
 	@Override
 	public void resume() {
 		tweenManager.resume();
+	}
+
+	@Override
+	public ClickListener attackListener() {
+		return new ClickListener() {
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+			}
+		};
+	}
+
+	@Override
+	public ClickListener defendListener() {
+		return new ClickListener() {
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+			}
+		};
+	}
+
+	@Override
+	public ClickListener moveListener() {
+		return new ClickListener() {
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+			}
+		};
+	}
+
+	@Override
+	public ClickListener undoListener() {
+		return new ClickListener() {
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+			}
+		};
 	}
 }

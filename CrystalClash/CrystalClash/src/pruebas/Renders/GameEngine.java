@@ -413,5 +413,8 @@ public class GameEngine implements Screen {
 	public static void start(Timeline t) {
 		t.start(tweenManager);
 	}
-
+	
+	public static void kill(Object o) {
+		tweenManager.killTarget(o);
+	}
 }

@@ -21,6 +21,7 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
 public class SelectUnitsRender extends GameRender {
 	private int unitCount = 0;
@@ -244,5 +245,29 @@ public class SelectUnitsRender extends GameRender {
 	public void resume() {
 		// TODO Auto-generated method stub
 
+	}
+
+	@Override
+	public ClickListener attackListener() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public ClickListener defendListener() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public ClickListener moveListener() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public ClickListener undoListener() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

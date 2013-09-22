@@ -692,4 +692,28 @@ public class TurnAnimations extends GameRender {
 	public void resume() {
 		tweenManager.resume();
 	}
+
+	@Override
+	public ClickListener attackListener() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public ClickListener defendListener() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public ClickListener moveListener() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public ClickListener undoListener() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }
