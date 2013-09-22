@@ -5,7 +5,6 @@ import pruebas.Controllers.GameController;
 import pruebas.Controllers.WorldController;
 import pruebas.CrystalClash.CrystalClash;
 import pruebas.Entities.Cell;
-import pruebas.Entities.GridPos;
 import pruebas.Entities.Path;
 import pruebas.Entities.Unit;
 import pruebas.Entities.helpers.AttackUnitAction;
@@ -402,14 +401,12 @@ public class NormalGame extends GameRender {
 	}
 
 	private void showTargetCells(boolean stillAssigning) {
-		GridPos g = null;
 		switch (unitAction.getActionType()) {
 		case ATTACK:
 			btnUndo.setPosition(btnAttack.getX(), btnDefense.getY());
 
 			if (((AttackUnitAction) unitAction).target != null) {
-				g = ((AttackUnitAction) unitAction).target.getGridPosition();
-				world.cellAtByGrid(g.getX(), g.getY()).addState(Cell.ATTACK_TARGET_CENTER);
+				((AttackUnitAction) unitAction).target.addState(Cell.ATTACK_TARGET_CENTER);
 			}
 			break;
 		case DEFENSE:
@@ -421,8 +418,7 @@ public class NormalGame extends GameRender {
 			btnUndo.setPosition(btnMove.getX(), btnDefense.getY());
 
 			for (int i = 0; i < ((MoveUnitAction) unitAction).moves.size; i++) {
-				g = ((MoveUnitAction) unitAction).moves.get(i).getGridPosition();
-				world.cellGrid[g.getX()][g.getY()].addState(Cell.MOVE_TARGET);
+				((MoveUnitAction) unitAction).moves.get(i).addState(Cell.MOVE_TARGET);
 			}
 
 			lblMoves.setText(maxMoves + 1 - ((MoveUnitAction) unitAction).moves.size + "");
@@ -445,6 +441,8 @@ public class NormalGame extends GameRender {
 		switch (actionType) {
 		case ATTACK:
 			clearAvailableCells();
+			paths.removePath(selectedUnit);
+			((AttackUnitAction) unitAction).target.removeState(Cell.ATTACK_TARGET_CENTER);
 			attackActions.removeValue((AttackUnitAction) unitAction, false);
 
 			setUnitAction(new NoneUnitAction());
@@ -458,6 +456,7 @@ public class NormalGame extends GameRender {
 			break;
 		case MOVE:
 			clearAvailableCells();
+			paths.removePath(selectedUnit);
 			Array<Cell> moves = ((MoveUnitAction) unitAction).moves;
 			clearPathCells(moves);
 			if (moves.size > 1)
@@ -605,8 +604,6 @@ public class NormalGame extends GameRender {
 					clearAvailableCells();
 					Array<Cell> moves = ((MoveUnitAction) unitAction).moves;
 					if (moves.size > 0) {
-						clearPathCells(moves);
-
 						Path p = paths.createOrResetPath(selectedUnit, Path.TYPE.MOVE);
 						p.clear();
 
@@ -617,6 +614,9 @@ public class NormalGame extends GameRender {
 
 							cell.setUnit(popUnitFromPath(moves));
 
+							for (int i = moves.size - 1; i > index; i--) {
+								moves.get(i).removeState(Cell.MOVE_TARGET);
+							}
 							moves.truncate(index + 1);
 
 							for (int i = 1; i < moves.size; i++) {
@@ -627,14 +627,17 @@ public class NormalGame extends GameRender {
 										moves.get(i).getCenterY());
 							}
 						} else {
-							if (moves.size > 1)
+							if (moves.size > 1) {
 								popUnitFromPath(moves);
+								for (int i = 1; i < moves.size; i++) {
+									moves.get(i).removeState(Cell.MOVE_TARGET);
+								}
+							}
 							moves.truncate(1);
 						}
 
 						lblMoves.setText(maxMoves + 1 - ((MoveUnitAction) unitAction).moves.size + "");
 
-						showTargetCells(true);
 						showAbleToMoveCells();
 					}
 				} else {

@@ -25,14 +25,6 @@ public class GameObject {
 		return position.y;
 	}
 
-	public float getCenterX() {
-		return position.x + CellHelper.CELL_CENTER_X;
-	}
-
-	public float getCenterY() {
-		return position.y + CellHelper.CELL_CENTER_Y;
-	}
-
 	public void setGrisPosition(int x, int y) {
 		gridPos.setX(x);
 		gridPos.setY(y);

@@ -25,6 +25,14 @@ public class Cell extends GameObject {
 		render = new CellRender(this);
 	}
 
+	public float getCenterX() {
+		return getX() + CellHelper.CELL_CENTER_X;
+	}
+
+	public float getCenterY() {
+		return getY() + CellHelper.CELL_CENTER_Y;
+	}
+
 	public boolean hasState(int state) {
 		return (this.state & state) == state;
 	}
