@@ -85,7 +85,7 @@ public class NormalGame extends GameRender {
 				setUnitAction(new AttackUnitAction(selectedUnit.isMelee()));
 				unitAction.origin = selectedCell;
 
-				world.getRender().hideActionsBar();
+				world.getRender().fadeOutActionsRing(false, null);
 				showAbleToAttackCells();
 			}
 		};
@@ -100,7 +100,7 @@ public class NormalGame extends GameRender {
 				defensiveUnits.add(selectedUnit);
 				selectedUnit.setDefendingPosition(true);
 
-				world.getRender().hideActionsBar();
+				world.getRender().fadeOutActionsRing(false, null);
 			}
 		};
 	}
@@ -114,7 +114,7 @@ public class NormalGame extends GameRender {
 				((MoveUnitAction) unitAction).moves.add(selectedCell);
 				selectedCell.addState(Cell.MOVE_TARGET);
 
-				world.getRender().hideActionsBar();
+				world.getRender().fadeOutActionsRing(false, null);
 				showAbleToMoveCells();
 			}
 		};
@@ -465,7 +465,7 @@ public class NormalGame extends GameRender {
 						hideAssignedActions();
 
 						if (u.isEnemy()) {
-							world.getRender().hideActionsBar();
+							world.getRender().fadeOutActionsRing(false, null);
 						} else {
 							if (cell.getAction() != null && cell.getAction().getActionType() != UnitActionType.NONE) {
 								setUnitAction(cell.getAction());
@@ -474,7 +474,7 @@ public class NormalGame extends GameRender {
 							} else {
 								undoVisible = false;
 							}
-							world.getRender().moveActionsBar(selectedCell);
+							world.getRender().moveActionsRing(selectedCell);
 						}
 					}
 				} else {
