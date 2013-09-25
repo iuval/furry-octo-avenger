@@ -50,21 +50,32 @@ public class AudioManager {
 	}
 
 	public static void playMusic(String name) {
+//		if (playing != null && playing.isPlaying())
+//			fadeOut(name);
+//		else
+//			fadeIn(name);
+		
 		if (playing != null && playing.isPlaying())
-			fadeOut(name);
-		else
-			fadeIn(name);
+			playing.stop();
+		
+		playing = getMusic("data/Audio/" + name + ".mp3");
+		playing.setVolume(volume);
+		playing.setLooping(true);
+		playing.play();
+		
 	}
 
 	public static void playSound(String name) {
-		getSound("data/SFX/" + name + ".mp3").play(volume);
+		getSound("data/SFX/" + name + ".mp3").play(1);
 	}
 
 	public static void volumeUp() {
 		volume += 0.05;
 		if (volume > 1)
 			volume = 1;
-
+		
+		if (playing != null)
+			playing.setVolume(volume);
 	}
 
 	public static void volumeDown() {
