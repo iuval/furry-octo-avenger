@@ -130,8 +130,7 @@ public class MenuLogInRender extends MenuRender {
 		groupInitialScreen.addActor(btnSignIn);
 		addActor(groupInitialScreen);
 
-		popupPanelTexture = new Texture(
-				Gdx.files.internal("data/Images/Menu/menu_login_popup.png"));
+		popupPanelTexture = ResourceHelper.getTexture("data/Images/Menu/menu_login_popup.png");
 		popupPanel = new Image(popupPanelTexture);
 		popupPanel.setSize(800, 500);
 		popupPanel.setPosition(0, 0);
@@ -142,8 +141,7 @@ public class MenuLogInRender extends MenuRender {
 				popupPanel.getWidth() / 2 - lblHeading.getWidth() / 2,
 				popupPanel.getTop() - 100);
 
-		textFieldTexture = new Texture(
-				Gdx.files.internal("data/Images/text_field_background.png"));
+		textFieldTexture = ResourceHelper.getTexture("data/Images/text_field_background.png");
 		textFieldEmail = new Image(textFieldTexture);
 		textFieldEmail.setPosition(50, popupPanel.getTop() - 200);
 		textFieldEmail.setSize(700, 50);
@@ -153,10 +151,7 @@ public class MenuLogInRender extends MenuRender {
 		textFieldPassword.setSize(700, 50);
 
 		Skin textFieldSkin = new Skin();
-		textFieldSkin
-				.add("textFieldCursor",
-						new Texture(Gdx.files
-								.internal("data/Images/Menu/cursor_1.png")));
+		textFieldSkin.add("textFieldCursor", ResourceHelper.getTexture("data/Images/Menu/cursor_1.png"));
 
 		TextFieldStyle textFieldStyle = new TextFieldStyle();
 		textFieldStyle.font = ResourceHelper.getFont();

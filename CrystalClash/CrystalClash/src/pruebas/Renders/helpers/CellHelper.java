@@ -2,18 +2,20 @@ package pruebas.Renders.helpers;
 
 import pruebas.Entities.Cell;
 
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 
 public class CellHelper {
-
-	public final static float CELL_HEIGHT = 106.0F;
 	public final static float CELL_WIDTH = 122.0F;
+	public final static float CELL_HEIGHT = 106.0F;
 
-	public static final float UNIT_PLAYER_1_X = 30f;
-	public static final float UNIT_PLAYER_1_Y = 25f;
-	public static final float UNIT_PLAYER_1_CENTER_X = 61f;
+	public static final float CELL_CENTER_X = 61f;
+	public static final float CELL_CENTER_Y = 53f;
+
+	public static final float CELL_UNIT_X = 30f;
+	public static final float CELL_UNIT_Y = 25f;
 
 	TextureAtlas atlas;
 
@@ -39,44 +41,35 @@ public class CellHelper {
 		path = skin.getRegion("path");
 	}
 
-	public TextureRegion getCellTexture(Cell cell) {
-		switch (cell.getState()) {
-		case NONE: {
-			return none;
+	public void drawCellTextures(SpriteBatch batch, Cell cell) {
+		if (cell.hasState(Cell.ABLE_TO_MOVE)) {
+			batch.draw(able_to_move, cell.getX(), cell.getY());
+		} else if (cell.hasState(Cell.ABLE_TO_ATTACK)) {
+			batch.draw(able_to_attack, cell.getX(), cell.getY());
+		} else if (cell.hasState(Cell.ABLE_TO_MOVE)) {
+			batch.draw(able_to_move, cell.getX(), cell.getY());
+		} else if (cell.hasState(Cell.ABLE_TO_PLACE)) {
+			batch.draw(able_to_place, cell.getX(), cell.getY());
+		} else {
+			batch.draw(none, cell.getX(), cell.getY());
 		}
-		case ABLE_TO_ATTACK: {
-			return able_to_attack;
+
+		if (cell.hasState(Cell.MOVE_TARGET)) {
+			batch.draw(path, cell.getX(), cell.getY());
 		}
-		case ABLE_TO_MOVE: {
-			return able_to_move;
+		if (cell.hasState(Cell.ATTACK_TARGET_CENTER)) {
+			batch.draw(attack_target_center, cell.getX(), cell.getY());
 		}
-		case ABLE_TO_PLACE: {
-			return able_to_place;
-		}
-		case ATTACK_TARGET_CENTER: {
-			return attack_target_center;
-		}
-		case ATTACK_TARGET_RADIUS: {
-			return attack_target_radius;
-		}
-		case MOVE_TARGET: {
-			return path;
-		}
-		default: {
-			return none;
-		}
+		if (cell.hasState(Cell.ATTACK_TARGET_RADIUS)) {
+			batch.draw(attack_target_radius, cell.getX(), cell.getY());
 		}
 	}
 
 	public static float getUnitX(Cell cell) {
-		return cell.getX() + CellHelper.UNIT_PLAYER_1_X;
-	}
-
-	public static float getUnitCenterX(Cell cell) {
-		return cell.getX() + CellHelper.UNIT_PLAYER_1_CENTER_X;
+		return cell.getX() + CellHelper.CELL_UNIT_X;
 	}
 
 	public static float getUnitY(Cell cell) {
-		return cell.getY() + CellHelper.UNIT_PLAYER_1_Y;
+		return cell.getY() + CellHelper.CELL_UNIT_Y;
 	}
 }

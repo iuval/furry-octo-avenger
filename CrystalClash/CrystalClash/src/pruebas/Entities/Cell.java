@@ -6,30 +6,56 @@ import pruebas.Renders.CellRender;
 import pruebas.Renders.helpers.CellHelper;
 
 public class Cell extends GameObject {
-	public enum State {
-		NONE, ABLE_TO_ATTACK, ABLE_TO_MOVE, ABLE_TO_PLACE, ATTACK_TARGET_CENTER, ATTACK_TARGET_RADIUS, MOVE_TARGET
-	}
+	public final static int NONE = 0; // 0
+	public final static int ABLE_TO_ATTACK = 1 << 0; // 1
+	public final static int ABLE_TO_MOVE = 1 << 1; // 2
+	public final static int ABLE_TO_PLACE = 1 << 2; // 4
+	public final static int ATTACK_TARGET_CENTER = 1 << 3; // 8
+	public final static int ATTACK_TARGET_RADIUS = 1 << 4; // 16
+	public final static int MOVE_TARGET = 1 << 5; // 32
 
 	private Unit unit;
 	private UnitAction action;
-	private State state = State.NONE;
+	public int state = NONE;
 	public int[][] neigbours;
 	private CellRender render;
+	private int incomingAttacksCount = 0;
 
 	public Cell() {
 		render = new CellRender(this);
 	}
 
+	public float getCenterX() {
+		return getX() + CellHelper.CELL_CENTER_X;
+	}
+
+	public float getCenterY() {
+		return getY() + CellHelper.CELL_CENTER_Y;
+	}
+
+	public boolean hasState(int state) {
+		return (this.state & state) == state;
+	}
+
+	public void addState(int state) {
+		this.state |= state;
+		if ((state & ATTACK_TARGET_CENTER) == ATTACK_TARGET_CENTER)
+			incomingAttacksCount++;
+	}
+
+	public void removeState(int state) {
+		if (incomingAttacksCount > 0 && (state & ATTACK_TARGET_CENTER) == ATTACK_TARGET_CENTER) {
+			incomingAttacksCount--;
+			// If there are more attacks targeting this cell, don't remove the
+			// atack target state
+			if (incomingAttacksCount > 0)
+				return;
+		}
+		this.state &= ~state;
+	}
+
 	public CellRender getRender() {
 		return render;
-	}
-
-	public State getState() {
-		return state;
-	}
-
-	public void setState(State s) {
-		state = s;
 	}
 
 	public void placeUnit(Unit unit) {
@@ -41,8 +67,8 @@ public class Cell extends GameObject {
 
 	public void setUnit(Unit unit) {
 		this.unit = unit;
-		unit.setPosition(getX() + CellHelper.UNIT_PLAYER_1_X, getY()
-				+ CellHelper.UNIT_PLAYER_1_Y);
+		unit.setPosition(getX() + CellHelper.CELL_UNIT_X, getY()
+				+ CellHelper.CELL_UNIT_Y);
 	}
 
 	public Unit getUnit() {

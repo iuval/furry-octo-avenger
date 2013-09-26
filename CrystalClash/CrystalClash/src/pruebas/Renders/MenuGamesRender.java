@@ -236,7 +236,7 @@ public class MenuGamesRender extends MenuRender {
 		final MessageBoxCallback surrenderCallback = new MessageBoxCallback() {
 			@Override
 			public void onEvent(int type, Object data) {
-				if (type == MessageBoxCallback.YES){
+				if (type == MessageBoxCallback.YES) {
 					controller.surrenderGame(data.toString());
 					loadGameList();
 				}
@@ -264,30 +264,12 @@ public class MenuGamesRender extends MenuRender {
 
 		listItemSkin = new Skin();
 		listItemSkin.add("font", ResourceHelper.getFont());
-		listItemSkin
-				.add("play_up",
-						new Texture(
-								Gdx.files
-										.internal("data/Images/Menu/games_list_item_green.png")));
-		listItemSkin.add(
-				"play_down",
-				new Texture(Gdx.files
-						.internal("data/Images/Menu/games_list_item_green.png")));
-		listItemSkin.add(
-				"wait_up",
-				new Texture(Gdx.files
-						.internal("data/Images/Menu/games_list_item_red.png")));
-		listItemSkin.add(
-				"wait_down",
-				new Texture(Gdx.files
-						.internal("data/Images/Menu/games_list_item_red.png")));
-		listItemSkin.add(
-				"surrender_up",
-				new Texture(Gdx.files
-						.internal("data/Images/Menu/button_surrender.png")));
-		listItemSkin
-				.add("surrender_down",
-						ResourceHelper.getTexture("data/Images/Menu/button_surrender_pressed.png"));
+		listItemSkin.add("play_up", ResourceHelper.getTexture("data/Images/Menu/games_list_item_green.png"));
+		listItemSkin.add("play_down", ResourceHelper.getTexture("data/Images/Menu/games_list_item_green.png"));
+		listItemSkin.add("wait_up", ResourceHelper.getTexture("data/Images/Menu/games_list_item_red.png"));
+		listItemSkin.add("wait_down", ResourceHelper.getTexture("data/Images/Menu/games_list_item_red.png"));
+		listItemSkin.add("surrender_up", ResourceHelper.getTexture("data/Images/Menu/button_surrender.png"));
+		listItemSkin.add("surrender_down", ResourceHelper.getTexture("data/Images/Menu/button_surrender_pressed.png"));
 
 		TextButtonStyle playStyle = new TextButtonStyle();
 		playStyle.font = listItemSkin.getFont("font");

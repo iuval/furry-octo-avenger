@@ -214,7 +214,11 @@ public class SelectUnitsRender extends GameRender {
 	}
 
 	@Override
-	public void render(float dt, SpriteBatch batch) {
+	public void renderInTheBack(float dt, SpriteBatch batch) {
+	}
+
+	@Override
+	public void renderInTheFront(float dt, SpriteBatch batch) {
 		tabs.draw(dt, batch);
 		if (selectedUnit != null) {
 			selectedUnit.getRender().draw(batch, dt);
