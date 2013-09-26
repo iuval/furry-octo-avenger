@@ -198,7 +198,7 @@ public class GameEngine implements Screen {
 				}
 				setState(GameState.InTranstionMenuGamesAndGame);
 				Timeline.createSequence()
-						.push(Tween.to(background, ActorAccessor.ALPHA, CrystalClash.ANIMATION_SPEED).target(0))
+						.push(Tween.to(background, ActorAccessor.ALPHA, CrystalClash.SLOW_ANIMATION_SPEED).target(0))
 						.setCallback(new TweenCallback() {
 							@Override
 							public void onEvent(int type, BaseTween<?> source) {
@@ -296,7 +296,7 @@ public class GameEngine implements Screen {
 		} else if (state == GameState.InGame) {
 			worldRender.pushExitAnimation(t);
 			t.push(Tween.set(background, ActorAccessor.ALPHA).target(0));
-			t.push(Tween.to(background, ActorAccessor.ALPHA, CrystalClash.ANIMATION_SPEED).target(1));
+			t.push(Tween.to(background, ActorAccessor.ALPHA, CrystalClash.SLOW_ANIMATION_SPEED).target(1));
 			t.setCallback(new TweenCallback() {
 				@Override
 				public void onEvent(int type, BaseTween<?> source) {
@@ -377,12 +377,12 @@ public class GameEngine implements Screen {
 
 	public static Timeline pushShowBlackScreen(Timeline t) {
 		txrBlackScreen.setVisible(true);
-		return t.push(Tween.to(txrBlackScreen, ActorAccessor.ALPHA, CrystalClash.FAST_ANIMATION_SPEED)
+		return t.push(Tween.to(txrBlackScreen, ActorAccessor.ALPHA, CrystalClash.NORMAL_ANIMATION_SPEED)
 				.target(1));
 	}
 
 	public static Timeline pushHideBlackScreen(Timeline t) {
-		return t.push(Tween.to(txrBlackScreen, ActorAccessor.ALPHA, CrystalClash.FAST_ANIMATION_SPEED)
+		return t.push(Tween.to(txrBlackScreen, ActorAccessor.ALPHA, CrystalClash.NORMAL_ANIMATION_SPEED)
 				.target(0))
 				.setCallback(new TweenCallback() {
 

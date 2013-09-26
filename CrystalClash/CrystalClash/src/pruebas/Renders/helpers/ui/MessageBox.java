@@ -164,13 +164,13 @@ public class MessageBox extends Group {
 
 	protected Timeline getEnterAnimation() {
 		return GameEngine.pushShowBlackScreen(Timeline.createParallel())
-				.push(Tween.to(this, ActorAccessor.Y, CrystalClash.FAST_ANIMATION_SPEED)
+				.push(Tween.to(this, ActorAccessor.Y, CrystalClash.NORMAL_ANIMATION_SPEED)
 						.target(CrystalClash.HEIGHT / 4));
 	}
 
 	protected Timeline getExitAnimation() {
 		return GameEngine.pushHideBlackScreen(Timeline.createParallel())
-				.push(Tween.to(this, ActorAccessor.Y, CrystalClash.FAST_ANIMATION_SPEED)
+				.push(Tween.to(this, ActorAccessor.Y, CrystalClash.NORMAL_ANIMATION_SPEED)
 						.target(CrystalClash.HEIGHT + getHeight()));
 	}
 }

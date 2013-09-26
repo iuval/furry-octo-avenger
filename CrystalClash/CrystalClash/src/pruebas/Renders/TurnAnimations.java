@@ -525,12 +525,12 @@ public class TurnAnimations extends GameRender {
 					gameEndMessage.getY() + gameEndMessage.getHeight() / 2 - btnBackToMenu.getHeight() / 2);
 			start(Timeline.createSequence()
 					.beginParallel()
-					.push(Tween.to(gameEndMessage, ActorAccessor.Y, CrystalClash.ANIMATION_SPEED)
+					.push(Tween.to(gameEndMessage, ActorAccessor.Y, CrystalClash.SLOW_ANIMATION_SPEED)
 							.target(CrystalClash.HEIGHT / 2 - gameEndMessage.getHeight() / 2))
-					.push(Tween.to(btnBackToMenu, ActorAccessor.Y, CrystalClash.ANIMATION_SPEED)
+					.push(Tween.to(btnBackToMenu, ActorAccessor.Y, CrystalClash.SLOW_ANIMATION_SPEED)
 							.target(CrystalClash.HEIGHT / 2 - btnBackToMenu.getHeight() / 2))
 					.end()
-					.push(Tween.to(btnBackToMenu, ActorAccessor.Y, CrystalClash.ANIMATION_SPEED)
+					.push(Tween.to(btnBackToMenu, ActorAccessor.Y, CrystalClash.SLOW_ANIMATION_SPEED)
 							.target(CrystalClash.HEIGHT / 2 - gameEndMessage.getHeight() / 2 - btnBackToMenu.getHeight())
 							.ease(TweenEquations.easeOutBounce)));
 		} else {
@@ -601,7 +601,7 @@ public class TurnAnimations extends GameRender {
 
 	private void hidePanel() {
 		start(Timeline.createSequence()
-				.push(Tween.to(grpPanel, ActorAccessor.Y, CrystalClash.FAST_ANIMATION_SPEED).target(CrystalClash.HEIGHT)));
+				.push(Tween.to(grpPanel, ActorAccessor.Y, CrystalClash.NORMAL_ANIMATION_SPEED).target(CrystalClash.HEIGHT)));
 	}
 
 	private void showPanel() {
@@ -609,7 +609,7 @@ public class TurnAnimations extends GameRender {
 		grpPanel.addActor(btnSkip);
 
 		start(Timeline.createSequence()
-				.push(Tween.to(grpPanel, ActorAccessor.Y, CrystalClash.FAST_ANIMATION_SPEED).target(0)));
+				.push(Tween.to(grpPanel, ActorAccessor.Y, CrystalClash.NORMAL_ANIMATION_SPEED).target(0)));
 	}
 
 	@Override
@@ -649,9 +649,9 @@ public class TurnAnimations extends GameRender {
 	@Override
 	public Timeline pushExitAnimation(Timeline t) {
 		if (world.gameEnded) {
-			t.push(Tween.to(btnBackToMenu, ActorAccessor.Y, CrystalClash.FAST_ANIMATION_SPEED)
+			t.push(Tween.to(btnBackToMenu, ActorAccessor.Y, CrystalClash.NORMAL_ANIMATION_SPEED)
 					.target(CrystalClash.HEIGHT))
-					.push(Tween.to(gameEndMessage, ActorAccessor.Y, CrystalClash.FAST_ANIMATION_SPEED)
+					.push(Tween.to(gameEndMessage, ActorAccessor.Y, CrystalClash.NORMAL_ANIMATION_SPEED)
 							.target(CrystalClash.HEIGHT))
 					.setCallback(new TweenCallback() {
 						@Override
@@ -660,7 +660,7 @@ public class TurnAnimations extends GameRender {
 						}
 					});
 		} else {
-			t.push(Tween.to(grpPanel, ActorAccessor.Y, CrystalClash.FAST_ANIMATION_SPEED)
+			t.push(Tween.to(grpPanel, ActorAccessor.Y, CrystalClash.NORMAL_ANIMATION_SPEED)
 					.target(CrystalClash.HEIGHT))
 					.setCallback(new TweenCallback() {
 						@Override

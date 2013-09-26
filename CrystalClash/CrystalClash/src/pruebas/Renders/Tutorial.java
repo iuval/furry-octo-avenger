@@ -217,10 +217,10 @@ public class Tutorial extends GameRender {
 			world.getRender().setBlockButtons(false);
 			lblMessage.setText("");
 			Timeline.createParallel()
-					.push(Tween.to(fireArcher, ActorAccessor.X, CrystalClash.ANIMATION_SPEED).target(-fireArcher.getWidth()))
-					.push(Tween.to(balloon, ActorAccessor.Y, CrystalClash.ANIMATION_SPEED).target(-balloon.getHeight()))
-					.push(Tween.to(lblMessage, ActorAccessor.Y, CrystalClash.ANIMATION_SPEED).target(-balloon.getHeight()))
-					.push(Tween.to(btnNext, ActorAccessor.Y, CrystalClash.ANIMATION_SPEED).target(-btnNext.getHeight()))
+					.push(Tween.to(fireArcher, ActorAccessor.X, CrystalClash.SLOW_ANIMATION_SPEED).target(-fireArcher.getWidth()))
+					.push(Tween.to(balloon, ActorAccessor.Y, CrystalClash.SLOW_ANIMATION_SPEED).target(-balloon.getHeight()))
+					.push(Tween.to(lblMessage, ActorAccessor.Y, CrystalClash.SLOW_ANIMATION_SPEED).target(-balloon.getHeight()))
+					.push(Tween.to(btnNext, ActorAccessor.Y, CrystalClash.SLOW_ANIMATION_SPEED).target(-btnNext.getHeight()))
 					.start(tweenManager);
 		}
 		action(messageIndex);
@@ -309,7 +309,7 @@ public class Tutorial extends GameRender {
 		btnSkip.setDisabled(true);
 		btnNext.setDisabled(true);
 		Timeline.createSequence()
-				.push(Tween.to(btnNext, ActorAccessor.Y, CrystalClash.ANIMATION_SPEED)
+				.push(Tween.to(btnNext, ActorAccessor.Y, CrystalClash.SLOW_ANIMATION_SPEED)
 						.target(-btnNext.getHeight())).start(tweenManager);
 	}
 	
@@ -318,7 +318,7 @@ public class Tutorial extends GameRender {
 		btnSkip.setDisabled(false);
 		btnNext.setDisabled(false);
 		Timeline.createSequence()
-				.push(Tween.to(btnNext, ActorAccessor.Y, CrystalClash.ANIMATION_SPEED)
+				.push(Tween.to(btnNext, ActorAccessor.Y, CrystalClash.SLOW_ANIMATION_SPEED)
 						.target(20)).start(tweenManager);
 	}
 	

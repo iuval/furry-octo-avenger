@@ -205,13 +205,13 @@ public class SelectUnitsRender extends GameRender {
 	@Override
 	public Timeline pushEnterAnimation(Timeline t) {
 		// TODO Auto-generated method stub
-		return null;
+		return t;
 	}
 
 	@Override
 	public Timeline pushExitAnimation(Timeline t) {
 		// TODO Auto-generated method stub
-		return null;
+		return t;
 	}
 
 	@Override
