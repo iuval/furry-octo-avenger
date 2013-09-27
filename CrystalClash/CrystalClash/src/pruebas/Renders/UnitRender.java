@@ -1,5 +1,6 @@
 package pruebas.Renders;
 
+import pruebas.Audio.AudioManager;
 import pruebas.Entities.Unit;
 import pruebas.Renders.helpers.UnitHelper;
 import pruebas.Util.SuperAnimation;
@@ -64,6 +65,7 @@ public class UnitRender {
 			break;
 		case fighting: {
 			currnetAnim = fightAnim;
+			AudioManager.playSound(unit.getName() + "_attack");
 		}
 			break;
 		case walking: {

@@ -51,10 +51,13 @@ public class UnitHelper {
 	}
 
 	public static SuperAnimation getSuperAnimation(String path) {
-		if (renderMap.contains(path)) {
+		if (renderMap.containsKey(path)) {
 			return renderMap.get(path).clone();
+		} else {
+			SuperAnimation s = FileUtil.getSuperAnimation(path);
+			renderMap.put(path, s);
+			return s;
 		}
-		return FileUtil.getSuperAnimation(path);
 	}
 
 	public static Texture getEnemyHPBar() {

@@ -3,6 +3,7 @@ package pruebas.Renders.helpers;
 import java.util.Hashtable;
 
 import pruebas.Util.FileUtil;
+import pruebas.Util.SuperAnimation;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
@@ -50,10 +51,13 @@ public class ResourceHelper {
 	}
 
 	public static Texture getTexture(String path) {
-		if (textureMap.contains(path)) {
+		if (textureMap.containsKey(path)) {
 			return textureMap.get(path);
+		} else {
+			Texture t = FileUtil.getTexture(path);
+			textureMap.put(path, t);
+			return t;
 		}
-		return FileUtil.getTexture(path);
 	}
 
 	public static Skin getCommonButtonsSkin() {
