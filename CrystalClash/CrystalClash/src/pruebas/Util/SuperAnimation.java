@@ -25,7 +25,6 @@ public class SuperAnimation {
 	public int handle_y = 0;
 
 	final TextureRegion[] keyFrames;
-	final float[] keyTimes;
 	final float[] keyDurations;
 
 	private boolean looping = true;
@@ -38,13 +37,13 @@ public class SuperAnimation {
 	 * 
 	 * @param animation_time
 	 *            the total time the animation takes to play.
-	 * @param keyTimes
+	 * @param keyDurations
 	 *            the time at which each key frame must show up.
 	 * @param keyFrames
 	 *            the {@link TextureRegion}s representing the frames.
 	 */
-	public SuperAnimation(float animation_time, float[] keyTimes, TextureRegion... keyFrames) {
-		this(animation_time, keyTimes, keyFrames, true);
+	public SuperAnimation(float animation_time, float[] keyDurations, TextureRegion... keyFrames) {
+		this(animation_time, keyDurations, keyFrames, true);
 	}
 
 	/**
@@ -52,7 +51,7 @@ public class SuperAnimation {
 	 * 
 	 * @param animation_time
 	 *            the total time the animation takes to play.
-	 * @param keyTimes
+	 * @param keyDurations
 	 *            the time at which each key frame must show up.
 	 * @param keyFrames
 	 *            the {@link TextureRegion}s representing the frames.
@@ -60,11 +59,10 @@ public class SuperAnimation {
 	 *            the type of animation play (NORMAL, REVERSED, LOOP,
 	 *            LOOP_REVERSED, LOOP_PINGPONG, LOOP_RANDOM)
 	 */
-	public SuperAnimation(float animation_time, float[] keyTimes,
+	public SuperAnimation(float animation_time, float[] keyDurations,
 			TextureRegion[] keyFrames, boolean loop) {
 		this.animationTime = animation_time;
-		this.keyTimes = keyTimes;
-		this.keyDurations = calculateDurations(keyTimes);
+		this.keyDurations = keyDurations;
 		this.keyFrames = getShallowCopy(keyFrames);
 		this.looping = loop;
 	}
@@ -194,7 +192,7 @@ public class SuperAnimation {
 	 * All SuperAnimations clones share the frames and duration instances
 	 */
 	public SuperAnimation clone() {
-		SuperAnimation anim = new SuperAnimation(totalTime, keyDurations, keyFrames);
+		SuperAnimation anim = new SuperAnimation(0, keyDurations, keyFrames);
 		anim.handle_x = handle_x;
 		anim.handle_y = handle_y;
 		return anim;
@@ -206,7 +204,7 @@ public class SuperAnimation {
 	public void randomCurrentFrame()
 	{
 		this.frameNumber = MathUtils.random(0, keyFrames.length - 1);
-		this.totalTime = keyTimes[frameNumber];
+		this.totalTime = keyDurations[frameNumber];
 	}
 
 	public float getFirstHeight() {

@@ -3,6 +3,8 @@ package pruebas.Util;
 import pruebas.Util.UnitAnimPrefReader.UnitPrefReaderData;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -33,13 +35,21 @@ public class FileUtil {
 		return anim;
 	}
 
+	public static TextureRegion getTextureRegion(String path) {
+		return new TextureRegion(getTexture(path));
+	}
+	
 	public static Texture getTexture(String path) {
 		Texture t = new Texture(Gdx.files.internal(path));
 		t.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 		return t;
 	}
 
-	public static TextureRegion getTextureRegion(String path) {
-		return new TextureRegion(getTexture(path));
+	public static Music getMusic(String path) {
+		return Gdx.audio.newMusic(Gdx.files.internal(path));
+	}
+	
+	public static Sound getSound(String path) {
+		return Gdx.audio.newSound(Gdx.files.internal(path));
 	}
 }

@@ -1,6 +1,8 @@
 package pruebas.Renders;
 
 import pruebas.Accessors.ActorAccessor;
+import pruebas.Accessors.MusicAccessor;
+import pruebas.Audio.AudioManager;
 import pruebas.Controllers.GameController;
 import pruebas.Controllers.MenuGames;
 import pruebas.Controllers.MenuLogIn;
@@ -20,6 +22,7 @@ import aurelienribon.tweenengine.TweenManager;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -61,7 +64,9 @@ public class GameEngine implements Screen {
 
 	@Override
 	public void show() {
+		tweenManager = new TweenManager();
 		Tween.registerAccessor(Actor.class, new ActorAccessor());
+		Tween.registerAccessor(Music.class, new MusicAccessor());
 
 		inputManager = new InputMultiplexer();
 		batch = new SpriteBatch();
@@ -72,9 +77,8 @@ public class GameEngine implements Screen {
 		batch.setProjectionMatrix(camera.combined);
 		stage.setCamera(camera);
 
-		tweenManager = new TweenManager();
-
 		ResourceHelper.fastLoad();
+		AudioManager.load();
 
 		load();
 		openSplash();
@@ -106,7 +110,6 @@ public class GameEngine implements Screen {
 		Texture backgroundTexture = ResourceHelper.getTexture("data/Images/Menu/menu_background.jpg");
 		background = new Image(backgroundTexture);
 
-		Tween.registerAccessor(Actor.class, new ActorAccessor());
 		Timeline.createSequence()
 				.push(Tween.set(background, ActorAccessor.ALPHA).target(0))
 				.push(Tween.to(background, ActorAccessor.ALPHA, 2).target(1))
@@ -163,6 +166,7 @@ public class GameEngine implements Screen {
 			stage.addActor(menuGamesRender);
 			break;
 		case InMenuGames:
+			AudioManager.playMusic("March For Glory");
 			stage.addActor(background);
 			stage.addActor(menuGamesRender);
 			if (worldRender != null) {
@@ -174,6 +178,7 @@ public class GameEngine implements Screen {
 			stage.addActor(menuGamesRender);
 			break;
 		case InGame:
+			AudioManager.playMusic("To Battle!");
 			inputManager.addProcessor(worldRender);
 			stage.addActor(worldRender);
 			break;
