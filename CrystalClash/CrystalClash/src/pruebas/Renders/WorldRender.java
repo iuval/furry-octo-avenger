@@ -451,7 +451,7 @@ public class WorldRender extends Group implements InputProcessor {
 					@Override
 					public void onEvent(int type, BaseTween<?> source) {
 						if (doFadeIn) {
-							grpActionBar.setPosition(CellHelper.getUnitCenterX(selectedCell) - actionsBar.getWidth() / 2, selectedCell.getY() - 80);
+							grpActionBar.setPosition(CellHelper.getCenterX(selectedCell) - actionsBar.getWidth() / 2, selectedCell.getY() - 80);
 							fadeInActionsRing();
 						} else {
 							grpActionBar.setPosition(CrystalClash.WIDTH + actionsBar.getWidth(), 0);

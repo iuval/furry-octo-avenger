@@ -168,6 +168,7 @@ public class MenuGamesRender extends MenuRender {
 	}
 
 	private void load() {
+		GameController.getInstance().setTutorialNotDone();
 		initSkin();
 		if (!GameController.getInstance().isTutorialDone()) {
 			loadTutorial();

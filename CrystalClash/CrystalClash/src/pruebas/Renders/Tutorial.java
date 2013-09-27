@@ -6,7 +6,6 @@ import pruebas.Controllers.GameController;
 import pruebas.Controllers.WorldController;
 import pruebas.CrystalClash.CrystalClash;
 import pruebas.Entities.Cell;
-import pruebas.Entities.Cell.State;
 import pruebas.Entities.Unit;
 import pruebas.Entities.helpers.MoveUnitAction;
 import pruebas.Renders.UnitRender.FACING;
@@ -48,23 +47,23 @@ public class Tutorial extends GameRender {
 
 	private Array<String> messages;
 	private int messageIndex;
-	
+
 	private Unit assassin;
 	private Unit tank;
 	private Unit archer;
 	private MoveUnitAction tankMove;
-	
+
 	private boolean blockButtons;
 
 	public Tutorial(WorldController world) {
 		super(world);
 		messageIndex = 0;
-		
+
 		load();
 		readTutorialScript();
 		GameController.getInstance().loadUnitsStats();
 		setData();
-		
+
 		world.getRender().setReadInput(false);
 		world.getRender().setBlockButtons(true);
 
@@ -77,7 +76,7 @@ public class Tutorial extends GameRender {
 	public void load() {
 		TextureAtlas atlas = new TextureAtlas("data/Images/InGame/options_bar.pack");
 		Skin skin = new Skin(atlas);
-		
+
 		tweenManager = new TweenManager();
 		Tween.registerAccessor(Unit.class, new UnitAccessor());
 
@@ -97,22 +96,22 @@ public class Tutorial extends GameRender {
 		btnNext.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
-				if(!blockButtons)
+				if (!blockButtons)
 					next();
 			}
 		});
-		
+
 		final MessageBoxCallback confirmation = new MessageBoxCallback() {
 			@Override
 			public void onEvent(int type, Object data) {
 				if (type == MessageBoxCallback.YES) {
-					
+
 				} else {
 					MessageBox.build().hide();
 				}
 			}
 		};
-		
+
 		imgBtnSkipBackground = new Image(skin.getRegion("exit_hud"));
 		imgBtnSkipBackground.setPosition(CrystalClash.WIDTH, CrystalClash.HEIGHT - imgBtnSkipBackground.getHeight());
 		TextButtonStyle skipStyle = new TextButtonStyle(
@@ -134,11 +133,12 @@ public class Tutorial extends GameRender {
 							.setMessage("Are you sure you want to leave?\n" + text)
 							.twoButtonsLayout("Yes, i got it", "No, let's go on")
 							.setCallback(confirmation)
-		.setHideOnAction(false)
-						.show();
-			}}
+							.setHideOnAction(false)
+							.show();
+				}
+			}
 		});
-		
+
 		addActor(fireArcher);
 		addActor(balloon);
 		addActor(lblMessage);
@@ -147,50 +147,50 @@ public class Tutorial extends GameRender {
 		addActor(btnSkip);
 	}
 
-	private void readTutorialScript(){
+	private void readTutorialScript() {
 		messages = new Array<String>();
-		//Scene 1
-		messages.add("Welcome to the front line.\nYou must lead our troop!"); //0
-		messages.add("Our goal is to defeat the\nenemies army."); //1
-		messages.add("Look!! There’s an ally\nover there."); //2
-		messages.add("Tap to select him!!"); //3
-		messages.add("Those are the thing you\ncan ask him to do."); //4
-		messages.add("Keep in mind he can only\ndo one at a time!!"); //5
-		messages.add("Here you can see his life,\ndamage and mobility"); //6
-		messages.add("Watch out !! there’s an\nenemy there. "); //7
-		messages.add("Let’s get closer to attack."); //8
-		messages.add("This seems like a good\nposition."); //9
-		messages.add("You must get there by\ndescribing the road."); //10
-		messages.add("To confirm the road tap\nthe tick."); //11
-		messages.add("Good Job!! You have ordered\nhim to move there."); //12
-		messages.add("Your orders will be executed\nonce you end your turn."); //13
-		messages.add("Tap Tick!!"); //14
-		//Scene 2
-		messages.add("oh oh. . . I wasn’t counting\non the enemy moving."); //15
-		messages.add("I’m going to help him."); //16
-		messages.add("The enemy seems to be very\ntough."); //17
-		messages.add("Order him to take a\ndefensive position while\nI cover him."); //18
-		messages.add("I should attack him."); //19
-		messages.add("I’m ranged. I can attack\nfrom far away"); //20
-		messages.add("Don’t forget to tap the\ntick to confirm your orders."); //21
-		//Scene 3
-		messages.add("Now the enemy seems weaker."); //22
-		messages.add("Let both attack to\ndefeat him!!"); //23
-		//Scene 4
-		messages.add("Oh Sorry!! He moved. . .\nI missed!!"); //24
-		messages.add("That’s the problem we\n(ranged units) have."); //25
-		messages.add("They can dodge our shots\nby moving."); //26
-		messages.add("But if we can foresee\nwhere he’s moving,\nwe can hit him."); //27
-		messages.add("Now you are ready to\nfight on your own."); //28
-		messages.add("Defeat him to achieve\nyour goal!!"); //29
+		// Scene 1
+		messages.add("Welcome to the front line.\nYou must lead our troop!"); // 0
+		messages.add("Our goal is to defeat the\nenemies army."); // 1
+		messages.add("Look!! There’s an ally\nover there."); // 2
+		messages.add("Tap to select him!!"); // 3
+		messages.add("Those are the thing you\ncan ask him to do."); // 4
+		messages.add("Keep in mind he can only\ndo one at a time!!"); // 5
+		messages.add("Here you can see his life,\ndamage and mobility"); // 6
+		messages.add("Watch out !! there’s an\nenemy there. "); // 7
+		messages.add("Let’s get closer to attack."); // 8
+		messages.add("This seems like a good\nposition."); // 9
+		messages.add("You must get there by\ndescribing the road."); // 10
+		messages.add("To confirm the road tap\nthe tick."); // 11
+		messages.add("Good Job!! You have ordered\nhim to move there."); // 12
+		messages.add("Your orders will be executed\nonce you end your turn."); // 13
+		messages.add("Tap Tick!!"); // 14
+		// Scene 2
+		messages.add("oh oh. . . I wasn’t counting\non the enemy moving."); // 15
+		messages.add("I’m going to help him."); // 16
+		messages.add("The enemy seems to be very\ntough."); // 17
+		messages.add("Order him to take a\ndefensive position while\nI cover him."); // 18
+		messages.add("I should attack him."); // 19
+		messages.add("I’m ranged. I can attack\nfrom far away"); // 20
+		messages.add("Don’t forget to tap the\ntick to confirm your orders."); // 21
+		// Scene 3
+		messages.add("Now the enemy seems weaker."); // 22
+		messages.add("Let both attack to\ndefeat him!!"); // 23
+		// Scene 4
+		messages.add("Oh Sorry!! He moved. . .\nI missed!!"); // 24
+		messages.add("That’s the problem we\n(ranged units) have."); // 25
+		messages.add("They can dodge our shots\nby moving."); // 26
+		messages.add("But if we can foresee\nwhere he’s moving,\nwe can hit him."); // 27
+		messages.add("Now you are ready to\nfight on your own."); // 28
+		messages.add("Defeat him to achieve\nyour goal!!"); // 29
 	}
-	
-	private void setData(){
+
+	private void setData() {
 		assassin = new Unit("wind_assassin", false);
 		world.addUnit(assassin, 300, 700);
 		assassin.setPosition(-100, 354);
 		assassin.getRender().setState(STATE.walking);
-		
+
 		tank = new Unit("earth_tank", true);
 		tank.getRender().setFacing(FACING.left);
 		world.addUnit(tank, 900, 500);
@@ -200,17 +200,17 @@ public class Tutorial extends GameRender {
 		world.addUnit(archer, 400, 500);
 		archer.setPosition(-100, 354);
 		archer.getRender().setState(STATE.walking);
-		
+
 		tankMove = new MoveUnitAction();
 		tankMove.origin = world.cellAt(900, 500);
 		tankMove.moves.add(world.cellAtByGrid(6, 3));
 		tankMove.moves.add(world.cellAtByGrid(5, 4));
 		world.cellAt(900, 500).setAction(tankMove);
 	}
-	
-	private void next(){
+
+	private void next() {
 		messageIndex++;
-		if(messageIndex < messages.size){
+		if (messageIndex < messages.size) {
 			lblMessage.setText(messages.get(messageIndex));
 		} else {
 			world.getRender().setReadInput(true);
@@ -225,9 +225,9 @@ public class Tutorial extends GameRender {
 		}
 		action(messageIndex);
 	}
-	
-	private void action(int index){
-		switch(index){
+
+	private void action(int index) {
+		switch (index) {
 		case 2:
 			world.getRender().moveHand(assassin);
 			break;
@@ -247,12 +247,12 @@ public class Tutorial extends GameRender {
 			break;
 		case 9:
 			world.getRender().moveHand(675, CrystalClash.HEIGHT - 150);
-			world.setCellStateByGridPos(5, 5, State.MOVE_TARGET);
+			world.cellAtByGrid(5, 5).addState(Cell.MOVE_TARGET);
 			showNext();
 			break;
 		case 10:
 			world.getRender().setReadInput(true);
-			//hideNext();
+			// hideNext();
 			break;
 		case 11:
 			world.getRender().moveHand(0, 125);
@@ -266,27 +266,27 @@ public class Tutorial extends GameRender {
 		case 14:
 			world.getRender().setBlockButtons(false);
 			world.getRender().moveHand(0, 125);
-			//hideNext();
+			// hideNext();
 			break;
 		case 16:
 			Timeline.createParallel()
-			.push(Tween.to(archer, UnitAccessor.X, CrystalClash.ENTRANCE_ANIMATION_SPEED)
-					.target(CellHelper.getUnitX(world.cellAt(400, 500))).ease(TweenEquations.easeNone))
-			.push(Tween.to(archer, UnitAccessor.Y, CrystalClash.ENTRANCE_ANIMATION_SPEED)
-					.target(CellHelper.getUnitY(world.cellAt(400, 500))).ease(TweenEquations.easeNone))
-			.setCallbackTriggers(TweenCallback.COMPLETE)
-			.setCallback(new TweenCallback() {
-				@Override
-				public void onEvent(int type, BaseTween<?> source) {
-					// TODO Auto-generated method stub
-					archer.getRender().setState(STATE.idle);
-				}
-			}).start(tweenManager);
+					.push(Tween.to(archer, UnitAccessor.X, CrystalClash.ENTRANCE_ANIMATION_SPEED)
+							.target(CellHelper.getUnitX(world.cellAt(400, 500))).ease(TweenEquations.easeNone))
+					.push(Tween.to(archer, UnitAccessor.Y, CrystalClash.ENTRANCE_ANIMATION_SPEED)
+							.target(CellHelper.getUnitY(world.cellAt(400, 500))).ease(TweenEquations.easeNone))
+					.setCallbackTriggers(TweenCallback.COMPLETE)
+					.setCallback(new TweenCallback() {
+						@Override
+						public void onEvent(int type, BaseTween<?> source) {
+							// TODO Auto-generated method stub
+							archer.getRender().setState(STATE.idle);
+						}
+					}).start(tweenManager);
 			break;
 		case 18:
 			world.getRender().setReadInput(true);
 			world.getRender().moveHand(assassin);
-			//hideNext();
+			// hideNext();
 			break;
 		case 22:
 			world.getRender().setReadInput(false);
@@ -294,7 +294,7 @@ public class Tutorial extends GameRender {
 			break;
 		case 23:
 			world.getRender().setReadInput(true);
-			//hideNext();
+			// hideNext();
 			break;
 		case 24:
 			world.getRender().setReadInput(false);
@@ -303,7 +303,7 @@ public class Tutorial extends GameRender {
 			break;
 		}
 	}
-	
+
 	private void hideNext() {
 		blockButtons = true;
 		btnSkip.setDisabled(true);
@@ -312,7 +312,7 @@ public class Tutorial extends GameRender {
 				.push(Tween.to(btnNext, ActorAccessor.Y, CrystalClash.SLOW_ANIMATION_SPEED)
 						.target(-btnNext.getHeight())).start(tweenManager);
 	}
-	
+
 	private void showNext() {
 		blockButtons = false;
 		btnSkip.setDisabled(false);
@@ -321,19 +321,10 @@ public class Tutorial extends GameRender {
 				.push(Tween.to(btnNext, ActorAccessor.Y, CrystalClash.SLOW_ANIMATION_SPEED)
 						.target(20)).start(tweenManager);
 	}
-	
-	private void start(Timeline t) {
-		t.start(tweenManager);
-	}
 
 	@Override
 	public void clearAllChanges() {
 		// TODO Auto-generated method stub
-	}
-
-	@Override
-	public void render(float dt, SpriteBatch batch) {
-		tweenManager.update(dt);
 	}
 
 	@Override
@@ -343,7 +334,7 @@ public class Tutorial extends GameRender {
 			Unit u = cell.getUnit();
 			if (u != null) {
 				if (!u.isEnemy()) {
-					//showHUD
+					// showHUD
 					world.getRender().hideHand();
 					next();
 				}
@@ -382,7 +373,7 @@ public class Tutorial extends GameRender {
 						assassin.getRender().setState(STATE.idle);
 					}
 				});
-		
+
 		Timeline moveTank = Timeline.createParallel()
 				.push(Tween.to(tank, UnitAccessor.X, CrystalClash.ENTRANCE_ANIMATION_SPEED)
 						.target(CellHelper.getUnitX(world.cellAt(900, 500))).ease(TweenEquations.easeNone))
@@ -396,12 +387,13 @@ public class Tutorial extends GameRender {
 						tank.getRender().setState(STATE.idle);
 					}
 				});
-		
+
 		return t.push(moveAssassin).push(moveTank)
 				.push(Tween.to(fireArcher, ActorAccessor.X, CrystalClash.ENTRANCE_ANIMATION_SPEED).target(200))
 				.push(Tween.to(balloon, ActorAccessor.Y, CrystalClash.ENTRANCE_ANIMATION_SPEED).target(0))
 				.push(Tween.to(btnNext, ActorAccessor.Y, CrystalClash.ENTRANCE_ANIMATION_SPEED).target(20))
-				.push(Tween.to(imgBtnSkipBackground, ActorAccessor.X, CrystalClash.ENTRANCE_ANIMATION_SPEED).target(CrystalClash.WIDTH - imgBtnSkipBackground.getWidth()))
+				.push(Tween.to(imgBtnSkipBackground, ActorAccessor.X, CrystalClash.ENTRANCE_ANIMATION_SPEED).target(
+						CrystalClash.WIDTH - imgBtnSkipBackground.getWidth()))
 				.push(Tween.to(btnSkip, ActorAccessor.X, CrystalClash.ENTRANCE_ANIMATION_SPEED).target(CrystalClash.WIDTH - btnSkip.getWidth()))
 				.setCallbackTriggers(TweenCallback.COMPLETE)
 				.setCallback(new TweenCallback() {
@@ -409,7 +401,7 @@ public class Tutorial extends GameRender {
 					public void onEvent(int type, BaseTween<?> source) {
 						lblMessage.setPosition(balloon.getX() + 145, balloon.getTop() - 150);
 						lblMessage.setText(messages.get(messageIndex));
-						
+
 						btnNext.setDisabled(false);
 						btnSkip.setDisabled(false);
 						blockButtons = false;
@@ -476,5 +468,17 @@ public class Tutorial extends GameRender {
 			public void clicked(InputEvent event, float x, float y) {
 			}
 		};
+	}
+
+	@Override
+	public void renderInTheBack(float dt, SpriteBatch batch) {
+		tweenManager.update(dt);
+
+	}
+
+	@Override
+	public void renderInTheFront(float dt, SpriteBatch batch) {
+		// TODO Auto-generated method stub
+
 	}
 }
