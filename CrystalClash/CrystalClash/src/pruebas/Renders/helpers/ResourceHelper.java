@@ -20,6 +20,8 @@ public class ResourceHelper {
 
 	private static TextButtonStyle buttonStyle;
 	private static TextButtonStyle outerButtonStyle;
+	private static TextButtonStyle outerSmallButtonStyle;
+	private static TextButtonStyle nextButtonStyle;
 
 	public static void fastLoad() {
 		textureMap = new Hashtable<String, Texture>();
@@ -37,6 +39,14 @@ public class ResourceHelper {
 		outerButtonStyle = new TextButtonStyle(
 				skin.getDrawable("outer_button_orange"),
 				skin.getDrawable("outer_button_orange_pressed"), null, font);
+		
+		outerSmallButtonStyle = new TextButtonStyle(
+				skin.getDrawable("outer_button_small"),
+				skin.getDrawable("outer_button_small_pressed"), null, font);
+
+		nextButtonStyle = new TextButtonStyle(
+				skin.getDrawable("next_button"),
+				skin.getDrawable("next_button_pressed"), null, font);
 	}
 
 	public static Texture getTexture(String path) {
@@ -60,5 +70,13 @@ public class ResourceHelper {
 
 	public static TextButtonStyle getOuterButtonStyle() {
 		return outerButtonStyle;
+	}
+	
+	public static TextButtonStyle getOuterSmallButtonStyle() {
+		return outerSmallButtonStyle;
+	}
+	
+	public static TextButtonStyle getNextButtonStyle() {
+		return nextButtonStyle;
 	}
 }

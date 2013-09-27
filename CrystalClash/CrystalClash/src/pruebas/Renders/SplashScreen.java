@@ -115,23 +115,23 @@ public class SplashScreen extends MenuRender {
 				.push(Tween.set(name, ActorAccessor.ALPHA).target(0))
 				.push(Tween.set(name, ActorAccessor.Y)
 						.target(-name.getHeight()))
-				.push(Tween.to(background, ActorAccessor.ALPHA, CrystalClash.ANIMATION_SPEED)
+				.push(Tween.to(background, ActorAccessor.ALPHA, CrystalClash.SLOW_ANIMATION_SPEED)
 						.target(1))
-				.push(Tween.to(crystal, ActorAccessor.ALPHA, CrystalClash.ANIMATION_SPEED).target(1))
-				.push(Tween.to(crystal, ActorAccessor.Y, CrystalClash.ANIMATION_SPEED).target(
+				.push(Tween.to(crystal, ActorAccessor.ALPHA, CrystalClash.SLOW_ANIMATION_SPEED).target(1))
+				.push(Tween.to(crystal, ActorAccessor.Y, CrystalClash.SLOW_ANIMATION_SPEED).target(
 						CrystalClash.HEIGHT / 2 - crystal.getHeight() / 2 + 40))
-				.push(Tween.to(name, ActorAccessor.ALPHA, CrystalClash.ANIMATION_SPEED).target(1))
-				.push(Tween.to(name, ActorAccessor.Y, CrystalClash.ANIMATION_SPEED).target(40))
+				.push(Tween.to(name, ActorAccessor.ALPHA, CrystalClash.SLOW_ANIMATION_SPEED).target(1))
+				.push(Tween.to(name, ActorAccessor.Y, CrystalClash.SLOW_ANIMATION_SPEED).target(40))
 				.end();
 	}
 
 	@Override
 	public Timeline pushExitAnimation(Timeline t) {
 		return t.beginParallel()
-				.push(Tween.to(background, ActorAccessor.ALPHA, CrystalClash.ANIMATION_SPEED)
+				.push(Tween.to(background, ActorAccessor.ALPHA, CrystalClash.SLOW_ANIMATION_SPEED)
 						.target(0))
-				.push(Tween.to(crystal, ActorAccessor.ALPHA, CrystalClash.ANIMATION_SPEED).target(0))
-				.push(Tween.to(name, ActorAccessor.ALPHA, CrystalClash.ANIMATION_SPEED).target(0))
+				.push(Tween.to(crystal, ActorAccessor.ALPHA, CrystalClash.SLOW_ANIMATION_SPEED).target(0))
+				.push(Tween.to(name, ActorAccessor.ALPHA, CrystalClash.SLOW_ANIMATION_SPEED).target(0))
 				.end();
 	}
 }

@@ -1,9 +1,7 @@
 package pruebas.Renders;
 
-import pruebas.Accessors.ActorAccessor;
 import pruebas.Controllers.GameController;
 import pruebas.Controllers.WorldController;
-import pruebas.CrystalClash.CrystalClash;
 import pruebas.Entities.Cell;
 import pruebas.Entities.Path;
 import pruebas.Entities.Unit;
@@ -15,49 +13,22 @@ import pruebas.Entities.helpers.UnitAction;
 import pruebas.Entities.helpers.UnitAction.UnitActionType;
 import pruebas.Renders.UnitRender.STATE;
 import pruebas.Renders.helpers.PathManager;
-import pruebas.Renders.helpers.ResourceHelper;
-import aurelienribon.tweenengine.BaseTween;
 import aurelienribon.tweenengine.Timeline;
-import aurelienribon.tweenengine.Tween;
-import aurelienribon.tweenengine.TweenCallback;
 import aurelienribon.tweenengine.TweenManager;
 
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.ui.Image;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Array;
 
 public class NormalGame extends GameRender {
-	private TweenManager tweenManager;
-
 	private Unit selectedUnit;
 	private Cell selectedCell;
 
-	private Image selectorArrow;
-	private float arrowX;
-	private float arrowY;
+	// private Label lblMoves;
+	// private Label lblAttack;
 
-	private Image actionsBar;
-	private TextButton btnAttack;
-	private TextButton btnMove;
-	private TextButton btnDefense;
-	private TextButton btnUndo;
-	private Group grpActionBar;
-	private Label lblMoves;
-	private Label lblAttack;
-	private boolean actionsBarVisible;
-	private boolean undoVisible;
+	private TweenManager tweenManager;
 
 	private UnitActionType actionType;
 	private int maxMoves;
@@ -72,16 +43,8 @@ public class NormalGame extends GameRender {
 
 	public NormalGame(WorldController world) {
 		super(world);
-
-		tweenManager = new TweenManager();
-
 		selectedUnit = null;
 		selectedCell = null;
-
-		arrowX = 0;
-		arrowY = CrystalClash.HEIGHT + 20;
-		undoVisible = false;
-		actionsBarVisible = false;
 
 		actionType = UnitActionType.NONE;
 		maxMoves = 0;
@@ -95,6 +58,8 @@ public class NormalGame extends GameRender {
 
 		paths = new PathManager();
 
+		tweenManager = new TweenManager();
+
 		load();
 		clearAllChanges();
 		GameEngine.hideLoading();
@@ -102,189 +67,67 @@ public class NormalGame extends GameRender {
 
 	public void load() {
 		GameController.getInstance().loadUnitsStats();
-
 		PathManager.load();
 
-		Texture arrow = ResourceHelper.getTexture("data/Images/InGame/selector_arrow.png");
-		selectorArrow = new Image(arrow);
-		selectorArrow.setPosition(arrowX, arrowY);
+		// lblAttack = new Label("150", new LabelStyle(ResourceHelper.getFont(),
+		// Color.WHITE));
+		// lblAttack.setPosition(btnAttack.getX() + (btnAttack.getWidth() / 2 -
+		// lblAttack.getWidth() / 2), btnAttack.getY() + 3);
+		// lblMoves = new Label("5", new LabelStyle(ResourceHelper.getFont(),
+		// Color.WHITE));
+		// lblMoves.setPosition(btnMove.getX() + (btnMove.getWidth() / 2 -
+		// lblMoves.getWidth() / 2), btnMove.getY() + 3);
+	}
 
-		TextureAtlas atlas = new TextureAtlas("data/Images/InGame/options_bar.pack");
-		Skin skin = new Skin(atlas);
-
-		TextureRegion aux = skin.getRegion("actions_bar");
-		actionsBar = new Image(aux);
-
-		TextButtonStyle attackStyle = new TextButtonStyle(
-				skin.getDrawable("action_attack_button"),
-				skin.getDrawable("action_attack_button_pressed"), null, ResourceHelper.getFont());
-		btnAttack = new TextButton("", attackStyle);
-		btnAttack.setPosition(actionsBar.getX() + 15, actionsBar.getY() - 20);
-		btnAttack.addListener(new ClickListener() {
+	public ClickListener attackListener() {
+		return new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
-				btnUndo.setPosition(btnAttack.getX(), btnDefense.getY());
-				undoVisible = true;
-				updateActionsBar();
 				setUnitAction(new AttackUnitAction(selectedUnit.isMelee()));
 				unitAction.origin = selectedCell;
 
+				world.getRender().fadeOutActionsRing(false, null);
 				showAbleToAttackCells();
 			}
-		});
+		};
+	}
 
-		TextButtonStyle defenseStyle = new TextButtonStyle(
-				skin.getDrawable("action_defensive_button"),
-				skin.getDrawable("action_defensive_button_pressed"), null, ResourceHelper.getFont());
-		btnDefense = new TextButton("", defenseStyle);
-		btnDefense.setPosition(btnAttack.getX() + btnAttack.getWidth() + 15,
-				actionsBar.getY());
-		btnDefense.addListener(new ClickListener() {
+	public ClickListener defendListener() {
+		return new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
-				btnUndo.setPosition(btnDefense.getX(), btnDefense.getY());
-				undoVisible = true;
-				updateActionsBar();
 				setUnitAction(new DefendUnitAction());
 				unitAction.origin = selectedCell;
 				defensiveUnits.add(selectedUnit);
 				selectedUnit.setDefendingPosition(true);
-			}
-		});
 
-		TextButtonStyle moveStyle = new TextButtonStyle(
-				skin.getDrawable("action_run_button"),
-				skin.getDrawable("action_run_button_pressed"), null, ResourceHelper.getFont());
-		btnMove = new TextButton("", moveStyle);
-		btnMove.setPosition(btnDefense.getX() + btnDefense.getWidth() + 15,
-				actionsBar.getY() - 20);
-		btnMove.addListener(new ClickListener() {
+				world.getRender().fadeOutActionsRing(false, null);
+			}
+		};
+	}
+
+	public ClickListener moveListener() {
+		return new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
-				btnUndo.setPosition(btnMove.getX(), btnDefense.getY());
-				undoVisible = true;
-				updateActionsBar();
-
 				setUnitAction(new MoveUnitAction());
 				unitAction.origin = selectedCell;
 				((MoveUnitAction) unitAction).moves.add(selectedCell);
 				selectedCell.addState(Cell.MOVE_TARGET);
 
+				world.getRender().fadeOutActionsRing(false, null);
 				showAbleToMoveCells();
 			}
-		});
+		};
+	}
 
-		TextButtonStyle undoStyle = new TextButtonStyle(
-				skin.getDrawable("action_cancel_button"),
-				skin.getDrawable("action_cancel_button_pressed"), null, ResourceHelper.getFont());
-		btnUndo = new TextButton("", undoStyle);
-		btnUndo.setPosition(0, 300); // Afuera de la ventana
-		btnUndo.addListener(new ClickListener() {
+	public ClickListener undoListener() {
+		return new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
 				undoAction();
-				undoVisible = false;
-				updateActionsBar();
 			}
-		});
-
-		lblAttack = new Label("150", new LabelStyle(ResourceHelper.getFont(), Color.WHITE));
-		lblAttack.setPosition(btnAttack.getX()
-				+ (btnAttack.getWidth() / 2 - lblAttack.getWidth() / 2),
-				btnAttack.getY() + 3);
-
-		lblMoves = new Label("5", new LabelStyle(ResourceHelper.getFont(), Color.WHITE));
-		lblMoves.setPosition(btnMove.getX()
-				+ (btnMove.getWidth() / 2 - lblMoves.getWidth() / 2),
-				btnMove.getY() + 3);
-
-		grpActionBar = new Group();
-		grpActionBar.addActor(actionsBar);
-		grpActionBar.addActor(btnAttack);
-		grpActionBar.addActor(lblAttack);
-		grpActionBar.addActor(btnMove);
-		grpActionBar.addActor(lblMoves);
-		grpActionBar.addActor(btnDefense);
-
-		grpActionBar.setSize(actionsBar.getWidth(), actionsBar.getHeight());
-		grpActionBar.setPosition(
-				CrystalClash.WIDTH / 2 - grpActionBar.getWidth() / 2,
-				CrystalClash.HEIGHT + 50);
-
-		addActor(grpActionBar);
-	}
-
-	private void moveArrow(Unit u) {
-		if (u != null) {
-			System.out.println(arrowY);
-			if (selectorArrow.getY() >= CrystalClash.HEIGHT) {
-				selectorArrow.setPosition(u.getX(), CrystalClash.HEIGHT + 20);
-			}
-			arrowX = u.getX();
-			arrowY = u.getY() + 120;
-		} else {
-			arrowY = CrystalClash.HEIGHT + 20;
-		}
-
-		tweenManager.killAll();
-		Timeline.createParallel()
-				.push(Tween.to(selectorArrow, ActorAccessor.X, CrystalClash.ANIMATION_SPEED)
-						.target(arrowX))
-				.push(Tween.to(selectorArrow, ActorAccessor.Y, CrystalClash.ANIMATION_SPEED)
-						.target(arrowY))
-				.setCallback(new TweenCallback() {
-					@Override
-					public void onEvent(int type, BaseTween<?> source) {
-						selectorArrow.setPosition(arrowX, arrowY);
-						arrowAnimation();
-					}
-				}).start(tweenManager);
-	}
-
-	private void arrowAnimation() {
-		Timeline.createSequence()
-				.push(Tween.set(selectorArrow, ActorAccessor.Y).target(arrowY))
-				.push(Tween.to(selectorArrow, ActorAccessor.Y, CrystalClash.ANIMATION_SPEED).target(
-						arrowY - 10))
-				.push(Tween.to(selectorArrow, ActorAccessor.Y, CrystalClash.ANIMATION_SPEED).target(
-						arrowY)).repeat(Tween.INFINITY, 0).start(tweenManager);
-	}
-
-	private void showActionsBar() {
-		Timeline t = Timeline.createSequence();
-		if (450 < selectedUnit.getX() && selectedUnit.getX() < 825) {
-			if (actionsBarVisible) {
-				t.push(Tween.to(grpActionBar, ActorAccessor.X, CrystalClash.ANIMATION_SPEED).target(
-						CrystalClash.WIDTH / 4 - grpActionBar.getWidth() / 2));
-			} else {
-				grpActionBar.setX(CrystalClash.WIDTH / 4
-						- grpActionBar.getWidth() / 2);
-				t.push(Tween.to(grpActionBar, ActorAccessor.Y, CrystalClash.ANIMATION_SPEED).target(
-						CrystalClash.HEIGHT - grpActionBar.getHeight()));
-			}
-		} else {
-			if (actionsBarVisible) {
-				t.push(Tween.to(grpActionBar, ActorAccessor.X, CrystalClash.ANIMATION_SPEED).target(
-						CrystalClash.WIDTH / 2 - grpActionBar.getWidth() / 2));
-			} else {
-				grpActionBar.setX(CrystalClash.WIDTH / 2
-						- grpActionBar.getWidth() / 2);
-				t.push(Tween.to(grpActionBar, ActorAccessor.Y, CrystalClash.ANIMATION_SPEED).target(
-						CrystalClash.HEIGHT - grpActionBar.getHeight()));
-			}
-		}
-		t.start(tweenManager);
-		actionsBarVisible = true;
-	}
-
-	private void hideActionsBar() {
-		actionsBarVisible = false;
-		pushHideActionBar(Timeline.createSequence()).start(tweenManager);
-	}
-
-	private Timeline pushHideActionBar(Timeline t) {
-		return t.push(Tween.to(grpActionBar, ActorAccessor.Y, CrystalClash.ANIMATION_SPEED).target(
-				CrystalClash.HEIGHT + 50));
+		};
 	}
 
 	private void showAbleToActionCells() {
@@ -394,11 +237,12 @@ public class NormalGame extends GameRender {
 		selectedCell = null;
 		unitAction = null;
 		actionType = UnitAction.UnitActionType.NONE;
-		moveArrow(selectedUnit);
-		hideActionsBar();
+		world.getRender().fadeOutActionsRing(false, null);
 	}
 
 	private void undoAction() {
+		world.getRender().undoAction();
+
 		switch (actionType) {
 		case ATTACK:
 			clearAvailableCells();
@@ -423,7 +267,8 @@ public class NormalGame extends GameRender {
 			if (moves.size > 1)
 				popUnitFromPath(moves);
 
-			lblMoves.setText(maxMoves + "");
+			// TODO: popup
+			// lblMoves.setText(maxMoves + "");
 
 			setUnitAction(new NoneUnitAction());
 			selectedCell.setAction(unitAction);
@@ -435,24 +280,6 @@ public class NormalGame extends GameRender {
 			break;
 		default:
 			break;
-		}
-	}
-
-	private void updateActionsBar() {
-		if (undoVisible) {
-			grpActionBar.removeActor(btnAttack);
-			grpActionBar.removeActor(lblAttack);
-			grpActionBar.removeActor(btnMove);
-			grpActionBar.removeActor(lblMoves);
-			grpActionBar.removeActor(btnDefense);
-			grpActionBar.addActor(btnUndo);
-		} else {
-			grpActionBar.addActor(btnAttack);
-			grpActionBar.addActor(lblAttack);
-			grpActionBar.addActor(btnMove);
-			grpActionBar.addActor(lblMoves);
-			grpActionBar.addActor(btnDefense);
-			grpActionBar.removeActor(btnUndo);
 		}
 	}
 
@@ -486,7 +313,6 @@ public class NormalGame extends GameRender {
 	@Override
 	public void renderInTheFront(float dt, SpriteBatch batch) {
 		paths.render(batch, dt, Path.TYPE.ATTACK);
-		selectorArrow.draw(batch, 1);
 
 		tweenManager.update(dt);
 	}
@@ -557,7 +383,8 @@ public class NormalGame extends GameRender {
 					cell.addState(Cell.MOVE_TARGET);
 					cell.removeState(Cell.ABLE_TO_MOVE);
 
-					lblMoves.setText(maxMoves - moves.size + "");
+					// TODO: popup
+					// lblMoves.setText(maxMoves - moves.size + "");
 					moves.add(cell);
 
 					showAbleToMoveCells();
@@ -597,8 +424,8 @@ public class NormalGame extends GameRender {
 							moves.truncate(1);
 						}
 
-						lblMoves.setText(maxMoves + 1 - ((MoveUnitAction) unitAction).moves.size + "");
-
+						// lblMoves.setText(maxMoves + 1 - ((MoveUnitAction)
+						// unitAction).moves.size + "");
 						showAbleToMoveCells();
 					}
 				} else {
@@ -613,27 +440,24 @@ public class NormalGame extends GameRender {
 						selectedUnit = u;
 						selectedCell = cell;
 
-						lblAttack.setText(GameController.getInstance().getUnitAttack(selectedUnit.getName()) + "");
+						// TODO: popup
+						// lblAttack.setText(GameController.getInstance().getUnitAttack(selectedUnit.getName())
+						// + "");
 						maxMoves = GameController.getInstance().getUnitSpeed(selectedUnit.getName());
-						lblMoves.setText(maxMoves + "");
-
-						moveArrow(selectedUnit);
+						// lblMoves.setText(maxMoves + "");
 
 						if (u.isEnemy()) {
-							hideActionsBar();
+							world.getRender().fadeOutActionsRing(false, null);
 						} else {
 							if (cell.getAction() != null && cell.getAction().getActionType() != UnitActionType.NONE) {
 								setUnitAction(cell.getAction());
 								showAbleToActionCells();
-								undoVisible = true;
-							} else {
-								undoVisible = false;
 							}
-
-							updateActionsBar();
-							showActionsBar();
+							world.getRender().moveActionsRing(selectedCell);
 						}
 					}
+				} else {
+					clearSelection();
 				}
 				break;
 			default:
@@ -677,13 +501,7 @@ public class NormalGame extends GameRender {
 
 	@Override
 	public Timeline pushExitAnimation(Timeline t) {
-		arrowY = CrystalClash.HEIGHT + 20;
-		tweenManager.killAll();
-		return pushHideActionBar(t)
-				.push(Tween.to(grpActionBar, ActorAccessor.X, CrystalClash.ANIMATION_SPEED)
-						.target(-grpActionBar.getHeight()))
-				.push(Tween.to(selectorArrow, ActorAccessor.Y, CrystalClash.ANIMATION_SPEED)
-						.target(arrowY));
+		return t;
 	}
 
 	@Override
@@ -738,13 +556,9 @@ public class NormalGame extends GameRender {
 	}
 
 	public void pause() {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void resume() {
-		// TODO Auto-generated method stub
-
 	}
 }

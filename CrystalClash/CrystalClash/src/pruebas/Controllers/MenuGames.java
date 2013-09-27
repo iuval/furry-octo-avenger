@@ -76,6 +76,11 @@ public class MenuGames {
 				.show();
 	}
 
+	public void openTutorial() {
+		GameEngine.showLoading();
+		GameEngine.getInstance().openGame(null);
+	}
+	
 	public void getGameTurn(String gameId) {
 		GameEngine.showLoading();
 		ServerDriver.getGameTurn(GameController.getInstance().getUser().getId(), gameId);
