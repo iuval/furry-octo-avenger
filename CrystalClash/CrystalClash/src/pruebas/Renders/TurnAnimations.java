@@ -241,22 +241,16 @@ public class TurnAnimations extends GameRender {
 
 	private void createMeleeAttacks(Array<AttackUnitAction> attackActions, int player, Timeline attackTimeline) {
 		AttackUnitAction action = null;
-		boolean sameCellOriginTarget = false;
 		for (int m = 0; m < attackActions.size; m++) {
 			action = attackActions.get(m);
 
 			Timeline attack = Timeline.createSequence();
-			sameCellOriginTarget = action.origin.Equals(action.target);
 			Timeline move = Timeline.createParallel();
-			if (!sameCellOriginTarget) {
-				move.delay(rand.nextFloat())
-						.push(Tween
-								.to(action.origin.getUnit(), UnitAccessor.X, CrystalClash.WALK_ANIMATION_SPEED)
-								.target(getXForMeeleTarget(player, action.target, action.origin.getUnit())))
-						.push(Tween
-								.to(action.origin.getUnit(), UnitAccessor.Y, CrystalClash.WALK_ANIMATION_SPEED)
-								.target(getYForMeeleTarget(player, action.target, action.origin.getUnit())));
-			}
+			move.delay(rand.nextFloat())
+					.push(Tween.to(action.origin.getUnit(), UnitAccessor.X, CrystalClash.WALK_ANIMATION_SPEED)
+							.target(getXForMeeleTarget(player, action.target, action.origin.getUnit())))
+					.push(Tween.to(action.origin.getUnit(), UnitAccessor.Y, CrystalClash.WALK_ANIMATION_SPEED)
+							.target(getYForMeeleTarget(player, action.target, action.origin.getUnit())));
 			move.setUserData(new Object[] { action });
 			move.setCallbackTriggers(TweenCallback.BEGIN | TweenCallback.COMPLETE);
 			move.setCallback(new TweenCallback() {
@@ -278,14 +272,12 @@ public class TurnAnimations extends GameRender {
 
 			Timeline moveBack = Timeline.createParallel();
 			moveBack.delay(CrystalClash.FIGTH_ANIMATION_SPEED);
-			if (!sameCellOriginTarget) {
-				moveBack.push(Tween
-						.to(action.origin.getUnit(), UnitAccessor.X, CrystalClash.WALK_ANIMATION_SPEED)
-						.target(CellHelper.getUnitX(action.origin)));
-				moveBack.push(Tween
-						.to(action.origin.getUnit(), UnitAccessor.Y, CrystalClash.WALK_ANIMATION_SPEED)
-						.target(CellHelper.getUnitY(action.origin)));
-			}
+			moveBack.push(Tween
+					.to(action.origin.getUnit(), UnitAccessor.X, CrystalClash.WALK_ANIMATION_SPEED)
+					.target(CellHelper.getUnitX(action.origin)));
+			moveBack.push(Tween
+					.to(action.origin.getUnit(), UnitAccessor.Y, CrystalClash.WALK_ANIMATION_SPEED)
+					.target(CellHelper.getUnitY(action.origin)));
 			moveBack.setUserData(new Object[] { action.origin.getUnit() });
 			moveBack.setCallbackTriggers(TweenCallback.BEGIN | TweenCallback.COMPLETE);
 			moveBack.setCallback(new TweenCallback() {
@@ -313,9 +305,9 @@ public class TurnAnimations extends GameRender {
 		float resultX = CellHelper.getUnitX(target);
 
 		if (attacker.getX() > resultX) {
-			resultX += 10 + rand.nextInt(30);
+			resultX += 30 + rand.nextInt(25);
 		} else {
-			resultX -= 10 + rand.nextInt(30);
+			resultX -= 75 + rand.nextInt(25);
 		}
 		return resultX;
 	}
@@ -533,12 +525,12 @@ public class TurnAnimations extends GameRender {
 					gameEndMessage.getY() + gameEndMessage.getHeight() / 2 - btnBackToMenu.getHeight() / 2);
 			start(Timeline.createSequence()
 					.beginParallel()
-					.push(Tween.to(gameEndMessage, ActorAccessor.Y, CrystalClash.ANIMATION_SPEED)
+					.push(Tween.to(gameEndMessage, ActorAccessor.Y, CrystalClash.SLOW_ANIMATION_SPEED)
 							.target(CrystalClash.HEIGHT / 2 - gameEndMessage.getHeight() / 2))
-					.push(Tween.to(btnBackToMenu, ActorAccessor.Y, CrystalClash.ANIMATION_SPEED)
+					.push(Tween.to(btnBackToMenu, ActorAccessor.Y, CrystalClash.SLOW_ANIMATION_SPEED)
 							.target(CrystalClash.HEIGHT / 2 - btnBackToMenu.getHeight() / 2))
 					.end()
-					.push(Tween.to(btnBackToMenu, ActorAccessor.Y, CrystalClash.ANIMATION_SPEED)
+					.push(Tween.to(btnBackToMenu, ActorAccessor.Y, CrystalClash.SLOW_ANIMATION_SPEED)
 							.target(CrystalClash.HEIGHT / 2 - gameEndMessage.getHeight() / 2 - btnBackToMenu.getHeight())
 							.ease(TweenEquations.easeOutBounce)));
 		} else {
@@ -609,7 +601,7 @@ public class TurnAnimations extends GameRender {
 
 	private void hidePanel() {
 		start(Timeline.createSequence()
-				.push(Tween.to(grpPanel, ActorAccessor.Y, CrystalClash.FAST_ANIMATION_SPEED).target(CrystalClash.HEIGHT)));
+				.push(Tween.to(grpPanel, ActorAccessor.Y, CrystalClash.NORMAL_ANIMATION_SPEED).target(CrystalClash.HEIGHT)));
 	}
 
 	private void showPanel() {
@@ -617,7 +609,7 @@ public class TurnAnimations extends GameRender {
 		grpPanel.addActor(btnSkip);
 
 		start(Timeline.createSequence()
-				.push(Tween.to(grpPanel, ActorAccessor.Y, CrystalClash.FAST_ANIMATION_SPEED).target(0)));
+				.push(Tween.to(grpPanel, ActorAccessor.Y, CrystalClash.NORMAL_ANIMATION_SPEED).target(0)));
 	}
 
 	@Override
@@ -651,16 +643,15 @@ public class TurnAnimations extends GameRender {
 
 	@Override
 	public Timeline pushEnterAnimation(Timeline t) {
-		// TODO Auto-generated method stub
-		return null;
+		return t;
 	}
 
 	@Override
 	public Timeline pushExitAnimation(Timeline t) {
 		if (world.gameEnded) {
-			t.push(Tween.to(btnBackToMenu, ActorAccessor.Y, CrystalClash.FAST_ANIMATION_SPEED)
+			t.push(Tween.to(btnBackToMenu, ActorAccessor.Y, CrystalClash.NORMAL_ANIMATION_SPEED)
 					.target(CrystalClash.HEIGHT))
-					.push(Tween.to(gameEndMessage, ActorAccessor.Y, CrystalClash.FAST_ANIMATION_SPEED)
+					.push(Tween.to(gameEndMessage, ActorAccessor.Y, CrystalClash.NORMAL_ANIMATION_SPEED)
 							.target(CrystalClash.HEIGHT))
 					.setCallback(new TweenCallback() {
 						@Override
@@ -669,7 +660,7 @@ public class TurnAnimations extends GameRender {
 						}
 					});
 		} else {
-			t.push(Tween.to(grpPanel, ActorAccessor.Y, CrystalClash.FAST_ANIMATION_SPEED)
+			t.push(Tween.to(grpPanel, ActorAccessor.Y, CrystalClash.NORMAL_ANIMATION_SPEED)
 					.target(CrystalClash.HEIGHT))
 					.setCallback(new TweenCallback() {
 						@Override
@@ -700,5 +691,29 @@ public class TurnAnimations extends GameRender {
 	@Override
 	public void resume() {
 		tweenManager.resume();
+	}
+
+	@Override
+	public ClickListener attackListener() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public ClickListener defendListener() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public ClickListener moveListener() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public ClickListener undoListener() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

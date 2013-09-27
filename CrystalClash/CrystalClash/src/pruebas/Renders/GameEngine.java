@@ -87,8 +87,7 @@ public class GameEngine implements Screen {
 		txrBlackScreen.setColor(txrBlackScreen.getColor().r, txrBlackScreen.getColor().g, txrBlackScreen.getColor().b, 0);
 		txrBlackScreen.setVisible(false);
 
-		MessageBox.build()
-				.setTweenManager(tweenManager);
+		MessageBox.build().setTweenManager(tweenManager);
 
 		// loadingTexture = new
 		// SuperAnimatedActor(FileUtil.getSuperAnimation("data/Images/Menu/Loading/loading"),
@@ -199,13 +198,15 @@ public class GameEngine implements Screen {
 				}
 				setState(GameState.InTranstionMenuGamesAndGame);
 				Timeline.createSequence()
-						.push(Tween.to(background, ActorAccessor.ALPHA, CrystalClash.ANIMATION_SPEED).target(0))
+						.push(Tween.to(background, ActorAccessor.ALPHA, CrystalClash.SLOW_ANIMATION_SPEED).target(0))
 						.setCallback(new TweenCallback() {
 							@Override
 							public void onEvent(int type, BaseTween<?> source) {
 								setState(GameState.InGame);
 							};
 						}).start(tweenManager);
+				
+				world.getRender().pushEnterAnimation(Timeline.createParallel()).start(tweenManager);
 			};
 		});
 		t.start(tweenManager);
@@ -295,7 +296,7 @@ public class GameEngine implements Screen {
 		} else if (state == GameState.InGame) {
 			worldRender.pushExitAnimation(t);
 			t.push(Tween.set(background, ActorAccessor.ALPHA).target(0));
-			t.push(Tween.to(background, ActorAccessor.ALPHA, CrystalClash.ANIMATION_SPEED).target(1));
+			t.push(Tween.to(background, ActorAccessor.ALPHA, CrystalClash.SLOW_ANIMATION_SPEED).target(1));
 			t.setCallback(new TweenCallback() {
 				@Override
 				public void onEvent(int type, BaseTween<?> source) {
@@ -376,12 +377,12 @@ public class GameEngine implements Screen {
 
 	public static Timeline pushShowBlackScreen(Timeline t) {
 		txrBlackScreen.setVisible(true);
-		return t.push(Tween.to(txrBlackScreen, ActorAccessor.ALPHA, CrystalClash.FAST_ANIMATION_SPEED)
+		return t.push(Tween.to(txrBlackScreen, ActorAccessor.ALPHA, CrystalClash.NORMAL_ANIMATION_SPEED)
 				.target(1));
 	}
 
 	public static Timeline pushHideBlackScreen(Timeline t) {
-		return t.push(Tween.to(txrBlackScreen, ActorAccessor.ALPHA, CrystalClash.FAST_ANIMATION_SPEED)
+		return t.push(Tween.to(txrBlackScreen, ActorAccessor.ALPHA, CrystalClash.NORMAL_ANIMATION_SPEED)
 				.target(0))
 				.setCallback(new TweenCallback() {
 
@@ -412,5 +413,8 @@ public class GameEngine implements Screen {
 	public static void start(Timeline t) {
 		t.start(tweenManager);
 	}
-
+	
+	public static void kill(Object o) {
+		tweenManager.killTarget(o);
+	}
 }

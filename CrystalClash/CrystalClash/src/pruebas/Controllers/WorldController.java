@@ -35,17 +35,21 @@ public class WorldController {
 	public boolean gameEnded = false;
 
 	public WorldController(JsonValue data) {
-		this.player = data.getInt("player");
-		this.gameId = data.getString("game_id");
-		init();
-
 		render = new WorldRender(this);
+		init();
+		
+		if (data != null) {
+			this.player = data.getInt("player");
+			this.gameId = data.getString("game_id");
 
-		if (data.get("data") != null && data.get("data").asString().equals("none")) {
-			render.initFirstTurn();
+			if (data.get("data") != null && data.get("data").asString().equals("none")) {
+				render.initFirstTurn();
+			} else {
+				readData(data);
+				render.initTurnAnimations();
+			}
 		} else {
-			readData(data);
-			render.initTurnAnimations();
+			render.initTutorial();
 		}
 	}
 

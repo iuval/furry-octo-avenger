@@ -72,4 +72,12 @@ public class CellHelper {
 	public static float getUnitY(Cell cell) {
 		return cell.getY() + CellHelper.CELL_UNIT_Y;
 	}
+
+	public static float getCenterX(Cell cell) {
+		return cell.getX() + CellHelper.CELL_CENTER_X;
+	}
+
+	public static float getCenterY(Cell cell) {
+		return cell.getY() + CellHelper.CELL_CENTER_Y;
+	}
 }

@@ -84,7 +84,7 @@ public class MenuLogInRender extends MenuRender {
 		state = MenuLogInState.Idle;
 		return t.push(Tween.set(groupInitialScreen, ActorAccessor.ALPHA)
 				.target(0))
-				.push(Tween.to(groupInitialScreen, ActorAccessor.ALPHA, CrystalClash.ANIMATION_SPEED)
+				.push(Tween.to(groupInitialScreen, ActorAccessor.ALPHA, CrystalClash.SLOW_ANIMATION_SPEED)
 						.target(1));
 	}
 
@@ -93,7 +93,7 @@ public class MenuLogInRender extends MenuRender {
 		txtPassword.setText("");
 		txtPassword.setMessageText("");
 
-		return t.push(Tween.to(popUp, ActorAccessor.Y, CrystalClash.ANIMATION_SPEED).target(CrystalClash.HEIGHT));
+		return t.push(Tween.to(popUp, ActorAccessor.Y, CrystalClash.SLOW_ANIMATION_SPEED).target(CrystalClash.HEIGHT));
 	}
 
 	private void load() {
@@ -256,7 +256,7 @@ public class MenuLogInRender extends MenuRender {
 	// Solo para el btnBack (Mueve el panel hacia arriba y hace un fade-in de
 	// los otros botones
 	private void moveUp(MenuLogInState state) {
-		float speed = CrystalClash.ANIMATION_SPEED;
+		float speed = CrystalClash.SLOW_ANIMATION_SPEED;
 		GameEngine.start(Timeline.createParallel()
 				.push(Tween.to(popUp, ActorAccessor.ALPHA, speed).target(0))
 				.push(Tween.to(groupInitialScreen, ActorAccessor.ALPHA, speed).target(1))
@@ -267,7 +267,7 @@ public class MenuLogInRender extends MenuRender {
 	}
 
 	private void moveDown(MenuLogInState state) {
-		float speed = CrystalClash.ANIMATION_SPEED;
+		float speed = CrystalClash.SLOW_ANIMATION_SPEED;
 		GameEngine.start(Timeline.createParallel()
 				.push(Tween.to(popUp, ActorAccessor.Y, speed).target(
 						CrystalClash.HEIGHT / 2 - popUp.getHeight() / 2))
@@ -284,7 +284,7 @@ public class MenuLogInRender extends MenuRender {
 		if (up)
 			jump = CrystalClash.HEIGHT / 2 - 30;
 
-		float speed = CrystalClash.ANIMATION_SPEED;
+		float speed = CrystalClash.SLOW_ANIMATION_SPEED;
 		GameEngine.start(Timeline.createParallel()
 				.push(Tween.to(popUp, ActorAccessor.Y, speed).target(jump)));
 	}

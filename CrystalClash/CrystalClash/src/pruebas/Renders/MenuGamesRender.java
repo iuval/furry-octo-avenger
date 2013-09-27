@@ -8,8 +8,10 @@ import pruebas.Renders.helpers.ResourceHelper;
 import pruebas.Renders.helpers.ui.GameListItem;
 import pruebas.Renders.helpers.ui.MessageBox;
 import pruebas.Renders.helpers.ui.MessageBoxCallback;
+import aurelienribon.tweenengine.BaseTween;
 import aurelienribon.tweenengine.Timeline;
 import aurelienribon.tweenengine.Tween;
+import aurelienribon.tweenengine.TweenCallback;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
@@ -52,6 +54,12 @@ public class MenuGamesRender extends MenuRender {
 	private boolean isTryingToRefresh = false;
 	private boolean showPullDown = false;
 	private boolean showRelease = false;
+
+	private TextButton btnPlayTutorial;
+	private TextButton btnSkipTutorial;
+	private Image fireArcher;
+	private Image balloon;
+	private Label lblMessage;
 
 	public MenuGamesRender(MenuGames menu) {
 		this.controller = menu;
@@ -116,25 +124,55 @@ public class MenuGamesRender extends MenuRender {
 
 	@Override
 	public Timeline pushEnterAnimation(Timeline t) {
-		lblHeading.setText("Welcome " + GameController.getInstance().getUser().getNick());
-		return t.beginParallel()
-				.push(Tween.to(lblHeading, ActorAccessor.X, CrystalClash.ANIMATION_SPEED).target(50))
-				.push(Tween.to(btnLogOut, ActorAccessor.Y, CrystalClash.ANIMATION_SPEED).target(CrystalClash.HEIGHT - btnLogOut.getHeight() - 10))
-				.push(Tween.to(scrollPane, ActorAccessor.X, CrystalClash.ANIMATION_SPEED).target(0))
-				.end();
+		Timeline aux = Timeline.createParallel();
+
+		if (GameController.getInstance().isTutorialDone()) {
+			lblHeading.setText("Welcome " + GameController.getInstance().getUser().getNick());
+			aux.push(Tween.to(lblHeading, ActorAccessor.X, CrystalClash.SLOW_ANIMATION_SPEED).target(50))
+					.push(Tween.to(btnLogOut, ActorAccessor.Y, CrystalClash.SLOW_ANIMATION_SPEED).target(CrystalClash.HEIGHT - btnLogOut.getHeight() - 10))
+					.push(Tween.to(scrollPane, ActorAccessor.X, CrystalClash.SLOW_ANIMATION_SPEED).target(0));
+		} else {
+			aux.push(Tween.to(fireArcher, ActorAccessor.X, CrystalClash.SLOW_ANIMATION_SPEED).target(0))
+					.push(Tween.to(balloon, ActorAccessor.Y, CrystalClash.SLOW_ANIMATION_SPEED).target(CrystalClash.HEIGHT / 2))
+					.push(Tween.to(btnPlayTutorial, ActorAccessor.Y, CrystalClash.SLOW_ANIMATION_SPEED)
+							.target(CrystalClash.HEIGHT / 2 - btnPlayTutorial.getHeight()))
+					.push(Tween.to(btnSkipTutorial, ActorAccessor.Y, CrystalClash.SLOW_ANIMATION_SPEED).target(100))
+					.setCallbackTriggers(TweenCallback.COMPLETE)
+					.setCallback(new TweenCallback() {
+						@Override
+						public void onEvent(int type, BaseTween<?> source) {
+							lblMessage.setPosition(balloon.getX() + 145, balloon.getTop() - 200);
+						}
+					});
+		}
+		return t.push(aux);
 	}
 
 	@Override
 	public Timeline pushExitAnimation(Timeline t) {
-		return t.beginParallel()
-				.push(Tween.to(lblHeading, ActorAccessor.X, CrystalClash.ANIMATION_SPEED).target(-CrystalClash.WIDTH))
-				.push(Tween.to(btnLogOut, ActorAccessor.Y, CrystalClash.ANIMATION_SPEED).target(CrystalClash.HEIGHT))
-				.push(Tween.to(scrollPane, ActorAccessor.X, CrystalClash.ANIMATION_SPEED).target(CrystalClash.WIDTH))
-				.end();
+		Timeline aux = Timeline.createParallel();
+
+		if (GameController.getInstance().isTutorialDone()) {
+			aux.push(Tween.to(lblHeading, ActorAccessor.X, CrystalClash.SLOW_ANIMATION_SPEED).target(-CrystalClash.WIDTH))
+					.push(Tween.to(btnLogOut, ActorAccessor.Y, CrystalClash.SLOW_ANIMATION_SPEED).target(CrystalClash.HEIGHT))
+					.push(Tween.to(scrollPane, ActorAccessor.X, CrystalClash.SLOW_ANIMATION_SPEED).target(CrystalClash.WIDTH));
+		} else {
+			aux.push(Tween.to(fireArcher, ActorAccessor.X, CrystalClash.SLOW_ANIMATION_SPEED).target(-fireArcher.getWidth()))
+					.push(Tween.to(balloon, ActorAccessor.Y, CrystalClash.SLOW_ANIMATION_SPEED).target(CrystalClash.HEIGHT + balloon.getHeight()))
+					.push(Tween.to(btnPlayTutorial, ActorAccessor.Y, CrystalClash.SLOW_ANIMATION_SPEED)
+							.target(0 - btnPlayTutorial.getHeight()))
+					.push(Tween.to(btnSkipTutorial, ActorAccessor.Y, CrystalClash.SLOW_ANIMATION_SPEED)
+							.target(0 - btnPlayTutorial.getHeight() - btnSkipTutorial.getHeight()));
+		}
+		return t.push(aux);
 	}
 
 	private void load() {
+		GameController.getInstance().setTutorialNotDone();
 		initSkin();
+		if (!GameController.getInstance().isTutorialDone()) {
+			loadTutorial();
+		}
 
 		lblHeading = new Label("Welcome "
 				+ GameController.getInstance().getUser().getNick(),
@@ -204,6 +242,81 @@ public class MenuGamesRender extends MenuRender {
 				Gdx.files.internal("data/Images/Menu/RefreshList/refresh_message_release.png")));
 		refreshMessageRelease.setVisible(false);
 		addActor(refreshMessageRelease);
+	}
+
+	private void loadTutorial() {
+		fireArcher = new Image(new Texture(Gdx.files.internal("data/Images/Tutorial/fire_archer.png")));
+		fireArcher.setPosition(-fireArcher.getWidth(), 0);
+		addActor(fireArcher);
+
+		balloon = new Image(new Texture(Gdx.files.internal("data/Images/Tutorial/message_balloon.png")));
+		balloon.setPosition(CrystalClash.WIDTH / 3, CrystalClash.HEIGHT + balloon.getHeight());
+		addActor(balloon);
+
+		lblMessage = new Label("Welcome " + GameController.getInstance().getUser().getNick() +
+				"\n\nI can help you learn the\nbasics... Do you want me to?", new LabelStyle(ResourceHelper.getFont(), Color.BLACK));
+		lblMessage.setPosition(balloon.getX() + 145, balloon.getTop() - 65);
+		addActor(lblMessage);
+
+		btnPlayTutorial = new TextButton("Lets Do It!", ResourceHelper.getOuterButtonStyle());
+		btnPlayTutorial.setPosition(CrystalClash.WIDTH / 3 * 2 - btnPlayTutorial.getWidth() / 2 + 130, 0 - btnPlayTutorial.getHeight());
+		btnPlayTutorial.addListener(new ClickListener() {
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+				System.out.println("Do Toturial");
+				lblMessage.setText("");
+				controller.openTutorial();
+			}
+		});
+		addActor(btnPlayTutorial);
+
+		final MessageBoxCallback confirmation = new MessageBoxCallback() {
+			@Override
+			public void onEvent(int type, Object data) {
+				if (type == MessageBoxCallback.YES) {
+					System.out.println("Skip Toturial");
+					lblMessage.setText("");
+					goToNormalMenu();
+
+				} else {
+					MessageBox.build().hide();
+				}
+			}
+		};
+		btnSkipTutorial = new TextButton("No, thx", ResourceHelper.getOuterSmallButtonStyle());
+		btnSkipTutorial.setPosition(CrystalClash.WIDTH / 3 * 2 - btnSkipTutorial.getWidth() / 2 + 130, 0 - btnPlayTutorial.getHeight()
+				- btnSkipTutorial.getHeight());
+		btnSkipTutorial.addListener(new ClickListener() {
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+				MessageBox.build()
+						.setMessage("It's not safe going to the battle field without training...\nAre you sure you don't want to try?")
+						.twoButtonsLayout("Yes, i'm sure", "Wait, let me think")
+						.setCallback(confirmation)
+						.setHideOnAction(false)
+						.show();
+			}
+		});
+		addActor(btnSkipTutorial);
+	}
+
+	private void goToNormalMenu() {
+		loadGameList();
+		GameController.getInstance().setTutorialDone();
+		GameEngine.start(Timeline.createParallel()
+				.push(Tween.to(fireArcher, ActorAccessor.X, CrystalClash.SLOW_ANIMATION_SPEED).target(-fireArcher.getWidth()))
+				.push(Tween.to(balloon, ActorAccessor.Y, CrystalClash.SLOW_ANIMATION_SPEED).target(CrystalClash.HEIGHT + balloon.getHeight()))
+				.push(Tween.to(btnPlayTutorial, ActorAccessor.Y, CrystalClash.SLOW_ANIMATION_SPEED)
+						.target(0 - btnPlayTutorial.getHeight()))
+				.push(Tween.to(btnSkipTutorial, ActorAccessor.Y, CrystalClash.SLOW_ANIMATION_SPEED).target(0 - btnSkipTutorial.getHeight()))
+				.setCallbackTriggers(TweenCallback.COMPLETE)
+				.setCallback(new TweenCallback() {
+					@Override
+					public void onEvent(int type, BaseTween<?> source) {
+						lblMessage.setPosition(balloon.getX() + 50, balloon.getTop() - 150);
+						GameEngine.start(pushEnterAnimation(Timeline.createParallel()));
+					}
+				}));
 	}
 
 	private void loadGameList() {

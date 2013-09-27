@@ -5,28 +5,56 @@ filter: Linear,Linear
 repeat: none
 outer_button_orange
   rotate: false
-  xy: 0, 69
+  xy: 0, 179
   size: 490, 179
   orig: 490, 179
   offset: 0, 0
   index: -1
 outer_button_orange_pressed
   rotate: false
-  xy: 490, 69
+  xy: 0, 0
   size: 490, 179
   orig: 490, 179
   offset: 0, 0
   index: -1
+outer_button_small
+  rotate: false
+  xy: 490, 225
+  size: 305, 133
+  orig: 305, 133
+  offset: 0, 0
+  index: -1
+outer_button_small_pressed
+  rotate: false
+  xy: 490, 92
+  size: 305, 133
+  orig: 305, 133
+  offset: 0, 0
+  index: -1
+next_button
+  rotate: false
+  xy: 795, 263
+  size: 191, 95
+  orig: 191, 95
+  offset: 0, 0
+  index: -1
+next_button_pressed
+  rotate: false
+  xy: 795, 168
+  size: 191, 95
+  orig: 191, 95
+  offset: 0, 0
+  index: -1
 button_orange
   rotate: false
-  xy: 0, 0
+  xy: 490, 23
   size: 207, 69
   orig: 207, 69
   offset: 0, 0
   index: -1
 button_orange_pressed
   rotate: false
-  xy: 207, 0
+  xy: 697, 23
   size: 207, 69
   orig: 207, 69
   offset: 0, 0
