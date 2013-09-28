@@ -369,6 +369,7 @@ public class WorldRender extends Group implements InputProcessor {
 		grpActionBar.addActor(btnDefense);
 		grpActionBar.addActor(btnUndo);
 		grpActionBar.setSize(actionsBar.getWidth(), actionsBar.getHeight());
+		grpActionBar.setOrigin(actionsBar.getWidth() / 2, actionsBar.getHeight() / 2);
 		grpActionBar.setPosition(CrystalClash.WIDTH / 2 - grpActionBar.getWidth() / 2, CrystalClash.HEIGHT + 50);
 
 		addActor(grpActionBar);
@@ -452,42 +453,10 @@ public class WorldRender extends Group implements InputProcessor {
 		return t.beginParallel()
 				.push(Tween.to(grpActionBar, ActorAccessor.ALPHA, CrystalClash.FAST_ANIMATION_SPEED)
 						.target(0))
-				// .push(Tween.set(btnAttack, ActorAccessor.X)
-				// .target(btnAttack.getX() - 10))
-				// .push(Tween.set(btnAttack, ActorAccessor.Y)
-				// .target(btnAttack.getY() + 10))
-				// .push(Tween.to(btnAttack, ActorAccessor.X,
-				// CrystalClash.FAST_ANIMATION_SPEED)
-				// .target(btnAttack.getX() + 10))
-				// .push(Tween.to(btnAttack, ActorAccessor.Y,
-				// CrystalClash.FAST_ANIMATION_SPEED)
-				// .target(btnAttack.getY() - 10))
-				// .push(Tween.set(btnMove, ActorAccessor.X)
-				// .target(btnMove.getX() - 10))
-				// .push(Tween.set(btnMove, ActorAccessor.Y)
-				// .target(btnMove.getY() - 10))
-				// .push(Tween.to(btnMove, ActorAccessor.X,
-				// CrystalClash.FAST_ANIMATION_SPEED)
-				// .target(btnMove.getX() + 10))
-				// .push(Tween.to(btnMove, ActorAccessor.Y,
-				// CrystalClash.FAST_ANIMATION_SPEED)
-				// .target(btnMove.getY() + 10))
-				// .push(Tween.set(btnDefense, ActorAccessor.X)
-				// .target(btnDefense.getX() + 10))
-				// .push(Tween.set(btnDefense, ActorAccessor.Y)
-				// .target(btnDefense.getY() + 10))
-				// .push(Tween.to(btnDefense, ActorAccessor.X,
-				// CrystalClash.FAST_ANIMATION_SPEED)
-				// .target(btnDefense.getX() + 10))
-				// .push(Tween.to(btnDefense, ActorAccessor.Y,
-				// CrystalClash.FAST_ANIMATION_SPEED)
-				// .target(btnDefense.getY() + 10))
-				// .push(Tween.to(btnUndo, ActorAccessor.X,
-				// CrystalClash.FAST_ANIMATION_SPEED)
-				// .target(btnUndo.getX() - 10))
-				// .push(Tween.to(btnUndo, ActorAccessor.Y,
-				// CrystalClash.FAST_ANIMATION_SPEED)
-				// .target(btnDefense.getY() + 10))
+				.push(Tween.to(grpActionBar, ActorAccessor.SCALE_X, CrystalClash.FAST_ANIMATION_SPEED)
+						.target(0.8f))
+				.push(Tween.to(grpActionBar, ActorAccessor.SCALE_Y, CrystalClash.FAST_ANIMATION_SPEED)
+						.target(0.8f))
 				.push(Tween.call(new TweenCallback() {
 					@Override
 					public void onEvent(int type, BaseTween<?> source) {
@@ -498,8 +467,13 @@ public class WorldRender extends Group implements InputProcessor {
 	}
 
 	public void fadeInActionsRing() {
+		grpActionBar.setScale(0.8f, 0.8f);
 		GameEngine.start(Timeline.createParallel()
 				.push(Tween.to(grpActionBar, ActorAccessor.ALPHA, CrystalClash.FAST_ANIMATION_SPEED)
+						.target(1))
+				.push(Tween.to(grpActionBar, ActorAccessor.SCALE_X, CrystalClash.FAST_ANIMATION_SPEED)
+						.target(1))
+				.push(Tween.to(grpActionBar, ActorAccessor.SCALE_Y, CrystalClash.FAST_ANIMATION_SPEED)
 						.target(1)));
 	}
 
