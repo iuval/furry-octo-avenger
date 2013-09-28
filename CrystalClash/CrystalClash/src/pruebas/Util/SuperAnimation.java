@@ -51,7 +51,7 @@ public class SuperAnimation {
 	 * 
 	 * @param animation_time
 	 *            the total time the animation takes to play.
-	 * @param keyDurations
+	 * @param keyTimes
 	 *            the time at which each key frame must show up.
 	 * @param keyFrames
 	 *            the {@link TextureRegion}s representing the frames.
@@ -59,36 +59,11 @@ public class SuperAnimation {
 	 *            the type of animation play (NORMAL, REVERSED, LOOP,
 	 *            LOOP_REVERSED, LOOP_PINGPONG, LOOP_RANDOM)
 	 */
-	public SuperAnimation(float animation_time, float[] keyDurations,
-			TextureRegion[] keyFrames, boolean loop) {
+	public SuperAnimation(float animation_time, float[] keyTimes, TextureRegion[] keyFrames, boolean loop) {
 		this.animationTime = animation_time;
-		this.keyDurations = keyDurations;
-		this.keyFrames = getShallowCopy(keyFrames);
+		this.keyDurations = keyTimes;
+		this.keyFrames = keyFrames.clone();
 		this.looping = loop;
-	}
-
-	private TextureRegion[] getShallowCopy(TextureRegion[] keyFrames)
-	{
-		TextureRegion[] frames = new TextureRegion[keyFrames.length];
-		for (int i = 0, n = keyFrames.length; i < n; i++) {
-			frames[i] = keyFrames[i];
-		}
-		return frames;
-	}
-
-	private float[] calculateDurations(float[] keyTimes)
-	{
-		float[] durations = new float[keyTimes.length];
-
-		if (keyTimes.length >= 1)
-		{
-			for (int i = 0; i + 1 < keyTimes.length; i++) {
-				durations[i] = keyTimes[i + 1] - keyTimes[i];
-			}
-			durations[keyTimes.length - 1] = animationTime - keyTimes[keyTimes.length - 1];
-		}
-
-		return durations;
 	}
 
 	public void update(float stateTime) {
@@ -204,7 +179,7 @@ public class SuperAnimation {
 	public void randomCurrentFrame()
 	{
 		this.frameNumber = MathUtils.random(0, keyFrames.length - 1);
-		this.totalTime = keyDurations[frameNumber];
+		this.totalTime = MathUtils.random(totalTime);
 	}
 
 	public float getFirstHeight() {
