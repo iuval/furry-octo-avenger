@@ -88,7 +88,6 @@ public class WorldRender extends Group implements InputProcessor {
 		handY = arrowY;
 
 		UnitHelper.init();
-		load();
 	}
 
 	public void initFirstTurn() {
@@ -611,10 +610,11 @@ public class WorldRender extends Group implements InputProcessor {
 	}
 
 	public void dispose() {
-		txrTerrain.dispose();
+	//	txrTerrain.dispose();
 	}
 
 	public void init() {
+		load();
 	}
 
 	@Override
