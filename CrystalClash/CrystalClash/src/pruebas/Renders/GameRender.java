@@ -40,11 +40,11 @@ public abstract class GameRender extends Group {
 
 	public abstract void resume();
 	
-	public abstract ClickListener attackListener();
+	public abstract void onAttackAction();
 	
-	public abstract ClickListener defendListener();
+	public abstract void onDefendAction();
 	
-	public abstract ClickListener moveListener();
+	public abstract void onMoveAction();
 	
-	public abstract ClickListener undoListener();
+	public abstract void onUndoAction();
 }

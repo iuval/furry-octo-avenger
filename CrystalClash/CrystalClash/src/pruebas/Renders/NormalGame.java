@@ -17,16 +17,11 @@ import aurelienribon.tweenengine.Timeline;
 import aurelienribon.tweenengine.TweenManager;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Array;
 
 public class NormalGame extends GameRender {
 	private Unit selectedUnit;
 	private Cell selectedCell;
-
-	// private Label lblMoves;
-	// private Label lblAttack;
 
 	private TweenManager tweenManager;
 
@@ -79,55 +74,35 @@ public class NormalGame extends GameRender {
 		// lblMoves.getWidth() / 2), btnMove.getY() + 3);
 	}
 
-	public ClickListener attackListener() {
-		return new ClickListener() {
-			@Override
-			public void clicked(InputEvent event, float x, float y) {
-				setUnitAction(new AttackUnitAction(selectedUnit.isMelee()));
-				unitAction.origin = selectedCell;
+	public void onAttackAction() {
+		setUnitAction(new AttackUnitAction(selectedUnit.isMelee()));
+		unitAction.origin = selectedCell;
 
-				world.getRender().fadeOutActionsRing(false, null);
-				showAbleToAttackCells();
-			}
-		};
+		world.getRender().fadeOutActionsRing(false, null);
+		showAbleToAttackCells();
 	}
 
-	public ClickListener defendListener() {
-		return new ClickListener() {
-			@Override
-			public void clicked(InputEvent event, float x, float y) {
-				setUnitAction(new DefendUnitAction());
-				unitAction.origin = selectedCell;
-				defensiveUnits.add(selectedUnit);
-				selectedUnit.setDefendingPosition(true);
+	public void onDefendAction() {
+		setUnitAction(new DefendUnitAction());
+		unitAction.origin = selectedCell;
+		defensiveUnits.add(selectedUnit);
+		selectedUnit.setDefendingPosition(true);
 
-				world.getRender().fadeOutActionsRing(false, null);
-			}
-		};
+		world.getRender().fadeOutActionsRing(false, null);
 	}
 
-	public ClickListener moveListener() {
-		return new ClickListener() {
-			@Override
-			public void clicked(InputEvent event, float x, float y) {
-				setUnitAction(new MoveUnitAction());
-				unitAction.origin = selectedCell;
-				((MoveUnitAction) unitAction).moves.add(selectedCell);
-				selectedCell.addState(Cell.MOVE_TARGET);
+	public void onMoveAction() {
+		setUnitAction(new MoveUnitAction());
+		unitAction.origin = selectedCell;
+		((MoveUnitAction) unitAction).moves.add(selectedCell);
+		selectedCell.addState(Cell.MOVE_TARGET);
 
-				world.getRender().fadeOutActionsRing(false, null);
-				showAbleToMoveCells();
-			}
-		};
+		world.getRender().fadeOutActionsRing(false, null);
+		showAbleToMoveCells();
 	}
 
-	public ClickListener undoListener() {
-		return new ClickListener() {
-			@Override
-			public void clicked(InputEvent event, float x, float y) {
-				undoAction();
-			}
-		};
+	public void onUndoAction() {
+		undoAction();
 	}
 
 	private void showAbleToActionCells() {

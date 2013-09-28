@@ -93,7 +93,7 @@ public class TurnAnimations extends GameRender {
 	public void load() {
 		tweenManager = new TweenManager();
 		Tween.registerAccessor(Unit.class, new UnitAccessor());
-		
+
 		GameController.getInstance().loadUnitsStats();
 
 		Texture panelTexture = ResourceHelper.getTexture("data/Images/TurnAnimation/games_list_background.png");
@@ -694,26 +694,18 @@ public class TurnAnimations extends GameRender {
 	}
 
 	@Override
-	public ClickListener attackListener() {
-		// TODO Auto-generated method stub
-		return null;
+	public void onAttackAction() {
 	}
 
 	@Override
-	public ClickListener defendListener() {
-		// TODO Auto-generated method stub
-		return null;
+	public void onDefendAction() {
 	}
 
 	@Override
-	public ClickListener moveListener() {
-		// TODO Auto-generated method stub
-		return null;
+	public void onMoveAction() {
 	}
 
 	@Override
-	public ClickListener undoListener() {
-		// TODO Auto-generated method stub
-		return null;
+	public void onUndoAction() {
 	}
 }

@@ -59,7 +59,6 @@ public class WorldRender extends Group implements InputProcessor {
 	private TextButton btnDefense;
 	private TextButton btnUndo;
 	private Group grpActionBar;
-	private boolean actionsBarVisible;
 
 	private Image arrow;
 	private Image pointingHand;
@@ -83,7 +82,6 @@ public class WorldRender extends Group implements InputProcessor {
 		cellHelper.load();
 
 		hideMoreOptions = false;
-		actionsBarVisible = false;
 		arrowX = 0;
 		arrowY = CrystalClash.HEIGHT + 20;
 		handX = arrowX;
@@ -316,28 +314,48 @@ public class WorldRender extends Group implements InputProcessor {
 				skin.getDrawable("action_attack_button_pressed"), null, ResourceHelper.getFont());
 		btnAttack = new TextButton("", attackStyle);
 		btnAttack.setPosition(actionsBar.getX(), actionsBar.getY() + 155);
-		btnAttack.addListener(gameRender.attackListener());
+		btnAttack.addListener(new ClickListener() {
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+				gameRender.onAttackAction();
+			}
+		});
 
 		TextButtonStyle defenseStyle = new TextButtonStyle(
 				skin.getDrawable("action_defensive_button"),
 				skin.getDrawable("action_defensive_button_pressed"), null, ResourceHelper.getFont());
 		btnDefense = new TextButton("", defenseStyle);
 		btnDefense.setPosition(actionsBar.getX() + 5, actionsBar.getY() + 13);
-		btnDefense.addListener(gameRender.defendListener());
+		btnDefense.addListener(new ClickListener() {
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+				gameRender.onDefendAction();
+			}
+		});
 
 		TextButtonStyle moveStyle = new TextButtonStyle(
 				skin.getDrawable("action_run_button"),
 				skin.getDrawable("action_run_button_pressed"), null, ResourceHelper.getFont());
 		btnMove = new TextButton("", moveStyle);
 		btnMove.setPosition(actionsBar.getX() + 233, actionsBar.getY() + 155);
-		btnMove.addListener(gameRender.moveListener());
+		btnMove.addListener(new ClickListener() {
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+				gameRender.onMoveAction();
+			}
+		});
 
 		TextButtonStyle undoStyle = new TextButtonStyle(
 				skin.getDrawable("action_cancel_button"),
 				skin.getDrawable("action_cancel_button_pressed"), null, ResourceHelper.getFont());
 		btnUndo = new TextButton("", undoStyle);
 		btnUndo.setPosition(actionsBar.getX() + 231, actionsBar.getY() + 9);
-		btnUndo.addListener(gameRender.undoListener());
+		btnUndo.addListener(new ClickListener() {
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+				gameRender.onUndoAction();
+			}
+		});
 
 		arrow = new Image(ResourceHelper.getTexture("data/Images/InGame/selector_arrow.png"));
 		arrow.setPosition(arrowX, arrowY);
@@ -421,32 +439,24 @@ public class WorldRender extends Group implements InputProcessor {
 
 	public void fadeOutActionsRing(final boolean doFadeIn, final Cell selectedCell) {
 		GameEngine.start(Timeline.createParallel()
-				.push(Tween.to(grpActionBar, ActorAccessor.ALPHA, CrystalClash.FAST_ANIMATION_SPEED).target(0))
-				// .beginParallel()
-				// .push(Tween.to(btnAttack, ActorAccessor.X,
-				// CrystalClash.ANIMATION_SPEED).target(btnAttack.getX() + 10))
-				// .push(Tween.to(btnAttack, ActorAccessor.Y,
-				// CrystalClash.ANIMATION_SPEED).target(btnAttack.getY() - 10))
-				// .end()
-				// .beginParallel()
-				// .push(Tween.to(btnMove, ActorAccessor.X,
-				// CrystalClash.ANIMATION_SPEED).target(btnMove.getX() - 10))
-				// .push(Tween.to(btnMove, ActorAccessor.Y,
-				// CrystalClash.ANIMATION_SPEED).target(btnMove.getY() - 10))
-				// .end()
-				// .beginParallel()
-				// .push(Tween.to(btnDefense, ActorAccessor.X,
-				// CrystalClash.ANIMATION_SPEED).target(btnDefense.getX() + 10))
-				// .push(Tween.to(btnDefense, ActorAccessor.Y,
-				// CrystalClash.ANIMATION_SPEED).target(btnDefense.getY() + 10))
-				// .end()
-				// .beginParallel()
-				// .push(Tween.to(btnUndo, ActorAccessor.X,
-				// CrystalClash.ANIMATION_SPEED).target(btnUndo.getX() - 10))
-				// .push(Tween.to(btnUndo, ActorAccessor.Y,
-				// CrystalClash.ANIMATION_SPEED).target(btnDefense.getY() + 10))
-				// .end()
-				.setCallbackTriggers(TweenCallback.COMPLETE)
+				.push(Tween.to(grpActionBar, ActorAccessor.ALPHA, CrystalClash.FAST_ANIMATION_SPEED)
+						.target(0))
+				.push(Tween.to(btnAttack, ActorAccessor.X, CrystalClash.FAST_ANIMATION_SPEED)
+						.target(btnAttack.getX() + 10))
+				.push(Tween.to(btnAttack, ActorAccessor.Y, CrystalClash.FAST_ANIMATION_SPEED)
+						.target(btnAttack.getY() - 10))
+				.push(Tween.to(btnMove, ActorAccessor.X, CrystalClash.FAST_ANIMATION_SPEED)
+						.target(btnMove.getX() - 10))
+				.push(Tween.to(btnMove, ActorAccessor.Y, CrystalClash.FAST_ANIMATION_SPEED)
+						.target(btnMove.getY() - 10))
+				.push(Tween.to(btnDefense, ActorAccessor.X, CrystalClash.FAST_ANIMATION_SPEED)
+						.target(btnDefense.getX() + 10))
+				.push(Tween.to(btnDefense, ActorAccessor.Y, CrystalClash.FAST_ANIMATION_SPEED)
+						.target(btnDefense.getY() + 10))
+				.push(Tween.to(btnUndo, ActorAccessor.X, CrystalClash.FAST_ANIMATION_SPEED)
+						.target(btnUndo.getX() - 10))
+				.push(Tween.to(btnUndo, ActorAccessor.Y, CrystalClash.FAST_ANIMATION_SPEED)
+						.target(btnDefense.getY() + 10))
 				.setCallback(new TweenCallback() {
 					@Override
 					public void onEvent(int type, BaseTween<?> source) {
@@ -462,7 +472,8 @@ public class WorldRender extends Group implements InputProcessor {
 
 	public void fadeInActionsRing() {
 		GameEngine.start(Timeline.createParallel()
-				.push(Tween.to(grpActionBar, ActorAccessor.ALPHA, CrystalClash.FAST_ANIMATION_SPEED).target(1)));
+				.push(Tween.to(grpActionBar, ActorAccessor.ALPHA, CrystalClash.FAST_ANIMATION_SPEED)
+						.target(1)));
 	}
 
 	public void undoAction() {
