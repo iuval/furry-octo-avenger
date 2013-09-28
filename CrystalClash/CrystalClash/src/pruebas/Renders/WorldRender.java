@@ -414,19 +414,11 @@ public class WorldRender extends Group implements InputProcessor {
 		if (selectedCell.getUnit() != null) {
 			UnitActionType type = selectedCell.getAction().getActionType();
 			if (type.equals(UnitActionType.PLACE) || type.equals(UnitActionType.NONE)) {
-				// btnAttack.setDisabled(false);
-				// btnDefense.setDisabled(false);
-				// btnMove.setDisabled(false);
-				// btnUndo.setDisabled(true);
 				grpActionBar.addActor(btnAttack);
 				grpActionBar.addActor(btnDefense);
 				grpActionBar.addActor(btnMove);
 				grpActionBar.removeActor(btnUndo);
 			} else {
-				// btnAttack.setDisabled(true);
-				// btnDefense.setDisabled(true);
-				// btnMove.setDisabled(true);
-				// btnUndo.setDisabled(false);
 				grpActionBar.removeActor(btnAttack);
 				grpActionBar.removeActor(btnDefense);
 				grpActionBar.removeActor(btnMove);

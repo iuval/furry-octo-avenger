@@ -1,6 +1,7 @@
 package pruebas.Renders;
 
 import pruebas.Accessors.ActorAccessor;
+import pruebas.Audio.AudioManager;
 import pruebas.Controllers.GameController;
 import pruebas.Controllers.MenuGames;
 import pruebas.CrystalClash.CrystalClash;
@@ -13,10 +14,8 @@ import aurelienribon.tweenengine.Timeline;
 import aurelienribon.tweenengine.Tween;
 import aurelienribon.tweenengine.TweenCallback;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
@@ -48,6 +47,7 @@ public class MenuGamesRender extends MenuRender {
 	private Skin listItemSkin;
 	private TextButton btnNewRandom;
 	private TextButton btnNewInvite;
+	private TextButton btnMusic;
 
 	private Image refreshMessagePull;
 	private Image refreshMessageRelease;
@@ -128,9 +128,14 @@ public class MenuGamesRender extends MenuRender {
 
 		if (GameController.getInstance().isTutorialDone()) {
 			lblHeading.setText("Welcome " + GameController.getInstance().getUser().getNick());
-			aux.push(Tween.to(lblHeading, ActorAccessor.X, CrystalClash.SLOW_ANIMATION_SPEED).target(50))
-					.push(Tween.to(btnLogOut, ActorAccessor.Y, CrystalClash.SLOW_ANIMATION_SPEED).target(CrystalClash.HEIGHT - btnLogOut.getHeight() - 10))
-					.push(Tween.to(scrollPane, ActorAccessor.X, CrystalClash.SLOW_ANIMATION_SPEED).target(0));
+			aux.push(Tween.to(lblHeading, ActorAccessor.X, CrystalClash.SLOW_ANIMATION_SPEED)
+					.target(50))
+					.push(Tween.to(btnLogOut, ActorAccessor.Y, CrystalClash.SLOW_ANIMATION_SPEED)
+							.target(CrystalClash.HEIGHT - btnLogOut.getHeight() - 10))
+					.push(Tween.to(btnMusic, ActorAccessor.Y, CrystalClash.SLOW_ANIMATION_SPEED)
+							.target(CrystalClash.HEIGHT - btnMusic.getHeight() - 10))
+					.push(Tween.to(scrollPane, ActorAccessor.X, CrystalClash.SLOW_ANIMATION_SPEED)
+							.target(0));
 		} else {
 			aux.push(Tween.to(fireArcher, ActorAccessor.X, CrystalClash.SLOW_ANIMATION_SPEED).target(0))
 					.push(Tween.to(balloon, ActorAccessor.Y, CrystalClash.SLOW_ANIMATION_SPEED).target(CrystalClash.HEIGHT / 2))
@@ -153,12 +158,19 @@ public class MenuGamesRender extends MenuRender {
 		Timeline aux = Timeline.createParallel();
 
 		if (GameController.getInstance().isTutorialDone()) {
-			aux.push(Tween.to(lblHeading, ActorAccessor.X, CrystalClash.SLOW_ANIMATION_SPEED).target(-CrystalClash.WIDTH))
-					.push(Tween.to(btnLogOut, ActorAccessor.Y, CrystalClash.SLOW_ANIMATION_SPEED).target(CrystalClash.HEIGHT))
-					.push(Tween.to(scrollPane, ActorAccessor.X, CrystalClash.SLOW_ANIMATION_SPEED).target(CrystalClash.WIDTH));
+			aux.push(Tween.to(lblHeading, ActorAccessor.X, CrystalClash.SLOW_ANIMATION_SPEED)
+					.target(-CrystalClash.WIDTH))
+					.push(Tween.to(btnLogOut, ActorAccessor.Y, CrystalClash.SLOW_ANIMATION_SPEED)
+							.target(CrystalClash.HEIGHT))
+					.push(Tween.to(btnMusic, ActorAccessor.Y, CrystalClash.SLOW_ANIMATION_SPEED)
+							.target(CrystalClash.HEIGHT))
+					.push(Tween.to(scrollPane, ActorAccessor.X, CrystalClash.SLOW_ANIMATION_SPEED)
+							.target(CrystalClash.WIDTH));
 		} else {
-			aux.push(Tween.to(fireArcher, ActorAccessor.X, CrystalClash.SLOW_ANIMATION_SPEED).target(-fireArcher.getWidth()))
-					.push(Tween.to(balloon, ActorAccessor.Y, CrystalClash.SLOW_ANIMATION_SPEED).target(CrystalClash.HEIGHT + balloon.getHeight()))
+			aux.push(Tween.to(fireArcher, ActorAccessor.X, CrystalClash.SLOW_ANIMATION_SPEED)
+					.target(-fireArcher.getWidth()))
+					.push(Tween.to(balloon, ActorAccessor.Y, CrystalClash.SLOW_ANIMATION_SPEED)
+							.target(CrystalClash.HEIGHT + balloon.getHeight()))
 					.push(Tween.to(btnPlayTutorial, ActorAccessor.Y, CrystalClash.SLOW_ANIMATION_SPEED)
 							.target(0 - btnPlayTutorial.getHeight()))
 					.push(Tween.to(btnSkipTutorial, ActorAccessor.Y, CrystalClash.SLOW_ANIMATION_SPEED)
@@ -168,14 +180,12 @@ public class MenuGamesRender extends MenuRender {
 	}
 
 	private void load() {
-		GameController.getInstance().setTutorialNotDone();
 		initSkin();
 		if (!GameController.getInstance().isTutorialDone()) {
 			loadTutorial();
 		}
 
-		lblHeading = new Label("Welcome "
-				+ GameController.getInstance().getUser().getNick(),
+		lblHeading = new Label(String.format("Welcome %s", GameController.getInstance().getUser().getNick()),
 				new LabelStyle(ResourceHelper.getFont(), Color.WHITE));
 		lblHeading.setPosition(-CrystalClash.WIDTH, CrystalClash.HEIGHT - 50);
 		addActor(lblHeading);
@@ -191,6 +201,19 @@ public class MenuGamesRender extends MenuRender {
 			}
 		});
 		addActor(btnLogOut);
+
+		btnMusic = new TextButton(String.format("Sound %s", AudioManager.getVolume() == 0 ? "OFF" : "ON"),
+				ResourceHelper.getButtonStyle());
+		btnMusic.setPosition(CrystalClash.WIDTH - btnLogOut.getWidth() - 100 - btnMusic.getWidth(),
+				CrystalClash.HEIGHT);
+		btnMusic.addListener(new ClickListener() {
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+				btnMusic.setText(String.format("Sound %s", (AudioManager.toogleVolume() == 0 ? "OFF" : "ON")));
+			}
+		});
+		addActor(btnMusic);
+
 		list = new VerticalGroup();
 		list.setWidth(CrystalClash.WIDTH);
 
@@ -204,13 +227,11 @@ public class MenuGamesRender extends MenuRender {
 		scrollPane.setForceScroll(false, true);
 		scrollPane.invalidate();
 		addActor(scrollPane);
-		gamesImage = new Image(new Texture(
-				Gdx.files.internal("data/Images/Menu/current_games_header.png")));
+		gamesImage = new Image(ResourceHelper.getTexture("data/Images/Menu/current_games_header.png"));
 
 		list.addActor(gamesImage);
 
-		Image menuImage = new Image(new Texture(
-				Gdx.files.internal("data/Images/Menu/new_games_header.png")));
+		Image menuImage = new Image(ResourceHelper.getTexture("data/Images/Menu/new_games_header.png"));
 		list.addActor(menuImage);
 
 		Group inviteButtons = new Group();
@@ -233,23 +254,21 @@ public class MenuGamesRender extends MenuRender {
 
 		list.addActorAfter(menuImage, inviteButtons);
 
-		refreshMessagePull = new Image(new Texture(
-				Gdx.files.internal("data/Images/Menu/RefreshList/refresh_message_pull.png")));
+		refreshMessagePull = new Image(ResourceHelper.getTexture("data/Images/Menu/RefreshList/refresh_message_pull.png"));
 		refreshMessagePull.setVisible(false);
 		addActor(refreshMessagePull);
 
-		refreshMessageRelease = new Image(new Texture(
-				Gdx.files.internal("data/Images/Menu/RefreshList/refresh_message_release.png")));
+		refreshMessageRelease = new Image(ResourceHelper.getTexture("data/Images/Menu/RefreshList/refresh_message_release.png"));
 		refreshMessageRelease.setVisible(false);
 		addActor(refreshMessageRelease);
 	}
 
 	private void loadTutorial() {
-		fireArcher = new Image(new Texture(Gdx.files.internal("data/Images/Tutorial/fire_archer.png")));
+		fireArcher = new Image(ResourceHelper.getTexture("data/Images/Tutorial/fire_archer.png"));
 		fireArcher.setPosition(-fireArcher.getWidth(), 0);
 		addActor(fireArcher);
 
-		balloon = new Image(new Texture(Gdx.files.internal("data/Images/Tutorial/message_balloon.png")));
+		balloon = new Image(ResourceHelper.getTexture("data/Images/Tutorial/message_balloon.png"));
 		balloon.setPosition(CrystalClash.WIDTH / 3, CrystalClash.HEIGHT + balloon.getHeight());
 		addActor(balloon);
 
@@ -284,8 +303,8 @@ public class MenuGamesRender extends MenuRender {
 			}
 		};
 		btnSkipTutorial = new TextButton("No, thx", ResourceHelper.getOuterSmallButtonStyle());
-		btnSkipTutorial.setPosition(CrystalClash.WIDTH / 3 * 2 - btnSkipTutorial.getWidth() / 2 + 130, 0 - btnPlayTutorial.getHeight()
-				- btnSkipTutorial.getHeight());
+		btnSkipTutorial.setPosition(CrystalClash.WIDTH / 3 * 2 - btnSkipTutorial.getWidth() / 2 + 130,
+				0 - btnPlayTutorial.getHeight() - btnSkipTutorial.getHeight());
 		btnSkipTutorial.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
@@ -304,12 +323,14 @@ public class MenuGamesRender extends MenuRender {
 		loadGameList();
 		GameController.getInstance().setTutorialDone();
 		GameEngine.start(Timeline.createParallel()
-				.push(Tween.to(fireArcher, ActorAccessor.X, CrystalClash.SLOW_ANIMATION_SPEED).target(-fireArcher.getWidth()))
-				.push(Tween.to(balloon, ActorAccessor.Y, CrystalClash.SLOW_ANIMATION_SPEED).target(CrystalClash.HEIGHT + balloon.getHeight()))
+				.push(Tween.to(fireArcher, ActorAccessor.X, CrystalClash.SLOW_ANIMATION_SPEED)
+						.target(-fireArcher.getWidth()))
+				.push(Tween.to(balloon, ActorAccessor.Y, CrystalClash.SLOW_ANIMATION_SPEED)
+						.target(CrystalClash.HEIGHT + balloon.getHeight()))
 				.push(Tween.to(btnPlayTutorial, ActorAccessor.Y, CrystalClash.SLOW_ANIMATION_SPEED)
 						.target(0 - btnPlayTutorial.getHeight()))
-				.push(Tween.to(btnSkipTutorial, ActorAccessor.Y, CrystalClash.SLOW_ANIMATION_SPEED).target(0 - btnSkipTutorial.getHeight()))
-				.setCallbackTriggers(TweenCallback.COMPLETE)
+				.push(Tween.to(btnSkipTutorial, ActorAccessor.Y, CrystalClash.SLOW_ANIMATION_SPEED)
+						.target(0 - btnSkipTutorial.getHeight()))
 				.setCallback(new TweenCallback() {
 					@Override
 					public void onEvent(int type, BaseTween<?> source) {
@@ -335,8 +356,7 @@ public class MenuGamesRender extends MenuRender {
 
 		GameListItem listingItem;
 		for (int i = 0, len = games.length; i < len; i++) {
-			listingItem = new GameListItem(games[i][0], games[i][1],
-					games[i][2], games[i][3], games[i][4],
+			listingItem = new GameListItem(games[i][0], games[i][1], games[i][2], games[i][3], games[i][4],
 					listItemSkin, surrenderListener,
 					playListener);
 			gamesList[i] = listingItem;
