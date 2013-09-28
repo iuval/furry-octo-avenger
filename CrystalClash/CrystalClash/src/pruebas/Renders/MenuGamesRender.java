@@ -202,14 +202,14 @@ public class MenuGamesRender extends MenuRender {
 		});
 		addActor(btnLogOut);
 
-		btnMusic = new TextButton(String.format("Sound %s", AudioManager.getVolume() == 0 ? "OFF" : "ON"),
+		btnMusic = new TextButton(String.format("Music %s", AudioManager.getVolume() == 0 ? "OFF" : "ON"),
 				ResourceHelper.getButtonStyle());
 		btnMusic.setPosition(CrystalClash.WIDTH - btnLogOut.getWidth() - 100 - btnMusic.getWidth(),
 				CrystalClash.HEIGHT);
 		btnMusic.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
-				btnMusic.setText(String.format("Sound %s", (AudioManager.toogleVolume() == 0 ? "OFF" : "ON")));
+				btnMusic.setText(String.format("Music %s", (AudioManager.toogleVolume() == 0 ? "OFF" : "ON")));
 			}
 		});
 		addActor(btnMusic);
