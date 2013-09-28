@@ -78,7 +78,7 @@ public class NormalGame extends GameRender {
 		setUnitAction(new AttackUnitAction(selectedUnit.isMelee()));
 		unitAction.origin = selectedCell;
 
-		world.getRender().fadeOutActionsRing(false, null);
+		world.getRender().hideActionsRing();
 		showAbleToAttackCells();
 	}
 
@@ -88,7 +88,7 @@ public class NormalGame extends GameRender {
 		defensiveUnits.add(selectedUnit);
 		selectedUnit.setDefendingPosition(true);
 
-		world.getRender().fadeOutActionsRing(false, null);
+		world.getRender().hideActionsRing();
 	}
 
 	public void onMoveAction() {
@@ -97,31 +97,12 @@ public class NormalGame extends GameRender {
 		((MoveUnitAction) unitAction).moves.add(selectedCell);
 		selectedCell.addState(Cell.MOVE_TARGET);
 
-		world.getRender().fadeOutActionsRing(false, null);
+		world.getRender().hideActionsRing();
 		showAbleToMoveCells();
 	}
 
 	public void onUndoAction() {
 		undoAction();
-	}
-
-	private void showAbleToActionCells() {
-		switch (actionType) {
-		case PLACE:
-			break;
-		case ATTACK:
-			showAbleToAttackCells();
-			break;
-		case DEFENSE:
-			break;
-		case MOVE:
-			showAbleToMoveCells();
-			break;
-		case NONE:
-			break;
-		default:
-			break;
-		}
 	}
 
 	private void showAbleToMoveCells() {
@@ -212,49 +193,54 @@ public class NormalGame extends GameRender {
 		selectedCell = null;
 		unitAction = null;
 		actionType = UnitAction.UnitActionType.NONE;
-		world.getRender().fadeOutActionsRing(false, null);
+		world.getRender().hideActionsRing();
 	}
 
 	private void undoAction() {
-		world.getRender().undoAction();
+		if (selectedCell.getAction() != null &&
+				selectedCell.getAction().getActionType() != UnitActionType.NONE) {
+			setUnitAction(selectedCell.getAction());
 
-		switch (actionType) {
-		case ATTACK:
-			clearAvailableCells();
-			paths.removePath(selectedUnit);
-			((AttackUnitAction) unitAction).target.removeState(Cell.ATTACK_TARGET_CENTER);
-			attackActions.removeValue((AttackUnitAction) unitAction, false);
+			world.getRender().undoAction();
 
-			setUnitAction(new NoneUnitAction());
-			selectedCell.setAction(unitAction);
-			break;
-		case DEFENSE:
-			selectedUnit.setDefendingPosition(false);
+			switch (actionType) {
+			case ATTACK:
+				clearAvailableCells();
+				paths.removePath(selectedUnit);
+				((AttackUnitAction) unitAction).target.removeState(Cell.ATTACK_TARGET_CENTER);
+				attackActions.removeValue((AttackUnitAction) unitAction, false);
 
-			setUnitAction(new NoneUnitAction());
-			selectedCell.setAction(unitAction);
-			break;
-		case MOVE:
-			clearAvailableCells();
-			paths.removePath(selectedUnit);
-			Array<Cell> moves = ((MoveUnitAction) unitAction).moves;
-			clearPathCells(moves);
-			if (moves.size > 1)
-				popUnitFromPath(moves);
+				setUnitAction(new NoneUnitAction());
+				selectedCell.setAction(unitAction);
+				break;
+			case DEFENSE:
+				selectedUnit.setDefendingPosition(false);
 
-			// TODO: popup
-			// lblMoves.setText(maxMoves + "");
+				setUnitAction(new NoneUnitAction());
+				selectedCell.setAction(unitAction);
+				break;
+			case MOVE:
+				clearAvailableCells();
+				paths.removePath(selectedUnit);
+				Array<Cell> moves = ((MoveUnitAction) unitAction).moves;
+				clearPathCells(moves);
+				if (moves.size > 1)
+					popUnitFromPath(moves);
 
-			setUnitAction(new NoneUnitAction());
-			selectedCell.setAction(unitAction);
-			paths.removePath(selectedUnit);
-			break;
-		case NONE:
-			break;
-		case PLACE:
-			break;
-		default:
-			break;
+				// TODO: popup
+				// lblMoves.setText(maxMoves + "");
+
+				setUnitAction(new NoneUnitAction());
+				selectedCell.setAction(unitAction);
+				paths.removePath(selectedUnit);
+				break;
+			case NONE:
+				break;
+			case PLACE:
+				break;
+			default:
+				break;
+			}
 		}
 	}
 
@@ -421,17 +407,7 @@ public class NormalGame extends GameRender {
 						maxMoves = GameController.getInstance().getUnitSpeed(selectedUnit.getName());
 						// lblMoves.setText(maxMoves + "");
 
-						if (u.isEnemy()) {
-							world.getRender().fadeOutActionsRing(false, null);
-						} else {
-							if (cell.getAction() != null &&
-									cell.getAction().getActionType() !=
-									UnitActionType.NONE) {
-								setUnitAction(cell.getAction());
-								// showAbleToActionCells();
-							}
-							world.getRender().moveActionsRing(selectedCell);
-						}
+						world.getRender().moveActionsRing(selectedCell);
 					}
 				} else {
 					clearSelection();

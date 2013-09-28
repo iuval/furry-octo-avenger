@@ -410,27 +410,46 @@ public class WorldRender extends Group implements InputProcessor {
 						.target(grpBtnSend.getWidth() - 35).ease(TweenEquations.easeOutCirc)));
 	}
 
-	public void moveActionsRing(Cell selectedCell) {
+	public void moveActionsRing(final Cell selectedCell) {
 		if (selectedCell.getUnit() != null) {
-			UnitActionType type = selectedCell.getAction().getActionType();
-			if (type.equals(UnitActionType.PLACE) || type.equals(UnitActionType.NONE)) {
-				grpActionBar.addActor(btnAttack);
-				grpActionBar.addActor(btnDefense);
-				grpActionBar.addActor(btnMove);
-				grpActionBar.removeActor(btnUndo);
-			} else {
-				grpActionBar.removeActor(btnAttack);
-				grpActionBar.removeActor(btnDefense);
-				grpActionBar.removeActor(btnMove);
-				grpActionBar.addActor(btnUndo);
-			}
-
-			fadeOutActionsRing(true, selectedCell);
+			Timeline t = Timeline.createSequence();
+			pushFadeOutActionsRing(t);
+			t.setCallback(new TweenCallback() {
+				@Override
+				public void onEvent(int type, BaseTween<?> source) {
+					UnitActionType actionType = selectedCell.getAction().getActionType();
+					if (selectedCell.getUnit().isEnemy()) {
+						btnAttack.setVisible(false);
+						btnDefense.setVisible(false);
+						btnMove.setVisible(false);
+						btnUndo.setVisible(false);
+					} else {
+						if (actionType.equals(UnitActionType.PLACE) || actionType.equals(UnitActionType.NONE)) {
+							btnAttack.setVisible(true);
+							btnDefense.setVisible(true);
+							btnMove.setVisible(true);
+							btnUndo.setVisible(false);
+						} else {
+							btnAttack.setVisible(false);
+							btnDefense.setVisible(false);
+							btnMove.setVisible(false);
+							btnUndo.setVisible(true);
+						}
+					}
+					grpActionBar.setPosition(CellHelper.getCenterX(selectedCell) - actionsBar.getWidth() / 2, selectedCell.getY() - 80);
+					fadeInActionsRing();
+				}
+			});
+			GameEngine.start(t);
 		}
 	}
 
-	public void fadeOutActionsRing(final boolean doFadeIn, final Cell selectedCell) {
-		GameEngine.start(Timeline.createParallel()
+	public void hideActionsRing() {
+		GameEngine.start(pushFadeOutActionsRing(Timeline.createSequence()));
+	}
+
+	public Timeline pushFadeOutActionsRing(Timeline t) {
+		return t.beginParallel()
 				.push(Tween.to(grpActionBar, ActorAccessor.ALPHA, CrystalClash.FAST_ANIMATION_SPEED)
 						.target(0))
 				// .push(Tween.set(btnAttack, ActorAccessor.X)
@@ -469,17 +488,13 @@ public class WorldRender extends Group implements InputProcessor {
 				// .push(Tween.to(btnUndo, ActorAccessor.Y,
 				// CrystalClash.FAST_ANIMATION_SPEED)
 				// .target(btnDefense.getY() + 10))
-				.setCallback(new TweenCallback() {
+				.push(Tween.call(new TweenCallback() {
 					@Override
 					public void onEvent(int type, BaseTween<?> source) {
-						if (doFadeIn) {
-							grpActionBar.setPosition(CellHelper.getCenterX(selectedCell) - actionsBar.getWidth() / 2, selectedCell.getY() - 80);
-							fadeInActionsRing();
-						} else {
-							grpActionBar.setPosition(CrystalClash.WIDTH + actionsBar.getWidth(), 0);
-						}
+						grpActionBar.setPosition(CrystalClash.WIDTH + actionsBar.getWidth(), 0);
 					}
-				}));
+				}))
+				.end();
 	}
 
 	public void fadeInActionsRing() {
@@ -489,10 +504,10 @@ public class WorldRender extends Group implements InputProcessor {
 	}
 
 	public void undoAction() {
-		grpActionBar.addActor(btnAttack);
-		grpActionBar.addActor(btnDefense);
-		grpActionBar.addActor(btnMove);
-		grpActionBar.removeActor(btnUndo);
+		btnAttack.setVisible(true);
+		btnDefense.setVisible(true);
+		btnMove.setVisible(true);
+		btnUndo.setVisible(false);
 	}
 
 	public void moveArrow(Unit u) {
@@ -698,12 +713,18 @@ public class WorldRender extends Group implements InputProcessor {
 
 	public Timeline pushExitAnimation(Timeline t) {
 		t.beginSequence();
-		t.push(Tween.to(grpOptions, ActorAccessor.X, CrystalClash.NORMAL_ANIMATION_SPEED).target(-grpOptions.getWidth()))
-				.push(Tween.to(grpBtnOptions, ActorAccessor.X, CrystalClash.NORMAL_ANIMATION_SPEED).target(-grpBtnOptions.getWidth()))
-				.push(Tween.to(grpBtnSend, ActorAccessor.X, CrystalClash.NORMAL_ANIMATION_SPEED).target(-grpBtnSend.getWidth()))
-				.push(Tween.to(grpActionBar, ActorAccessor.Y, CrystalClash.NORMAL_ANIMATION_SPEED).target(CrystalClash.HEIGHT + grpActionBar.getHeight()))
-				.push(Tween.to(arrow, ActorAccessor.Y, CrystalClash.NORMAL_ANIMATION_SPEED).target(CrystalClash.HEIGHT + arrow.getHeight()))
-				.push(Tween.to(pointingHand, ActorAccessor.Y, CrystalClash.NORMAL_ANIMATION_SPEED).target(CrystalClash.HEIGHT + pointingHand.getHeight()))
+		t.push(Tween.to(grpOptions, ActorAccessor.X, CrystalClash.NORMAL_ANIMATION_SPEED)
+				.target(-grpOptions.getWidth()))
+				.push(Tween.to(grpBtnOptions, ActorAccessor.X, CrystalClash.NORMAL_ANIMATION_SPEED)
+						.target(-grpBtnOptions.getWidth()))
+				.push(Tween.to(grpBtnSend, ActorAccessor.X, CrystalClash.NORMAL_ANIMATION_SPEED)
+						.target(-grpBtnSend.getWidth()))
+				.push(Tween.to(grpActionBar, ActorAccessor.Y, CrystalClash.NORMAL_ANIMATION_SPEED)
+						.target(CrystalClash.HEIGHT + grpActionBar.getHeight()))
+				.push(Tween.to(arrow, ActorAccessor.Y, CrystalClash.NORMAL_ANIMATION_SPEED)
+						.target(CrystalClash.HEIGHT + arrow.getHeight()))
+				.push(Tween.to(pointingHand, ActorAccessor.Y, CrystalClash.NORMAL_ANIMATION_SPEED)
+						.target(CrystalClash.HEIGHT + pointingHand.getHeight()))
 				.end();
 
 		gameRender.pushExitAnimation(t);
