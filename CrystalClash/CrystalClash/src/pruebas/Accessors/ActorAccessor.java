@@ -1,11 +1,12 @@
 package pruebas.Accessors;
 
 import aurelienribon.tweenengine.TweenAccessor;
+
 import com.badlogic.gdx.scenes.scene2d.Actor;
 
 public class ActorAccessor implements TweenAccessor<Actor> {
 
-	public static final int X = 0, Y = 1, RGB = 2, ALPHA = 3;
+	public static final int X = 0, Y = 1, RGB = 2, ALPHA = 3, SCALE_X = 4, SCALE_Y = 5;
 
 	@Override
 	public int getValues(Actor target, int tweenType, float[] returnValues) {
@@ -23,6 +24,12 @@ public class ActorAccessor implements TweenAccessor<Actor> {
 			return 3;
 		case ALPHA:
 			returnValues[0] = target.getColor().a;
+			return 1;
+		case SCALE_X:
+			returnValues[0] = target.getScaleX();
+			return 1;
+		case SCALE_Y:
+			returnValues[0] = target.getScaleY();
 			return 1;
 		default:
 			assert false;
@@ -46,6 +53,12 @@ public class ActorAccessor implements TweenAccessor<Actor> {
 		case ALPHA:
 			target.setColor(target.getColor().r, target.getColor().g,
 					target.getColor().b, newValues[0]);
+			break;
+		case SCALE_X:
+			target.setScaleX(newValues[0]);
+			break;
+		case SCALE_Y:
+			target.setScaleY(newValues[0]);
 			break;
 		default:
 			assert false;

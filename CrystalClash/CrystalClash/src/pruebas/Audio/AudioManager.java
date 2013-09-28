@@ -94,6 +94,15 @@ public class AudioManager {
 			playing.setVolume(volume);
 	}
 
+	public static float getVolume() {
+		return volume;
+	}
+
+	public static float toogleVolume() {
+		setVolume(volume == 0 ? 0.5f : 0);
+		return volume;
+	}
+
 	private static void fadeOut(final String name) {
 		GameEngine.start(Timeline.createSequence()
 				.push(Tween.to(playing, MusicAccessor.VOLUME, 1f).target(0))

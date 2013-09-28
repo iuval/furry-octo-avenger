@@ -59,7 +59,6 @@ public class WorldRender extends Group implements InputProcessor {
 	private TextButton btnDefense;
 	private TextButton btnUndo;
 	private Group grpActionBar;
-	private boolean actionsBarVisible;
 
 	private Image arrow;
 	private Image pointingHand;
@@ -83,14 +82,12 @@ public class WorldRender extends Group implements InputProcessor {
 		cellHelper.load();
 
 		hideMoreOptions = false;
-		actionsBarVisible = false;
 		arrowX = 0;
 		arrowY = CrystalClash.HEIGHT + 20;
 		handX = arrowX;
 		handY = arrowY;
 
 		UnitHelper.init();
-		load();
 	}
 
 	public void initFirstTurn() {
@@ -316,28 +313,48 @@ public class WorldRender extends Group implements InputProcessor {
 				skin.getDrawable("action_attack_button_pressed"), null, ResourceHelper.getFont());
 		btnAttack = new TextButton("", attackStyle);
 		btnAttack.setPosition(actionsBar.getX(), actionsBar.getY() + 155);
-		btnAttack.addListener(gameRender.attackListener());
+		btnAttack.addListener(new ClickListener() {
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+				gameRender.onAttackAction();
+			}
+		});
 
 		TextButtonStyle defenseStyle = new TextButtonStyle(
 				skin.getDrawable("action_defensive_button"),
 				skin.getDrawable("action_defensive_button_pressed"), null, ResourceHelper.getFont());
 		btnDefense = new TextButton("", defenseStyle);
 		btnDefense.setPosition(actionsBar.getX() + 5, actionsBar.getY() + 13);
-		btnDefense.addListener(gameRender.defendListener());
+		btnDefense.addListener(new ClickListener() {
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+				gameRender.onDefendAction();
+			}
+		});
 
 		TextButtonStyle moveStyle = new TextButtonStyle(
 				skin.getDrawable("action_run_button"),
 				skin.getDrawable("action_run_button_pressed"), null, ResourceHelper.getFont());
 		btnMove = new TextButton("", moveStyle);
 		btnMove.setPosition(actionsBar.getX() + 233, actionsBar.getY() + 155);
-		btnMove.addListener(gameRender.moveListener());
+		btnMove.addListener(new ClickListener() {
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+				gameRender.onMoveAction();
+			}
+		});
 
 		TextButtonStyle undoStyle = new TextButtonStyle(
 				skin.getDrawable("action_cancel_button"),
 				skin.getDrawable("action_cancel_button_pressed"), null, ResourceHelper.getFont());
 		btnUndo = new TextButton("", undoStyle);
 		btnUndo.setPosition(actionsBar.getX() + 231, actionsBar.getY() + 9);
-		btnUndo.addListener(gameRender.undoListener());
+		btnUndo.addListener(new ClickListener() {
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+				gameRender.onUndoAction();
+			}
+		});
 
 		arrow = new Image(ResourceHelper.getTexture("data/Images/InGame/selector_arrow.png"));
 		arrow.setPosition(arrowX, arrowY);
@@ -351,6 +368,7 @@ public class WorldRender extends Group implements InputProcessor {
 		grpActionBar.addActor(btnDefense);
 		grpActionBar.addActor(btnUndo);
 		grpActionBar.setSize(actionsBar.getWidth(), actionsBar.getHeight());
+		grpActionBar.setOrigin(actionsBar.getWidth() / 2, actionsBar.getHeight() / 2);
 		grpActionBar.setPosition(CrystalClash.WIDTH / 2 - grpActionBar.getWidth() / 2, CrystalClash.HEIGHT + 50);
 
 		addActor(grpActionBar);
@@ -392,84 +410,77 @@ public class WorldRender extends Group implements InputProcessor {
 						.target(grpBtnSend.getWidth() - 35).ease(TweenEquations.easeOutCirc)));
 	}
 
-	public void moveActionsRing(Cell selectedCell) {
+	public void moveActionsRing(final Cell selectedCell) {
 		if (selectedCell.getUnit() != null) {
-			UnitActionType type = selectedCell.getAction().getActionType();
-			if (type.equals(UnitActionType.PLACE) || type.equals(UnitActionType.NONE)) {
-				// btnAttack.setDisabled(false);
-				// btnDefense.setDisabled(false);
-				// btnMove.setDisabled(false);
-				// btnUndo.setDisabled(true);
-				grpActionBar.addActor(btnAttack);
-				grpActionBar.addActor(btnDefense);
-				grpActionBar.addActor(btnMove);
-				grpActionBar.removeActor(btnUndo);
-			} else {
-				// btnAttack.setDisabled(true);
-				// btnDefense.setDisabled(true);
-				// btnMove.setDisabled(true);
-				// btnUndo.setDisabled(false);
-				grpActionBar.removeActor(btnAttack);
-				grpActionBar.removeActor(btnDefense);
-				grpActionBar.removeActor(btnMove);
-				grpActionBar.addActor(btnUndo);
-			}
-
-			fadeOutActionsRing(true, selectedCell);
+			Timeline t = Timeline.createSequence();
+			pushFadeOutActionsRing(t);
+			t.setCallback(new TweenCallback() {
+				@Override
+				public void onEvent(int type, BaseTween<?> source) {
+					UnitActionType actionType = selectedCell.getAction().getActionType();
+					if (selectedCell.getUnit().isEnemy()) {
+						btnAttack.setVisible(false);
+						btnDefense.setVisible(false);
+						btnMove.setVisible(false);
+						btnUndo.setVisible(false);
+					} else {
+						if (actionType.equals(UnitActionType.PLACE) || actionType.equals(UnitActionType.NONE)) {
+							btnAttack.setVisible(true);
+							btnDefense.setVisible(true);
+							btnMove.setVisible(true);
+							btnUndo.setVisible(false);
+						} else {
+							btnAttack.setVisible(false);
+							btnDefense.setVisible(false);
+							btnMove.setVisible(false);
+							btnUndo.setVisible(true);
+						}
+					}
+					grpActionBar.setPosition(CellHelper.getCenterX(selectedCell) - actionsBar.getWidth() / 2, selectedCell.getY() - 80);
+					fadeInActionsRing();
+				}
+			});
+			GameEngine.start(t);
 		}
 	}
 
-	public void fadeOutActionsRing(final boolean doFadeIn, final Cell selectedCell) {
-		GameEngine.start(Timeline.createParallel()
-				.push(Tween.to(grpActionBar, ActorAccessor.ALPHA, CrystalClash.FAST_ANIMATION_SPEED).target(0))
-				// .beginParallel()
-				// .push(Tween.to(btnAttack, ActorAccessor.X,
-				// CrystalClash.ANIMATION_SPEED).target(btnAttack.getX() + 10))
-				// .push(Tween.to(btnAttack, ActorAccessor.Y,
-				// CrystalClash.ANIMATION_SPEED).target(btnAttack.getY() - 10))
-				// .end()
-				// .beginParallel()
-				// .push(Tween.to(btnMove, ActorAccessor.X,
-				// CrystalClash.ANIMATION_SPEED).target(btnMove.getX() - 10))
-				// .push(Tween.to(btnMove, ActorAccessor.Y,
-				// CrystalClash.ANIMATION_SPEED).target(btnMove.getY() - 10))
-				// .end()
-				// .beginParallel()
-				// .push(Tween.to(btnDefense, ActorAccessor.X,
-				// CrystalClash.ANIMATION_SPEED).target(btnDefense.getX() + 10))
-				// .push(Tween.to(btnDefense, ActorAccessor.Y,
-				// CrystalClash.ANIMATION_SPEED).target(btnDefense.getY() + 10))
-				// .end()
-				// .beginParallel()
-				// .push(Tween.to(btnUndo, ActorAccessor.X,
-				// CrystalClash.ANIMATION_SPEED).target(btnUndo.getX() - 10))
-				// .push(Tween.to(btnUndo, ActorAccessor.Y,
-				// CrystalClash.ANIMATION_SPEED).target(btnDefense.getY() + 10))
-				// .end()
-				.setCallbackTriggers(TweenCallback.COMPLETE)
-				.setCallback(new TweenCallback() {
+	public void hideActionsRing() {
+		GameEngine.start(pushFadeOutActionsRing(Timeline.createSequence()));
+	}
+
+	public Timeline pushFadeOutActionsRing(Timeline t) {
+		return t.beginParallel()
+				.push(Tween.to(grpActionBar, ActorAccessor.ALPHA, CrystalClash.FAST_ANIMATION_SPEED)
+						.target(0))
+				.push(Tween.to(grpActionBar, ActorAccessor.SCALE_X, CrystalClash.FAST_ANIMATION_SPEED)
+						.target(0.8f))
+				.push(Tween.to(grpActionBar, ActorAccessor.SCALE_Y, CrystalClash.FAST_ANIMATION_SPEED)
+						.target(0.8f))
+				.push(Tween.call(new TweenCallback() {
 					@Override
 					public void onEvent(int type, BaseTween<?> source) {
-						if (doFadeIn) {
-							grpActionBar.setPosition(CellHelper.getCenterX(selectedCell) - actionsBar.getWidth() / 2, selectedCell.getY() - 80);
-							fadeInActionsRing();
-						} else {
-							grpActionBar.setPosition(CrystalClash.WIDTH + actionsBar.getWidth(), 0);
-						}
+						grpActionBar.setPosition(CrystalClash.WIDTH + actionsBar.getWidth(), 0);
 					}
-				}));
+				}))
+				.end();
 	}
 
 	public void fadeInActionsRing() {
+		grpActionBar.setScale(0.8f, 0.8f);
 		GameEngine.start(Timeline.createParallel()
-				.push(Tween.to(grpActionBar, ActorAccessor.ALPHA, CrystalClash.FAST_ANIMATION_SPEED).target(1)));
+				.push(Tween.to(grpActionBar, ActorAccessor.ALPHA, CrystalClash.FAST_ANIMATION_SPEED)
+						.target(1))
+				.push(Tween.to(grpActionBar, ActorAccessor.SCALE_X, CrystalClash.FAST_ANIMATION_SPEED)
+						.target(1))
+				.push(Tween.to(grpActionBar, ActorAccessor.SCALE_Y, CrystalClash.FAST_ANIMATION_SPEED)
+						.target(1)));
 	}
 
 	public void undoAction() {
-		grpActionBar.addActor(btnAttack);
-		grpActionBar.addActor(btnDefense);
-		grpActionBar.addActor(btnMove);
-		grpActionBar.removeActor(btnUndo);
+		btnAttack.setVisible(true);
+		btnDefense.setVisible(true);
+		btnMove.setVisible(true);
+		btnUndo.setVisible(false);
 	}
 
 	public void moveArrow(Unit u) {
@@ -599,10 +610,11 @@ public class WorldRender extends Group implements InputProcessor {
 	}
 
 	public void dispose() {
-		txrTerrain.dispose();
+	//	txrTerrain.dispose();
 	}
 
 	public void init() {
+		load();
 	}
 
 	@Override
@@ -675,12 +687,18 @@ public class WorldRender extends Group implements InputProcessor {
 
 	public Timeline pushExitAnimation(Timeline t) {
 		t.beginSequence();
-		t.push(Tween.to(grpOptions, ActorAccessor.X, CrystalClash.NORMAL_ANIMATION_SPEED).target(-grpOptions.getWidth()))
-				.push(Tween.to(grpBtnOptions, ActorAccessor.X, CrystalClash.NORMAL_ANIMATION_SPEED).target(-grpBtnOptions.getWidth()))
-				.push(Tween.to(grpBtnSend, ActorAccessor.X, CrystalClash.NORMAL_ANIMATION_SPEED).target(-grpBtnSend.getWidth()))
-				.push(Tween.to(grpActionBar, ActorAccessor.Y, CrystalClash.NORMAL_ANIMATION_SPEED).target(CrystalClash.HEIGHT + grpActionBar.getHeight()))
-				.push(Tween.to(arrow, ActorAccessor.Y, CrystalClash.NORMAL_ANIMATION_SPEED).target(CrystalClash.HEIGHT + arrow.getHeight()))
-				.push(Tween.to(pointingHand, ActorAccessor.Y, CrystalClash.NORMAL_ANIMATION_SPEED).target(CrystalClash.HEIGHT + pointingHand.getHeight()))
+		t.push(Tween.to(grpOptions, ActorAccessor.X, CrystalClash.NORMAL_ANIMATION_SPEED)
+				.target(-grpOptions.getWidth()))
+				.push(Tween.to(grpBtnOptions, ActorAccessor.X, CrystalClash.NORMAL_ANIMATION_SPEED)
+						.target(-grpBtnOptions.getWidth()))
+				.push(Tween.to(grpBtnSend, ActorAccessor.X, CrystalClash.NORMAL_ANIMATION_SPEED)
+						.target(-grpBtnSend.getWidth()))
+				.push(Tween.to(grpActionBar, ActorAccessor.Y, CrystalClash.NORMAL_ANIMATION_SPEED)
+						.target(CrystalClash.HEIGHT + grpActionBar.getHeight()))
+				.push(Tween.to(arrow, ActorAccessor.Y, CrystalClash.NORMAL_ANIMATION_SPEED)
+						.target(CrystalClash.HEIGHT + arrow.getHeight()))
+				.push(Tween.to(pointingHand, ActorAccessor.Y, CrystalClash.NORMAL_ANIMATION_SPEED)
+						.target(CrystalClash.HEIGHT + pointingHand.getHeight()))
 				.end();
 
 		gameRender.pushExitAnimation(t);
