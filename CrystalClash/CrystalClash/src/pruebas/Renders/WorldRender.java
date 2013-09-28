@@ -433,22 +433,42 @@ public class WorldRender extends Group implements InputProcessor {
 		GameEngine.start(Timeline.createParallel()
 				.push(Tween.to(grpActionBar, ActorAccessor.ALPHA, CrystalClash.FAST_ANIMATION_SPEED)
 						.target(0))
-				.push(Tween.to(btnAttack, ActorAccessor.X, CrystalClash.FAST_ANIMATION_SPEED)
-						.target(btnAttack.getX() + 10))
-				.push(Tween.to(btnAttack, ActorAccessor.Y, CrystalClash.FAST_ANIMATION_SPEED)
-						.target(btnAttack.getY() - 10))
-				.push(Tween.to(btnMove, ActorAccessor.X, CrystalClash.FAST_ANIMATION_SPEED)
-						.target(btnMove.getX() - 10))
-				.push(Tween.to(btnMove, ActorAccessor.Y, CrystalClash.FAST_ANIMATION_SPEED)
-						.target(btnMove.getY() - 10))
-				.push(Tween.to(btnDefense, ActorAccessor.X, CrystalClash.FAST_ANIMATION_SPEED)
-						.target(btnDefense.getX() + 10))
-				.push(Tween.to(btnDefense, ActorAccessor.Y, CrystalClash.FAST_ANIMATION_SPEED)
-						.target(btnDefense.getY() + 10))
-				.push(Tween.to(btnUndo, ActorAccessor.X, CrystalClash.FAST_ANIMATION_SPEED)
-						.target(btnUndo.getX() - 10))
-				.push(Tween.to(btnUndo, ActorAccessor.Y, CrystalClash.FAST_ANIMATION_SPEED)
-						.target(btnDefense.getY() + 10))
+				// .push(Tween.set(btnAttack, ActorAccessor.X)
+				// .target(btnAttack.getX() - 10))
+				// .push(Tween.set(btnAttack, ActorAccessor.Y)
+				// .target(btnAttack.getY() + 10))
+				// .push(Tween.to(btnAttack, ActorAccessor.X,
+				// CrystalClash.FAST_ANIMATION_SPEED)
+				// .target(btnAttack.getX() + 10))
+				// .push(Tween.to(btnAttack, ActorAccessor.Y,
+				// CrystalClash.FAST_ANIMATION_SPEED)
+				// .target(btnAttack.getY() - 10))
+				// .push(Tween.set(btnMove, ActorAccessor.X)
+				// .target(btnMove.getX() - 10))
+				// .push(Tween.set(btnMove, ActorAccessor.Y)
+				// .target(btnMove.getY() - 10))
+				// .push(Tween.to(btnMove, ActorAccessor.X,
+				// CrystalClash.FAST_ANIMATION_SPEED)
+				// .target(btnMove.getX() + 10))
+				// .push(Tween.to(btnMove, ActorAccessor.Y,
+				// CrystalClash.FAST_ANIMATION_SPEED)
+				// .target(btnMove.getY() + 10))
+				// .push(Tween.set(btnDefense, ActorAccessor.X)
+				// .target(btnDefense.getX() + 10))
+				// .push(Tween.set(btnDefense, ActorAccessor.Y)
+				// .target(btnDefense.getY() + 10))
+				// .push(Tween.to(btnDefense, ActorAccessor.X,
+				// CrystalClash.FAST_ANIMATION_SPEED)
+				// .target(btnDefense.getX() + 10))
+				// .push(Tween.to(btnDefense, ActorAccessor.Y,
+				// CrystalClash.FAST_ANIMATION_SPEED)
+				// .target(btnDefense.getY() + 10))
+				// .push(Tween.to(btnUndo, ActorAccessor.X,
+				// CrystalClash.FAST_ANIMATION_SPEED)
+				// .target(btnUndo.getX() - 10))
+				// .push(Tween.to(btnUndo, ActorAccessor.Y,
+				// CrystalClash.FAST_ANIMATION_SPEED)
+				// .target(btnDefense.getY() + 10))
 				.setCallback(new TweenCallback() {
 					@Override
 					public void onEvent(int type, BaseTween<?> source) {

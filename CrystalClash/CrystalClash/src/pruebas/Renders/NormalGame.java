@@ -424,9 +424,11 @@ public class NormalGame extends GameRender {
 						if (u.isEnemy()) {
 							world.getRender().fadeOutActionsRing(false, null);
 						} else {
-							if (cell.getAction() != null && cell.getAction().getActionType() != UnitActionType.NONE) {
+							if (cell.getAction() != null &&
+									cell.getAction().getActionType() !=
+									UnitActionType.NONE) {
 								setUnitAction(cell.getAction());
-								showAbleToActionCells();
+								// showAbleToActionCells();
 							}
 							world.getRender().moveActionsRing(selectedCell);
 						}
