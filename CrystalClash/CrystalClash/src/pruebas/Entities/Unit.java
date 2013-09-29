@@ -27,7 +27,7 @@ public class Unit extends GameObject {
 	private UnitRender render;
 
 	public Unit(String unitName, boolean enemy) {
-		this(unitName, -1, enemy, GameController.getInstance().getUnitLife(unitName));
+		this(unitName, -1, enemy, GameController.getUnitLife(unitName));
 	}
 
 	public Unit(String unitName, int num, boolean enemy, int hp) {
@@ -35,12 +35,12 @@ public class Unit extends GameObject {
 		this.playerNumber = num;
 		this.unitName = unitName;
 
-		GameController.getInstance().loadUnitsStats();
+		GameController.loadUnitsStats();
 		this.hitPoints = hp;
-		this.totalHitPoints = GameController.getInstance().getUnitLife(unitName);
-		this.damage = GameController.getInstance().getUnitAttack(unitName);
-		this.movement = GameController.getInstance().getUnitSpeed(unitName);
-		this.range = GameController.getInstance().getUnitRange(unitName);
+		this.totalHitPoints = GameController.getUnitLife(unitName);
+		this.damage = GameController.getUnitAttack(unitName);
+		this.movement = GameController.getUnitSpeed(unitName);
+		this.range = GameController.getUnitRange(unitName);
 		inDefensePosition = false;
 
 		if (render == null) {

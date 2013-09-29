@@ -35,7 +35,7 @@ public class UnitHelper {
 		render.walkAnim = ResourceHelper.getUnitSuperAnimation(unitName, "run");
 		render.dieAnim = ResourceHelper.getUnitSuperAnimation(unitName, "die");
 		render.dieAnim.setLooping(false);
-		render.shieldAnim = ResourceHelper.getSuperAnimation("Units/defensive_shield");
+		render.shieldAnim = ResourceHelper.getSuperAnimation("units/defensive_shield");
 		render.setState(UnitRender.STATE.idle);
 		return render;
 	}

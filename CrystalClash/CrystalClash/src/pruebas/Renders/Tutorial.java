@@ -61,7 +61,7 @@ public class Tutorial extends GameRender {
 
 		load();
 		readTutorialScript();
-		GameController.getInstance().loadUnitsStats();
+		GameController.loadUnitsStats();
 		setData();
 
 		world.getRender().setReadInput(false);
@@ -74,7 +74,7 @@ public class Tutorial extends GameRender {
 	}
 
 	public void load() {
-		TextureAtlas atlas = ResourceHelper.getTextureAtlas("InGame/options_bar.pack");
+		TextureAtlas atlas = ResourceHelper.getTextureAtlas("in_game/options_bar.pack");
 		Skin skin = new Skin(atlas);
 
 		tweenManager = new TweenManager();

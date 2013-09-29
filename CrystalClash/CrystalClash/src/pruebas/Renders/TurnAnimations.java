@@ -95,14 +95,14 @@ public class TurnAnimations extends GameRender {
 		tweenManager = new TweenManager();
 		Tween.registerAccessor(Unit.class, new UnitAccessor());
 
-		GameController.getInstance().loadUnitsStats();
+		GameController.loadUnitsStats();
 
-		Texture panelTexture = ResourceHelper.getTexture("TurnAnimation/games_list_background.png");
+		Texture panelTexture = ResourceHelper.getTexture("turn_animation/games_list_background.png");
 		panel = new Image(panelTexture);
 
-		victoryTexture = ResourceHelper.getTexture("TurnAnimation/Messages/banner_victory.png");
-		defeatTexture = ResourceHelper.getTexture("TurnAnimation/Messages/banner_defeat.png");
-		drawTexture = ResourceHelper.getTexture("TurnAnimation/Messages/banner_draw.png");
+		victoryTexture = ResourceHelper.getTexture("turn_animation/messages/banner_victory.png");
+		defeatTexture = ResourceHelper.getTexture("turn_animation/messages/banner_defeat.png");
+		drawTexture = ResourceHelper.getTexture("turn_animation/messages/banner_draw.png");
 
 		btnBackToMenu = new TextButton("Back to menu", ResourceHelper.getButtonStyle());
 		btnBackToMenu.addListener(new ClickListener() {

@@ -2,6 +2,7 @@ package pruebas.Renders.helpers;
 
 import java.util.Hashtable;
 
+import pruebas.Controllers.GameController;
 import pruebas.Util.FileUtil;
 import pruebas.Util.SuperAnimation;
 
@@ -33,9 +34,9 @@ public class ResourceHelper {
 	}
 
 	public static void slowLoad() {
-		atlas = getTextureAtlas("Buttons/buttons.pack", false);
+		atlas = getTextureAtlas("buttons/buttons.pack", false);
 		skin = new Skin(atlas);
-		font = new BitmapFont(Gdx.files.internal("data/Fonts/font.fnt"), false);
+		font = new BitmapFont(Gdx.files.internal("data/fonts/font.fnt"), false);
 
 		buttonStyle = new TextButtonStyle(
 				skin.getDrawable("button_orange"),
@@ -58,7 +59,7 @@ public class ResourceHelper {
 		if (texturesMap.containsKey(path)) {
 			return texturesMap.get(path);
 		} else {
-			Texture t = FileUtil.getTexture(String.format("data/Images/%s", path));
+			Texture t = FileUtil.getTexture(String.format("data/images/%s", path));
 			texturesMap.put(path, t);
 			return t;
 		}
@@ -68,7 +69,7 @@ public class ResourceHelper {
 		if (persistent) {
 			return getTexture(path);
 		} else {
-			return FileUtil.getTexture(String.format("data/Images/%s", path));
+			return FileUtil.getTexture(String.format("data/images/%s", path));
 		}
 	}
 
@@ -76,7 +77,7 @@ public class ResourceHelper {
 		if (textureAtlasMap.containsKey(path)) {
 			return textureAtlasMap.get(path);
 		} else {
-			TextureAtlas t = new TextureAtlas(String.format("data/Images/%s", path));
+			TextureAtlas t = new TextureAtlas(String.format("data/images/%s", path));
 			textureAtlasMap.put(path, t);
 			return t;
 		}
@@ -86,19 +87,19 @@ public class ResourceHelper {
 		if (persistent) {
 			return getTextureAtlas(path);
 		} else {
-			return new TextureAtlas(String.format("data/Images/%s", path));
+			return new TextureAtlas(String.format("data/images/%s", path));
 		}
 	}
 
 	public static SuperAnimation getUnitSuperAnimation(String unitName, String action) {
-		return getSuperAnimation(String.format("Units/%s/%s", unitName, action));
+		return getSuperAnimation(String.format("units/%s/%s/%s", GameController.getUnitElement(unitName), unitName, action));
 	}
 
 	public static SuperAnimation getSuperAnimation(String path) {
 		if (superAnimationsMap.containsKey(path)) {
 			return superAnimationsMap.get(path).clone();
 		} else {
-			SuperAnimation s = FileUtil.getSuperAnimation(String.format("data/Images/%s", path));
+			SuperAnimation s = FileUtil.getSuperAnimation(String.format("data/images/%s", path));
 			superAnimationsMap.put(path, s);
 			return s;
 		}

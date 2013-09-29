@@ -61,7 +61,7 @@ public class NormalGame extends GameRender {
 	}
 
 	public void load() {
-		GameController.getInstance().loadUnitsStats();
+		GameController.loadUnitsStats();
 		PathManager.load();
 
 		// lblAttack = new Label("150", new LabelStyle(ResourceHelper.getFont(),
@@ -402,9 +402,9 @@ public class NormalGame extends GameRender {
 						selectedCell = cell;
 
 						// TODO: popup
-						// lblAttack.setText(GameController.getInstance().getUnitAttack(selectedUnit.getName())
+						// lblAttack.setText(GameController.getUnitAttack(selectedUnit.getName())
 						// + "");
-						maxMoves = GameController.getInstance().getUnitSpeed(selectedUnit.getName());
+						maxMoves = GameController.getUnitSpeed(selectedUnit.getName());
 						// lblMoves.setText(maxMoves + "");
 
 						world.getRender().moveActionsRing(selectedCell);

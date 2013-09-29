@@ -38,7 +38,7 @@ public class ServerDriver {
 								.ProcessResponce(httpResponse);
 						if (values.getString("value").equals("ok")) {
 							JsonValue data = values.get("data");
-							GameController.getInstance().logInSuccess(data.getString("id"), email, password);
+							GameController.logInSuccess(data.getString("id"), email, password);
 						} else {
 							GameEngine.getInstance().logInError(values.getString("message"));
 						}
@@ -61,7 +61,7 @@ public class ServerDriver {
 						JsonValue values = ServerDriver.ProcessResponce(httpResponse);
 						if (values.getString("value").equals("ok")) {
 							JsonValue data = values.get("data");
-							GameController.getInstance().logInSuccess(data.getString("id"), email, password);
+							GameController.logInSuccess(data.getString("id"), email, password);
 						} else {
 							GameEngine.getInstance().logInError(values.getString("message"));
 						}

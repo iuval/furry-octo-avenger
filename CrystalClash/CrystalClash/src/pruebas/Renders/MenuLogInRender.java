@@ -97,7 +97,7 @@ public class MenuLogInRender extends MenuRender {
 	}
 
 	private void load() {
-		final Profile prof = GameController.getInstance().profileService.retrieveProfile();
+		final Profile prof = GameController.profileService.retrieveProfile();
 
 		charactersTexture = ResourceHelper.getTexture("Menu/menu_login_lobby_characters.png");
 		characters = new Image(charactersTexture);

@@ -227,7 +227,7 @@ public class GameEngine implements Screen {
 			@Override
 			public void onEvent(int type, BaseTween<?> source) {
 				loadInSplash();
-				if (!GameController.getInstance().willTryToLogin())
+				if (!GameController.willTryToLogin())
 					openMenuLogIn();
 			}
 		});
@@ -347,7 +347,7 @@ public class GameEngine implements Screen {
 	public void pause() {
 		if (state == GameState.InGame)
 			worldRender.pause();
-		GameController.getInstance().saveProfile();
+		GameController.saveProfile();
 	}
 
 	@Override
@@ -368,7 +368,7 @@ public class GameEngine implements Screen {
 
 	@Override
 	public void dispose() {
-		GameController.getInstance().saveProfile();
+		GameController.saveProfile();
 		batch.dispose();
 		stage.dispose();
 		menuLogInRender.dispose();

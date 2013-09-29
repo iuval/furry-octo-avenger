@@ -38,7 +38,7 @@ public class MenuLogIn {
 	public void sendLogIn(String email, String password) {
 		this.email = email;
 		this.password = password;
-		GameController.getInstance().logIn(email, password);
+		GameController.logIn(email, password);
 	}
 
 	public void serverError(String message) {

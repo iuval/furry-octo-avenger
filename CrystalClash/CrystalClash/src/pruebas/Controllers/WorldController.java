@@ -321,12 +321,12 @@ public class WorldController {
 			data = builder.toString();
 		}
 
-		ServerDriver.sendGameTurn(GameController.getInstance().getUser().getId(),
+		ServerDriver.sendGameTurn(GameController.getUser().getId(),
 				gameId, data, result);
 	}
 
 	public void surrenderCurrentGame() {
-		ServerDriver.sendGameTurn(GameController.getInstance().getUser().getId(),
+		ServerDriver.sendGameTurn(GameController.getUser().getId(),
 				gameId, "ended", "defeat");
 	}
 

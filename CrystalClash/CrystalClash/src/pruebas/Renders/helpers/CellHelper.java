@@ -29,7 +29,7 @@ public class CellHelper {
 	TextureRegion path;
 
 	public void load() {
-		atlas = ResourceHelper.getTextureAtlas("InGame/cells.pack");
+		atlas = ResourceHelper.getTextureAtlas("in_game/cells.pack");
 		Skin skin = new Skin(atlas);
 
 		none = skin.getRegion("none");
