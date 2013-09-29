@@ -199,8 +199,8 @@ public class GameEngine implements Screen {
 				if (worldRender == null) {
 					world = new WorldController(data);
 					worldRender = world.getRender();
-					worldRender.init();
 				}
+				worldRender.init();
 				setState(GameState.InTranstionMenuGamesAndGame);
 				Timeline.createSequence()
 						.push(Tween.to(background, ActorAccessor.ALPHA, CrystalClash.SLOW_ANIMATION_SPEED).target(0))
@@ -210,7 +210,7 @@ public class GameEngine implements Screen {
 								setState(GameState.InGame);
 							};
 						}).start(tweenManager);
-				
+
 				world.getRender().pushEnterAnimation(Timeline.createParallel()).start(tweenManager);
 			};
 		});
@@ -348,6 +348,7 @@ public class GameEngine implements Screen {
 	public void pause() {
 		if (state == GameState.InGame)
 			worldRender.pause();
+		GameController.getInstance().saveProfile();
 	}
 
 	@Override
@@ -368,6 +369,7 @@ public class GameEngine implements Screen {
 
 	@Override
 	public void dispose() {
+		GameController.getInstance().saveProfile();
 		batch.dispose();
 		stage.dispose();
 		menuLogInRender.dispose();
@@ -418,7 +420,7 @@ public class GameEngine implements Screen {
 	public static void start(Timeline t) {
 		t.start(tweenManager);
 	}
-	
+
 	public static void kill(Object o) {
 		tweenManager.killTarget(o);
 	}

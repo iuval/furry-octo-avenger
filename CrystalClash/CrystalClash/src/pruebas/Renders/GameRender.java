@@ -5,7 +5,6 @@ import aurelienribon.tweenengine.Timeline;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Group;
-import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
 public abstract class GameRender extends Group {
 	protected WorldController world;
@@ -39,12 +38,12 @@ public abstract class GameRender extends Group {
 	public abstract void pause();
 
 	public abstract void resume();
-	
-	public abstract ClickListener attackListener();
-	
-	public abstract ClickListener defendListener();
-	
-	public abstract ClickListener moveListener();
-	
-	public abstract ClickListener undoListener();
+
+	public abstract void onAttackAction();
+
+	public abstract void onDefendAction();
+
+	public abstract void onMoveAction();
+
+	public abstract void onUndoAction();
 }

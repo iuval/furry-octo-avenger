@@ -1,5 +1,7 @@
 package pruebas.Util;
 
+import pruebas.Audio.AudioManager;
+
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.Json.Serializable;
 import com.badlogic.gdx.utils.JsonValue;
@@ -31,7 +33,7 @@ public class Profile implements Serializable {
 	{
 		return userEmail;
 	}
-	
+
 	/**
 	 * Sets the user password.
 	 */
@@ -47,7 +49,7 @@ public class Profile implements Serializable {
 	{
 		return userPassword;
 	}
-	
+
 	/**
 	 * Sets the tutorial as done.
 	 */
@@ -55,7 +57,7 @@ public class Profile implements Serializable {
 	{
 		this.tutorialDone = true;
 	}
-	
+
 	/**
 	 * TODO: BORRAR, es solo pa probar
 	 */
@@ -71,7 +73,7 @@ public class Profile implements Serializable {
 	{
 		return tutorialDone;
 	}
-	
+
 	public boolean hasUserAndPassword() {
 		return userPassword != null
 				&& !userPassword.isEmpty()
@@ -87,6 +89,7 @@ public class Profile implements Serializable {
 		json.writeValue("user_email", userEmail);
 		json.writeValue("user_password", userPassword);
 		json.writeValue("tutorial_done", String.valueOf(tutorialDone));
+		json.writeValue("volume", String.valueOf(AudioManager.getVolume()));
 	}
 
 	@Override
@@ -98,11 +101,13 @@ public class Profile implements Serializable {
 		userPassword = json.readValue("user_password", String.class, jsonData);
 		if (userPassword == null)
 			userPassword = "";
-		
+
 		String s = json.readValue("tutorial_done", String.class, jsonData);
 		if (s == null)
 			tutorialDone = false;
 		else
 			tutorialDone = Boolean.parseBoolean(s);
+
+		AudioManager.setVolume(json.readValue("volume", Float.class, 0.5f, jsonData));
 	}
 }

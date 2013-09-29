@@ -101,21 +101,25 @@ public class GameController {
 		}
 		return false;
 	}
-	
+
 	public boolean isTutorialDone() {
 		Profile p = profileService.retrieveProfile();
 		return p.isTutorialDone();
 	}
-	
+
 	public void setTutorialDone() {
 		Profile p = profileService.retrieveProfile();
 		p.setTutorialDone();
 	}
-	
+
 	// TODO: Borrar, es solo para probar
 	public void setTutorialNotDone() {
 		Profile p = profileService.retrieveProfile();
 		p.setTutorialNotDone();
+	}
+
+	public void saveProfile() {
+		profileService.persist();
 	}
 
 	public void logIn(String email, String password) {
@@ -130,7 +134,6 @@ public class GameController {
 	public void logInSuccess(String userId, String email, String password) {
 		profileService.retrieveProfile().setUserEmail(email);
 		profileService.retrieveProfile().setUserPassword(password);
-		profileService.persist();
 		setUser(new User(userId, email, email));
 		GameEngine.getInstance().openMenuGames();
 	}

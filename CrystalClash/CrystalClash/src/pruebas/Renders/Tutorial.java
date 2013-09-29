@@ -435,39 +435,19 @@ public class Tutorial extends GameRender {
 	}
 
 	@Override
-	public ClickListener attackListener() {
-		return new ClickListener() {
-			@Override
-			public void clicked(InputEvent event, float x, float y) {
-			}
-		};
+	public void onAttackAction() {
 	}
 
 	@Override
-	public ClickListener defendListener() {
-		return new ClickListener() {
-			@Override
-			public void clicked(InputEvent event, float x, float y) {
-			}
-		};
+	public void onDefendAction() {
 	}
 
 	@Override
-	public ClickListener moveListener() {
-		return new ClickListener() {
-			@Override
-			public void clicked(InputEvent event, float x, float y) {
-			}
-		};
+	public void onMoveAction() {
 	}
 
 	@Override
-	public ClickListener undoListener() {
-		return new ClickListener() {
-			@Override
-			public void clicked(InputEvent event, float x, float y) {
-			}
-		};
+	public void onUndoAction() {
 	}
 
 	@Override
