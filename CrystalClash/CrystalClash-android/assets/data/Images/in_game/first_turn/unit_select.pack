@@ -1,7 +1,7 @@
 
 unit_select.png
 format: RGBA8888
-filter: Nearest,Nearest
+filter: Linear,Linear
 repeat: none
 darkness_background
   rotate: false
@@ -118,7 +118,7 @@ icon_speed
 
 unit_select2.png
 format: RGBA8888
-filter: Nearest,Nearest
+filter: Linear,Linear
 repeat: none
 fire_background
   rotate: false
@@ -137,7 +137,7 @@ water_background
 
 unit_select3.png
 format: RGBA8888
-filter: Nearest,Nearest
+filter: Linear,Linear
 repeat: none
 wind_background
   rotate: false

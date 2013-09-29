@@ -15,7 +15,7 @@ import aurelienribon.tweenengine.Tween;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
@@ -40,12 +40,12 @@ public class MenuLogInRender extends MenuRender {
 	private TextButton btnSignIn;
 	private TextButton btnConfirm;
 	private TextButton btnBack;
-	private Texture popupPanelTexture;
+	private TextureRegion popupPanelTexture;
 	private Image popupPanel;
-	private Texture textFieldTexture;
+	private TextureRegion textFieldTexture;
 	private Image textFieldEmail;
 	private Image textFieldPassword;
-	private Texture charactersTexture;
+	private TextureRegion charactersTexture;
 	private Image characters;
 
 	private Group groupInitialScreen;
@@ -99,7 +99,7 @@ public class MenuLogInRender extends MenuRender {
 	private void load() {
 		final Profile prof = GameController.profileService.retrieveProfile();
 
-		charactersTexture = ResourceHelper.getTexture("Menu/menu_login_lobby_characters.png");
+		charactersTexture = ResourceHelper.getTexture("Menu/menu_login_lobby_characters");
 		characters = new Image(charactersTexture);
 
 		btnLogIn = new TextButton("Log In", ResourceHelper.getOuterButtonStyle());
@@ -130,7 +130,7 @@ public class MenuLogInRender extends MenuRender {
 		groupInitialScreen.addActor(btnSignIn);
 		addActor(groupInitialScreen);
 
-		popupPanelTexture = ResourceHelper.getTexture("Menu/menu_login_popup.png");
+		popupPanelTexture = ResourceHelper.getTexture("Menu/menu_login_popup");
 		popupPanel = new Image(popupPanelTexture);
 		popupPanel.setSize(800, 500);
 		popupPanel.setPosition(0, 0);
@@ -141,7 +141,7 @@ public class MenuLogInRender extends MenuRender {
 				popupPanel.getWidth() / 2 - lblHeading.getWidth() / 2,
 				popupPanel.getTop() - 100);
 
-		textFieldTexture = ResourceHelper.getTexture("text_field_background.png");
+		textFieldTexture = ResourceHelper.getTexture("text_field_background");
 		textFieldEmail = new Image(textFieldTexture);
 		textFieldEmail.setPosition(50, popupPanel.getTop() - 200);
 		textFieldEmail.setSize(700, 50);
@@ -151,7 +151,7 @@ public class MenuLogInRender extends MenuRender {
 		textFieldPassword.setSize(700, 50);
 
 		Skin textFieldSkin = new Skin();
-		textFieldSkin.add("textFieldCursor", ResourceHelper.getTexture("Menu/cursor_1.png"));
+		textFieldSkin.add("textFieldCursor", ResourceHelper.getTexture("Menu/cursor_1"));
 
 		TextFieldStyle textFieldStyle = new TextFieldStyle();
 		textFieldStyle.font = ResourceHelper.getFont();
@@ -290,7 +290,6 @@ public class MenuLogInRender extends MenuRender {
 	}
 
 	public void dispose() {
-		popupPanelTexture.dispose();
 	}
 
 	// INPUT PROCESSOR--------------------------------------------

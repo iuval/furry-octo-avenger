@@ -13,10 +13,15 @@ public class Unit extends GameObject {
 	public static final int ELEMENT_WATER = 3;
 	public static final int ELEMENT_DARKNESS = 4;
 
+	public static final int TYPE_slayer = 0;
+	public static final int TYPE_TANK = 1;
+	public static final int TYPE_MAGE = 2;
+	public static final int TYPE_RANGED = 3;
+
 	private int hitPoints;
 	private int totalHitPoints;
 	private int damage;
-	private int movement;
+	private int speed;
 	private int range;
 
 	private String unitName;
@@ -39,7 +44,7 @@ public class Unit extends GameObject {
 		this.hitPoints = hp;
 		this.totalHitPoints = GameController.getUnitLife(unitName);
 		this.damage = GameController.getUnitAttack(unitName);
-		this.movement = GameController.getUnitSpeed(unitName);
+		this.speed = GameController.getUnitSpeed(unitName);
 		this.range = GameController.getUnitRange(unitName);
 		inDefensePosition = false;
 
@@ -113,6 +118,10 @@ public class Unit extends GameObject {
 
 	public int getDamage() {
 		return damage;
+	}
+
+	public int getSpeed() {
+		return speed;
 	}
 
 	public boolean isAlive() {

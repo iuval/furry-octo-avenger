@@ -1,5 +1,7 @@
 package pruebas.Renders;
 
+import java.util.Enumeration;
+
 import pruebas.Controllers.GameController;
 import pruebas.Controllers.WorldController;
 import pruebas.CrystalClash.CrystalClash;
@@ -9,6 +11,7 @@ import pruebas.Renders.UnitRender.FACING;
 import pruebas.Renders.helpers.ResourceHelper;
 import pruebas.Renders.helpers.ui.List;
 import pruebas.Renders.helpers.ui.TabContainer;
+import pruebas.Renders.helpers.ui.ToggleButton;
 import pruebas.Renders.helpers.ui.UnitListItem;
 import aurelienribon.tweenengine.Timeline;
 
@@ -52,76 +55,76 @@ public class SelectUnitsRender extends GameRender {
 			tabs.setPosition(0, 0);
 		}
 		tabs.setSize(CrystalClash.HEIGHT, CrystalClash.WIDTH / 2);
-		//
-		// // Fire
-		// List listFire = new List(skin.getRegion("fire_background"));
-		// listFire.setPaddingTop(160);
-		// ToggleButton headerFire = new ToggleButton();
-		// headerFire.setTextureRegion(skin.getRegion("fire_tab"),
-		// skin.getRegion("fire_tab_selected"));
-		// tabs.addTab(headerFire, listFire);
-		//
-		// // Wind
-		// List listWind = new List(skin.getRegion("wind_background"));
-		// listWind.setPaddingTop(160);
-		// ToggleButton headerWind = new ToggleButton();
-		// headerWind.setTextureRegion(skin.getRegion("wind_tab"),
-		// skin.getRegion("wind_tab_selected"));
-		// tabs.addTab(headerWind, listWind);
-		//
-		// // Earth
-		// List listEarth = new List(skin.getRegion("earth_background"));
-		// listEarth.setPaddingTop(160);
-		// ToggleButton headerEarth = new ToggleButton();
-		// headerEarth.setTextureRegion(skin.getRegion("earth_tab"),
-		// skin.getRegion("earth_tab_selected"));
-		// tabs.addTab(headerEarth, listEarth);
-		//
-		// // Water
-		// List listWater = new List(skin.getRegion("water_background"));
-		// listWater.setPaddingTop(160);
-		// ToggleButton headerWater = new ToggleButton();
-		// headerWater.setTextureRegion(skin.getRegion("water_tab"),
-		// skin.getRegion("water_tab_selected"));
-		// tabs.addTab(headerWater, listWater);
-		//
-		// // Darkness
-		// List listDarkness = new List(skin.getRegion("darkness_background"));
-		// listDarkness.setPaddingTop(160);
-		// ToggleButton headerDarkness = new ToggleButton();
-		// headerDarkness.setTextureRegion(skin.getRegion("darkness_tab"),
-		// skin.getRegion("darkness_tab_selected"));
-		// tabs.addTab(headerDarkness, listDarkness);
-		//
-		// // List items
-		// Enumeration<String> unit_names =
-		// GameController.getUnitNames();
-		// String unit_name;
-		// while (unit_names.hasMoreElements()) {
-		// unit_name = unit_names.nextElement();
-		// UnitListItem item = new UnitListItem(unit_name,
-		// portraitsAtlas.findRegion("portrait_" + unit_name), skin);
-		// switch (GameController.getUnitElement(unit_name)) {
-		// case Unit.ELEMENT_FIRE:
-		// listFire.addUnitItem(item);
-		// break;
-		// case Unit.ELEMENT_EARTH:
-		// listEarth.addUnitItem(item);
-		// break;
-		// case Unit.ELEMENT_WIND:
-		// listWind.addUnitItem(item);
-		// break;
-		// case Unit.ELEMENT_WATER:
-		// listWater.addUnitItem(item);
-		// break;
-		// case Unit.ELEMENT_DARKNESS:
-		// listDarkness.addUnitItem(item);
-		// break;
-		//
-		// default:
-		// break;
-		// }
-		// }
+
+		// Fire
+		List listFire = new List(skin.getRegion("fire_background"));
+		listFire.setPaddingTop(160);
+		ToggleButton headerFire = new ToggleButton();
+		headerFire.setTextureRegion(skin.getRegion("fire_tab"),
+				skin.getRegion("fire_tab_selected"));
+		tabs.addTab(headerFire, listFire);
+
+		// Wind
+		List listWind = new List(skin.getRegion("wind_background"));
+		listWind.setPaddingTop(160);
+		ToggleButton headerWind = new ToggleButton();
+		headerWind.setTextureRegion(skin.getRegion("wind_tab"),
+				skin.getRegion("wind_tab_selected"));
+		tabs.addTab(headerWind, listWind);
+
+		// Earth
+		List listEarth = new List(skin.getRegion("earth_background"));
+		listEarth.setPaddingTop(160);
+		ToggleButton headerEarth = new ToggleButton();
+		headerEarth.setTextureRegion(skin.getRegion("earth_tab"),
+				skin.getRegion("earth_tab_selected"));
+		tabs.addTab(headerEarth, listEarth);
+
+		// Water
+		List listWater = new List(skin.getRegion("water_background"));
+		listWater.setPaddingTop(160);
+		ToggleButton headerWater = new ToggleButton();
+		headerWater.setTextureRegion(skin.getRegion("water_tab"),
+				skin.getRegion("water_tab_selected"));
+		tabs.addTab(headerWater, listWater);
+
+		// Darkness
+		List listDarkness = new List(skin.getRegion("darkness_background"));
+		listDarkness.setPaddingTop(160);
+		ToggleButton headerDarkness = new ToggleButton();
+		headerDarkness.setTextureRegion(skin.getRegion("darkness_tab"),
+				skin.getRegion("darkness_tab_selected"));
+		tabs.addTab(headerDarkness, listDarkness);
+
+		// List items
+		Enumeration<String> unit_names =
+				GameController.getUnitNames();
+		String unit_name;
+		while (unit_names.hasMoreElements()) {
+			unit_name = unit_names.nextElement();
+			UnitListItem item = new UnitListItem(unit_name,
+					portraitsAtlas.findRegion("portrait_" + unit_name), skin);
+			switch (GameController.getUnitElementIndex(unit_name)) {
+			case Unit.ELEMENT_FIRE:
+				listFire.addUnitItem(item);
+				break;
+			case Unit.ELEMENT_EARTH:
+				listEarth.addUnitItem(item);
+				break;
+			case Unit.ELEMENT_WIND:
+				listWind.addUnitItem(item);
+				break;
+			case Unit.ELEMENT_WATER:
+				listWater.addUnitItem(item);
+				break;
+			case Unit.ELEMENT_DARKNESS:
+				listDarkness.addUnitItem(item);
+				break;
+
+			default:
+				break;
+			}
+		}
 	}
 
 	private boolean canPlaceUnit() {

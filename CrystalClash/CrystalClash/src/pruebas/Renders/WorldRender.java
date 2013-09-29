@@ -11,6 +11,7 @@ import pruebas.Renders.helpers.ResourceHelper;
 import pruebas.Renders.helpers.UnitHelper;
 import pruebas.Renders.helpers.ui.MessageBox;
 import pruebas.Renders.helpers.ui.MessageBoxCallback;
+import pruebas.Renders.helpers.ui.UnitStatsPopup;
 import aurelienribon.tweenengine.BaseTween;
 import aurelienribon.tweenengine.Timeline;
 import aurelienribon.tweenengine.Tween;
@@ -19,7 +20,6 @@ import aurelienribon.tweenengine.TweenEquations;
 
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputProcessor;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -35,7 +35,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 public class WorldRender extends Group implements InputProcessor {
 	public static CellHelper cellHelper;
 
-	private Texture txrTerrain;
+	private TextureRegion txrTerrain;
 	private Image imgTerrain;
 
 	private Group grpBtnSend;
@@ -66,6 +66,8 @@ public class WorldRender extends Group implements InputProcessor {
 	private float arrowY;
 	private float handX;
 	private float handY;
+
+	private UnitStatsPopup statsPopup;
 
 	private WorldController world;
 	GameRender gameRender;
@@ -145,7 +147,7 @@ public class WorldRender extends Group implements InputProcessor {
 		Skin skin = new Skin(atlas);
 
 		// Terrain
-		txrTerrain = ResourceHelper.getTexture("in_game/terrain.jpg");
+		txrTerrain = ResourceHelper.getTexture("in_game/terrain");
 		imgTerrain = new Image(txrTerrain);
 		imgTerrain.setSize(CrystalClash.WIDTH, CrystalClash.HEIGHT);
 
@@ -356,9 +358,9 @@ public class WorldRender extends Group implements InputProcessor {
 			}
 		});
 
-		arrow = new Image(ResourceHelper.getTexture("in_game/selector_arrow.png"));
+		arrow = new Image(ResourceHelper.getTexture("in_game/selector_arrow"));
 		arrow.setPosition(arrowX, arrowY);
-		pointingHand = new Image(ResourceHelper.getTexture("Tutorial/pointing_hand.png"));
+		pointingHand = new Image(ResourceHelper.getTexture("Tutorial/pointing_hand"));
 		pointingHand.setPosition(handX, handY);
 
 		grpActionBar = new Group();
@@ -374,6 +376,9 @@ public class WorldRender extends Group implements InputProcessor {
 		addActor(grpActionBar);
 		addActor(arrow);
 		addActor(pointingHand);
+
+		statsPopup = new UnitStatsPopup();
+		addActor(statsPopup);
 	}
 
 	private void back() {
@@ -410,7 +415,21 @@ public class WorldRender extends Group implements InputProcessor {
 						.target(grpBtnSend.getWidth() - 35).ease(TweenEquations.easeOutCirc)));
 	}
 
-	public void moveActionsRing(final Cell selectedCell) {
+	public void selectUnit(Unit unit) {
+		statsPopup.show(unit);
+	}
+
+	public void selectUnitInCell(Unit unit, Cell cell) {
+		statsPopup.show(unit);
+		moveActionsRing(cell);
+	}
+
+	public void deselectUnitInCell() {
+		statsPopup.hide();
+		hideActionsRing();
+	}
+
+	private void moveActionsRing(final Cell selectedCell) {
 		if (selectedCell.getUnit() != null) {
 			Timeline t = Timeline.createSequence();
 			pushFadeOutActionsRing(t);
@@ -448,7 +467,7 @@ public class WorldRender extends Group implements InputProcessor {
 		GameEngine.start(pushFadeOutActionsRing(Timeline.createSequence()));
 	}
 
-	public Timeline pushFadeOutActionsRing(Timeline t) {
+	private Timeline pushFadeOutActionsRing(Timeline t) {
 		return t.beginParallel()
 				.push(Tween.to(grpActionBar, ActorAccessor.ALPHA, CrystalClash.FAST_ANIMATION_SPEED)
 						.target(0))
@@ -465,7 +484,7 @@ public class WorldRender extends Group implements InputProcessor {
 				.end();
 	}
 
-	public void fadeInActionsRing() {
+	private void fadeInActionsRing() {
 		grpActionBar.setScale(0.8f, 0.8f);
 		GameEngine.start(Timeline.createParallel()
 				.push(Tween.to(grpActionBar, ActorAccessor.ALPHA, CrystalClash.FAST_ANIMATION_SPEED)

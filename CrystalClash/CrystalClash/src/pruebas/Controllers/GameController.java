@@ -64,8 +64,16 @@ public class GameController {
 		}
 	}
 
-	public static int getUnitLife(String unitName) {
+	public static int getUnitElementIndex(String unitName) {
+		return unitValues.get(unitName)[0];
+	}
+
+	public static int getUnitTypeIndex(String unitName) {
 		return unitValues.get(unitName)[1];
+	}
+
+	public static int getUnitLife(String unitName) {
+		return unitValues.get(unitName)[2];
 	}
 
 	public static int getUnitLifeInScale(String unitName) {
@@ -73,7 +81,7 @@ public class GameController {
 	}
 
 	public static int getUnitAttack(String unitName) {
-		return unitValues.get(unitName)[2];
+		return unitValues.get(unitName)[3];
 	}
 
 	public static int getUnitAttackInScale(String unitName) {
@@ -81,7 +89,7 @@ public class GameController {
 	}
 
 	public static int getUnitSpeed(String unitName) {
-		return unitValues.get(unitName)[3];
+		return unitValues.get(unitName)[4];
 	}
 
 	public static int getUnitSpeedInScale(String unitName) {
@@ -89,7 +97,7 @@ public class GameController {
 	}
 
 	public static int getUnitRange(String unitName) {
-		return unitValues.get(unitName)[4];
+		return unitValues.get(unitName)[5];
 	}
 
 	public static Enumeration<String> getUnitNames() {

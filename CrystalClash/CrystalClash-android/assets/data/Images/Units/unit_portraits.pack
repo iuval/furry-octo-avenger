@@ -24,7 +24,7 @@ portrait_fire_archer
   orig: 113, 114
   offset: 0, 0
   index: -1
-portrait_wind_assassin
+portrait_wind_slayer
   rotate: false
   xy: 339, 0
   size: 113, 114

@@ -14,9 +14,9 @@ public class FileUtil {
 	public static SuperAnimation getSuperAnimation(String base_file_name) {
 		UnitPrefReaderData data = UnitAnimPrefReader.load(base_file_name + ".pref");
 
-		Texture sheet = getTexture(base_file_name + ".png");
-		TextureRegion[][] tmp = TextureRegion.split(sheet, sheet.getWidth()
-				/ data.cols, sheet.getHeight() / data.rows);
+		TextureRegion sheet = getTexture(base_file_name + ".png");
+		TextureRegion[][] tmp = sheet.split(sheet.getRegionWidth()
+				/ data.cols, sheet.getRegionHeight() / data.rows);
 		TextureRegion[] frames = new TextureRegion[data.image_count];
 
 		int index = 0;
@@ -37,17 +37,17 @@ public class FileUtil {
 	public static TextureRegion getTextureRegion(String path) {
 		return new TextureRegion(getTexture(path));
 	}
-	
-	public static Texture getTexture(String path) {
+
+	public static TextureRegion getTexture(String path) {
 		Texture t = new Texture(Gdx.files.internal(path));
 		t.setFilter(TextureFilter.Linear, TextureFilter.Linear);
-		return t;
+		return new TextureRegion(t);
 	}
 
 	public static Music getMusic(String path) {
 		return Gdx.audio.newMusic(Gdx.files.internal(path));
 	}
-	
+
 	public static Sound getSound(String path) {
 		return Gdx.audio.newSound(Gdx.files.internal(path));
 	}

@@ -78,7 +78,7 @@ public class NormalGame extends GameRender {
 		setUnitAction(new AttackUnitAction(selectedUnit.isMelee()));
 		unitAction.origin = selectedCell;
 
-		world.getRender().hideActionsRing();
+		world.getRender().deselectUnitInCell();
 		showAbleToAttackCells();
 	}
 
@@ -193,7 +193,7 @@ public class NormalGame extends GameRender {
 		selectedCell = null;
 		unitAction = null;
 		actionType = UnitAction.UnitActionType.NONE;
-		world.getRender().hideActionsRing();
+		world.getRender().deselectUnitInCell();
 	}
 
 	private void undoAction() {
@@ -407,7 +407,7 @@ public class NormalGame extends GameRender {
 						maxMoves = GameController.getUnitSpeed(selectedUnit.getName());
 						// lblMoves.setText(maxMoves + "");
 
-						world.getRender().moveActionsRing(selectedCell);
+						world.getRender().selectUnitInCell(selectedUnit, selectedCell);
 					}
 				} else {
 					clearSelection();

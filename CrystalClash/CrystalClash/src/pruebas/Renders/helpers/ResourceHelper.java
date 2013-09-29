@@ -7,14 +7,15 @@ import pruebas.Util.FileUtil;
 import pruebas.Util.SuperAnimation;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
 
 public class ResourceHelper {
-	private static Hashtable<String, Texture> texturesMap;
+	private static Hashtable<String, TextureRegion> texturesMap;
 	private static Hashtable<String, TextureAtlas> textureAtlasMap;
 	private static Hashtable<String, SuperAnimation> superAnimationsMap;
 
@@ -28,7 +29,7 @@ public class ResourceHelper {
 	private static TextButtonStyle nextButtonStyle;
 
 	public static void fastLoad() {
-		texturesMap = new Hashtable<String, Texture>();
+		texturesMap = new Hashtable<String, TextureRegion>();
 		textureAtlasMap = new Hashtable<String, TextureAtlas>();
 		superAnimationsMap = new Hashtable<String, SuperAnimation>();
 	}
@@ -37,7 +38,7 @@ public class ResourceHelper {
 		atlas = getTextureAtlas("buttons/buttons.pack", false);
 		skin = new Skin(atlas);
 		font = new BitmapFont(Gdx.files.internal("data/fonts/font.fnt"), false);
-
+		font.getRegion().getTexture().setFilter(TextureFilter.Linear, TextureFilter.Linear);
 		buttonStyle = new TextButtonStyle(
 				skin.getDrawable("button_orange"),
 				skin.getDrawable("button_orange_pressed"), null, font);
@@ -55,21 +56,21 @@ public class ResourceHelper {
 				skin.getDrawable("next_button_pressed"), null, font);
 	}
 
-	public static Texture getTexture(String path) {
+	public static TextureRegion getTexture(String path) {
 		if (texturesMap.containsKey(path)) {
 			return texturesMap.get(path);
 		} else {
-			Texture t = FileUtil.getTexture(String.format("data/images/%s", path));
+			TextureRegion t = FileUtil.getTexture(String.format("data/images/%s.png", path));
 			texturesMap.put(path, t);
 			return t;
 		}
 	}
 
-	public static Texture getTexture(String path, boolean persistent) {
+	public static TextureRegion getTexture(String path, boolean persistent) {
 		if (persistent) {
 			return getTexture(path);
 		} else {
-			return FileUtil.getTexture(String.format("data/images/%s", path));
+			return FileUtil.getTexture(String.format("data/images/%s.png", path));
 		}
 	}
 

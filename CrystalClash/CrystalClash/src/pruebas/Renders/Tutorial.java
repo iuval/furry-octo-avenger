@@ -48,7 +48,7 @@ public class Tutorial extends GameRender {
 	private Array<String> messages;
 	private int messageIndex;
 
-	private Unit assassin;
+	private Unit slayer;
 	private Unit tank;
 	private Unit archer;
 	private MoveUnitAction tankMove;
@@ -80,11 +80,11 @@ public class Tutorial extends GameRender {
 		tweenManager = new TweenManager();
 		Tween.registerAccessor(Unit.class, new UnitAccessor());
 
-		fireArcher = new Image(ResourceHelper.getTexture("Tutorial/fire_archer.png"));
+		fireArcher = new Image(ResourceHelper.getTexture("Tutorial/fire_archer"));
 		fireArcher.scale(-0.55f);
 		fireArcher.setPosition(-fireArcher.getWidth(), 0);
 
-		balloon = new Image(ResourceHelper.getTexture("Tutorial/message_balloon.png"));
+		balloon = new Image(ResourceHelper.getTexture("Tutorial/message_balloon"));
 		balloon.scale(-0.1f);
 		balloon.setPosition(160 + fireArcher.getWidth() * 0.45f, -balloon.getHeight());
 
@@ -186,10 +186,10 @@ public class Tutorial extends GameRender {
 	}
 
 	private void setData() {
-		assassin = new Unit("wind_assassin", false);
-		world.addUnit(assassin, 300, 700);
-		assassin.setPosition(-100, 354);
-		assassin.getRender().setState(STATE.walking);
+		slayer = new Unit("wind_slayer", false);
+		world.addUnit(slayer, 300, 700);
+		slayer.setPosition(-100, 354);
+		slayer.getRender().setState(STATE.walking);
 
 		tank = new Unit("earth_tank", true);
 		tank.getRender().setFacing(FACING.left);
@@ -229,7 +229,7 @@ public class Tutorial extends GameRender {
 	private void action(int index) {
 		switch (index) {
 		case 2:
-			world.getRender().moveHand(assassin);
+			world.getRender().moveHand(slayer);
 			break;
 		case 3:
 			world.getRender().setReadInput(true);
@@ -285,7 +285,7 @@ public class Tutorial extends GameRender {
 			break;
 		case 18:
 			world.getRender().setReadInput(true);
-			world.getRender().moveHand(assassin);
+			world.getRender().moveHand(slayer);
 			// hideNext();
 			break;
 		case 22:
@@ -360,17 +360,17 @@ public class Tutorial extends GameRender {
 
 	@Override
 	public Timeline pushEnterAnimation(Timeline t) {
-		Timeline moveAssassin = Timeline.createParallel()
-				.push(Tween.to(assassin, UnitAccessor.X, CrystalClash.ENTRANCE_ANIMATION_SPEED)
+		Timeline moveslayer = Timeline.createParallel()
+				.push(Tween.to(slayer, UnitAccessor.X, CrystalClash.ENTRANCE_ANIMATION_SPEED)
 						.target(CellHelper.getUnitX(world.cellAt(300, 700))).ease(TweenEquations.easeNone))
-				.push(Tween.to(assassin, UnitAccessor.Y, CrystalClash.ENTRANCE_ANIMATION_SPEED)
+				.push(Tween.to(slayer, UnitAccessor.Y, CrystalClash.ENTRANCE_ANIMATION_SPEED)
 						.target(CellHelper.getUnitY(world.cellAt(300, 700))).ease(TweenEquations.easeNone))
 				.setCallbackTriggers(TweenCallback.COMPLETE)
 				.setCallback(new TweenCallback() {
 					@Override
 					public void onEvent(int type, BaseTween<?> source) {
 						// TODO Auto-generated method stub
-						assassin.getRender().setState(STATE.idle);
+						slayer.getRender().setState(STATE.idle);
 					}
 				});
 
@@ -388,7 +388,7 @@ public class Tutorial extends GameRender {
 					}
 				});
 
-		return t.push(moveAssassin).push(moveTank)
+		return t.push(moveslayer).push(moveTank)
 				.push(Tween.to(fireArcher, ActorAccessor.X, CrystalClash.ENTRANCE_ANIMATION_SPEED).target(200))
 				.push(Tween.to(balloon, ActorAccessor.Y, CrystalClash.ENTRANCE_ANIMATION_SPEED).target(0))
 				.push(Tween.to(btnNext, ActorAccessor.Y, CrystalClash.ENTRANCE_ANIMATION_SPEED).target(20))
