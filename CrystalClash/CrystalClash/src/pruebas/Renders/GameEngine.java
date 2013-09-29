@@ -87,14 +87,14 @@ public class GameEngine implements Screen {
 	private void loadInSplash() {
 		ResourceHelper.slowLoad();
 
-		txrBlackScreen = new Image(ResourceHelper.getTexture("data/Images/Menu/Loading/background.png"));
+		txrBlackScreen = new Image(ResourceHelper.getTexture("Menu/Loading/background.png"));
 		txrBlackScreen.setColor(txrBlackScreen.getColor().r, txrBlackScreen.getColor().g, txrBlackScreen.getColor().b, 0);
 		txrBlackScreen.setVisible(false);
 
 		MessageBox.build().setTweenManager(tweenManager);
 
 		// loadingTexture = new
-		// SuperAnimatedActor(FileUtil.getSuperAnimation("data/Images/Menu/Loading/loading"),
+		// SuperAnimatedActor(FileUtil.getSuperAnimation("Menu/Loading/loading"),
 		// true, FACING.right);
 		// hideLoading();
 
@@ -107,7 +107,7 @@ public class GameEngine implements Screen {
 	}
 
 	private void load() {
-		Texture backgroundTexture = ResourceHelper.getTexture("data/Images/Menu/menu_background.jpg");
+		Texture backgroundTexture = ResourceHelper.getTexture("Menu/menu_background.jpg");
 		background = new Image(backgroundTexture);
 
 		Timeline.createSequence()

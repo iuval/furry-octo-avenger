@@ -32,10 +32,10 @@ public class PathManager {
 		STEP_COUNT_PER_SEGMENT = 3;
 		BIG_DOT_TIME = 0.2f;
 
-		SMALL_DOT_MOVE_TEXTURE = ResourceHelper.getTexture("data/Images/InGame/ActionDots/movement_small_dot.png");
-		BIG_DOT_MOVE_TEXTURE = ResourceHelper.getTexture("data/Images/InGame/ActionDots/movement_big_dot.png");
-		SMALL_DOT_ATTACK_TEXTURE = ResourceHelper.getTexture("data/Images/InGame/ActionDots/attack_small_dot.png");
-		BIG_DOT_ATTACK_TEXTURE = ResourceHelper.getTexture("data/Images/InGame/ActionDots/attack_big_dot.png");
+		SMALL_DOT_MOVE_TEXTURE = ResourceHelper.getTexture("InGame/ActionDots/movement_small_dot.png");
+		BIG_DOT_MOVE_TEXTURE = ResourceHelper.getTexture("InGame/ActionDots/movement_big_dot.png");
+		SMALL_DOT_ATTACK_TEXTURE = ResourceHelper.getTexture("InGame/ActionDots/attack_small_dot.png");
+		BIG_DOT_ATTACK_TEXTURE = ResourceHelper.getTexture("InGame/ActionDots/attack_big_dot.png");
 	}
 
 	public void render(SpriteBatch batch, float dt, Path.TYPE type) {

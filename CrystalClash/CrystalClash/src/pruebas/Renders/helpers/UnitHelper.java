@@ -1,10 +1,6 @@
 package pruebas.Renders.helpers;
 
-import java.util.Hashtable;
-
 import pruebas.Renders.UnitRender;
-import pruebas.Util.FileUtil;
-import pruebas.Util.SuperAnimation;
 
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Pixmap.Format;
@@ -23,41 +19,25 @@ public class UnitHelper {
 	public static final int HP_BAR_Y = 130;
 	public static final int HP_BAR_X = 10;
 
-	public static Hashtable<String, SuperAnimation> renderMap;
 	public static Texture backHPBar;
 	public static Texture enemyHPBar;
 	public static Texture allyHPBar;
 
 	public static void init() {
-		renderMap = new Hashtable<String, SuperAnimation>();
 		backHPBar = createBar(0, 0, 0, 1, UnitHelper.HP_BAR_BACK_WIDTH, UnitHelper.HP_BAR_BACK_HEIGHT);
 	}
 
 	public static UnitRender getUnitRender(String unitName) {
 		UnitRender render = new UnitRender();
-		render.idleAnim = getUnitSuperAnimation(unitName, "idle");
+		render.idleAnim = ResourceHelper.getUnitSuperAnimation(unitName, "idle");
 		render.idleAnim.randomCurrentFrame();
-		render.fightAnim = getUnitSuperAnimation(unitName, "attack");
-		render.walkAnim = getUnitSuperAnimation(unitName, "run");
-		render.dieAnim = getUnitSuperAnimation(unitName, "die");
+		render.fightAnim = ResourceHelper.getUnitSuperAnimation(unitName, "attack");
+		render.walkAnim = ResourceHelper.getUnitSuperAnimation(unitName, "run");
+		render.dieAnim = ResourceHelper.getUnitSuperAnimation(unitName, "die");
 		render.dieAnim.setLooping(false);
-		render.shieldAnim = getSuperAnimation("data/Units/defensive_shield");
+		render.shieldAnim = ResourceHelper.getSuperAnimation("Units/defensive_shield");
 		render.setState(UnitRender.STATE.idle);
 		return render;
-	}
-
-	public static SuperAnimation getUnitSuperAnimation(String unitName, String action) {
-		return getSuperAnimation(String.format("data/Units/%s/%s", unitName, action));
-	}
-
-	public static SuperAnimation getSuperAnimation(String path) {
-		if (renderMap.containsKey(path)) {
-			return renderMap.get(path).clone();
-		} else {
-			SuperAnimation s = FileUtil.getSuperAnimation(path);
-			renderMap.put(path, s);
-			return s;
-		}
 	}
 
 	public static Texture getEnemyHPBar() {

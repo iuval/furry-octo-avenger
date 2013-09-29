@@ -12,8 +12,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 public class FileUtil {
 
 	public static SuperAnimation getSuperAnimation(String base_file_name) {
-		UnitPrefReaderData data = UnitAnimPrefReader.load(base_file_name
-				+ ".pref");
+		UnitPrefReaderData data = UnitAnimPrefReader.load(base_file_name + ".pref");
 
 		Texture sheet = getTexture(base_file_name + ".png");
 		TextureRegion[][] tmp = TextureRegion.split(sheet, sheet.getWidth()

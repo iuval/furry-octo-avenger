@@ -74,17 +74,17 @@ public class Tutorial extends GameRender {
 	}
 
 	public void load() {
-		TextureAtlas atlas = new TextureAtlas("data/Images/InGame/options_bar.pack");
+		TextureAtlas atlas = ResourceHelper.getTextureAtlas("InGame/options_bar.pack");
 		Skin skin = new Skin(atlas);
 
 		tweenManager = new TweenManager();
 		Tween.registerAccessor(Unit.class, new UnitAccessor());
 
-		fireArcher = new Image(ResourceHelper.getTexture("data/Images/Tutorial/fire_archer.png"));
+		fireArcher = new Image(ResourceHelper.getTexture("Tutorial/fire_archer.png"));
 		fireArcher.scale(-0.55f);
 		fireArcher.setPosition(-fireArcher.getWidth(), 0);
 
-		balloon = new Image(ResourceHelper.getTexture("data/Images/Tutorial/message_balloon.png"));
+		balloon = new Image(ResourceHelper.getTexture("Tutorial/message_balloon.png"));
 		balloon.scale(-0.1f);
 		balloon.setPosition(160 + fireArcher.getWidth() * 0.45f, -balloon.getHeight());
 

@@ -44,11 +44,9 @@ public class SelectUnitsRender extends GameRender {
 		resetUnitsCount();
 		addActor(lblUnitsCount);
 
-		TextureAtlas atlas = new TextureAtlas(
-				"data/Images/InGame/FirstTurn/unit_select.pack");
+		TextureAtlas atlas = ResourceHelper.getTextureAtlas("InGame/FirstTurn/unit_select.pack");
 		Skin skin = new Skin(atlas);
-		TextureAtlas portraitsAtlas = new TextureAtlas(
-				"data/Units/unit_portraits.pack");
+		TextureAtlas portraitsAtlas = ResourceHelper.getTextureAtlas("Units/unit_portraits.pack");
 
 		tabs = new TabContainer(null);
 		if (world.player == 1) {

@@ -13,7 +13,9 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
 
 public class ResourceHelper {
-	private static Hashtable<String, Texture> textureMap;
+	private static Hashtable<String, Texture> texturesMap;
+	private static Hashtable<String, TextureAtlas> textureAtlasMap;
+	private static Hashtable<String, SuperAnimation> superAnimationsMap;
 
 	private static TextureAtlas atlas;
 	private static Skin skin;
@@ -25,11 +27,13 @@ public class ResourceHelper {
 	private static TextButtonStyle nextButtonStyle;
 
 	public static void fastLoad() {
-		textureMap = new Hashtable<String, Texture>();
+		texturesMap = new Hashtable<String, Texture>();
+		textureAtlasMap = new Hashtable<String, TextureAtlas>();
+		superAnimationsMap = new Hashtable<String, SuperAnimation>();
 	}
 
 	public static void slowLoad() {
-		atlas = new TextureAtlas("data/Images/Buttons/buttons.pack");
+		atlas = getTextureAtlas("Buttons/buttons.pack", false);
 		skin = new Skin(atlas);
 		font = new BitmapFont(Gdx.files.internal("data/Fonts/font.fnt"), false);
 
@@ -40,7 +44,7 @@ public class ResourceHelper {
 		outerButtonStyle = new TextButtonStyle(
 				skin.getDrawable("outer_button_orange"),
 				skin.getDrawable("outer_button_orange_pressed"), null, font);
-		
+
 		outerSmallButtonStyle = new TextButtonStyle(
 				skin.getDrawable("outer_button_small"),
 				skin.getDrawable("outer_button_small_pressed"), null, font);
@@ -51,12 +55,52 @@ public class ResourceHelper {
 	}
 
 	public static Texture getTexture(String path) {
-		if (textureMap.containsKey(path)) {
-			return textureMap.get(path);
+		if (texturesMap.containsKey(path)) {
+			return texturesMap.get(path);
 		} else {
-			Texture t = FileUtil.getTexture(path);
-			textureMap.put(path, t);
+			Texture t = FileUtil.getTexture(String.format("data/Images/%s", path));
+			texturesMap.put(path, t);
 			return t;
+		}
+	}
+
+	public static Texture getTexture(String path, boolean persistent) {
+		if (persistent) {
+			return getTexture(path);
+		} else {
+			return FileUtil.getTexture(String.format("data/Images/%s", path));
+		}
+	}
+
+	public static TextureAtlas getTextureAtlas(String path) {
+		if (textureAtlasMap.containsKey(path)) {
+			return textureAtlasMap.get(path);
+		} else {
+			TextureAtlas t = new TextureAtlas(String.format("data/Images/%s", path));
+			textureAtlasMap.put(path, t);
+			return t;
+		}
+	}
+
+	public static TextureAtlas getTextureAtlas(String path, boolean persistent) {
+		if (persistent) {
+			return getTextureAtlas(path);
+		} else {
+			return new TextureAtlas(String.format("data/Images/%s", path));
+		}
+	}
+
+	public static SuperAnimation getUnitSuperAnimation(String unitName, String action) {
+		return getSuperAnimation(String.format("Units/%s/%s", unitName, action));
+	}
+
+	public static SuperAnimation getSuperAnimation(String path) {
+		if (superAnimationsMap.containsKey(path)) {
+			return superAnimationsMap.get(path).clone();
+		} else {
+			SuperAnimation s = FileUtil.getSuperAnimation(String.format("data/Images/%s", path));
+			superAnimationsMap.put(path, s);
+			return s;
 		}
 	}
 
@@ -75,11 +119,11 @@ public class ResourceHelper {
 	public static TextButtonStyle getOuterButtonStyle() {
 		return outerButtonStyle;
 	}
-	
+
 	public static TextButtonStyle getOuterSmallButtonStyle() {
 		return outerSmallButtonStyle;
 	}
-	
+
 	public static TextButtonStyle getNextButtonStyle() {
 		return nextButtonStyle;
 	}

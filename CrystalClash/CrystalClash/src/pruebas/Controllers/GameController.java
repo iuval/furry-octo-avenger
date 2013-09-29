@@ -46,8 +46,8 @@ public class GameController {
 
 	public void loadUnitsStats() {
 		if (!dataLoaded) {
-			unitValues = UnitStatsPrefReader.load("data/Units/stats.pref");
-			int[] shared = UnitSharedDataPrefReader.load("data/Units/shared.pref");
+			unitValues = UnitStatsPrefReader.load("data/Prefs/stats.pref");
+			int[] shared = UnitSharedDataPrefReader.load("data/Prefs/shared.pref");
 			unitMaxLife = shared[0];
 			unitMaxAttack = shared[1];
 			unitMaxSpeed = shared[2];

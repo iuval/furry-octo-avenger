@@ -141,11 +141,11 @@ public class WorldRender extends Group implements InputProcessor {
 	}
 
 	private void load() {
-		TextureAtlas atlas = new TextureAtlas("data/Images/InGame/options_bar.pack");
+		TextureAtlas atlas = ResourceHelper.getTextureAtlas("InGame/options_bar.pack");
 		Skin skin = new Skin(atlas);
 
 		// Terrain
-		txrTerrain = ResourceHelper.getTexture("data/Images/InGame/terrain.jpg");
+		txrTerrain = ResourceHelper.getTexture("InGame/terrain.jpg");
 		imgTerrain = new Image(txrTerrain);
 		imgTerrain.setSize(CrystalClash.WIDTH, CrystalClash.HEIGHT);
 
@@ -302,7 +302,7 @@ public class WorldRender extends Group implements InputProcessor {
 	}
 
 	private void finishLoad() {
-		TextureAtlas atlas = new TextureAtlas("data/Images/InGame/options_bar.pack");
+		TextureAtlas atlas = ResourceHelper.getTextureAtlas("InGame/options_bar.pack");
 		Skin skin = new Skin(atlas);
 
 		TextureRegion aux = skin.getRegion("actions_hud");
@@ -356,9 +356,9 @@ public class WorldRender extends Group implements InputProcessor {
 			}
 		});
 
-		arrow = new Image(ResourceHelper.getTexture("data/Images/InGame/selector_arrow.png"));
+		arrow = new Image(ResourceHelper.getTexture("InGame/selector_arrow.png"));
 		arrow.setPosition(arrowX, arrowY);
-		pointingHand = new Image(ResourceHelper.getTexture("data/Images/Tutorial/pointing_hand.png"));
+		pointingHand = new Image(ResourceHelper.getTexture("Tutorial/pointing_hand.png"));
 		pointingHand.setPosition(handX, handY);
 
 		grpActionBar = new Group();
@@ -610,7 +610,7 @@ public class WorldRender extends Group implements InputProcessor {
 	}
 
 	public void dispose() {
-	//	txrTerrain.dispose();
+		// txrTerrain.dispose();
 	}
 
 	public void init() {

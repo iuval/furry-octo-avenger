@@ -2,10 +2,10 @@ package pruebas.Renders;
 
 import pruebas.Accessors.ActorAccessor;
 import pruebas.CrystalClash.CrystalClash;
+import pruebas.Renders.helpers.ResourceHelper;
 import aurelienribon.tweenengine.Timeline;
 import aurelienribon.tweenengine.Tween;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 
@@ -23,18 +23,15 @@ public class SplashScreen extends MenuRender {
 	}
 
 	private void load() {
-		backgroundTexture = new Texture(
-				Gdx.files.internal("data/Images/Splash/splash_background.jpg"));
+		backgroundTexture = ResourceHelper.getTexture("Splash/splash_background.jpg", false);
 
 		background = new Image(backgroundTexture);
 		addActor(background);
 
 		background.setSize(CrystalClash.WIDTH, CrystalClash.HEIGHT);
 
-		crystalTexture = new Texture(
-				Gdx.files.internal("data/Images/Splash/splash_crystal.png"));
-		nameTexture = new Texture(
-				Gdx.files.internal("data/Images/Splash/splash_name.png"));
+		crystalTexture = ResourceHelper.getTexture("Splash/splash_crystal.png", false);
+		nameTexture = ResourceHelper.getTexture("Splash/splash_name.png", false);
 
 		crystal = new Image(crystalTexture);
 		addActor(crystal);
