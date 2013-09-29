@@ -200,7 +200,6 @@ public class GameEngine implements Screen {
 					world = new WorldController(data);
 					worldRender = world.getRender();
 				}
-				worldRender.init();
 				setState(GameState.InTranstionMenuGamesAndGame);
 				Timeline.createSequence()
 						.push(Tween.to(background, ActorAccessor.ALPHA, CrystalClash.SLOW_ANIMATION_SPEED).target(0))

@@ -36,8 +36,9 @@ public class WorldController {
 
 	public WorldController(JsonValue data) {
 		render = new WorldRender(this);
+		render.init();
 		init();
-		
+
 		if (data != null) {
 			this.player = data.getInt("player");
 			this.gameId = data.getString("game_id");
@@ -137,7 +138,7 @@ public class WorldController {
 		ArrayList<int[]> temp = new ArrayList<int[]>();
 		for (int h = 0; h < 6; h++) {
 			for (int v = 0; v < 9; v++) {
-				if(h == 5){
+				if (h == 5) {
 					int kk = 0;
 					System.out.print(kk);
 				}
