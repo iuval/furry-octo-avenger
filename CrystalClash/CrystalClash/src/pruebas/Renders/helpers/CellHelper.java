@@ -28,6 +28,8 @@ public class CellHelper {
 	TextureRegion attack_target_radius;
 	TextureRegion path;
 
+	TextureRegion selected;
+
 	public void load() {
 		atlas = ResourceHelper.getTextureAtlas("in_game/cells.pack");
 		Skin skin = new Skin(atlas);
@@ -38,6 +40,7 @@ public class CellHelper {
 		able_to_place = skin.getRegion("able_to_move");
 		attack_target_center = skin.getRegion("attack_target_center");
 		attack_target_radius = skin.getRegion("attack_target_center");
+		selected = ResourceHelper.getTexture("in_game/cell_selected");
 		path = skin.getRegion("path");
 	}
 
@@ -62,6 +65,9 @@ public class CellHelper {
 		}
 		if (cell.hasState(Cell.ATTACK_TARGET_RADIUS)) {
 			batch.draw(attack_target_radius, cell.getX(), cell.getY());
+		}
+		if (cell.hasState(Cell.SELECTED)) {
+			batch.draw(selected, cell.getX(), cell.getY());
 		}
 	}
 

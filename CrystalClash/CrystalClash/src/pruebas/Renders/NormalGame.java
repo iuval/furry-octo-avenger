@@ -63,22 +63,13 @@ public class NormalGame extends GameRender {
 	public void load() {
 		GameController.loadUnitsStats();
 		PathManager.load();
-
-		// lblAttack = new Label("150", new LabelStyle(ResourceHelper.getFont(),
-		// Color.WHITE));
-		// lblAttack.setPosition(btnAttack.getX() + (btnAttack.getWidth() / 2 -
-		// lblAttack.getWidth() / 2), btnAttack.getY() + 3);
-		// lblMoves = new Label("5", new LabelStyle(ResourceHelper.getFont(),
-		// Color.WHITE));
-		// lblMoves.setPosition(btnMove.getX() + (btnMove.getWidth() / 2 -
-		// lblMoves.getWidth() / 2), btnMove.getY() + 3);
 	}
 
 	public void onAttackAction() {
 		setUnitAction(new AttackUnitAction(selectedUnit.isMelee()));
 		unitAction.origin = selectedCell;
 
-		world.getRender().deselectUnitInCell();
+		world.getRender().deselectUnitInCell(selectedCell);
 		showAbleToAttackCells();
 	}
 
@@ -189,11 +180,11 @@ public class NormalGame extends GameRender {
 	}
 
 	private void clearSelection() {
+		world.getRender().deselectUnitInCell(selectedCell);
 		selectedUnit = null;
 		selectedCell = null;
 		unitAction = null;
 		actionType = UnitAction.UnitActionType.NONE;
-		world.getRender().deselectUnitInCell();
 	}
 
 	private void undoAction() {

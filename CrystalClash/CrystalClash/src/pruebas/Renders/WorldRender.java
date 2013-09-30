@@ -420,12 +420,17 @@ public class WorldRender extends Group implements InputProcessor {
 	}
 
 	public void selectUnitInCell(Unit unit, Cell cell) {
+		if (!unit.isEnemy()) {
+			moveActionsRing(cell);
+		}
+		cell.addState(Cell.SELECTED);
 		statsPopup.show(unit);
-		moveActionsRing(cell);
 	}
 
-	public void deselectUnitInCell() {
+	public void deselectUnitInCell(Cell cell) {
 		statsPopup.hide();
+		if (cell != null)
+			cell.removeState(Cell.SELECTED);
 		hideActionsRing();
 	}
 
@@ -437,23 +442,16 @@ public class WorldRender extends Group implements InputProcessor {
 				@Override
 				public void onEvent(int type, BaseTween<?> source) {
 					UnitActionType actionType = selectedCell.getAction().getActionType();
-					if (selectedCell.getUnit().isEnemy()) {
+					if (actionType.equals(UnitActionType.PLACE) || actionType.equals(UnitActionType.NONE)) {
+						btnAttack.setVisible(true);
+						btnDefense.setVisible(true);
+						btnMove.setVisible(true);
+						btnUndo.setVisible(false);
+					} else {
 						btnAttack.setVisible(false);
 						btnDefense.setVisible(false);
 						btnMove.setVisible(false);
-						btnUndo.setVisible(false);
-					} else {
-						if (actionType.equals(UnitActionType.PLACE) || actionType.equals(UnitActionType.NONE)) {
-							btnAttack.setVisible(true);
-							btnDefense.setVisible(true);
-							btnMove.setVisible(true);
-							btnUndo.setVisible(false);
-						} else {
-							btnAttack.setVisible(false);
-							btnDefense.setVisible(false);
-							btnMove.setVisible(false);
-							btnUndo.setVisible(true);
-						}
+						btnUndo.setVisible(true);
 					}
 					grpActionBar.setPosition(CellHelper.getCenterX(selectedCell) - actionsBar.getWidth() / 2, selectedCell.getY() - 80);
 					fadeInActionsRing();
