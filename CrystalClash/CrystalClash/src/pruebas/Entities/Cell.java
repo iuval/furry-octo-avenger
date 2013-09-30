@@ -13,6 +13,7 @@ public class Cell extends GameObject {
 	public final static int ATTACK_TARGET_CENTER = 1 << 3; // 8
 	public final static int ATTACK_TARGET_RADIUS = 1 << 4; // 16
 	public final static int MOVE_TARGET = 1 << 5; // 32
+	public final static int SELECTED = 1 << 6; // 64
 
 	private Unit unit;
 	private UnitAction action;

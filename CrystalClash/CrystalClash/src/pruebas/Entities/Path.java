@@ -2,8 +2,8 @@ package pruebas.Entities;
 
 import pruebas.Renders.helpers.PathManager;
 
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 
@@ -15,8 +15,8 @@ public class Path {
 	public float time;
 	public Array<Vector2> dots;
 	public int bigDotIndex;
-	private Texture smallBall;
-	private Texture bigBall;
+	private TextureRegion smallBall;
+	private TextureRegion bigBall;
 	private TYPE type;
 
 	public Path(TYPE type) {

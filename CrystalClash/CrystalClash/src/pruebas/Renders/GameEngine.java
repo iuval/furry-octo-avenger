@@ -25,8 +25,8 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -87,14 +87,14 @@ public class GameEngine implements Screen {
 	private void loadInSplash() {
 		ResourceHelper.slowLoad();
 
-		txrBlackScreen = new Image(ResourceHelper.getTexture("data/Images/Menu/Loading/background.png"));
+		txrBlackScreen = new Image(ResourceHelper.getTexture("Menu/Loading/background"));
 		txrBlackScreen.setColor(txrBlackScreen.getColor().r, txrBlackScreen.getColor().g, txrBlackScreen.getColor().b, 0);
 		txrBlackScreen.setVisible(false);
 
 		MessageBox.build().setTweenManager(tweenManager);
 
 		// loadingTexture = new
-		// SuperAnimatedActor(FileUtil.getSuperAnimation("data/Images/Menu/Loading/loading"),
+		// SuperAnimatedActor(FileUtil.getSuperAnimation("Menu/Loading/loading"),
 		// true, FACING.right);
 		// hideLoading();
 
@@ -107,7 +107,7 @@ public class GameEngine implements Screen {
 	}
 
 	private void load() {
-		Texture backgroundTexture = ResourceHelper.getTexture("data/Images/Menu/menu_background.jpg");
+		TextureRegion backgroundTexture = ResourceHelper.getTexture("Menu/menu_background");
 		background = new Image(backgroundTexture);
 
 		Timeline.createSequence()
@@ -227,7 +227,7 @@ public class GameEngine implements Screen {
 			@Override
 			public void onEvent(int type, BaseTween<?> source) {
 				loadInSplash();
-				if (!GameController.getInstance().willTryToLogin())
+				if (!GameController.willTryToLogin())
 					openMenuLogIn();
 			}
 		});
@@ -347,7 +347,7 @@ public class GameEngine implements Screen {
 	public void pause() {
 		if (state == GameState.InGame)
 			worldRender.pause();
-		GameController.getInstance().saveProfile();
+		GameController.saveProfile();
 	}
 
 	@Override
@@ -368,7 +368,7 @@ public class GameEngine implements Screen {
 
 	@Override
 	public void dispose() {
-		GameController.getInstance().saveProfile();
+		GameController.saveProfile();
 		batch.dispose();
 		stage.dispose();
 		menuLogInRender.dispose();

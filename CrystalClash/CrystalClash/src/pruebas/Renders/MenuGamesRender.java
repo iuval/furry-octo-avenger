@@ -126,8 +126,8 @@ public class MenuGamesRender extends MenuRender {
 	public Timeline pushEnterAnimation(Timeline t) {
 		Timeline aux = Timeline.createParallel();
 
-		if (GameController.getInstance().isTutorialDone()) {
-			lblHeading.setText("Welcome " + GameController.getInstance().getUser().getNick());
+		if (GameController.isTutorialDone()) {
+			lblHeading.setText("Welcome " + GameController.getUser().getNick());
 			aux.push(Tween.to(lblHeading, ActorAccessor.X, CrystalClash.SLOW_ANIMATION_SPEED)
 					.target(50))
 					.push(Tween.to(btnLogOut, ActorAccessor.Y, CrystalClash.SLOW_ANIMATION_SPEED)
@@ -157,7 +157,7 @@ public class MenuGamesRender extends MenuRender {
 	public Timeline pushExitAnimation(Timeline t) {
 		Timeline aux = Timeline.createParallel();
 
-		if (GameController.getInstance().isTutorialDone()) {
+		if (GameController.isTutorialDone()) {
 			aux.push(Tween.to(lblHeading, ActorAccessor.X, CrystalClash.SLOW_ANIMATION_SPEED)
 					.target(-CrystalClash.WIDTH))
 					.push(Tween.to(btnLogOut, ActorAccessor.Y, CrystalClash.SLOW_ANIMATION_SPEED)
@@ -181,11 +181,11 @@ public class MenuGamesRender extends MenuRender {
 
 	private void load() {
 		initSkin();
-		if (!GameController.getInstance().isTutorialDone()) {
+		if (!GameController.isTutorialDone()) {
 			loadTutorial();
 		}
 
-		lblHeading = new Label(String.format("Welcome %s", GameController.getInstance().getUser().getNick()),
+		lblHeading = new Label(String.format("Welcome %s", GameController.getUser().getNick()),
 				new LabelStyle(ResourceHelper.getFont(), Color.WHITE));
 		lblHeading.setPosition(-CrystalClash.WIDTH, CrystalClash.HEIGHT - 50);
 		addActor(lblHeading);
@@ -227,11 +227,11 @@ public class MenuGamesRender extends MenuRender {
 		scrollPane.setForceScroll(false, true);
 		scrollPane.invalidate();
 		addActor(scrollPane);
-		gamesImage = new Image(ResourceHelper.getTexture("data/Images/Menu/current_games_header.png"));
+		gamesImage = new Image(ResourceHelper.getTexture("Menu/current_games_header"));
 
 		list.addActor(gamesImage);
 
-		Image menuImage = new Image(ResourceHelper.getTexture("data/Images/Menu/new_games_header.png"));
+		Image menuImage = new Image(ResourceHelper.getTexture("Menu/new_games_header"));
 		list.addActor(menuImage);
 
 		Group inviteButtons = new Group();
@@ -254,25 +254,25 @@ public class MenuGamesRender extends MenuRender {
 
 		list.addActorAfter(menuImage, inviteButtons);
 
-		refreshMessagePull = new Image(ResourceHelper.getTexture("data/Images/Menu/RefreshList/refresh_message_pull.png"));
+		refreshMessagePull = new Image(ResourceHelper.getTexture("menu/refresh_list/refresh_message_pull"));
 		refreshMessagePull.setVisible(false);
 		addActor(refreshMessagePull);
 
-		refreshMessageRelease = new Image(ResourceHelper.getTexture("data/Images/Menu/RefreshList/refresh_message_release.png"));
+		refreshMessageRelease = new Image(ResourceHelper.getTexture("menu/refresh_list/refresh_message_release"));
 		refreshMessageRelease.setVisible(false);
 		addActor(refreshMessageRelease);
 	}
 
 	private void loadTutorial() {
-		fireArcher = new Image(ResourceHelper.getTexture("data/Images/Tutorial/fire_archer.png"));
+		fireArcher = new Image(ResourceHelper.getTexture("Tutorial/fire_archer"));
 		fireArcher.setPosition(-fireArcher.getWidth(), 0);
 		addActor(fireArcher);
 
-		balloon = new Image(ResourceHelper.getTexture("data/Images/Tutorial/message_balloon.png"));
+		balloon = new Image(ResourceHelper.getTexture("Tutorial/message_balloon"));
 		balloon.setPosition(CrystalClash.WIDTH / 3, CrystalClash.HEIGHT + balloon.getHeight());
 		addActor(balloon);
 
-		lblMessage = new Label("Welcome " + GameController.getInstance().getUser().getNick() +
+		lblMessage = new Label("Welcome " + GameController.getUser().getNick() +
 				"\n\nI can help you learn the\nbasics... Do you want me to?", new LabelStyle(ResourceHelper.getFont(), Color.BLACK));
 		lblMessage.setPosition(balloon.getX() + 145, balloon.getTop() - 65);
 		addActor(lblMessage);
@@ -321,7 +321,7 @@ public class MenuGamesRender extends MenuRender {
 
 	private void goToNormalMenu() {
 		loadGameList();
-		GameController.getInstance().setTutorialDone();
+		GameController.setTutorialDone();
 		GameEngine.start(Timeline.createParallel()
 				.push(Tween.to(fireArcher, ActorAccessor.X, CrystalClash.SLOW_ANIMATION_SPEED)
 						.target(-fireArcher.getWidth()))
@@ -397,12 +397,12 @@ public class MenuGamesRender extends MenuRender {
 
 		listItemSkin = new Skin();
 		listItemSkin.add("font", ResourceHelper.getFont());
-		listItemSkin.add("play_up", ResourceHelper.getTexture("data/Images/Menu/games_list_item_green.png"));
-		listItemSkin.add("play_down", ResourceHelper.getTexture("data/Images/Menu/games_list_item_green.png"));
-		listItemSkin.add("wait_up", ResourceHelper.getTexture("data/Images/Menu/games_list_item_red.png"));
-		listItemSkin.add("wait_down", ResourceHelper.getTexture("data/Images/Menu/games_list_item_red.png"));
-		listItemSkin.add("surrender_up", ResourceHelper.getTexture("data/Images/Menu/button_surrender.png"));
-		listItemSkin.add("surrender_down", ResourceHelper.getTexture("data/Images/Menu/button_surrender_pressed.png"));
+		listItemSkin.add("play_up", ResourceHelper.getTexture("Menu/games_list_item_green"));
+		listItemSkin.add("play_down", ResourceHelper.getTexture("Menu/games_list_item_green"));
+		listItemSkin.add("wait_up", ResourceHelper.getTexture("Menu/games_list_item_red"));
+		listItemSkin.add("wait_down", ResourceHelper.getTexture("Menu/games_list_item_red"));
+		listItemSkin.add("surrender_up", ResourceHelper.getTexture("Menu/button_surrender"));
+		listItemSkin.add("surrender_down", ResourceHelper.getTexture("Menu/button_surrender_pressed"));
 
 		TextButtonStyle playStyle = new TextButtonStyle();
 		playStyle.font = listItemSkin.getFont("font");

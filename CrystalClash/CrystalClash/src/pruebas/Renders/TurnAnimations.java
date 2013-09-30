@@ -27,8 +27,8 @@ import aurelienribon.tweenengine.TweenEquations;
 import aurelienribon.tweenengine.TweenManager;
 import aurelienribon.tweenengine.equations.Linear;
 
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
@@ -57,9 +57,9 @@ public class TurnAnimations extends GameRender {
 	private TextButton btnSkip;
 	private Group grpPanel;
 
-	private Texture victoryTexture;
-	private Texture defeatTexture;
-	private Texture drawTexture;
+	private TextureRegion victoryTexture;
+	private TextureRegion defeatTexture;
+	private TextureRegion drawTexture;
 	private Image gameEndMessage;
 	private TextButton btnBackToMenu;
 
@@ -95,14 +95,14 @@ public class TurnAnimations extends GameRender {
 		tweenManager = new TweenManager();
 		Tween.registerAccessor(Unit.class, new UnitAccessor());
 
-		GameController.getInstance().loadUnitsStats();
+		GameController.loadUnitsStats();
 
-		Texture panelTexture = ResourceHelper.getTexture("data/Images/TurnAnimation/games_list_background.png");
+		TextureRegion panelTexture = ResourceHelper.getTexture("turn_animation/games_list_background");
 		panel = new Image(panelTexture);
 
-		victoryTexture = ResourceHelper.getTexture("data/Images/TurnAnimation/Messages/banner_victory.png");
-		defeatTexture = ResourceHelper.getTexture("data/Images/TurnAnimation/Messages/banner_defeat.png");
-		drawTexture = ResourceHelper.getTexture("data/Images/TurnAnimation/Messages/banner_draw.png");
+		victoryTexture = ResourceHelper.getTexture("turn_animation/messages/banner_victory");
+		defeatTexture = ResourceHelper.getTexture("turn_animation/messages/banner_defeat");
+		drawTexture = ResourceHelper.getTexture("turn_animation/messages/banner_draw");
 
 		btnBackToMenu = new TextButton("Back to menu", ResourceHelper.getButtonStyle());
 		btnBackToMenu.addListener(new ClickListener() {
