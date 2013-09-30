@@ -58,7 +58,7 @@ public class AudioManager {
 		if (playing != null && playing.isPlaying())
 			playing.stop();
 
-		playing = getMusic(String.format("data/Audio/%s.mp3", name));
+		playing = getMusic(String.format("data/audio/%s.mp3", name));
 		playing.setVolume(volume);
 		playing.setLooping(true);
 		playing.play();
@@ -66,7 +66,7 @@ public class AudioManager {
 	}
 
 	public static void playSound(String name) {
-		getSound(String.format("data/SFX/%s.mp3", name)).play(1);
+		getSound(String.format("data/audio/sfx/%s.mp3", name)).play(1);
 	}
 
 	public static void volumeUp() {
@@ -116,7 +116,7 @@ public class AudioManager {
 	}
 
 	private static void fadeIn(String name) {
-		playing = getMusic(String.format("data/Audio/%s.mp3", name));
+		playing = getMusic(String.format("data/audio/%s.mp3", name));
 		playing.setVolume(0);
 		playing.setLooping(true);
 		playing.play();

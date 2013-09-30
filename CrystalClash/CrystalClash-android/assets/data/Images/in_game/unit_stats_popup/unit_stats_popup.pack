@@ -1,0 +1,61 @@
+
+unit_stats_popup.png
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+stats_popup
+  rotate: false
+  xy: 1, 1
+  size: 596, 57
+  orig: 596, 57
+  offset: 0, 0
+  index: -1
+icon_speed
+  rotate: false
+  xy: 598, 11
+  size: 46, 47
+  orig: 46, 47
+  offset: 0, 0
+  index: -1
+icon_attack
+  rotate: false
+  xy: 645, 20
+  size: 53, 38
+  orig: 53, 38
+  offset: 0, 0
+  index: -1
+icon_life
+  rotate: false
+  xy: 699, 12
+  size: 43, 46
+  orig: 43, 46
+  offset: 0, 0
+  index: -1
+icon_slayer
+  rotate: false
+  xy: 743, 17
+  size: 41, 41
+  orig: 41, 41
+  offset: 0, 0
+  index: -1
+icon_mage
+  rotate: false
+  xy: 785, 17
+  size: 41, 41
+  orig: 41, 41
+  offset: 0, 0
+  index: -1
+icon_ranged
+  rotate: false
+  xy: 827, 17
+  size: 41, 41
+  orig: 41, 41
+  offset: 0, 0
+  index: -1
+icon_tank
+  rotate: false
+  xy: 869, 17
+  size: 41, 41
+  orig: 41, 41
+  offset: 0, 0
+  index: -1

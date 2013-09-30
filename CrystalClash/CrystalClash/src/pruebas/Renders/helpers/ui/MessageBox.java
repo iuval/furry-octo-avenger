@@ -35,7 +35,7 @@ public class MessageBox extends Group {
 		setSize(800, CrystalClash.HEIGHT / 2);
 		setPosition(CrystalClash.WIDTH / 2 - 400, CrystalClash.HEIGHT + getHeight());
 
-		imgWindowBackground = new Image(ResourceHelper.getTexture("data/Images/Menu/games_list_background.png"));
+		imgWindowBackground = new Image(ResourceHelper.getTexture("Menu/games_list_background"));
 		imgWindowBackground.setSize(getWidth(), getHeight());
 		imgWindowBackground.setPosition(0, 0);
 		addActor(imgWindowBackground);

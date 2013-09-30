@@ -7,8 +7,8 @@ import pruebas.Entities.Path;
 import pruebas.Entities.Path.TYPE;
 import pruebas.Entities.Unit;
 
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 public class PathManager {
 
@@ -19,10 +19,10 @@ public class PathManager {
 
 	public static int STEP_COUNT_PER_SEGMENT;
 	public static float BIG_DOT_TIME;
-	public static Texture SMALL_DOT_MOVE_TEXTURE;
-	public static Texture BIG_DOT_MOVE_TEXTURE;
-	public static Texture SMALL_DOT_ATTACK_TEXTURE;
-	public static Texture BIG_DOT_ATTACK_TEXTURE;
+	public static TextureRegion SMALL_DOT_MOVE_TEXTURE;
+	public static TextureRegion BIG_DOT_MOVE_TEXTURE;
+	public static TextureRegion SMALL_DOT_ATTACK_TEXTURE;
+	public static TextureRegion BIG_DOT_ATTACK_TEXTURE;
 
 	public PathManager() {
 		paths = new Hashtable<Unit, Path>();
@@ -32,10 +32,10 @@ public class PathManager {
 		STEP_COUNT_PER_SEGMENT = 3;
 		BIG_DOT_TIME = 0.2f;
 
-		SMALL_DOT_MOVE_TEXTURE = ResourceHelper.getTexture("data/Images/InGame/ActionDots/movement_small_dot.png");
-		BIG_DOT_MOVE_TEXTURE = ResourceHelper.getTexture("data/Images/InGame/ActionDots/movement_big_dot.png");
-		SMALL_DOT_ATTACK_TEXTURE = ResourceHelper.getTexture("data/Images/InGame/ActionDots/attack_small_dot.png");
-		BIG_DOT_ATTACK_TEXTURE = ResourceHelper.getTexture("data/Images/InGame/ActionDots/attack_big_dot.png");
+		SMALL_DOT_MOVE_TEXTURE = ResourceHelper.getTexture("in_game/action_dots/movement_small_dot");
+		BIG_DOT_MOVE_TEXTURE = ResourceHelper.getTexture("in_game/action_dots/movement_big_dot");
+		SMALL_DOT_ATTACK_TEXTURE = ResourceHelper.getTexture("in_game/action_dots/attack_small_dot");
+		BIG_DOT_ATTACK_TEXTURE = ResourceHelper.getTexture("in_game/action_dots/attack_big_dot");
 	}
 
 	public void render(SpriteBatch batch, float dt, Path.TYPE type) {
@@ -142,7 +142,7 @@ public class PathManager {
 		}
 	}
 
-	public static Texture getSmallBallTexture(Path.TYPE type) {
+	public static TextureRegion getSmallBallTexture(Path.TYPE type) {
 		if (type == TYPE.ATTACK) {
 			return PathManager.SMALL_DOT_ATTACK_TEXTURE;
 		} else {
@@ -150,7 +150,7 @@ public class PathManager {
 		}
 	}
 
-	public static Texture getBigBallTexture(Path.TYPE type) {
+	public static TextureRegion getBigBallTexture(Path.TYPE type) {
 		if (type == TYPE.ATTACK) {
 			return PathManager.BIG_DOT_ATTACK_TEXTURE;
 		} else {

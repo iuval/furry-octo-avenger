@@ -37,18 +37,16 @@ public class SelectUnitsRender extends GameRender {
 	}
 
 	public void load() {
-		GameController.getInstance().loadUnitsStats();
+		GameController.loadUnitsStats();
 
 		lblUnitsCount = new Label("", new LabelStyle(ResourceHelper.getFont(), Color.WHITE));
 		lblUnitsCount.setPosition(CrystalClash.WIDTH - 100, 50);
 		resetUnitsCount();
 		addActor(lblUnitsCount);
 
-		TextureAtlas atlas = new TextureAtlas(
-				"data/Images/InGame/FirstTurn/unit_select.pack");
+		TextureAtlas atlas = ResourceHelper.getTextureAtlas("in_game/first_turn/unit_select.pack");
 		Skin skin = new Skin(atlas);
-		TextureAtlas portraitsAtlas = new TextureAtlas(
-				"data/Units/unit_portraits.pack");
+		TextureAtlas portraitsAtlas = ResourceHelper.getTextureAtlas("units/unit_portraits.pack");
 
 		tabs = new TabContainer(null);
 		if (world.player == 1) {
@@ -99,13 +97,14 @@ public class SelectUnitsRender extends GameRender {
 		tabs.addTab(headerDarkness, listDarkness);
 
 		// List items
-		Enumeration<String> unit_names = GameController.getInstance().getUnitNames();
+		Enumeration<String> unit_names =
+				GameController.getUnitNames();
 		String unit_name;
 		while (unit_names.hasMoreElements()) {
 			unit_name = unit_names.nextElement();
 			UnitListItem item = new UnitListItem(unit_name,
 					portraitsAtlas.findRegion("portrait_" + unit_name), skin);
-			switch (GameController.getInstance().getUnitElement(unit_name)) {
+			switch (GameController.getUnitElementIndex(unit_name)) {
 			case Unit.ELEMENT_FIRE:
 				listFire.addUnitItem(item);
 				break;
@@ -129,7 +128,7 @@ public class SelectUnitsRender extends GameRender {
 	}
 
 	private boolean canPlaceUnit() {
-		return unitCount < GameController.getInstance().unitsPerPlayer;
+		return unitCount < GameController.unitsPerPlayer;
 	}
 
 	private void changeUnitsCountBy(int du) {
@@ -143,7 +142,7 @@ public class SelectUnitsRender extends GameRender {
 	}
 
 	private void updateUnitsCountLabel() {
-		lblUnitsCount.setText(unitCount + "/" + GameController.getInstance().unitsPerPlayer);
+		lblUnitsCount.setText(unitCount + "/" + GameController.unitsPerPlayer);
 	}
 
 	@Override
