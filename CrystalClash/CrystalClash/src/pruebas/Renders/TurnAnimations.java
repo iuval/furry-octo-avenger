@@ -1,5 +1,6 @@
 package pruebas.Renders;
 
+import java.util.LinkedList;
 import java.util.Random;
 
 import pruebas.Accessors.ActorAccessor;
@@ -326,6 +327,8 @@ public class TurnAnimations extends GameRender {
 
 	private void moveUnits() {
 		Timeline t = Timeline.createSequence();
+		LinkedList<Cell[]> map = new LinkedList<Cell[]>();
+
 		final Timeline fallbackPathsTimeline = Timeline.createParallel();
 		t.beginParallel();
 		createPaths(player1Moves, 1, t, fallbackPathsTimeline);
@@ -346,6 +349,57 @@ public class TurnAnimations extends GameRender {
 			}
 		});
 		start(t);
+	}
+
+	private void checkMoveCollisions(LinkedList<Cell[]> queue) {
+		if (queue.isEmpty()) {
+			rangedAttackUnits();
+		} else {
+			Cell[] cells = queue.pollLast();
+
+			Cell cellAlly = cells[0];
+			Cell cellEnemy = cells[1];
+
+			TweenCallback backPathCallback = new TweenCallback() {
+				@Override
+				public void onEvent(int type, BaseTween<?> source) {
+					if (source.getUserData() != null) {
+						Cell cellFrom = (Cell) (((Object[]) source.getUserData())[0]);
+						Cell cellTo = (Cell) (((Object[]) source.getUserData())[1]);
+						repositionUnit(cellFrom, cellTo);
+						Unit unit = cellFrom.getUnit();
+						unit.getRender().setState(STATE.idle);
+					}
+				}
+			};
+			// Enemy fallback
+			MoveUnitAction enemyActions = ((MoveUnitAction) cellEnemy.getAction());
+			Timeline enemyPath = Timeline.createSequence()
+					.setCallbackTriggers(TweenCallback.BEGIN | TweenCallback.COMPLETE)
+					.setCallback(backPathCallback);
+			int j = enemyActions.moves.size - 2;
+			Cell cellReturnTo;
+			do {
+				cellReturnTo = enemyActions.moves.get(j);
+				pushUnitStep(enemyActions.origin.getUnit(), cellReturnTo, enemyPath);
+			} while (--j >= 0 && cellReturnTo.getUnit() != null);
+			enemyPath.setUserData(new Object[] { cellEnemy, cellReturnTo });
+
+			// Ally fallback
+			MoveUnitAction allyActions = ((MoveUnitAction) cellAlly.getAction());
+			Timeline allyPath = Timeline.createSequence()
+					.setCallbackTriggers(TweenCallback.BEGIN | TweenCallback.COMPLETE)
+					.setCallback(backPathCallback);
+			j = allyActions.moves.size - 2;
+			do {
+				cellReturnTo = allyActions.moves.get(j);
+				pushUnitStep(allyActions.origin.getUnit(), cellReturnTo, allyPath);
+			} while (--j >= 0 && cellReturnTo.getUnit() != null);
+			allyPath.setUserData(new Object[] { cellAlly, cellReturnTo });
+
+			//
+			start(Timeline.createParallel().push(enemyPath).push(allyPath));
+		}
 	}
 
 	private void createPaths(Array<MoveUnitAction> moveActions, final int player, Timeline pathsTimeline, final Timeline fallbackPathsTimeline) {
