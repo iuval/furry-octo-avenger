@@ -176,12 +176,21 @@ public class TurnAnimations extends GameRender {
 
 	private void placeUnits() {
 		Timeline t = Timeline.createSequence();
-		t.beginParallel();
-		createPlacingPath(player1Places, 1, t);
-		t.end();
-		t.beginParallel();
-		createPlacingPath(player2Places, 2, t);
-		t.end();
+		if (world.gameTurn % 2 == 0) {
+			t.beginParallel();
+			createPlacingPath(player1Places, t);
+			t.end();
+			t.beginParallel();
+			createPlacingPath(player2Places, t);
+			t.end();
+		} else {
+			t.beginParallel();
+			createPlacingPath(player2Places, t);
+			t.end();
+			t.beginParallel();
+			createPlacingPath(player1Places, t);
+			t.end();
+		}
 		t.setCallback(new TweenCallback() {
 			@Override
 			public void onEvent(int type, BaseTween<?> source) {
@@ -191,7 +200,7 @@ public class TurnAnimations extends GameRender {
 		start(t);
 	}
 
-	private void createPlacingPath(Array<PlaceUnitAction> placeActions, int player, Timeline placeTimeline) {
+	private void createPlacingPath(Array<PlaceUnitAction> placeActions, Timeline placeTimeline) {
 		PlaceUnitAction action = null;
 		for (int m = 0; m < placeActions.size; m++) {
 			action = placeActions.get(m);
@@ -225,12 +234,21 @@ public class TurnAnimations extends GameRender {
 
 	private void meleeAttackUnits() {
 		Timeline t = Timeline.createSequence();
-		t.beginParallel();
-		createMeleeAttacks(player1MeleeAttacks, 1, t);
-		t.end();
-		t.beginParallel();
-		createMeleeAttacks(player2MeleeAttacks, 2, t);
-		t.end();
+		if (world.gameTurn % 2 == 0) {
+			t.beginParallel();
+			createMeleeAttacks(player1MeleeAttacks, 1, t);
+			t.end();
+			t.beginParallel();
+			createMeleeAttacks(player2MeleeAttacks, 2, t);
+			t.end();
+		} else {
+			t.beginParallel();
+			createMeleeAttacks(player2MeleeAttacks, 2, t);
+			t.end();
+			t.beginParallel();
+			createMeleeAttacks(player1MeleeAttacks, 1, t);
+			t.end();
+		}
 		t.setCallback(new TweenCallback() {
 			@Override
 			public void onEvent(int type, BaseTween<?> source) {
@@ -327,12 +345,22 @@ public class TurnAnimations extends GameRender {
 	private void moveUnits() {
 		Timeline t = Timeline.createSequence();
 		final Timeline fallbackPathsTimeline = Timeline.createParallel();
-		t.beginParallel();
-		createPaths(player1Moves, 1, t, fallbackPathsTimeline);
-		t.end();
-		t.beginParallel();
-		createPaths(player2Moves, 2, t, fallbackPathsTimeline);
-		t.end();
+
+		if (world.gameTurn % 2 == 0) {
+			t.beginParallel();
+			createPaths(player1Moves, t, fallbackPathsTimeline);
+			t.end();
+			t.beginParallel();
+			createPaths(player2Moves, t, fallbackPathsTimeline);
+			t.end();
+		} else {
+			t.beginParallel();
+			createPaths(player2Moves, t, fallbackPathsTimeline);
+			t.end();
+			t.beginParallel();
+			createPaths(player1Moves, t, fallbackPathsTimeline);
+			t.end();
+		}
 		t.setCallback(new TweenCallback() {
 			@Override
 			public void onEvent(int type, BaseTween<?> source) {
@@ -348,7 +376,7 @@ public class TurnAnimations extends GameRender {
 		start(t);
 	}
 
-	private void createPaths(Array<MoveUnitAction> moveActions, final int player, Timeline pathsTimeline, final Timeline fallbackPathsTimeline) {
+	private void createPaths(Array<MoveUnitAction> moveActions, Timeline pathsTimeline, final Timeline fallbackPathsTimeline) {
 		MoveUnitAction action = null;
 		for (int m = 0; m < moveActions.size; m++) {
 			action = moveActions.get(m);
@@ -379,25 +407,31 @@ public class TurnAnimations extends GameRender {
 											}
 										}
 									};
-									// Enemy fallback
-									MoveUnitAction enemyActions = ((MoveUnitAction) cellTo.getAction());
-									Timeline enemyPath = Timeline.createSequence()
-											.setCallbackTriggers(TweenCallback.BEGIN | TweenCallback.COMPLETE)
-											.setCallback(backPathCallback);
-									int j = enemyActions.moves.size - 2;
+									// // Enemy fallback
+									// MoveUnitAction enemyActions =
+									// ((MoveUnitAction) cellTo.getAction());
+									// Timeline enemyPath =
+									// Timeline.createSequence()
+									// .setCallbackTriggers(TweenCallback.BEGIN
+									// | TweenCallback.COMPLETE)
+									// .setCallback(backPathCallback);
+									// int j = enemyActions.moves.size - 2;
+									// Cell cellReturnTo;
+									// do {
+									// cellReturnTo = enemyActions.moves.get(j);
+									// pushUnitStep(enemyActions.origin.getUnit(),
+									// cellReturnTo, enemyPath);
+									// } while (--j >= 0 &&
+									// cellReturnTo.getUnit() != null);
+									// enemyPath.setUserData(new Object[] {
+									// cellTo, cellReturnTo });
 									Cell cellReturnTo;
-									do {
-										cellReturnTo = enemyActions.moves.get(j);
-										pushUnitStep(enemyActions.origin.getUnit(), cellReturnTo, enemyPath);
-									} while (--j >= 0 && cellReturnTo.getUnit() != null);
-									enemyPath.setUserData(new Object[] { cellTo, cellReturnTo });
-
 									// Ally fallback
 									MoveUnitAction allyActions = ((MoveUnitAction) cellFrom.getAction());
 									Timeline allyPath = Timeline.createSequence()
 											.setCallbackTriggers(TweenCallback.BEGIN | TweenCallback.COMPLETE)
 											.setCallback(backPathCallback);
-									j = allyActions.moves.size - 2;
+									int j = allyActions.moves.size - 2;
 									do {
 										cellReturnTo = allyActions.moves.get(j);
 										pushUnitStep(allyActions.origin.getUnit(), cellReturnTo, allyPath);
@@ -405,7 +439,7 @@ public class TurnAnimations extends GameRender {
 									allyPath.setUserData(new Object[] { cellFrom, cellReturnTo });
 
 									//
-									fallbackPathsTimeline.push(enemyPath);
+									// fallbackPathsTimeline.push(enemyPath);
 									fallbackPathsTimeline.push(allyPath);
 								} else {
 									repositionUnit(cellFrom, cellTo);
@@ -465,12 +499,22 @@ public class TurnAnimations extends GameRender {
 
 	private void rangedAttackUnits() {
 		Timeline t = Timeline.createSequence();
-		t.beginParallel();
-		createRangedAttacks(player1RangedAttacks, 1, t);
-		t.end();
-		t.beginParallel();
-		createRangedAttacks(player2RangedAttacks, 2, t);
-		t.end();
+
+		if (world.gameTurn % 2 == 0) {
+			t.beginParallel();
+			createRangedAttacks(player1RangedAttacks, t);
+			t.end();
+			t.beginParallel();
+			createRangedAttacks(player2RangedAttacks, t);
+			t.end();
+		} else {
+			t.beginParallel();
+			createRangedAttacks(player2RangedAttacks, t);
+			t.end();
+			t.beginParallel();
+			createRangedAttacks(player1RangedAttacks, t);
+			t.end();
+		}
 		t.setCallback(new TweenCallback() {
 			@Override
 			public void onEvent(int type, BaseTween<?> source) {
@@ -481,8 +525,7 @@ public class TurnAnimations extends GameRender {
 		start(t);
 	}
 
-	private void createRangedAttacks(Array<AttackUnitAction> attackActions, int player,
-			Timeline attackTimeline) {
+	private void createRangedAttacks(Array<AttackUnitAction> attackActions, Timeline attackTimeline) {
 		AttackUnitAction action = null;
 		for (int m = 0; m < attackActions.size; m++) {
 			action = attackActions.get(m);
