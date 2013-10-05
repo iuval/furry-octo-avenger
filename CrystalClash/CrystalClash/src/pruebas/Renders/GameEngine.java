@@ -332,6 +332,7 @@ public class GameEngine implements Screen {
 					.show();
 		} else {
 			openMenuLogIn();
+			MessageBox.build().hide();
 		}
 	}
 
