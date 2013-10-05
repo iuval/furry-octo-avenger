@@ -100,6 +100,18 @@ public class ResourceHelper {
 		return getSuperAnimation(String.format("units/%s/%s/%s", GameController.getUnitElement(unitName), unitName, action));
 	}
 
+	public static TextureRegion getUnitProfile(String unitName) {
+		return getTexture(String.format("units/%s/%s/profile", GameController.getUnitElement(unitName), unitName));
+	}
+
+	public static TextureRegion getElementIcon(String elementName) {
+		return getTexture(String.format("units/%s/element", elementName));
+	}
+
+	public static TextureRegion getUnitElementIcon(String unitName) {
+		return getElementIcon(GameController.getUnitElement(unitName));
+	}
+
 	public static SuperAnimation getSuperAnimation(String path) {
 		if (superAnimationsMap.containsKey(path)) {
 			return superAnimationsMap.get(path).clone();

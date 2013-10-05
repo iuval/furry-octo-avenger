@@ -1,67 +1,37 @@
 package pruebas.Renders.helpers.ui;
 
-import pruebas.Controllers.GameController;
+import pruebas.Renders.helpers.ResourceHelper;
 
-import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.Group;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 
-public class UnitListItem extends Panel {
-	private Sprite unitItem;
-	private Sprite attackIcon;
-	private Sprite speedIcon;
-	private Sprite lifeIcon;
-	private Sprite attackValueIcon;
-	private Sprite speedValueIcon;
-	private Sprite lifeValueIcon;
+public class UnitListItem extends Group {
+	private Image sprBackground;
+	private Image sprProfile;
+	private Image sprElement;
+	private TextButton btnSplash;
 	private String unitName;
 
-	public UnitListItem(String unitName, TextureRegion icon, Skin skin) {
-		super(skin.getRegion("unit_stats_holder"));
+	public UnitListItem(String unitName) {
 		this.unitName = unitName;
 
-		this.setSize(background.getRegionHeight(), background.getRegionWidth());
-		this.unitItem = new Sprite(icon);
-		unitItem.setPosition(33, 33);
+		sprBackground = new Image(ResourceHelper.getTexture("in_game/first_turn/item_border"));
+		sprBackground.setPosition(0, 0);
+		addActor(sprBackground);
 
-		lifeIcon = new Sprite(skin.getRegion("icon_life"));
-		lifeIcon.setPosition(203, 90);
-		attackIcon = new Sprite(skin.getRegion("icon_attack"));
-		attackIcon.setPosition(333, 90);
-		speedIcon = new Sprite(skin.getRegion("icon_speed"));
-		speedIcon.setPosition(463, 90);
+		sprProfile = new Image(ResourceHelper.getUnitProfile(unitName));
+		sprProfile.setPosition(0, 0);
+		addActor(sprProfile);
 
-		lifeValueIcon = new Sprite(skin.getRegion("stat_bar_"
-				+ GameController.getUnitLifeInScale(unitName)));
-		lifeValueIcon.setPosition(170, 40);
-		attackValueIcon = new Sprite(skin.getRegion("stat_bar_"
-				+ GameController.getUnitAttackInScale(unitName)));
-		attackValueIcon.setPosition(300, 40);
-		speedValueIcon = new Sprite(skin.getRegion("stat_bar_"
-				+ GameController.getUnitSpeedInScale(unitName)));
-		speedValueIcon.setPosition(430, 40);
-	}
+		sprElement = new Image(ResourceHelper.getUnitElementIcon(unitName));
+		sprElement.setPosition(150, 200);
+		addActor(sprElement);
 
-	@Override
-	public void draw(float dt, SpriteBatch batch) {
-		super.draw(dt, batch);
-		batch.draw(this.unitItem, getX() + unitItem.getX(),
-				getY() + unitItem.getY());
-
-		batch.draw(this.lifeIcon, getX() + lifeIcon.getX(),
-				getY() + lifeIcon.getY());
-		batch.draw(this.attackIcon, getX() + attackIcon.getX(), getY()
-				+ attackIcon.getY());
-		batch.draw(this.speedIcon, getX() + speedIcon.getX(), getY()
-				+ speedIcon.getY());
-
-		batch.draw(this.lifeValueIcon, getX() + lifeValueIcon.getX(), getY()
-				+ lifeValueIcon.getY());
-		batch.draw(this.attackValueIcon, getX() + attackValueIcon.getX(),
-				getY() + attackValueIcon.getY());
-		batch.draw(this.speedValueIcon, getX() + speedValueIcon.getX(), getY()
-				+ speedValueIcon.getY());
+		btnSplash = new TextButton("View", ResourceHelper.getButtonStyle());
+		btnSplash.setSize(190, 50);
+		btnSplash.setPosition(4, 6);
+		addActor(btnSplash);
 	}
 
 	public String getUnitName() {

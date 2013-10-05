@@ -60,11 +60,11 @@ public class UnitStatsPopup extends Group {
 		LabelStyle style = new LabelStyle(ResourceHelper.getFont(), Color.WHITE);
 
 		// Element
-		txtFireIcon = new TextureRegionDrawable(ResourceHelper.getTexture("units/fire/icon_race_fire"));
-		txtEarthIcon = new TextureRegionDrawable(ResourceHelper.getTexture("units/earth/icon_race_earth"));
-		txtWaterIcon = new TextureRegionDrawable(ResourceHelper.getTexture("units/water/icon_race_water"));
-		txtWindIcon = new TextureRegionDrawable(ResourceHelper.getTexture("units/wind/icon_race_wind"));
-		txtDarkIcon = new TextureRegionDrawable(ResourceHelper.getTexture("units/darkness/icon_race_darkness"));
+		txtFireIcon = new TextureRegionDrawable(ResourceHelper.getElementIcon("fire"));
+		txtEarthIcon = new TextureRegionDrawable(ResourceHelper.getElementIcon("earth"));
+		txtWaterIcon = new TextureRegionDrawable(ResourceHelper.getElementIcon("water"));
+		txtWindIcon = new TextureRegionDrawable(ResourceHelper.getElementIcon("wind"));
+		txtDarkIcon = new TextureRegionDrawable(ResourceHelper.getElementIcon("darkness"));
 
 		imgElement = new Image(txtFireIcon);
 		imgElement.setPosition(0, 0);
