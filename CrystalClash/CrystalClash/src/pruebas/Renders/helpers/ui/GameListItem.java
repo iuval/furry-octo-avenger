@@ -33,18 +33,18 @@ public class GameListItem extends Group {
 		btnPlay.setBounds(0, 0, w, h);
 		addActor(btnPlay);
 
-
 		Label lblName = new Label(playerName, skin, "font", Color.WHITE);
 
-		lblName.setSize(160, 70);
-		lblName.setPosition(w / 2 - lblName.getWidth() / 2, 80);
+		lblName.setSize(550, 70);
+		lblName.setPosition(220, 60);
 		lblName.setAlignment(Align.center);
 		btnPlay.addActor(lblName);
 
 		Label labelvictories = new Label(victories + " victories", skin, "font", Color.GREEN);
 
-		labelvictories.setSize(160, 70);
-		labelvictories.setPosition(w / 2 - labelvictories.getWidth() / 2, 20);
+		labelvictories.setSize(550, 70);
+		;
+		labelvictories.setPosition(220, 10);
 		labelvictories.setAlignment(Align.center);
 		btnPlay.addActor(labelvictories);
 
