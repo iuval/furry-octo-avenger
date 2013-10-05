@@ -73,7 +73,6 @@ public class WorldRender extends Group implements InputProcessor {
 	GameRender gameRender;
 
 	private boolean readInput = true;
-	private boolean blockButtons = false;
 
 	private MessageBoxCallback backCallback;
 
@@ -241,7 +240,7 @@ public class WorldRender extends Group implements InputProcessor {
 		btnOptions.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
-				if (!blockButtons) {
+				if (!btnOptions.isDisabled()) {
 					hideMoreOptions = true;
 					showOptions();
 				}
@@ -278,7 +277,7 @@ public class WorldRender extends Group implements InputProcessor {
 		ClickListener sendListener = new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
-				if (!blockButtons) {
+				if (!btnSend.isDisabled()) {
 					if (gameRender.canSend()) {
 						setReadInput(false);
 						MessageBox.build()
@@ -424,7 +423,7 @@ public class WorldRender extends Group implements InputProcessor {
 			moveActionsRing(cell);
 		}
 		cell.addState(Cell.SELECTED);
-		statsPopup.show(unit);
+		showStatsPopup(unit);
 	}
 
 	public void deselectUnitInCell(Cell cell) {
@@ -433,8 +432,16 @@ public class WorldRender extends Group implements InputProcessor {
 			cell.removeState(Cell.SELECTED);
 		hideActionsRing();
 	}
+	
+	public void showStatsPopup(Unit u) {
+		statsPopup.show(u);
+	}
 
-	private void moveActionsRing(final Cell selectedCell) {
+	public void hideStatsPopup() {
+		statsPopup.hide();
+	}
+	
+	public void moveActionsRing(final Cell selectedCell) {
 		if (selectedCell.getUnit() != null) {
 			Timeline t = Timeline.createSequence();
 			pushFadeOutActionsRing(t);
@@ -727,10 +734,8 @@ public class WorldRender extends Group implements InputProcessor {
 	}
 
 	public void setBlockButtons(boolean block) {
-		blockButtons = block;
-
 		btnSend.setDisabled(block);
-		btnOptions.setDisabled(block);
+		btnOptions.setDisabled(true);
 	}
 
 	public void pause() {
