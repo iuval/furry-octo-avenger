@@ -142,10 +142,10 @@ public class GameController {
 		ServerDriver.sendLogIn(email, password);
 	}
 
-	public static void logInSuccess(String userId, String email, String password) {
+	public static void logInSuccess(String userId, String name, String email, String password) {
 		profileService.retrieveProfile().setUserEmail(email);
 		profileService.retrieveProfile().setUserPassword(password);
-		setUser(new User(userId, email, email));
+		setUser(new User(userId, email, name));
 		GameEngine.getInstance().openMenuGames();
 	}
 
