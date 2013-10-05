@@ -30,6 +30,7 @@ public class WorldController {
 
 	public int player;
 	private String gameId;
+	public int gameTurn;
 	public int enemiesCount;
 	public int allysCount;
 	public boolean gameEnded = false;
@@ -57,6 +58,7 @@ public class WorldController {
 	private void readData(JsonValue values) {
 		enemiesCount = 0;
 		allysCount = 0;
+		gameTurn = values.getInt("turn");
 		readPlayerData(values.get("data1"), 1);
 		readPlayerData(values.get("data2"), 2);
 	}
