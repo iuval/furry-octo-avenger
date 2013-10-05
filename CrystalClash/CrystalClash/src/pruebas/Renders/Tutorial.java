@@ -719,14 +719,11 @@ public class Tutorial extends GameRender {
 	public void pause() {
 		tweenManager.pause();
 	}
-	
-	
 
 	@Override
 	public void resume() {
 		tweenManager.resume();
 	}
-	
 
 	@Override
 	public void onAttackAction() {
@@ -744,7 +741,6 @@ public class Tutorial extends GameRender {
 		}
 	}
 	
-
 	@Override
 	public void onDefendAction() {
 		switch (messageIndex) {
@@ -758,7 +754,6 @@ public class Tutorial extends GameRender {
 		}
 	}
 	
-
 	@Override
 	public void onMoveAction() {
 		switch (messageIndex) {
@@ -770,19 +765,16 @@ public class Tutorial extends GameRender {
 		}
 	}
 	
-
 	@Override
 	public void onUndoAction() {
 	}
 	
-
 	@Override
 	public void renderInTheBack(float dt, SpriteBatch batch) {
 		tweenManager.update(dt);
 		paths.render(batch, dt, Path.TYPE.MOVE);
 	}
 	
-
 	@Override
 	public void renderInTheFront(float dt, SpriteBatch batch) {
 		paths.render(batch, dt, Path.TYPE.ATTACK);
