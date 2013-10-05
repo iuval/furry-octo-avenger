@@ -4,14 +4,14 @@ public class User {
 
 	private String id;
 	private String email;
-	private String nick;
+	private String name;
 
 	// Lista de partidas, Icon/Avatar
 
-	public User(String id, String email, String nick) {
+	public User(String id, String email, String name) {
 		this.id = id;
 		this.email = email;
-		this.nick = nick;
+		this.name = name;
 	}
 
 	public String getId() {
@@ -22,7 +22,7 @@ public class User {
 		return email;
 	}
 
-	public String getNick() {
-		return nick;
+	public String getName() {
+		return name;
 	}
 }

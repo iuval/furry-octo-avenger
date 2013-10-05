@@ -127,7 +127,7 @@ public class MenuGamesRender extends MenuRender {
 		Timeline aux = Timeline.createParallel();
 
 		if (GameController.isTutorialDone()) {
-			lblHeading.setText("Welcome " + GameController.getUser().getNick());
+			lblHeading.setText("Welcome " + GameController.getUser().getName());
 			aux.push(Tween.to(lblHeading, ActorAccessor.X, CrystalClash.SLOW_ANIMATION_SPEED)
 					.target(50))
 					.push(Tween.to(btnLogOut, ActorAccessor.Y, CrystalClash.SLOW_ANIMATION_SPEED)
@@ -185,7 +185,7 @@ public class MenuGamesRender extends MenuRender {
 			loadTutorial();
 		}
 
-		lblHeading = new Label(String.format("Welcome %s", GameController.getUser().getNick()),
+		lblHeading = new Label(String.format("Welcome %s", GameController.getUser().getName()),
 				new LabelStyle(ResourceHelper.getFont(), Color.WHITE));
 		lblHeading.setPosition(-CrystalClash.WIDTH, CrystalClash.HEIGHT - 50);
 		addActor(lblHeading);
@@ -272,7 +272,7 @@ public class MenuGamesRender extends MenuRender {
 		balloon.setPosition(CrystalClash.WIDTH / 3, CrystalClash.HEIGHT + balloon.getHeight());
 		addActor(balloon);
 
-		lblMessage = new Label("Welcome " + GameController.getUser().getNick() +
+		lblMessage = new Label("Welcome " + GameController.getUser().getName() +
 				"\n\nI can help you learn the\nbasics... Do you want me to?", new LabelStyle(ResourceHelper.getFont(), Color.BLACK));
 		lblMessage.setPosition(balloon.getX() + 145, balloon.getTop() - 65);
 		addActor(lblMessage);
