@@ -144,9 +144,8 @@ public class GameEngine implements Screen {
 			batch.begin();
 			worldRender.render(dt, batch);
 			batch.end();
-		} else {
-			stage.draw();
 		}
+		stage.draw();
 	}
 
 	private void setState(GameState newState) {

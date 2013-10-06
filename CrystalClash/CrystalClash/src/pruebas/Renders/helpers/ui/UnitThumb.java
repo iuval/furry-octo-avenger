@@ -5,18 +5,23 @@ import pruebas.Renders.helpers.ResourceHelper;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 
-public class UnitListItem extends Group {
+public class UnitThumb extends Group {
+	private TextureRegionDrawable txtSelected;
+	private TextureRegionDrawable txtNotSelected;
 	private Image sprBackground;
 	private Image sprProfile;
 	private Image sprElement;
 	private TextButton btnSplash;
 	private String unitName;
 
-	public UnitListItem(String unitName) {
+	public UnitThumb(String unitName) {
 		this.unitName = unitName;
 
-		sprBackground = new Image(ResourceHelper.getTexture("in_game/first_turn/item_border"));
+		txtSelected = new TextureRegionDrawable(ResourceHelper.getTexture("in_game/first_turn/item_border"));
+		txtNotSelected = new TextureRegionDrawable(ResourceHelper.getTexture("in_game/first_turn/item_border"));
+		sprBackground = new Image(txtNotSelected);
 		sprBackground.setPosition(0, 0);
 		addActor(sprBackground);
 
@@ -32,6 +37,14 @@ public class UnitListItem extends Group {
 		btnSplash.setSize(190, 50);
 		btnSplash.setPosition(4, 6);
 		addActor(btnSplash);
+	}
+
+	public void select() {
+		sprBackground.setDrawable(txtSelected);
+	}
+
+	public void desselect() {
+		sprBackground.setDrawable(txtNotSelected);
 	}
 
 	public String getUnitName() {

@@ -1,37 +1,22 @@
 package pruebas.Renders;
 
-import java.util.Enumeration;
-
 import pruebas.Audio.AudioManager;
 import pruebas.Controllers.GameController;
 import pruebas.Controllers.WorldController;
-import pruebas.CrystalClash.CrystalClash;
 import pruebas.Entities.Cell;
 import pruebas.Entities.Unit;
 import pruebas.Renders.UnitRender.FACING;
-import pruebas.Renders.helpers.ResourceHelper;
-import pruebas.Renders.helpers.ui.UnitListItem;
+import pruebas.Renders.helpers.ui.UnitThumbListener;
+import pruebas.Renders.helpers.ui.UnitThumbsList;
 import aurelienribon.tweenengine.Timeline;
 
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.ui.Image;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
-import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.utils.Align;
-import com.badlogic.gdx.scenes.scene2d.utils.DragListener;
 
 public class SelectUnitsRender extends GameRender {
 	private int unitCount = 0;
-	private Label lblUnitsCount;
+	private String selectedUnitName;
 	private Unit selectedUnit = null;
-	private Table table;
-	private Image imgTableBg;
-	private ScrollPane scrollPane;
+	private UnitThumbsList unitList;
 
 	public SelectUnitsRender(WorldController world) {
 		super(world);
@@ -44,63 +29,20 @@ public class SelectUnitsRender extends GameRender {
 	public void load() {
 		GameController.loadUnitsStats();
 
-		lblUnitsCount = new Label("", new LabelStyle(ResourceHelper.getFont(), Color.WHITE));
-		lblUnitsCount.setPosition(CrystalClash.WIDTH - 100, 50);
-		resetUnitsCount();
-		addActor(lblUnitsCount);
-
-		imgTableBg = new Image(ResourceHelper.getTexture("in_game/first_turn/list_background"));
-		addActor(imgTableBg);
-
-		table = new Table();
-		scrollPane = new ScrollPane(table);
-		if (world.player == 1) {
-			scrollPane.setPosition(CrystalClash.WIDTH / 2 + 10, 155);
-			imgTableBg.setPosition(CrystalClash.WIDTH / 2, 0);
-		} else {
-			scrollPane.setPosition(10, 155);
-			imgTableBg.setPosition(0, 0);
-		}
-		scrollPane.setScrollingDisabled(true, false);
-		scrollPane.setOverscroll(false, true);
-		scrollPane.setSmoothScrolling(true);
-		scrollPane.setForceScroll(false, true);
-		scrollPane.setSize(623, 685);
-		scrollPane.invalidate();
-		addActor(scrollPane);
-
-		table.align(Align.top | Align.left);
-		table.defaults().width(198).height(252).padLeft(6).padTop(6);
-		// List items
-		Enumeration<String> unit_names = GameController.getUnitNames();
-		String unit_name;
-		int i = 0;
-		while (unit_names.hasMoreElements()) {
-			if (i == 3) {
-				table.row();
-				i = 0;
-			}
-			i++;
-			unit_name = unit_names.nextElement();
-			UnitListItem item = new UnitListItem(unit_name);
-			item.addListener((new DragListener() {
-				public void touchDragged(InputEvent event, float x, float y, int pointer) {
-					if (selectedUnit == null) {
-						UnitListItem item = (UnitListItem) event.getListenerActor();
-						if (item != null) {
-							Unit u = new Unit(item.getUnitName(), false);
-							if (world.player == 2)
-								u.getRender().setFacing(FACING.left);
-							selectedUnit = u;
-							Vector2 v = GameEngine.getRealPosition(x, y);
-							selectedUnit.setPosition(v.x, v.y);
-						}
-					}
+		unitList = new UnitThumbsList(world.player, new UnitThumbListener() {
+			@Override
+			public void onClick(String unitName, boolean selected, float x, float y) {
+				if (selected) {
+					selectedUnitName = unitName;
+				} else {
+					selectedUnitName = null;
+					selectedUnit = null;
 				}
+			}
+		});
+		addActor(unitList);
 
-			}));
-			table.add(item);
-		}
+		resetUnitsCount();
 	}
 
 	private boolean canPlaceUnit() {
@@ -118,7 +60,7 @@ public class SelectUnitsRender extends GameRender {
 	}
 
 	private void updateUnitsCountLabel() {
-		lblUnitsCount.setText(unitCount + "/" + GameController.unitsPerPlayer);
+		unitList.setUnitCountText(unitCount + "/" + GameController.unitsPerPlayer);
 	}
 
 	@Override
@@ -128,22 +70,31 @@ public class SelectUnitsRender extends GameRender {
 	}
 
 	public boolean touchDown(float x, float y, int pointer, int button) {
-		if (selectedUnit == null) {
-			Cell cell = world.cellAt(x, y);
-			if (cell != null) {
-				selectedUnit = cell.getUnit();
-				if (selectedUnit != null) {
-					cell.removeUnit();
-					changeUnitsCountBy(-1);
+		Cell cell = world.cellAt(x, y);
+		if (cell != null) {
+			selectedUnit = cell.getUnit();
+			if (selectedUnit != null) {
+				cell.removeUnit();
+				changeUnitsCountBy(-1);
+			} else {
+				if (selectedUnitName != null && canPlaceUnit()) {
+					if (selectedUnit == null) {
+						Unit u = new Unit(selectedUnitName, false);
+						if (world.player == 2)
+							u.getRender().setFacing(FACING.left);
+						selectedUnit = u;
+					}
+					selectedUnit.setPosition(x, y);
 				}
 			}
 		}
+
 		return true;
 	}
 
 	public boolean touchUp(float x, float y, int pointer, int button) {
 		if (selectedUnit != null) {
-			if (canPlaceUnit() && world.placeUnit(x, y, selectedUnit)) {
+			if (world.placeUnit(x, y, selectedUnit)) {
 				changeUnitsCountBy(1);
 			}
 			selectedUnit = null;
@@ -152,7 +103,6 @@ public class SelectUnitsRender extends GameRender {
 	}
 
 	public boolean touchDragged(float x, float y, int pointer) {
-		System.out.println("touchdragged" + x + ", " + y);
 		if (selectedUnit != null) {
 			selectedUnit.setPosition(x, y);
 		}
