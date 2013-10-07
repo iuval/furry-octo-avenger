@@ -227,11 +227,11 @@ public class MenuGamesRender extends MenuRender {
 		scrollPane.setForceScroll(false, true);
 		scrollPane.invalidate();
 		addActor(scrollPane);
-		gamesImage = new Image(ResourceHelper.getTexture("Menu/current_games_header"));
+		gamesImage = new Image(ResourceHelper.getTexture("menu/current_games_header"));
 
 		list.addActor(gamesImage);
 
-		Image menuImage = new Image(ResourceHelper.getTexture("Menu/new_games_header"));
+		Image menuImage = new Image(ResourceHelper.getTexture("menu/new_games_header"));
 		list.addActor(menuImage);
 
 		Group inviteButtons = new Group();
@@ -264,11 +264,11 @@ public class MenuGamesRender extends MenuRender {
 	}
 
 	private void loadTutorial() {
-		fireArcher = new Image(ResourceHelper.getTexture("Tutorial/fire_archer"));
+		fireArcher = new Image(ResourceHelper.getTexture("tutorial/fire_archer"));
 		fireArcher.setPosition(-fireArcher.getWidth(), 0);
 		addActor(fireArcher);
 
-		balloon = new Image(ResourceHelper.getTexture("Tutorial/message_balloon"));
+		balloon = new Image(ResourceHelper.getTexture("tutorial/message_balloon"));
 		balloon.setPosition(CrystalClash.WIDTH / 3, CrystalClash.HEIGHT + balloon.getHeight());
 		addActor(balloon);
 
@@ -397,12 +397,12 @@ public class MenuGamesRender extends MenuRender {
 
 		listItemSkin = new Skin();
 		listItemSkin.add("font", ResourceHelper.getFont());
-		listItemSkin.add("play_up", ResourceHelper.getTexture("Menu/games_list_item_green"));
-		listItemSkin.add("play_down", ResourceHelper.getTexture("Menu/games_list_item_green"));
-		listItemSkin.add("wait_up", ResourceHelper.getTexture("Menu/games_list_item_red"));
-		listItemSkin.add("wait_down", ResourceHelper.getTexture("Menu/games_list_item_red"));
-		listItemSkin.add("surrender_up", ResourceHelper.getTexture("Menu/button_surrender"));
-		listItemSkin.add("surrender_down", ResourceHelper.getTexture("Menu/button_surrender_pressed"));
+		listItemSkin.add("play_up", ResourceHelper.getTexture("menu/games_list_item_green"));
+		listItemSkin.add("play_down", ResourceHelper.getTexture("menu/games_list_item_green"));
+		listItemSkin.add("wait_up", ResourceHelper.getTexture("menu/games_list_item_red"));
+		listItemSkin.add("wait_down", ResourceHelper.getTexture("menu/games_list_item_red"));
+		listItemSkin.add("surrender_up", ResourceHelper.getTexture("menu/button_surrender"));
+		listItemSkin.add("surrender_down", ResourceHelper.getTexture("menu/button_surrender_pressed"));
 
 		TextButtonStyle playStyle = new TextButtonStyle();
 		playStyle.font = listItemSkin.getFont("font");
