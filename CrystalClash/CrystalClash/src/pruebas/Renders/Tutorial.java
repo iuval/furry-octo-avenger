@@ -127,7 +127,8 @@ public class Tutorial extends GameRender {
 			@Override
 			public void onEvent(int type, Object data) {
 				if (type == MessageBoxCallback.YES) {
-
+					GameEngine.showLoading();
+					GameEngine.getInstance().openMenuGames();
 				} else {
 					MessageBox.build().hide();
 				}
