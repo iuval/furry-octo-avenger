@@ -58,7 +58,9 @@ public class AudioManager {
 	}
 
 	public static void playSound(String name) {
+		playing.setVolume(volume / 2);
 		getSound(String.format("data/audio/sfx/%s.mp3", name)).play(volume);
+		playing.setVolume(volume);
 	}
 
 	public static void volumeUp() {

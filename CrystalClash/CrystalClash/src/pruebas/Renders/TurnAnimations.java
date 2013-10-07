@@ -572,12 +572,15 @@ public class TurnAnimations extends GameRender {
 		if (world.allysCount == 0 && world.enemiesCount > 0) {
 			world.gameEnded = true;
 			gameEndMessage = new Image(defeatTexture);
+			AudioManager.playSound("defeat");
 		} else if (world.enemiesCount == 0 && world.allysCount > 0) {
 			world.gameEnded = true;
 			gameEndMessage = new Image(victoryTexture);
+			AudioManager.playSound("victory");
 		} else if (world.allysCount == 0 && world.enemiesCount == 0) {
 			world.gameEnded = true;
 			gameEndMessage = new Image(drawTexture);
+			AudioManager.playSound("draw");
 		}
 		if (world.gameEnded) {
 			grpPanel.remove();
