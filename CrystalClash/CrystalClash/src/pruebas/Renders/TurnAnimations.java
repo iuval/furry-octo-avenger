@@ -4,6 +4,7 @@ import java.util.Random;
 
 import pruebas.Accessors.ActorAccessor;
 import pruebas.Accessors.UnitAccessor;
+import pruebas.Audio.AudioManager;
 import pruebas.Controllers.GameController;
 import pruebas.Controllers.WorldController;
 import pruebas.CrystalClash.CrystalClash;
@@ -707,6 +708,7 @@ public class TurnAnimations extends GameRender {
 
 	@Override
 	public Timeline pushEnterAnimation(Timeline t) {
+		AudioManager.playMusic("some thingy");
 		return t;
 	}
 

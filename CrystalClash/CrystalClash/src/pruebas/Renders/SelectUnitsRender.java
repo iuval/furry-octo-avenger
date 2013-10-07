@@ -2,6 +2,7 @@ package pruebas.Renders;
 
 import java.util.Enumeration;
 
+import pruebas.Audio.AudioManager;
 import pruebas.Controllers.GameController;
 import pruebas.Controllers.WorldController;
 import pruebas.CrystalClash.CrystalClash;
@@ -202,7 +203,7 @@ public class SelectUnitsRender extends GameRender {
 
 	@Override
 	public Timeline pushEnterAnimation(Timeline t) {
-		// TODO Auto-generated method stub
+		AudioManager.playMusic("choose your destiny");
 		return t;
 	}
 
