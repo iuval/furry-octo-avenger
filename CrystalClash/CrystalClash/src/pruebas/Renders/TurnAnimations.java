@@ -93,7 +93,6 @@ public class TurnAnimations extends GameRender {
 
 	public void load() {
 		tweenManager = new TweenManager();
-		Tween.registerAccessor(Unit.class, new UnitAccessor());
 
 		GameController.loadUnitsStats();
 
