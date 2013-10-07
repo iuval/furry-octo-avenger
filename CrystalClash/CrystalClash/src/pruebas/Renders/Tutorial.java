@@ -80,11 +80,11 @@ public class Tutorial extends GameRender {
 		tweenManager = new TweenManager();
 		Tween.registerAccessor(Unit.class, new UnitAccessor());
 
-		fireArcher = new Image(ResourceHelper.getTexture("Tutorial/fire_archer"));
+		fireArcher = new Image(ResourceHelper.getTexture("tutorial/fire_archer"));
 		fireArcher.scale(-0.55f);
 		fireArcher.setPosition(-fireArcher.getWidth(), 0);
 
-		balloon = new Image(ResourceHelper.getTexture("Tutorial/message_balloon"));
+		balloon = new Image(ResourceHelper.getTexture("tutorial/message_balloon"));
 		balloon.scale(-0.1f);
 		balloon.setPosition(160 + fireArcher.getWidth() * 0.45f, -balloon.getHeight());
 

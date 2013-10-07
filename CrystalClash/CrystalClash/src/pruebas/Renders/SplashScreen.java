@@ -23,15 +23,15 @@ public class SplashScreen extends MenuRender {
 	}
 
 	private void load() {
-		backgroundTexture = ResourceHelper.getTexture("Splash/splash_background", false);
+		backgroundTexture = ResourceHelper.getTexture("splash/splash_background", false);
 
 		background = new Image(backgroundTexture);
 		addActor(background);
 
 		background.setSize(CrystalClash.WIDTH, CrystalClash.HEIGHT);
 
-		crystalTexture = ResourceHelper.getTexture("Splash/splash_crystal", false);
-		nameTexture = ResourceHelper.getTexture("Splash/splash_name", false);
+		crystalTexture = ResourceHelper.getTexture("splash/splash_crystal", false);
+		nameTexture = ResourceHelper.getTexture("splash/splash_name", false);
 
 		crystal = new Image(crystalTexture);
 		addActor(crystal);

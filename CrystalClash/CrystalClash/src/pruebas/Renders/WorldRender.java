@@ -360,7 +360,7 @@ public class WorldRender extends Group implements InputProcessor {
 
 		arrow = new Image(ResourceHelper.getTexture("in_game/selector_arrow"));
 		arrow.setPosition(arrowX, arrowY);
-		pointingHand = new Image(ResourceHelper.getTexture("Tutorial/pointing_hand"));
+		pointingHand = new Image(ResourceHelper.getTexture("tutorial/pointing_hand"));
 		pointingHand.setPosition(handX, handY);
 
 		grpActionBar = new Group();

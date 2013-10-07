@@ -99,7 +99,7 @@ public class MenuLogInRender extends MenuRender {
 	private void load() {
 		final Profile prof = GameController.profileService.retrieveProfile();
 
-		charactersTexture = ResourceHelper.getTexture("Menu/menu_login_lobby_characters");
+		charactersTexture = ResourceHelper.getTexture("menu/menu_login_lobby_characters");
 		characters = new Image(charactersTexture);
 
 		btnLogIn = new TextButton("Log In", ResourceHelper.getOuterButtonStyle());
@@ -130,7 +130,7 @@ public class MenuLogInRender extends MenuRender {
 		groupInitialScreen.addActor(btnSignIn);
 		addActor(groupInitialScreen);
 
-		popupPanelTexture = ResourceHelper.getTexture("Menu/menu_login_popup");
+		popupPanelTexture = ResourceHelper.getTexture("menu/menu_login_popup");
 		popupPanel = new Image(popupPanelTexture);
 		popupPanel.setSize(800, 500);
 		popupPanel.setPosition(0, 0);
@@ -151,7 +151,7 @@ public class MenuLogInRender extends MenuRender {
 		textFieldPassword.setSize(700, 50);
 
 		Skin textFieldSkin = new Skin();
-		textFieldSkin.add("textFieldCursor", ResourceHelper.getTexture("Menu/cursor_1"));
+		textFieldSkin.add("textFieldCursor", ResourceHelper.getTexture("menu/cursor_1"));
 
 		TextFieldStyle textFieldStyle = new TextFieldStyle();
 		textFieldStyle.font = ResourceHelper.getFont();
