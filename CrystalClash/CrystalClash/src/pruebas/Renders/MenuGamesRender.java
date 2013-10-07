@@ -283,9 +283,9 @@ public class MenuGamesRender extends MenuRender {
 		btnPlayTutorial.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
-				System.out.println("Do Toturial");
 				lblMessage.setText("");
-				controller.openTutorial();
+				controller.openTutorial();				
+				GameController.setTutorialDone();
 			}
 		});
 		addActor(btnPlayTutorial);
