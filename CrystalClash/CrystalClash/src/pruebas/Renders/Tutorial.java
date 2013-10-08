@@ -8,7 +8,6 @@ import pruebas.CrystalClash.CrystalClash;
 import pruebas.Entities.Cell;
 import pruebas.Entities.Path;
 import pruebas.Entities.Unit;
-import pruebas.Entities.helpers.AttackUnitAction;
 import pruebas.Entities.helpers.MoveUnitAction;
 import pruebas.Entities.helpers.NoneUnitAction;
 import pruebas.Renders.UnitRender.FACING;
@@ -56,7 +55,7 @@ public class Tutorial extends GameRender {
 	private Unit tank;
 	private Unit archer;
 	private MoveUnitAction slayerMove;
-	
+
 	private Unit selectedUnit;
 	private boolean archerAttacked;
 	private boolean slayerAttacked;
@@ -65,7 +64,7 @@ public class Tutorial extends GameRender {
 	private boolean actionRingVisible;
 	private boolean blockButtons;
 	private int movePathX;
-	
+
 	private PathManager paths;
 
 	public Tutorial(WorldController world) {
@@ -85,12 +84,12 @@ public class Tutorial extends GameRender {
 		btnSkip.setDisabled(true);
 		actionRingVisible = false;
 		blockButtons = true;
-		
+
 		selectedUnit = null;
 		archerAttacked = false;
 		slayerAttacked = false;
 		actionInProgress = false;
-		
+
 		paths = new PathManager();
 		GameEngine.hideLoading();
 	}
@@ -203,7 +202,7 @@ public class Tutorial extends GameRender {
 		messages.add("Now the enemy seems weaker."); // 25
 		messages.add("Let's both attack to\ndefeat him!!"); // 26
 		// Scene 4
-		messages.add("Oh crap!! He moved. . .\nI missed!!"); // 27
+		messages.add("Oh rats!! He moved. . .\nI missed!!"); // 27
 		messages.add("That's the problem we\n(ranged units) have."); // 28
 		messages.add("They can dodge our shots\nby moving."); // 29
 		messages.add("But if we can foresee\nwhere he's moving,\nwe can hit him."); // 30
@@ -222,7 +221,7 @@ public class Tutorial extends GameRender {
 		world.addUnit(tank, 900, 500);
 		tank.setPosition(CrystalClash.WIDTH + 100, 354);
 		tank.getRender().setState(STATE.walking);
-		
+
 		archer = new Unit("fire_archer", false);
 		world.addUnit(archer, 650, 500);
 		archer.setPosition(-100, 354);
@@ -233,9 +232,9 @@ public class Tutorial extends GameRender {
 	}
 
 	private void next() {
-		if(messageIndex < 32)
+		if (messageIndex < 32)
 			messageIndex++;
-		
+
 		if (messageIndex + 1 < messages.size) {
 			lblMessage.setText(messages.get(messageIndex));
 		} else {
@@ -391,7 +390,7 @@ public class Tutorial extends GameRender {
 						}
 						break;
 					case 18:
-						if(u.equals(slayer)){
+						if (u.equals(slayer)) {
 							if (!actionRingVisible) {
 								actionRingVisible = true;
 								world.getRender().moveActionsRing(cell);
@@ -400,7 +399,7 @@ public class Tutorial extends GameRender {
 						}
 						break;
 					case 20:
-						if(u.equals(archer)){
+						if (u.equals(archer)) {
 							if (!actionRingVisible) {
 								actionRingVisible = true;
 								world.getRender().moveActionsRing(cell);
@@ -486,11 +485,11 @@ public class Tutorial extends GameRender {
 									cell.getCenterX(),
 									cell.getCenterY());
 						}
-						
+
 						slayerMove.moves.add(world.cellAtByGrid(movePathX, 4));
 						movePathX++;
-						
-						if(cell.hasState(Cell.MOVE_TARGET)) {
+
+						if (cell.hasState(Cell.MOVE_TARGET)) {
 							world.getRender().hideArrow();
 							next();
 						} else {
@@ -637,7 +636,7 @@ public class Tutorial extends GameRender {
 
 				actionInProgress = false;
 				world.getRender().hideHand();
-				
+
 				if (archerAttacked && slayerAttacked) {
 					world.getRender().setBlockButtons(false);
 				}
@@ -661,7 +660,7 @@ public class Tutorial extends GameRender {
 
 				actionInProgress = false;
 				world.getRender().hideHand();
-				
+
 				if (archerAttacked && slayerAttacked) {
 					world.getRender().setBlockButtons(false);
 				}
@@ -703,7 +702,7 @@ public class Tutorial extends GameRender {
 			break;
 		}
 	}
-	
+
 	@Override
 	public void onDefendAction() {
 		switch (messageIndex) {
@@ -717,7 +716,7 @@ public class Tutorial extends GameRender {
 			break;
 		}
 	}
-	
+
 	@Override
 	public void onMoveAction() {
 		switch (messageIndex) {
@@ -730,7 +729,7 @@ public class Tutorial extends GameRender {
 			break;
 		}
 	}
-	
+
 	@Override
 	public void onUndoAction() {
 	}
@@ -825,8 +824,8 @@ public class Tutorial extends GameRender {
 					}
 				}).start(tweenManager);
 	}
-	
-	private void playAnimation3(){
+
+	private void playAnimation3() {
 		Timeline tankAtt = Timeline.createSequence();
 		Timeline tankMove = Timeline.createParallel()
 				.push(Tween.to(tank, UnitAccessor.X, CrystalClash.WALK_ANIMATION_SPEED)
@@ -887,7 +886,7 @@ public class Tutorial extends GameRender {
 				archer.getRender().setState(STATE.idle);
 			}
 		});
-		
+
 		Timeline.createSequence()
 				.push(tankAtt)
 				.push(archerAttStart)
@@ -904,8 +903,8 @@ public class Tutorial extends GameRender {
 					}
 				}).start(tweenManager);
 	}
-	
-	private void playAnimation4(){
+
+	private void playAnimation4() {
 		Timeline slayerAtt = Timeline.createSequence();
 		Timeline slayerMove = Timeline.createParallel()
 				.push(Tween.to(slayer, UnitAccessor.X, CrystalClash.WALK_ANIMATION_SPEED)
@@ -968,7 +967,7 @@ public class Tutorial extends GameRender {
 						}
 					}
 				});
-		
+
 		Timeline archerAttStart = Timeline.createSequence();
 		archerAttStart.setCallback(new TweenCallback() {
 			@Override
@@ -987,7 +986,7 @@ public class Tutorial extends GameRender {
 				archer.getRender().setState(STATE.idle);
 			}
 		});
-		
+
 		Timeline.createSequence()
 				.push(slayerAtt)
 				.push(tankM)
@@ -1005,8 +1004,8 @@ public class Tutorial extends GameRender {
 					}
 				}).start(tweenManager);
 	}
-	
-	private void playAnimation5(){
+
+	private void playAnimation5() {
 		Timeline slayerAtt = Timeline.createSequence();
 		Timeline slayerMove = Timeline.createParallel()
 				.push(Tween.to(slayer, UnitAccessor.X, CrystalClash.WALK_ANIMATION_SPEED)
@@ -1068,7 +1067,7 @@ public class Tutorial extends GameRender {
 				world.cellAtByGrid(6, 4).state = Cell.NONE;
 			}
 		});
-		
+
 		Timeline tankDeath = Timeline.createSequence()
 				.setCallbackTriggers(TweenCallback.BEGIN)
 				.setCallback(new TweenCallback() {
@@ -1077,10 +1076,10 @@ public class Tutorial extends GameRender {
 						tank.getRender().setState(STATE.dieing);
 					}
 				});
-		
+
 		Timeline tankDeathTime = Timeline.createSequence()
 				.delay(5);
-		
+
 		Timeline.createSequence()
 				.push(slayerAtt)
 				.push(archerAttStart)
@@ -1091,7 +1090,7 @@ public class Tutorial extends GameRender {
 				.setCallback(new TweenCallback() {
 					@Override
 					public void onEvent(int type, BaseTween<?> source) {
-						if(type == COMPLETE){
+						if (type == COMPLETE) {
 							Image endGameMessage = new Image(ResourceHelper.getTexture("turn_animation/messages/banner_victory"));
 							TextButton btnBackToMenu = new TextButton("Back to menu", ResourceHelper.getButtonStyle());
 							btnBackToMenu.addListener(new ClickListener() {
@@ -1108,7 +1107,7 @@ public class Tutorial extends GameRender {
 
 							addActor(btnBackToMenu);
 							addActor(endGameMessage);
-							
+
 							Timeline.createSequence()
 									.beginParallel()
 									.push(Tween.to(endGameMessage, ActorAccessor.Y, CrystalClash.SLOW_ANIMATION_SPEED)
@@ -1123,13 +1122,13 @@ public class Tutorial extends GameRender {
 					}
 				}).start(tweenManager);
 	}
-	
+
 	@Override
 	public void renderInTheBack(float dt, SpriteBatch batch) {
 		tweenManager.update(dt);
 		paths.render(batch, dt, Path.TYPE.MOVE);
 	}
-	
+
 	@Override
 	public void renderInTheFront(float dt, SpriteBatch batch) {
 		paths.render(batch, dt, Path.TYPE.ATTACK);
