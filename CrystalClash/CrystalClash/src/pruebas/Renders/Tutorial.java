@@ -6,14 +6,18 @@ import pruebas.Controllers.GameController;
 import pruebas.Controllers.WorldController;
 import pruebas.CrystalClash.CrystalClash;
 import pruebas.Entities.Cell;
+import pruebas.Entities.Path;
 import pruebas.Entities.Unit;
 import pruebas.Entities.helpers.MoveUnitAction;
+import pruebas.Entities.helpers.NoneUnitAction;
 import pruebas.Renders.UnitRender.FACING;
 import pruebas.Renders.UnitRender.STATE;
 import pruebas.Renders.helpers.CellHelper;
+import pruebas.Renders.helpers.PathManager;
 import pruebas.Renders.helpers.ResourceHelper;
 import pruebas.Renders.helpers.ui.MessageBox;
 import pruebas.Renders.helpers.ui.MessageBoxCallback;
+import pruebas.Util.I18n;
 import aurelienribon.tweenengine.BaseTween;
 import aurelienribon.tweenengine.Timeline;
 import aurelienribon.tweenengine.Tween;
@@ -51,13 +55,23 @@ public class Tutorial extends GameRender {
 	private Unit slayer;
 	private Unit tank;
 	private Unit archer;
-	private MoveUnitAction tankMove;
+	private MoveUnitAction slayerMove;
 
+	private Unit selectedUnit;
+	private boolean archerAttacked;
+	private boolean slayerAttacked;
+	private boolean actionInProgress;
+
+	private boolean actionRingVisible;
 	private boolean blockButtons;
+	private int movePathX;
+
+	private PathManager paths;
 
 	public Tutorial(WorldController world) {
 		super(world);
 		messageIndex = 0;
+		movePathX = 2;
 
 		load();
 		readTutorialScript();
@@ -69,7 +83,15 @@ public class Tutorial extends GameRender {
 
 		btnNext.setDisabled(true);
 		btnSkip.setDisabled(true);
+		actionRingVisible = false;
 		blockButtons = true;
+
+		selectedUnit = null;
+		archerAttacked = false;
+		slayerAttacked = false;
+		actionInProgress = false;
+
+		paths = new PathManager();
 		GameEngine.hideLoading();
 	}
 
@@ -105,7 +127,8 @@ public class Tutorial extends GameRender {
 			@Override
 			public void onEvent(int type, Object data) {
 				if (type == MessageBoxCallback.YES) {
-
+					GameEngine.showLoading();
+					GameEngine.getInstance().openMenuGames();
 				} else {
 					MessageBox.build().hide();
 				}
@@ -122,20 +145,18 @@ public class Tutorial extends GameRender {
 		btnSkip.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
-				if (!blockButtons) {
-					String text = "We have just started...";
-					if (messageIndex >= messages.size / 2)
-						text = "We are half road down...";
-					if (messageIndex >= messages.size - 8)
-						text = "We are almost finished...";
+				String text = "We have just started...";
+				if (messageIndex >= messages.size / 2)
+					text = "We are half road down...";
+				if (messageIndex >= messages.size - 8)
+					text = "We are almost finished...";
 
-					MessageBox.build()
-							.setMessage("Are you sure you want to leave?\n" + text)
-							.twoButtonsLayout("Yes, i got it", "No, let's go on")
-							.setCallback(confirmation)
-							.setHideOnAction(false)
-							.show();
-				}
+				MessageBox.build()
+						.setMessage("Are you sure you want to leave?\n" + text)
+						.twoButtonsLayout("Yes, i got it", "No, let's go on")
+						.setCallback(confirmation)
+						.setHideOnAction(false)
+						.show();
 			}
 		});
 
@@ -145,49 +166,55 @@ public class Tutorial extends GameRender {
 		addActor(btnNext);
 		addActor(imgBtnSkipBackground);
 		addActor(btnSkip);
+
+		PathManager.load();
 	}
 
 	private void readTutorialScript() {
+		I18n.load();
 		messages = new Array<String>();
 		// Scene 1
-		messages.add("Welcome to the front line.\nYou must lead our troop!"); // 0
-		messages.add("Our goal is to defeat the\nenemies army."); // 1
-		messages.add("Look!! There’s an ally\nover there."); // 2
-		messages.add("Tap to select him!!"); // 3
-		messages.add("Those are the thing you\ncan ask him to do."); // 4
-		messages.add("Keep in mind he can only\ndo one at a time!!"); // 5
-		messages.add("Here you can see his life,\ndamage and mobility"); // 6
-		messages.add("Watch out !! there’s an\nenemy there. "); // 7
-		messages.add("Let’s get closer to attack."); // 8
-		messages.add("This seems like a good\nposition."); // 9
-		messages.add("You must get there by\ndescribing the road."); // 10
-		messages.add("To confirm the road tap\nthe tick."); // 11
-		messages.add("Good Job!! You have ordered\nhim to move there."); // 12
-		messages.add("Your orders will be executed\nonce you end your turn."); // 13
-		messages.add("Tap Tick!!"); // 14
+		messages.add(I18n.t("tutorial_line_0"));
+		messages.add(I18n.t("tutorial_line_1"));
+		messages.add(I18n.t("tutorial_line_2"));
+		messages.add(I18n.t("tutorial_line_3"));
+		messages.add(I18n.t("tutorial_line_4"));
+		messages.add(I18n.t("tutorial_line_5"));
+		messages.add(I18n.t("tutorial_line_6"));
+		messages.add(I18n.t("tutorial_line_7"));
+		messages.add(I18n.t("tutorial_line_8"));
+		messages.add(I18n.t("tutorial_line_9"));
+		messages.add(I18n.t("tutorial_line_10"));
+		messages.add(I18n.t("tutorial_line_11"));
+		messages.add(I18n.t("tutorial_line_12"));
+		messages.add(I18n.t("tutorial_line_13"));
+		messages.add(I18n.t("tutorial_line_14"));
 		// Scene 2
-		messages.add("oh oh. . . I wasn’t counting\non the enemy moving."); // 15
-		messages.add("I’m going to help him."); // 16
-		messages.add("The enemy seems to be very\ntough."); // 17
-		messages.add("Order him to take a\ndefensive position while\nI cover him."); // 18
-		messages.add("I should attack him."); // 19
-		messages.add("I’m ranged. I can attack\nfrom far away"); // 20
-		messages.add("Don’t forget to tap the\ntick to confirm your orders."); // 21
+		messages.add(I18n.t("tutorial_line_15"));
+		messages.add(I18n.t("tutorial_line_16"));
+		messages.add(I18n.t("tutorial_line_17"));
+		messages.add(I18n.t("tutorial_line_18"));
+		messages.add(I18n.t("tutorial_line_19"));
+		messages.add(I18n.t("tutorial_line_20"));
+		messages.add(I18n.t("tutorial_line_21"));
+		messages.add(I18n.t("tutorial_line_22"));
+		messages.add(I18n.t("tutorial_line_23"));
+		messages.add(I18n.t("tutorial_line_24"));
 		// Scene 3
-		messages.add("Now the enemy seems weaker."); // 22
-		messages.add("Let both attack to\ndefeat him!!"); // 23
+		messages.add(I18n.t("tutorial_line_25"));
+		messages.add(I18n.t("tutorial_line_26"));
 		// Scene 4
-		messages.add("Oh Sorry!! He moved. . .\nI missed!!"); // 24
-		messages.add("That’s the problem we\n(ranged units) have."); // 25
-		messages.add("They can dodge our shots\nby moving."); // 26
-		messages.add("But if we can foresee\nwhere he’s moving,\nwe can hit him."); // 27
-		messages.add("Now you are ready to\nfight on your own."); // 28
-		messages.add("Defeat him to achieve\nyour goal!!"); // 29
+		messages.add(I18n.t("tutorial_line_27"));
+		messages.add(I18n.t("tutorial_line_28"));
+		messages.add(I18n.t("tutorial_line_29"));
+		messages.add(I18n.t("tutorial_line_30"));
+		messages.add(I18n.t("tutorial_line_31"));
+		messages.add(I18n.t("tutorial_line_32"));
 	}
 
 	private void setData() {
 		slayer = new Unit("wind_slayer", false);
-		world.addUnit(slayer, 300, 700);
+		world.addUnit(slayer, 300, 500);
 		slayer.setPosition(-100, 354);
 		slayer.getRender().setState(STATE.walking);
 
@@ -196,26 +223,26 @@ public class Tutorial extends GameRender {
 		world.addUnit(tank, 900, 500);
 		tank.setPosition(CrystalClash.WIDTH + 100, 354);
 		tank.getRender().setState(STATE.walking);
+
 		archer = new Unit("fire_archer", false);
-		world.addUnit(archer, 400, 500);
+		world.addUnit(archer, 650, 500);
 		archer.setPosition(-100, 354);
 		archer.getRender().setState(STATE.walking);
 
-		tankMove = new MoveUnitAction();
-		tankMove.origin = world.cellAt(900, 500);
-		tankMove.moves.add(world.cellAtByGrid(6, 3));
-		tankMove.moves.add(world.cellAtByGrid(5, 4));
-		world.cellAt(900, 500).setAction(tankMove);
+		slayerMove = new MoveUnitAction();
+		slayerMove.origin = world.cellAt(300, 700);
 	}
 
 	private void next() {
-		messageIndex++;
-		if (messageIndex < messages.size) {
+		if (messageIndex < 32)
+			messageIndex++;
+
+		if (messageIndex + 1 < messages.size) {
 			lblMessage.setText(messages.get(messageIndex));
 		} else {
-			world.getRender().setReadInput(true);
-			world.getRender().setBlockButtons(false);
 			lblMessage.setText("");
+			blockButtons = true;
+			btnNext.setDisabled(true);
 			Timeline.createParallel()
 					.push(Tween.to(fireArcher, ActorAccessor.X, CrystalClash.SLOW_ANIMATION_SPEED).target(-fireArcher.getWidth()))
 					.push(Tween.to(balloon, ActorAccessor.Y, CrystalClash.SLOW_ANIMATION_SPEED).target(-balloon.getHeight()))
@@ -223,11 +250,11 @@ public class Tutorial extends GameRender {
 					.push(Tween.to(btnNext, ActorAccessor.Y, CrystalClash.SLOW_ANIMATION_SPEED).target(-btnNext.getHeight()))
 					.start(tweenManager);
 		}
-		action(messageIndex);
+		action();
 	}
 
-	private void action(int index) {
-		switch (index) {
+	private void action() {
+		switch (messageIndex) {
 		case 2:
 			world.getRender().moveHand(slayer);
 			break;
@@ -239,86 +266,100 @@ public class Tutorial extends GameRender {
 			world.getRender().setReadInput(false);
 			showNext();
 			break;
+		case 6:
+			world.getRender().hideActionsRing();
+			actionRingVisible = false;
+			world.getRender().showStatsPopup(slayer);
+			break;
 		case 7:
+			world.getRender().hideStatsPopup();
 			world.getRender().moveArrow(tank);
 			break;
 		case 8:
 			world.getRender().hideArrow();
+			world.getRender().moveHand(slayer);
+			world.getRender().setReadInput(true);
+			hideNext();
 			break;
 		case 9:
-			world.getRender().moveHand(675, CrystalClash.HEIGHT - 150);
-			world.cellAtByGrid(5, 5).addState(Cell.MOVE_TARGET);
+			world.getRender().moveArrow(695, CrystalClash.HEIGHT - 280);
+			world.cellAtByGrid(5, 4).addState(Cell.MOVE_TARGET);
 			showNext();
 			break;
 		case 10:
+			world.getRender().moveHand(375, CrystalClash.HEIGHT - 210);
 			world.getRender().setReadInput(true);
-			// hideNext();
+			hideNext();
 			break;
 		case 11:
 			world.getRender().moveHand(0, 125);
 			world.getRender().setBlockButtons(false);
 			break;
 		case 12:
-			world.getRender().setBlockButtons(true);
 			world.getRender().hideHand();
 			showNext();
 			break;
 		case 14:
 			world.getRender().setBlockButtons(false);
 			world.getRender().moveHand(0, 125);
-			// hideNext();
+			hideNext();
+			break;
+		case 15:
+			world.getRender().setBlockButtons(true);
+			world.getRender().setReadInput(false);
+			showNext();
 			break;
 		case 16:
-			Timeline.createParallel()
-					.push(Tween.to(archer, UnitAccessor.X, CrystalClash.ENTRANCE_ANIMATION_SPEED)
-							.target(CellHelper.getUnitX(world.cellAt(400, 500))).ease(TweenEquations.easeNone))
-					.push(Tween.to(archer, UnitAccessor.Y, CrystalClash.ENTRANCE_ANIMATION_SPEED)
-							.target(CellHelper.getUnitY(world.cellAt(400, 500))).ease(TweenEquations.easeNone))
-					.setCallbackTriggers(TweenCallback.COMPLETE)
-					.setCallback(new TweenCallback() {
-						@Override
-						public void onEvent(int type, BaseTween<?> source) {
-							// TODO Auto-generated method stub
-							archer.getRender().setState(STATE.idle);
-						}
-					}).start(tweenManager);
+			btnNext.setDisabled(true);
+			blockButtons = true;
+			playAnimation2();
 			break;
 		case 18:
 			world.getRender().setReadInput(true);
 			world.getRender().moveHand(slayer);
-			// hideNext();
-			break;
-		case 22:
-			world.getRender().setReadInput(false);
-			showNext();
-			break;
-		case 23:
-			world.getRender().setReadInput(true);
-			// hideNext();
+			hideNext();
 			break;
 		case 24:
+			world.getRender().setBlockButtons(false);
+			world.getRender().moveHand(0, 125);
+			hideNext();
+			break;
+		case 25:
 			world.getRender().setReadInput(false);
 			world.getRender().setBlockButtons(true);
 			showNext();
+			break;
+		case 26:
+			world.getRender().setReadInput(true);
+			hideNext();
+			break;
+		case 27:
+			world.getRender().setReadInput(false);
+			showNext();
+			break;
+		case 32:
+			world.getRender().setReadInput(true);
+			archerAttacked = false;
+			slayerAttacked = false;
+			actionInProgress = false;
+			selectedUnit = null;
 			break;
 		}
 	}
 
 	private void hideNext() {
 		blockButtons = true;
-		btnSkip.setDisabled(true);
 		btnNext.setDisabled(true);
 		Timeline.createSequence()
-				.push(Tween.to(btnNext, ActorAccessor.Y, CrystalClash.SLOW_ANIMATION_SPEED)
+				.push(Tween.to(btnNext, ActorAccessor.Y, CrystalClash.NORMAL_ANIMATION_SPEED)
 						.target(-btnNext.getHeight())).start(tweenManager);
 	}
 
 	private void showNext() {
 		blockButtons = false;
-		btnSkip.setDisabled(false);
 		btnNext.setDisabled(false);
 		Timeline.createSequence()
-				.push(Tween.to(btnNext, ActorAccessor.Y, CrystalClash.SLOW_ANIMATION_SPEED)
+				.push(Tween.to(btnNext, ActorAccessor.Y, CrystalClash.NORMAL_ANIMATION_SPEED)
 						.target(20)).start(tweenManager);
 	}
 
@@ -334,9 +375,130 @@ public class Tutorial extends GameRender {
 			Unit u = cell.getUnit();
 			if (u != null) {
 				if (!u.isEnemy()) {
-					// showHUD
-					world.getRender().hideHand();
-					next();
+					switch (messageIndex) {
+					case 3:
+						if (!actionRingVisible) {
+							actionRingVisible = true;
+							world.getRender().moveActionsRing(cell);
+							world.getRender().hideHand();
+							next();
+						}
+						break;
+					case 8:
+						if (!actionRingVisible) {
+							actionRingVisible = true;
+							world.getRender().moveActionsRing(cell);
+							world.getRender().moveHand(395, CrystalClash.HEIGHT - 205);
+						}
+						break;
+					case 18:
+						if (u.equals(slayer)) {
+							if (!actionRingVisible) {
+								actionRingVisible = true;
+								world.getRender().moveActionsRing(cell);
+								world.getRender().moveHand(540, CrystalClash.HEIGHT / 2 + 110);
+							}
+						}
+						break;
+					case 20:
+						if (u.equals(archer)) {
+							if (!actionRingVisible) {
+								actionRingVisible = true;
+								world.getRender().moveActionsRing(cell);
+								world.getRender().moveHand(460, CrystalClash.HEIGHT / 2 + 185);
+							}
+						}
+						break;
+					case 26:
+					case 32:
+						boolean canShow = (u.equals(archer) && !archerAttacked) || (u.equals(slayer) && !slayerAttacked);
+						if (!actionInProgress && canShow && !u.equals(selectedUnit)) {
+							selectedUnit = u;
+							if (!actionRingVisible) {
+								actionRingVisible = true;
+								world.getRender().moveActionsRing(cell);
+							}
+						}
+						break;
+					}
+				} else {
+					if (cell.hasState(Cell.ABLE_TO_ATTACK)) {
+						switch (messageIndex) {
+						case 21:
+							cell.removeState(Cell.ABLE_TO_ATTACK);
+							cell.addState(Cell.ATTACK_TARGET_CENTER);
+
+							Path p = paths.createOrResetPath(archer, Path.TYPE.ATTACK);
+							PathManager.addArc(p,
+									world.cellAtByGrid(4, 3).getCenterX(),
+									world.cellAtByGrid(4, 3).getCenterY(),
+									cell.getCenterX(),
+									cell.getCenterY());
+
+							world.getRender().moveHand(0, 125);
+							world.getRender().setBlockButtons(false);
+							next();
+							break;
+						case 26:
+						case 32:
+							cell.removeState(Cell.ABLE_TO_ATTACK);
+							cell.addState(Cell.ATTACK_TARGET_CENTER);
+
+							if (selectedUnit.equals(archer) && !archerAttacked) {
+								Path archerA = paths.createOrResetPath(archer, Path.TYPE.ATTACK);
+								PathManager.addArc(archerA,
+										world.cellAtByGrid(4, 3).getCenterX(),
+										world.cellAtByGrid(4, 3).getCenterY(),
+										cell.getCenterX(),
+										cell.getCenterY());
+							} else if (selectedUnit.equals(slayer) && !slayerAttacked) {
+								Path slayerA = paths.createOrResetPath(slayer, Path.TYPE.ATTACK);
+								PathManager.addLine(slayerA,
+										world.cellAtByGrid(5, 4).getCenterX(),
+										world.cellAtByGrid(5, 4).getCenterY(),
+										cell.getCenterX(),
+										cell.getCenterY());
+							}
+
+							world.getRender().moveHand(0, 125);
+							world.getRender().setBlockButtons(false);
+							break;
+						}
+					}
+				}
+			} else {
+				if (cell.hasState(Cell.ABLE_TO_MOVE)) {
+					switch (messageIndex) {
+					case 10:
+						world.getRender().hideHand();
+						Array<Cell> moves = slayerMove.moves;
+						Path p = paths.getOrCreatePath(slayer, Path.TYPE.MOVE);
+
+						if (moves.size == 0) {
+							PathManager.addLine(p,
+									world.cellAtByGrid(1, 4).getCenterX(),
+									world.cellAtByGrid(1, 4).getCenterY(),
+									cell.getCenterX(),
+									cell.getCenterY());
+						} else {
+							PathManager.addLine(p,
+									moves.get(moves.size - 1).getCenterX(),
+									moves.get(moves.size - 1).getCenterY(),
+									cell.getCenterX(),
+									cell.getCenterY());
+						}
+
+						slayerMove.moves.add(world.cellAtByGrid(movePathX, 4));
+						movePathX++;
+
+						if (cell.hasState(Cell.MOVE_TARGET)) {
+							world.getRender().hideArrow();
+							next();
+						} else {
+							world.cellAtByGrid(movePathX, 4).addState(Cell.ABLE_TO_MOVE);
+						}
+						break;
+					}
 				}
 			}
 		}
@@ -362,9 +524,9 @@ public class Tutorial extends GameRender {
 	public Timeline pushEnterAnimation(Timeline t) {
 		Timeline moveslayer = Timeline.createParallel()
 				.push(Tween.to(slayer, UnitAccessor.X, CrystalClash.ENTRANCE_ANIMATION_SPEED)
-						.target(CellHelper.getUnitX(world.cellAt(300, 700))).ease(TweenEquations.easeNone))
+						.target(CellHelper.getUnitX(world.cellAt(300, 500))).ease(TweenEquations.easeNone))
 				.push(Tween.to(slayer, UnitAccessor.Y, CrystalClash.ENTRANCE_ANIMATION_SPEED)
-						.target(CellHelper.getUnitY(world.cellAt(300, 700))).ease(TweenEquations.easeNone))
+						.target(CellHelper.getUnitY(world.cellAt(300, 500))).ease(TweenEquations.easeNone))
 				.setCallbackTriggers(TweenCallback.COMPLETE)
 				.setCallback(new TweenCallback() {
 					@Override
@@ -399,12 +561,14 @@ public class Tutorial extends GameRender {
 				.setCallback(new TweenCallback() {
 					@Override
 					public void onEvent(int type, BaseTween<?> source) {
-						lblMessage.setPosition(balloon.getX() + 145, balloon.getTop() - 150);
-						lblMessage.setText(messages.get(messageIndex));
+						if (type == COMPLETE) {
+							lblMessage.setPosition(balloon.getX() + 145, balloon.getTop() - 150);
+							lblMessage.setText(messages.get(messageIndex));
 
-						btnNext.setDisabled(false);
-						btnSkip.setDisabled(false);
-						blockButtons = false;
+							btnNext.setDisabled(false);
+							btnSkip.setDisabled(false);
+							blockButtons = false;
+						}
 					}
 				});
 	}
@@ -422,7 +586,89 @@ public class Tutorial extends GameRender {
 
 	@Override
 	public void onSend() {
-		// TODO Auto-generated method stub
+		switch (messageIndex) {
+		case 11:
+			next();
+			world.getRender().setBlockButtons(true);
+			break;
+		case 14:
+			world.getRender().hideHand();
+			world.cellAtByGrid(2, 4).removeState(Cell.ABLE_TO_MOVE);
+			world.cellAtByGrid(3, 4).removeState(Cell.ABLE_TO_MOVE);
+			world.cellAtByGrid(4, 4).removeState(Cell.ABLE_TO_MOVE);
+			world.cellAtByGrid(5, 4).removeState(Cell.ABLE_TO_MOVE);
+			world.cellAtByGrid(5, 4).removeState(Cell.MOVE_TARGET);
+			paths.removePath(slayer);
+			playAnimation1();
+			world.getRender().setBlockButtons(true);
+			break;
+		case 19:
+			world.getRender().moveHand(archer);
+			next();
+			world.getRender().setBlockButtons(true);
+			break;
+		case 22:
+			world.getRender().hideHand();
+			showNext();
+			next();
+			world.getRender().setBlockButtons(true);
+			break;
+		case 24:
+			paths.removePath(archer);
+			world.getRender().hideHand();
+			world.cellAtByGrid(6, 3).state = Cell.NONE;
+			playAnimation3();
+			world.getRender().setBlockButtons(true);
+			break;
+		case 26:
+			if (archerAttacked && slayerAttacked) {
+				paths.removePath(slayer);
+				paths.removePath(archer);
+				world.cellAtByGrid(6, 3).state = Cell.NONE;
+				world.getRender().setBlockButtons(true);
+				playAnimation4();
+			} else {
+				if (selectedUnit.equals(archer)) {
+					archerAttacked = true;
+					world.getRender().setBlockButtons(true);
+				} else if (selectedUnit.equals(slayer)) {
+					slayerAttacked = true;
+					world.getRender().setBlockButtons(true);
+				}
+
+				actionInProgress = false;
+				world.getRender().hideHand();
+
+				if (archerAttacked && slayerAttacked) {
+					world.getRender().setBlockButtons(false);
+				}
+			}
+			break;
+		case 32:
+			if (archerAttacked && slayerAttacked) {
+				paths.removePath(slayer);
+				paths.removePath(archer);
+				world.cellAtByGrid(6, 4).state = Cell.NONE;
+				world.getRender().setBlockButtons(true);
+				playAnimation5();
+			} else {
+				if (selectedUnit.equals(archer)) {
+					archerAttacked = true;
+					world.getRender().setBlockButtons(true);
+				} else if (selectedUnit.equals(slayer)) {
+					slayerAttacked = true;
+					world.getRender().setBlockButtons(true);
+				}
+
+				actionInProgress = false;
+				world.getRender().hideHand();
+
+				if (archerAttacked && slayerAttacked) {
+					world.getRender().setBlockButtons(false);
+				}
+			}
+			break;
+		}
 	}
 
 	public void pause() {
@@ -436,29 +682,457 @@ public class Tutorial extends GameRender {
 
 	@Override
 	public void onAttackAction() {
+		switch (messageIndex) {
+		case 20:
+			next();
+			world.getRender().hideActionsRing();
+			actionRingVisible = false;
+			world.getRender().hideHand();
+			world.cellAtByGrid(6, 3).addState(Cell.ABLE_TO_ATTACK);
+			break;
+		case 26:
+			actionInProgress = true;
+			world.getRender().hideActionsRing();
+			actionRingVisible = false;
+			world.cellAtByGrid(6, 3).addState(Cell.ABLE_TO_ATTACK);
+			break;
+		case 32:
+			actionInProgress = true;
+			world.getRender().hideActionsRing();
+			actionRingVisible = false;
+			world.cellAtByGrid(6, 4).addState(Cell.ABLE_TO_ATTACK);
+			break;
+		}
 	}
 
 	@Override
 	public void onDefendAction() {
+		switch (messageIndex) {
+		case 18:
+			slayer.setDefendingPosition(true);
+			world.getRender().hideActionsRing();
+			actionRingVisible = false;
+			world.getRender().setBlockButtons(false);
+			world.getRender().moveHand(0, 125);
+			next();
+			break;
+		}
 	}
 
 	@Override
 	public void onMoveAction() {
+		switch (messageIndex) {
+		case 8:
+			world.getRender().hideActionsRing();
+			actionRingVisible = false;
+			world.getRender().hideHand();
+			world.cellAtByGrid(movePathX, 4).addState(Cell.ABLE_TO_MOVE);
+			next();
+			break;
+		}
 	}
 
 	@Override
 	public void onUndoAction() {
 	}
 
+	private void playAnimation1() {
+		Timeline slayerM = Timeline.createSequence()
+				.beginParallel()
+				.push(Tween.to(slayer, UnitAccessor.X, CrystalClash.WALK_ANIMATION_SPEED)
+						.target(CellHelper.getUnitX(world.cellAtByGrid(2, 4))).ease(TweenEquations.easeNone))
+				.push(Tween.to(slayer, UnitAccessor.Y, CrystalClash.WALK_ANIMATION_SPEED)
+						.target(CellHelper.getUnitY(world.cellAtByGrid(2, 4))).ease(TweenEquations.easeNone))
+				.end().beginParallel()
+				.push(Tween.to(slayer, UnitAccessor.X, CrystalClash.WALK_ANIMATION_SPEED)
+						.target(CellHelper.getUnitX(world.cellAtByGrid(3, 4))).ease(TweenEquations.easeNone))
+				.push(Tween.to(slayer, UnitAccessor.Y, CrystalClash.WALK_ANIMATION_SPEED)
+						.target(CellHelper.getUnitY(world.cellAtByGrid(3, 4))).ease(TweenEquations.easeNone))
+				.end().beginParallel()
+				.push(Tween.to(slayer, UnitAccessor.X, CrystalClash.WALK_ANIMATION_SPEED)
+						.target(CellHelper.getUnitX(world.cellAtByGrid(4, 4))).ease(TweenEquations.easeNone))
+				.push(Tween.to(slayer, UnitAccessor.Y, CrystalClash.WALK_ANIMATION_SPEED)
+						.target(CellHelper.getUnitY(world.cellAtByGrid(4, 4))).ease(TweenEquations.easeNone))
+				.end().beginParallel()
+				.push(Tween.to(slayer, UnitAccessor.X, CrystalClash.WALK_ANIMATION_SPEED)
+						.target(CellHelper.getUnitX(world.cellAtByGrid(5, 4))).ease(TweenEquations.easeNone))
+				.push(Tween.to(slayer, UnitAccessor.Y, CrystalClash.WALK_ANIMATION_SPEED)
+						.target(CellHelper.getUnitY(world.cellAtByGrid(5, 4))).ease(TweenEquations.easeNone))
+				.end()
+				.setCallbackTriggers(TweenCallback.BEGIN | TweenCallback.COMPLETE)
+				.setCallback(new TweenCallback() {
+					@Override
+					public void onEvent(int type, BaseTween<?> source) {
+						if (type == TweenCallback.COMPLETE) {
+							slayer.getRender().setState(STATE.idle);
+							world.cellAtByGrid(1, 4).removeUnit();
+							world.cellAtByGrid(5, 4).setUnit(slayer);
+							world.cellAtByGrid(5, 4).setAction(new NoneUnitAction());
+						} else {
+							slayer.getRender().setState(STATE.walking);
+						}
+					}
+				});
+
+		Timeline tankM = Timeline.createSequence()
+				.beginParallel()
+				.push(Tween.to(tank, UnitAccessor.X, CrystalClash.WALK_ANIMATION_SPEED)
+						.target(CellHelper.getUnitX(world.cellAtByGrid(6, 3))).ease(TweenEquations.easeNone))
+				.push(Tween.to(tank, UnitAccessor.Y, CrystalClash.WALK_ANIMATION_SPEED)
+						.target(CellHelper.getUnitY(world.cellAtByGrid(6, 3))).ease(TweenEquations.easeNone))
+				.end()
+				.setCallbackTriggers(TweenCallback.BEGIN | TweenCallback.COMPLETE)
+				.setCallback(new TweenCallback() {
+					@Override
+					public void onEvent(int type, BaseTween<?> source) {
+						if (type == TweenCallback.COMPLETE) {
+							tank.getRender().setState(STATE.idle);
+							world.cellAtByGrid(7, 4).removeUnit();
+							world.cellAtByGrid(6, 3).setUnit(tank);
+						} else {
+							tank.getRender().setState(STATE.walking);
+						}
+					}
+				});
+
+		Timeline.createSequence()
+				.push(slayerM)
+				.push(tankM)
+				.setCallbackTriggers(TweenCallback.COMPLETE)
+				.setCallback(new TweenCallback() {
+					@Override
+					public void onEvent(int type, BaseTween<?> source) {
+						if (type == COMPLETE)
+							next();
+					}
+				}).start(tweenManager);
+	}
+
+	private void playAnimation2() {
+		Timeline.createParallel()
+				.push(Tween.to(archer, UnitAccessor.X, CrystalClash.ENTRANCE_ANIMATION_SPEED)
+						.target(CellHelper.getUnitX(world.cellAt(650, 500))).ease(TweenEquations.easeNone))
+				.push(Tween.to(archer, UnitAccessor.Y, CrystalClash.ENTRANCE_ANIMATION_SPEED)
+						.target(CellHelper.getUnitY(world.cellAt(650, 500))).ease(TweenEquations.easeNone))
+				.setCallbackTriggers(TweenCallback.COMPLETE)
+				.setCallback(new TweenCallback() {
+					@Override
+					public void onEvent(int type, BaseTween<?> source) {
+						if (type == COMPLETE) {
+							archer.getRender().setState(STATE.idle);
+							btnNext.setDisabled(false);
+							blockButtons = false;
+						}
+					}
+				}).start(tweenManager);
+	}
+
+	private void playAnimation3() {
+		Timeline tankAtt = Timeline.createSequence();
+		Timeline tankMove = Timeline.createParallel()
+				.push(Tween.to(tank, UnitAccessor.X, CrystalClash.WALK_ANIMATION_SPEED)
+						.target(CellHelper.getUnitX(world.cellAtByGrid(5, 4)) + 45).ease(TweenEquations.easeNone))
+				.push(Tween.to(tank, UnitAccessor.Y, CrystalClash.WALK_ANIMATION_SPEED)
+						.target(CellHelper.getUnitY(world.cellAtByGrid(5, 4))).ease(TweenEquations.easeNone));
+		tankMove.setCallbackTriggers(TweenCallback.BEGIN | TweenCallback.COMPLETE);
+		tankMove.setCallback(new TweenCallback() {
+			@Override
+			public void onEvent(int type, BaseTween<?> source) {
+				if (type == TweenCallback.COMPLETE) {
+					tank.getRender().setState(STATE.fighting);
+					slayer.damage(tank.getDamage());
+				} else if (type == TweenCallback.BEGIN) {
+					tank.getRender().setState(STATE.walking);
+				}
+			}
+		});
+		tankAtt.push(tankMove);
+
+		Timeline tankMoveBack = Timeline.createParallel();
+		tankMoveBack.delay(CrystalClash.FIGTH_ANIMATION_SPEED);
+		tankMoveBack.push(Tween
+				.to(tank, UnitAccessor.X, CrystalClash.WALK_ANIMATION_SPEED)
+				.target(CellHelper.getUnitX(world.cellAtByGrid(6, 3))).ease(TweenEquations.easeNone));
+		tankMoveBack.push(Tween
+				.to(tank, UnitAccessor.Y, CrystalClash.WALK_ANIMATION_SPEED)
+				.target(CellHelper.getUnitY(world.cellAtByGrid(6, 3))).ease(TweenEquations.easeNone));
+		tankMoveBack.setCallbackTriggers(TweenCallback.BEGIN | TweenCallback.COMPLETE);
+		tankMoveBack.setCallback(new TweenCallback() {
+			@Override
+			public void onEvent(int type, BaseTween<?> source) {
+				if (type == TweenCallback.COMPLETE) {
+					tank.getRender().setState(STATE.idle);
+					tank.getRender().setFacing(FACING.left);
+				} else {
+					tank.getRender().setState(STATE.walking);
+				}
+			}
+		});
+		tankAtt.push(tankMoveBack);
+
+		Timeline archerAttStart = Timeline.createSequence();
+		archerAttStart.setCallback(new TweenCallback() {
+			@Override
+			public void onEvent(int type, BaseTween<?> source) {
+				archer.getRender().setState(STATE.fighting);
+				world.cellAtByGrid(6, 3).addState(Cell.ATTACK_TARGET_CENTER);
+				tank.damage(200);
+			}
+		});
+
+		Timeline archerAttStop = Timeline.createSequence();
+		archerAttStop.delay(CrystalClash.FIGTH_ANIMATION_SPEED);
+		archerAttStop.setCallback(new TweenCallback() {
+			@Override
+			public void onEvent(int type, BaseTween<?> source) {
+				archer.getRender().setState(STATE.idle);
+			}
+		});
+
+		Timeline.createSequence()
+				.push(tankAtt)
+				.push(archerAttStart)
+				.push(archerAttStop)
+				.setCallbackTriggers(TweenCallback.COMPLETE)
+				.setCallback(new TweenCallback() {
+					@Override
+					public void onEvent(int type, BaseTween<?> source) {
+						if (type == COMPLETE) {
+							slayer.setDefendingPosition(false);
+							world.cellAtByGrid(6, 3).state = Cell.NONE;
+							next();
+						}
+					}
+				}).start(tweenManager);
+	}
+
+	private void playAnimation4() {
+		Timeline slayerAtt = Timeline.createSequence();
+		Timeline slayerMove = Timeline.createParallel()
+				.push(Tween.to(slayer, UnitAccessor.X, CrystalClash.WALK_ANIMATION_SPEED)
+						.target(CellHelper.getUnitX(world.cellAtByGrid(6, 3)) - 45).ease(TweenEquations.easeNone))
+				.push(Tween.to(slayer, UnitAccessor.Y, CrystalClash.WALK_ANIMATION_SPEED)
+						.target(CellHelper.getUnitY(world.cellAtByGrid(6, 3))).ease(TweenEquations.easeNone));
+		slayerMove.setCallbackTriggers(TweenCallback.BEGIN | TweenCallback.COMPLETE);
+		slayerMove.setCallback(new TweenCallback() {
+			@Override
+			public void onEvent(int type, BaseTween<?> source) {
+				if (type == TweenCallback.COMPLETE) {
+					slayer.getRender().setState(STATE.fighting);
+					tank.damage(200);
+				} else if (type == TweenCallback.BEGIN) {
+					slayer.getRender().setState(STATE.walking);
+				}
+			}
+		});
+		slayerAtt.push(slayerMove);
+
+		Timeline slayerMoveBack = Timeline.createParallel();
+		slayerMoveBack.delay(CrystalClash.FIGTH_ANIMATION_SPEED);
+		slayerMoveBack.push(Tween
+				.to(slayer, UnitAccessor.X, CrystalClash.WALK_ANIMATION_SPEED)
+				.target(CellHelper.getUnitX(world.cellAtByGrid(5, 4))).ease(TweenEquations.easeNone));
+		slayerMoveBack.push(Tween
+				.to(slayer, UnitAccessor.Y, CrystalClash.WALK_ANIMATION_SPEED)
+				.target(CellHelper.getUnitY(world.cellAtByGrid(5, 4))).ease(TweenEquations.easeNone));
+		slayerMoveBack.setCallbackTriggers(TweenCallback.BEGIN | TweenCallback.COMPLETE);
+		slayerMoveBack.setCallback(new TweenCallback() {
+			@Override
+			public void onEvent(int type, BaseTween<?> source) {
+				if (type == TweenCallback.COMPLETE) {
+					slayer.getRender().setState(STATE.idle);
+					slayer.getRender().setFacing(FACING.right);
+				} else {
+					slayer.getRender().setState(STATE.walking);
+				}
+			}
+		});
+		slayerAtt.push(slayerMoveBack);
+
+		Timeline tankM = Timeline.createSequence()
+				.beginParallel()
+				.push(Tween.to(tank, UnitAccessor.X, CrystalClash.WALK_ANIMATION_SPEED)
+						.target(CellHelper.getUnitX(world.cellAtByGrid(6, 4))).ease(TweenEquations.easeNone))
+				.push(Tween.to(tank, UnitAccessor.Y, CrystalClash.WALK_ANIMATION_SPEED)
+						.target(CellHelper.getUnitY(world.cellAtByGrid(6, 4))).ease(TweenEquations.easeNone))
+				.end()
+				.setCallbackTriggers(TweenCallback.BEGIN | TweenCallback.COMPLETE)
+				.setCallback(new TweenCallback() {
+					@Override
+					public void onEvent(int type, BaseTween<?> source) {
+						if (type == TweenCallback.COMPLETE) {
+							tank.getRender().setState(STATE.idle);
+							world.cellAtByGrid(6, 3).removeUnit();
+							world.cellAtByGrid(6, 4).setUnit(tank);
+						} else {
+							tank.getRender().setState(STATE.walking);
+						}
+					}
+				});
+
+		Timeline archerAttStart = Timeline.createSequence();
+		archerAttStart.setCallback(new TweenCallback() {
+			@Override
+			public void onEvent(int type, BaseTween<?> source) {
+				archer.getRender().setState(STATE.fighting);
+				world.cellAtByGrid(6, 3).addState(Cell.ATTACK_TARGET_CENTER);
+				tank.damage(archer.getDamage());
+			}
+		});
+
+		Timeline archerAttStop = Timeline.createSequence();
+		archerAttStop.delay(CrystalClash.FIGTH_ANIMATION_SPEED);
+		archerAttStop.setCallback(new TweenCallback() {
+			@Override
+			public void onEvent(int type, BaseTween<?> source) {
+				archer.getRender().setState(STATE.idle);
+			}
+		});
+
+		Timeline.createSequence()
+				.push(slayerAtt)
+				.push(tankM)
+				.push(archerAttStart)
+				.push(archerAttStop)
+				.setCallbackTriggers(TweenCallback.COMPLETE)
+				.setCallback(new TweenCallback() {
+					@Override
+					public void onEvent(int type, BaseTween<?> source) {
+						if (type == COMPLETE) {
+							world.cellAtByGrid(6, 3).state = Cell.NONE;
+							world.getRender().setReadInput(true);
+							next();
+						}
+					}
+				}).start(tweenManager);
+	}
+
+	private void playAnimation5() {
+		Timeline slayerAtt = Timeline.createSequence();
+		Timeline slayerMove = Timeline.createParallel()
+				.push(Tween.to(slayer, UnitAccessor.X, CrystalClash.WALK_ANIMATION_SPEED)
+						.target(CellHelper.getUnitX(world.cellAtByGrid(6, 4)) - 45).ease(TweenEquations.easeNone))
+				.push(Tween.to(slayer, UnitAccessor.Y, CrystalClash.WALK_ANIMATION_SPEED)
+						.target(CellHelper.getUnitY(world.cellAtByGrid(6, 4))).ease(TweenEquations.easeNone));
+		slayerMove.setCallbackTriggers(TweenCallback.BEGIN | TweenCallback.COMPLETE);
+		slayerMove.setCallback(new TweenCallback() {
+			@Override
+			public void onEvent(int type, BaseTween<?> source) {
+				if (type == TweenCallback.COMPLETE) {
+					slayer.getRender().setState(STATE.fighting);
+					tank.damage(200);
+				} else if (type == TweenCallback.BEGIN) {
+					slayer.getRender().setState(STATE.walking);
+				}
+			}
+		});
+		slayerAtt.push(slayerMove);
+
+		Timeline slayerMoveBack = Timeline.createParallel();
+		slayerMoveBack.delay(CrystalClash.FIGTH_ANIMATION_SPEED);
+		slayerMoveBack.push(Tween
+				.to(slayer, UnitAccessor.X, CrystalClash.WALK_ANIMATION_SPEED)
+				.target(CellHelper.getUnitX(world.cellAtByGrid(5, 4))).ease(TweenEquations.easeNone));
+		slayerMoveBack.push(Tween
+				.to(slayer, UnitAccessor.Y, CrystalClash.WALK_ANIMATION_SPEED)
+				.target(CellHelper.getUnitY(world.cellAtByGrid(5, 4))).ease(TweenEquations.easeNone));
+		slayerMoveBack.setCallbackTriggers(TweenCallback.BEGIN | TweenCallback.COMPLETE);
+		slayerMoveBack.setCallback(new TweenCallback() {
+			@Override
+			public void onEvent(int type, BaseTween<?> source) {
+				if (type == TweenCallback.COMPLETE) {
+					slayer.getRender().setState(STATE.idle);
+					slayer.getRender().setFacing(FACING.right);
+				} else {
+					slayer.getRender().setState(STATE.walking);
+				}
+			}
+		});
+		slayerAtt.push(slayerMoveBack);
+
+		Timeline archerAttStart = Timeline.createSequence();
+		archerAttStart.setCallback(new TweenCallback() {
+			@Override
+			public void onEvent(int type, BaseTween<?> source) {
+				archer.getRender().setState(STATE.fighting);
+				world.cellAtByGrid(6, 4).addState(Cell.ATTACK_TARGET_CENTER);
+				tank.damage(200);
+			}
+		});
+
+		Timeline archerAttStop = Timeline.createSequence();
+		archerAttStop.delay(CrystalClash.FIGTH_ANIMATION_SPEED);
+		archerAttStop.setCallback(new TweenCallback() {
+			@Override
+			public void onEvent(int type, BaseTween<?> source) {
+				archer.getRender().setState(STATE.idle);
+				world.cellAtByGrid(6, 4).state = Cell.NONE;
+			}
+		});
+
+		Timeline tankDeath = Timeline.createSequence()
+				.setCallbackTriggers(TweenCallback.BEGIN)
+				.setCallback(new TweenCallback() {
+					@Override
+					public void onEvent(int type, BaseTween<?> source) {
+						tank.getRender().setState(STATE.dieing);
+					}
+				});
+
+		Timeline tankDeathTime = Timeline.createSequence()
+				.delay(5);
+
+		Timeline.createSequence()
+				.push(slayerAtt)
+				.push(archerAttStart)
+				.push(archerAttStop)
+				.push(tankDeath)
+				.push(tankDeathTime)
+				.setCallbackTriggers(TweenCallback.COMPLETE)
+				.setCallback(new TweenCallback() {
+					@Override
+					public void onEvent(int type, BaseTween<?> source) {
+						if (type == COMPLETE) {
+							Image endGameMessage = new Image(ResourceHelper.getTexture("turn_animation/messages/banner_victory"));
+							TextButton btnBackToMenu = new TextButton("Back to menu", ResourceHelper.getButtonStyle());
+							btnBackToMenu.addListener(new ClickListener() {
+								@Override
+								public void clicked(InputEvent event, float x, float y) {
+									GameEngine.showLoading();
+									GameEngine.getInstance().openMenuGames();
+								}
+							});
+							endGameMessage.setPosition(CrystalClash.WIDTH / 2 - endGameMessage.getWidth() / 2,
+									CrystalClash.HEIGHT);
+							btnBackToMenu.setPosition(endGameMessage.getX() + endGameMessage.getWidth() / 2 - btnBackToMenu.getWidth() / 2,
+									endGameMessage.getY() + endGameMessage.getHeight() / 2 - btnBackToMenu.getHeight() / 2);
+
+							addActor(btnBackToMenu);
+							addActor(endGameMessage);
+
+							Timeline.createSequence()
+									.beginParallel()
+									.push(Tween.to(endGameMessage, ActorAccessor.Y, CrystalClash.SLOW_ANIMATION_SPEED)
+											.target(CrystalClash.HEIGHT / 2 - endGameMessage.getHeight() / 2))
+									.push(Tween.to(btnBackToMenu, ActorAccessor.Y, CrystalClash.SLOW_ANIMATION_SPEED)
+											.target(CrystalClash.HEIGHT / 2 - btnBackToMenu.getHeight() / 2))
+									.end()
+									.push(Tween.to(btnBackToMenu, ActorAccessor.Y, CrystalClash.SLOW_ANIMATION_SPEED)
+											.target(CrystalClash.HEIGHT / 2 - endGameMessage.getHeight() / 2 - btnBackToMenu.getHeight())
+											.ease(TweenEquations.easeOutBounce)).start(tweenManager);
+						}
+					}
+				}).start(tweenManager);
+	}
+
 	@Override
 	public void renderInTheBack(float dt, SpriteBatch batch) {
 		tweenManager.update(dt);
-
+		paths.render(batch, dt, Path.TYPE.MOVE);
 	}
 
 	@Override
 	public void renderInTheFront(float dt, SpriteBatch batch) {
-		// TODO Auto-generated method stub
-
+		paths.render(batch, dt, Path.TYPE.ATTACK);
 	}
 }
