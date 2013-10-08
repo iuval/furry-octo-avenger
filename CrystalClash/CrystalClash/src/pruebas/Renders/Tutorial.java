@@ -17,6 +17,7 @@ import pruebas.Renders.helpers.PathManager;
 import pruebas.Renders.helpers.ResourceHelper;
 import pruebas.Renders.helpers.ui.MessageBox;
 import pruebas.Renders.helpers.ui.MessageBoxCallback;
+import pruebas.Util.I18n;
 import aurelienribon.tweenengine.BaseTween;
 import aurelienribon.tweenengine.Timeline;
 import aurelienribon.tweenengine.Tween;
@@ -170,44 +171,45 @@ public class Tutorial extends GameRender {
 	}
 
 	private void readTutorialScript() {
+		I18n.load();
 		messages = new Array<String>();
 		// Scene 1
-		messages.add("Welcome to the front line.\nYou must lead our troop!"); // 0
-		messages.add("Our goal is to defeat the\nenemies army."); // 1
-		messages.add("Look!! There's an ally\nover there."); // 2
-		messages.add("Tap to select him!!"); // 3
-		messages.add("Those are the thing you\ncan ask him to do.\n\nAttack, Move or Defend!"); // 4
-		messages.add("Keep in mind he can only\ndo one at a time!!"); // 5
-		messages.add("Here you can see his life,\ndamage and mobility"); // 6
-		messages.add("Watch out !! there's an\nenemy there. "); // 7
-		messages.add("Let's get closer to attack."); // 8
-		messages.add("This seems like a good\nposition."); // 9
-		messages.add("You must get there by\ndescribing the road."); // 10
-		messages.add("To confirm the road tap\nthe tick."); // 11
-		messages.add("Good Job!! You have ordered\nhim to move there."); // 12
-		messages.add("Your orders will be executed\nonce you end your turn."); // 13
-		messages.add("Tap Tick!!\nYou will have to wait until\nthe enemy makes a move."); // 14
+		messages.add(I18n.t("tutorial_line_0"));
+		messages.add(I18n.t("tutorial_line_1"));
+		messages.add(I18n.t("tutorial_line_2"));
+		messages.add(I18n.t("tutorial_line_3"));
+		messages.add(I18n.t("tutorial_line_4"));
+		messages.add(I18n.t("tutorial_line_5"));
+		messages.add(I18n.t("tutorial_line_6"));
+		messages.add(I18n.t("tutorial_line_7"));
+		messages.add(I18n.t("tutorial_line_8"));
+		messages.add(I18n.t("tutorial_line_9"));
+		messages.add(I18n.t("tutorial_line_10"));
+		messages.add(I18n.t("tutorial_line_11"));
+		messages.add(I18n.t("tutorial_line_12"));
+		messages.add(I18n.t("tutorial_line_13"));
+		messages.add(I18n.t("tutorial_line_14"));
 		// Scene 2
-		messages.add("oh oh. . . I wasn't counting\non the enemy moving."); // 15
-		messages.add("I'm going to help him."); // 16
-		messages.add("The enemy seems to be very\ntough."); // 17
-		messages.add("Order him to take a\ndefensive position while\nI cover him."); // 18
-		messages.add("Don't forget to tap the\ntick to confirm your orders."); // 19
-		messages.add("I should attack him."); // 20
-		messages.add("I'm ranged. I can attack\nfrom far away"); // 21
-		messages.add("Aren't you forgetting\nsomething?"); // 22
-		messages.add("Now you should end\nyour turn.\nDo you remember how?"); // 23
-		messages.add("Yes!\nExactly!"); // 24
+		messages.add(I18n.t("tutorial_line_15"));
+		messages.add(I18n.t("tutorial_line_16"));
+		messages.add(I18n.t("tutorial_line_17"));
+		messages.add(I18n.t("tutorial_line_18"));
+		messages.add(I18n.t("tutorial_line_19"));
+		messages.add(I18n.t("tutorial_line_20"));
+		messages.add(I18n.t("tutorial_line_21"));
+		messages.add(I18n.t("tutorial_line_22"));
+		messages.add(I18n.t("tutorial_line_23"));
+		messages.add(I18n.t("tutorial_line_24"));
 		// Scene 3
-		messages.add("Now the enemy seems weaker."); // 25
-		messages.add("Let's both attack to\ndefeat him!!"); // 26
+		messages.add(I18n.t("tutorial_line_25"));
+		messages.add(I18n.t("tutorial_line_26"));
 		// Scene 4
-		messages.add("Oh rats!! He moved. . .\nI missed!!"); // 27
-		messages.add("That's the problem we\n(ranged units) have."); // 28
-		messages.add("They can dodge our shots\nby moving."); // 29
-		messages.add("But if we can foresee\nwhere he's moving,\nwe can hit him."); // 30
-		messages.add("Now you are ready to\nfight on your own."); // 31
-		messages.add("Defeat him to achieve\nyour goal!!"); // 32
+		messages.add(I18n.t("tutorial_line_27"));
+		messages.add(I18n.t("tutorial_line_28"));
+		messages.add(I18n.t("tutorial_line_29"));
+		messages.add(I18n.t("tutorial_line_30"));
+		messages.add(I18n.t("tutorial_line_31"));
+		messages.add(I18n.t("tutorial_line_32"));
 	}
 
 	private void setData() {
