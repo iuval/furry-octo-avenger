@@ -135,7 +135,7 @@ public class UnitStatsPopup extends Group {
 		}
 
 		switch (GameController.getUnitTypeIndex(unit.getName())) {
-		case Unit.TYPE_slayer:
+		case Unit.TYPE_SLAYER:
 			imgTypeOfAttack.setDrawable(txtSlayer);
 			lblTypeOfAttack.setText("Slayer");
 			break;

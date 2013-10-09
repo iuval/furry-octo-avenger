@@ -8,6 +8,7 @@ import pruebas.Controllers.GameController;
 import pruebas.Controllers.WorldController;
 import pruebas.CrystalClash.CrystalClash;
 import pruebas.Entities.Cell;
+import pruebas.Entities.Path;
 import pruebas.Entities.Unit;
 import pruebas.Entities.helpers.AttackUnitAction;
 import pruebas.Entities.helpers.DefendUnitAction;
@@ -18,6 +19,7 @@ import pruebas.Entities.helpers.UnitAction;
 import pruebas.Renders.UnitRender.FACING;
 import pruebas.Renders.UnitRender.STATE;
 import pruebas.Renders.helpers.CellHelper;
+import pruebas.Renders.helpers.PathManager;
 import pruebas.Renders.helpers.ResourceHelper;
 import aurelienribon.tweenengine.BaseTween;
 import aurelienribon.tweenengine.Timeline;
@@ -29,6 +31,7 @@ import aurelienribon.tweenengine.equations.Linear;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
@@ -503,17 +506,112 @@ public class TurnAnimations extends GameRender {
 			action = attackActions.get(m);
 
 			Timeline startAnim = Timeline.createSequence();
+			startAnim.setCallbackTriggers(TweenCallback.BEGIN);
 			startAnim.setUserData(new Object[] { action });
 			startAnim.setCallback(new TweenCallback() {
 				@Override
 				public void onEvent(int type, BaseTween<?> source) {
-					AttackUnitAction action = (AttackUnitAction) (((Object[]) source.getUserData())[0]);
+					AttackUnitAction action = (AttackUnitAction) ((Object[]) source.getUserData())[0];
 					Unit unit = action.origin.getUnit();
 
 					unit.getRender().setState(STATE.fighting);
+					if (action.target.getCenterX() < unit.getX()) {
+						unit.getRender().setFacing(FACING.left);
+					} else {
+						unit.getRender().setFacing(FACING.right);
+					}
 					action.target.state = Cell.ATTACK_TARGET_CENTER;
 				}
 			});
+
+			Unit unit = action.origin.getUnit();
+
+			// If the unit is ranged
+			if (GameController.getUnitTypeIndex(unit.getName()) == Unit.TYPE_RANGED) {
+				// Calculate the arrow's path
+				Path arrowPath = new Path();
+				PathManager.addArc(arrowPath,
+						action.origin.getCenterX(), action.origin.getCenterY() + 30,
+						action.target.getCenterX(), action.target.getCenterY() + 30);
+
+				float speed = CrystalClash.FIGTH_ANIMATION_SPEED / arrowPath.dots.size;
+
+				Image arrow = new Image(ResourceHelper.getUnitResourceTexture(unit.getName(), "arrow"));
+				arrow.setOrigin(arrow.getWidth() / 2, arrow.getHeight() / 2);
+				addActor(arrow);
+
+				Vector2 first = arrowPath.dots.get(0).cpy();
+				Vector2 second = arrowPath.dots.get(1).cpy();
+				float angleOrigin = second.sub(first).cpy().angle();
+
+				startAnim.push(Tween.set(arrow, ActorAccessor.ALPHA)
+						.target(0))
+						.push(Tween.set(arrow, ActorAccessor.X)
+								.target(CellHelper.getCenterX(action.origin)))
+						.push(Tween.set(arrow, ActorAccessor.Y)
+								.target(CellHelper.getCenterY(action.origin)))
+						.push(Tween.set(arrow, ActorAccessor.ROTATION)
+								.target(angleOrigin));
+
+				Vector2 prelast = arrowPath.dots.get(arrowPath.dots.size - 2).cpy();
+				Vector2 last = arrowPath.dots.get(arrowPath.dots.size - 1).cpy();
+				float angleTarget = last.sub(prelast).angle();
+
+				Timeline arrowTimeline = Timeline.createParallel();
+				arrowTimeline.delay(unit.getRender().fightAnim.getAnimationTime());
+
+				// Arrow rotation
+				if (arrowPath.dots.get(0).x < arrowPath.dots.get(arrowPath.dots.size - 1).x) {
+					arrowTimeline.beginSequence();
+					arrowTimeline.push(Tween.to(arrow, ActorAccessor.ROTATION,
+							CrystalClash.FIGTH_ANIMATION_SPEED / 2)
+							.target(0)
+							.ease(TweenEquations.easeNone));
+					arrowTimeline.push(Tween.set(arrow, ActorAccessor.ROTATION)
+							.target(360));
+					arrowTimeline.push(Tween.to(arrow, ActorAccessor.ROTATION,
+							CrystalClash.FIGTH_ANIMATION_SPEED / 2)
+							.target(angleTarget)
+							.ease(TweenEquations.easeNone));
+					arrowTimeline.end();
+				} else {
+					arrowTimeline.push(Tween.to(arrow, ActorAccessor.ROTATION,
+							CrystalClash.FIGTH_ANIMATION_SPEED)
+							.target(angleTarget)
+							.ease(TweenEquations.easeNone));
+				}
+
+				// Arrow alpha
+				arrowTimeline.push(Tween.to(arrow, ActorAccessor.ALPHA,
+						CrystalClash.FAST_ANIMATION_SPEED)
+						.target(1)
+						.ease(TweenEquations.easeNone));
+
+				// Arrow movement
+				arrowTimeline.beginSequence();
+				for (int i = 0; i < arrowPath.dots.size; i++) {
+					arrowTimeline.beginParallel();
+					Vector2 v = arrowPath.dots.get(i);
+					arrowTimeline.push(Tween.to(arrow, ActorAccessor.X, speed)
+							.target(v.x)
+							.ease(TweenEquations.easeNone));
+					arrowTimeline.push(Tween.to(arrow, ActorAccessor.Y, speed)
+							.target(v.y)
+							.ease(TweenEquations.easeNone));
+					arrowTimeline.end();
+				}
+				arrowTimeline.end();
+
+				arrowTimeline.setUserData(new Object[] { arrow });
+				arrowTimeline.setCallback(new TweenCallback() {
+					@Override
+					public void onEvent(int type, BaseTween<?> source) {
+						Image arrow = (Image) ((Object[]) source.getUserData())[0];
+						arrow.remove();
+					}
+				});
+				startAnim.push(arrowTimeline);
+			}
 
 			Timeline stopAnim = Timeline.createSequence();
 			stopAnim.delay(CrystalClash.FIGTH_ANIMATION_SPEED);
@@ -528,6 +626,12 @@ public class TurnAnimations extends GameRender {
 					doDamage(enemy, unit);
 					unit.getRender().setState(STATE.idle);
 					action.target.state = Cell.NONE;
+
+					if (unit.isPlayerOne()) {
+						unit.getRender().setFacing(FACING.right);
+					} else {
+						unit.getRender().setFacing(FACING.left);
+					}
 				}
 			});
 

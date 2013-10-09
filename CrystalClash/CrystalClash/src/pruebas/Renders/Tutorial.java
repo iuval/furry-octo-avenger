@@ -6,7 +6,6 @@ import pruebas.Controllers.GameController;
 import pruebas.Controllers.WorldController;
 import pruebas.CrystalClash.CrystalClash;
 import pruebas.Entities.Cell;
-import pruebas.Entities.Path;
 import pruebas.Entities.Unit;
 import pruebas.Entities.helpers.MoveUnitAction;
 import pruebas.Entities.helpers.NoneUnitAction;
@@ -428,7 +427,7 @@ public class Tutorial extends GameRender {
 							cell.removeState(Cell.ABLE_TO_ATTACK);
 							cell.addState(Cell.ATTACK_TARGET_CENTER);
 
-							Path p = paths.createOrResetPath(archer, Path.TYPE.ATTACK);
+							PathRender p = paths.createOrResetPath(archer, PathRender.TYPE.ATTACK);
 							PathManager.addArc(p,
 									world.cellAtByGrid(4, 3).getCenterX(),
 									world.cellAtByGrid(4, 3).getCenterY(),
@@ -445,14 +444,14 @@ public class Tutorial extends GameRender {
 							cell.addState(Cell.ATTACK_TARGET_CENTER);
 
 							if (selectedUnit.equals(archer) && !archerAttacked) {
-								Path archerA = paths.createOrResetPath(archer, Path.TYPE.ATTACK);
+								PathRender archerA = paths.createOrResetPath(archer, PathRender.TYPE.ATTACK);
 								PathManager.addArc(archerA,
 										world.cellAtByGrid(4, 3).getCenterX(),
 										world.cellAtByGrid(4, 3).getCenterY(),
 										cell.getCenterX(),
 										cell.getCenterY());
 							} else if (selectedUnit.equals(slayer) && !slayerAttacked) {
-								Path slayerA = paths.createOrResetPath(slayer, Path.TYPE.ATTACK);
+								PathRender slayerA = paths.createOrResetPath(slayer, PathRender.TYPE.ATTACK);
 								PathManager.addLine(slayerA,
 										world.cellAtByGrid(5, 4).getCenterX(),
 										world.cellAtByGrid(5, 4).getCenterY(),
@@ -472,7 +471,7 @@ public class Tutorial extends GameRender {
 					case 10:
 						world.getRender().hideHand();
 						Array<Cell> moves = slayerMove.moves;
-						Path p = paths.getOrCreatePath(slayer, Path.TYPE.MOVE);
+						PathRender p = paths.getOrCreatePath(slayer, PathRender.TYPE.MOVE);
 
 						if (moves.size == 0) {
 							PathManager.addLine(p,
@@ -1128,11 +1127,11 @@ public class Tutorial extends GameRender {
 	@Override
 	public void renderInTheBack(float dt, SpriteBatch batch) {
 		tweenManager.update(dt);
-		paths.render(batch, dt, Path.TYPE.MOVE);
+		paths.render(batch, dt, PathRender.TYPE.MOVE);
 	}
 
 	@Override
 	public void renderInTheFront(float dt, SpriteBatch batch) {
-		paths.render(batch, dt, Path.TYPE.ATTACK);
+		paths.render(batch, dt, PathRender.TYPE.ATTACK);
 	}
 }

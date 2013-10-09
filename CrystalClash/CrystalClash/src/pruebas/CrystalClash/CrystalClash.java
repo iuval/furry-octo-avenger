@@ -42,7 +42,7 @@ public class CrystalClash extends Game {
 		super.render();
 
 		// output the current FPS
-		fpsLogger.log();
+	//	fpsLogger.log();
 	}
 
 	@Override

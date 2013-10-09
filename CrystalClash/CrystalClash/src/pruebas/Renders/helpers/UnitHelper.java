@@ -32,6 +32,7 @@ public class UnitHelper {
 		render.idleAnim = ResourceHelper.getUnitSuperAnimation(unitName, "idle");
 		render.idleAnim.randomCurrentFrame();
 		render.fightAnim = ResourceHelper.getUnitSuperAnimation(unitName, "attack");
+		render.fightAnim.setLooping(false);
 		render.walkAnim = ResourceHelper.getUnitSuperAnimation(unitName, "run");
 		render.dieAnim = ResourceHelper.getUnitSuperAnimation(unitName, "die");
 		render.dieAnim.setLooping(false);

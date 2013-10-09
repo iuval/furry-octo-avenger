@@ -4,15 +4,16 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 
 import pruebas.Entities.Path;
-import pruebas.Entities.Path.TYPE;
 import pruebas.Entities.Unit;
+import pruebas.Renders.PathRender;
+import pruebas.Renders.PathRender.TYPE;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 public class PathManager {
 
-	private Hashtable<Unit, Path> paths;
+	private Hashtable<Unit, PathRender> paths;
 
 	public static final float POINT_CENTER_X = 19f;
 	public static final float POINT_CENTER_Y = 19f;
@@ -25,7 +26,7 @@ public class PathManager {
 	public static TextureRegion BIG_DOT_ATTACK_TEXTURE;
 
 	public PathManager() {
-		paths = new Hashtable<Unit, Path>();
+		paths = new Hashtable<Unit, PathRender>();
 	}
 
 	public static void load() {
@@ -38,9 +39,9 @@ public class PathManager {
 		BIG_DOT_ATTACK_TEXTURE = ResourceHelper.getTexture("in_game/action_dots/attack_big_dot");
 	}
 
-	public void render(SpriteBatch batch, float dt, Path.TYPE type) {
-		Enumeration<Path> en = paths.elements();
-		Path p;
+	public void render(SpriteBatch batch, float dt, PathRender.TYPE type) {
+		Enumeration<PathRender> en = paths.elements();
+		PathRender p;
 		while (en.hasMoreElements()) {
 			p = en.nextElement();
 			if (p.getType() == type)
@@ -48,19 +49,19 @@ public class PathManager {
 		}
 	}
 
-	public Path getOrCreatePath(Unit u, Path.TYPE type) {
-		Path p = getPath(u);
+	public PathRender getOrCreatePath(Unit u, PathRender.TYPE type) {
+		PathRender p = getPath(u);
 		if (p == null) {
-			p = new Path(type);
+			p = new PathRender(type);
 			paths.put(u, p);
 		}
 		return p;
 	}
 
-	public Path createOrResetPath(Unit u, Path.TYPE type) {
-		Path p = getPath(u);
+	public PathRender createOrResetPath(Unit u, PathRender.TYPE type) {
+		PathRender p = getPath(u);
 		if (p == null) {
-			p = new Path(type);
+			p = new PathRender(type);
 			paths.put(u, p);
 		} else {
 			p.clear();
@@ -68,7 +69,7 @@ public class PathManager {
 		return p;
 	}
 
-	public Path getPath(Unit u) {
+	public PathRender getPath(Unit u) {
 		return paths.get(u);
 	}
 
@@ -142,7 +143,7 @@ public class PathManager {
 		}
 	}
 
-	public static TextureRegion getSmallBallTexture(Path.TYPE type) {
+	public static TextureRegion getSmallBallTexture(PathRender.TYPE type) {
 		if (type == TYPE.ATTACK) {
 			return PathManager.SMALL_DOT_ATTACK_TEXTURE;
 		} else {
@@ -150,7 +151,7 @@ public class PathManager {
 		}
 	}
 
-	public static TextureRegion getBigBallTexture(Path.TYPE type) {
+	public static TextureRegion getBigBallTexture(PathRender.TYPE type) {
 		if (type == TYPE.ATTACK) {
 			return PathManager.BIG_DOT_ATTACK_TEXTURE;
 		} else {

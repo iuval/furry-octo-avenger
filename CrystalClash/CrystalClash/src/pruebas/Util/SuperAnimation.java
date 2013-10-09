@@ -32,6 +32,10 @@ public class SuperAnimation {
 	private float animationTime = 0;
 	private int frameNumber = 0;
 
+	public float getAnimationTime() {
+		return animationTime;
+	}
+
 	/**
 	 * Constructor, storing the frame duration and key frames.
 	 * 
