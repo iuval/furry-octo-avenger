@@ -100,7 +100,6 @@ public class Tutorial extends GameRender {
 		Skin skin = new Skin(atlas);
 
 		tweenManager = new TweenManager();
-		Tween.registerAccessor(Unit.class, new UnitAccessor());
 
 		fireArcher = new Image(ResourceHelper.getTexture("tutorial/fire_archer"));
 		fireArcher.scale(-0.55f);

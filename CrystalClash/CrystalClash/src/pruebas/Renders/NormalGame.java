@@ -1,5 +1,6 @@
 package pruebas.Renders;
 
+import pruebas.Audio.AudioManager;
 import pruebas.Controllers.GameController;
 import pruebas.Controllers.WorldController;
 import pruebas.Entities.Cell;
@@ -38,6 +39,7 @@ public class NormalGame extends GameRender {
 
 	public NormalGame(WorldController world) {
 		super(world);
+		AudioManager.playMusic("to battle!");
 		selectedUnit = null;
 		selectedCell = null;
 
@@ -125,8 +127,7 @@ public class NormalGame extends GameRender {
 		showAbleToAttackCellRecursive(selectedCell, selectedUnit.isMelee(), selectedUnit.getRange(), false);
 	}
 
-	// Method that actually "shows" (change state) the cell where units can
-	// attack
+	// Method that actually "shows" (change state) the cell where units can attack
 	private void showAbleToAttackCellRecursive(Cell cell, boolean onlyCellsWithUnit, int range, boolean hide) {
 		int[][] cells = cell.neigbours;
 

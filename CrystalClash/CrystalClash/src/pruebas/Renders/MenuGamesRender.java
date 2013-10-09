@@ -124,6 +124,7 @@ public class MenuGamesRender extends MenuRender {
 
 	@Override
 	public Timeline pushEnterAnimation(Timeline t) {
+		AudioManager.playMusic("march for glory");
 		Timeline aux = Timeline.createParallel();
 
 		if (GameController.isTutorialDone()) {
