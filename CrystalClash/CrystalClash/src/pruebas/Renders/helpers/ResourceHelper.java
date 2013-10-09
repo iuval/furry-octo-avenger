@@ -74,6 +74,10 @@ public class ResourceHelper {
 		}
 	}
 
+	public static TextureRegion getUnitResourceTexture(String unitName, String resource) {
+		return getTexture(String.format("units/%s/%s/%s", GameController.getUnitElement(unitName), unitName, resource));
+	}
+
 	public static TextureAtlas getTextureAtlas(String path) {
 		if (textureAtlasMap.containsKey(path)) {
 			return textureAtlasMap.get(path);
