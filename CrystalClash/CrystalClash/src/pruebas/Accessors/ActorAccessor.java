@@ -6,7 +6,7 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 
 public class ActorAccessor implements TweenAccessor<Actor> {
 
-	public static final int X = 0, Y = 1, RGB = 2, ALPHA = 3, SCALE_X = 4, SCALE_Y = 5;
+	public static final int X = 0, Y = 1, RGB = 2, ALPHA = 3, SCALE_X = 4, SCALE_Y = 5, ROTATION = 6;
 
 	@Override
 	public int getValues(Actor target, int tweenType, float[] returnValues) {
@@ -30,6 +30,9 @@ public class ActorAccessor implements TweenAccessor<Actor> {
 			return 1;
 		case SCALE_Y:
 			returnValues[0] = target.getScaleY();
+			return 1;
+		case ROTATION:
+			returnValues[0] = target.getRotation();
 			return 1;
 		default:
 			assert false;
@@ -59,6 +62,9 @@ public class ActorAccessor implements TweenAccessor<Actor> {
 			break;
 		case SCALE_Y:
 			target.setScaleY(newValues[0]);
+			break;
+		case ROTATION:
+			target.setRotation(newValues[0]);
 			break;
 		default:
 			assert false;

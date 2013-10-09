@@ -4,7 +4,6 @@ import pruebas.Audio.AudioManager;
 import pruebas.Controllers.GameController;
 import pruebas.Controllers.WorldController;
 import pruebas.Entities.Cell;
-import pruebas.Entities.Path;
 import pruebas.Entities.Unit;
 import pruebas.Entities.helpers.AttackUnitAction;
 import pruebas.Entities.helpers.DefendUnitAction;
@@ -260,12 +259,12 @@ public class NormalGame extends GameRender {
 
 	@Override
 	public void renderInTheBack(float dt, SpriteBatch batch) {
-		paths.render(batch, dt, Path.TYPE.MOVE);
+		paths.render(batch, dt, PathRender.TYPE.MOVE);
 	}
 
 	@Override
 	public void renderInTheFront(float dt, SpriteBatch batch) {
-		paths.render(batch, dt, Path.TYPE.ATTACK);
+		paths.render(batch, dt, PathRender.TYPE.ATTACK);
 
 		tweenManager.update(dt);
 	}
@@ -284,7 +283,7 @@ public class NormalGame extends GameRender {
 					cell.addState(Cell.ATTACK_TARGET_CENTER);
 					((AttackUnitAction) unitAction).target = cell;
 
-					Path p = paths.createOrResetPath(selectedUnit, Path.TYPE.ATTACK);
+					PathRender p = paths.createOrResetPath(selectedUnit, PathRender.TYPE.ATTACK);
 					if (selectedUnit.isMelee()) {
 						PathManager.addLine(p,
 								selectedCell.getCenterX(),
@@ -309,7 +308,7 @@ public class NormalGame extends GameRender {
 				if (cell.hasState(Cell.ABLE_TO_MOVE)) {
 					clearAvailableCells();
 					Array<Cell> moves = ((MoveUnitAction) unitAction).moves;
-					Path p = paths.getOrCreatePath(selectedUnit, Path.TYPE.MOVE);
+					PathRender p = paths.getOrCreatePath(selectedUnit, PathRender.TYPE.MOVE);
 
 					if (moves.size == 0) {
 						PathManager.addLine(p,
@@ -345,7 +344,7 @@ public class NormalGame extends GameRender {
 					clearAvailableCells();
 					Array<Cell> moves = ((MoveUnitAction) unitAction).moves;
 					if (moves.size > 0) {
-						Path p = paths.createOrResetPath(selectedUnit, Path.TYPE.MOVE);
+						PathRender p = paths.createOrResetPath(selectedUnit, PathRender.TYPE.MOVE);
 						p.clear();
 
 						int index = ((MoveUnitAction) unitAction).moves.indexOf(cell, true);

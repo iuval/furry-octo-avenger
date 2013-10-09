@@ -13,7 +13,7 @@ public class Unit extends GameObject {
 	public static final int ELEMENT_WATER = 3;
 	public static final int ELEMENT_DARKNESS = 4;
 
-	public static final int TYPE_slayer = 0;
+	public static final int TYPE_SLAYER = 0;
 	public static final int TYPE_TANK = 1;
 	public static final int TYPE_MAGE = 2;
 	public static final int TYPE_RANGED = 3;
