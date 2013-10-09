@@ -2,12 +2,15 @@ package pruebas.Renders;
 
 import pruebas.Accessors.ActorAccessor;
 import pruebas.Accessors.MusicAccessor;
+import pruebas.Accessors.UnitAccessor;
 import pruebas.Audio.AudioManager;
+import pruebas.Audio.MusicWrapper;
 import pruebas.Controllers.GameController;
 import pruebas.Controllers.MenuGames;
 import pruebas.Controllers.MenuLogIn;
 import pruebas.Controllers.WorldController;
 import pruebas.CrystalClash.CrystalClash;
+import pruebas.Entities.Unit;
 import pruebas.Enumerators.GameState;
 import pruebas.Renders.helpers.ResourceHelper;
 import pruebas.Renders.helpers.ui.MessageBox;
@@ -22,7 +25,6 @@ import aurelienribon.tweenengine.TweenManager;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -66,7 +68,8 @@ public class GameEngine implements Screen {
 	public void show() {
 		tweenManager = new TweenManager();
 		Tween.registerAccessor(Actor.class, new ActorAccessor());
-		Tween.registerAccessor(Music.class, new MusicAccessor());
+		Tween.registerAccessor(MusicWrapper.class, new MusicAccessor());
+		Tween.registerAccessor(Unit.class, new UnitAccessor());
 
 		inputManager = new InputMultiplexer();
 		batch = new SpriteBatch();
@@ -166,7 +169,6 @@ public class GameEngine implements Screen {
 			stage.addActor(menuGamesRender);
 			break;
 		case InMenuGames:
-			AudioManager.playMusic("March For Glory");
 			stage.addActor(background);
 			stage.addActor(menuGamesRender);
 			if (worldRender != null) {
@@ -178,7 +180,6 @@ public class GameEngine implements Screen {
 			stage.addActor(menuGamesRender);
 			break;
 		case InGame:
-			AudioManager.playMusic("To Battle!");
 			inputManager.addProcessor(worldRender);
 			stage.addActor(worldRender);
 			break;

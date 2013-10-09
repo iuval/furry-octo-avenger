@@ -1,15 +1,14 @@
 package pruebas.Accessors;
 
+import pruebas.Audio.MusicWrapper;
 import aurelienribon.tweenengine.TweenAccessor;
 
-import com.badlogic.gdx.audio.Music;
-
-public class MusicAccessor implements TweenAccessor<Music> {
+public class MusicAccessor implements TweenAccessor<MusicWrapper> {
 
 	public static final int VOLUME = 0;
 
 	@Override
-	public int getValues(Music target, int tweenType, float[] returnValues) {
+	public int getValues(MusicWrapper target, int tweenType, float[] returnValues) {
 		switch (tweenType) {
 		case VOLUME:
 			returnValues[0] = target.getVolume();
@@ -21,7 +20,7 @@ public class MusicAccessor implements TweenAccessor<Music> {
 	}
 
 	@Override
-	public void setValues(Music target, int tweenType, float[] newValues) {
+	public void setValues(MusicWrapper target, int tweenType, float[] newValues) {
 		switch (tweenType) {
 		case VOLUME:
 			target.setVolume(newValues[0]);
