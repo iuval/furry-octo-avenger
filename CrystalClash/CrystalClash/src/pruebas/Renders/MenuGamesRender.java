@@ -9,6 +9,8 @@ import pruebas.Renders.helpers.ResourceHelper;
 import pruebas.Renders.helpers.ui.GameListItem;
 import pruebas.Renders.helpers.ui.MessageBox;
 import pruebas.Renders.helpers.ui.MessageBoxCallback;
+import pruebas.Renders.helpers.ui.SuperScrollPane;
+import pruebas.Renders.helpers.ui.SuperScrollPaneRefreshCallback;
 import aurelienribon.tweenengine.BaseTween;
 import aurelienribon.tweenengine.Timeline;
 import aurelienribon.tweenengine.Tween;
@@ -22,7 +24,6 @@ import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
-import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
@@ -33,7 +34,7 @@ public class MenuGamesRender extends MenuRender {
 	private static MenuGamesRender instance;
 
 	private MenuGames controller;
-	private ScrollPane scrollPane;
+	private SuperScrollPane superScroll;
 	private Image gamesImage;
 
 	private VerticalGroup list;
@@ -48,12 +49,6 @@ public class MenuGamesRender extends MenuRender {
 	private TextButton btnNewRandom;
 	private TextButton btnNewInvite;
 	private TextButton btnMusic;
-
-	private Image refreshMessagePull;
-	private Image refreshMessageRelease;
-	private boolean isTryingToRefresh = false;
-	private boolean showPullDown = false;
-	private boolean showRelease = false;
 
 	private TextButton btnPlayTutorial;
 	private TextButton btnSkipTutorial;
@@ -76,45 +71,8 @@ public class MenuGamesRender extends MenuRender {
 
 	@Override
 	public void act(float delta) {
-		if (scrollPane.isPanning()) {
-			if (!isTryingToRefresh && scrollPane.getScrollY() < -100) {
-				showPullDown = true;
-				showRelease = false;
-				isTryingToRefresh = true;
-			} else if (isTryingToRefresh && scrollPane.getScrollY() < -200) {
-				showPullDown = false;
-				showRelease = true;
-			} else if (isTryingToRefresh && scrollPane.getScrollY() > -200) {
-				if (isTryingToRefresh && scrollPane.getScrollY() > -100) {
-					isTryingToRefresh = false;
-				} else {
-					showPullDown = true;
-					showRelease = false;
-				}
-			}
-		} else {
-			if (isTryingToRefresh) {
-				if (showRelease) {
-					loadGameList();
-				}
-				isTryingToRefresh = false;
-			}
-		}
+		superScroll.act(delta);
 
-		if (isTryingToRefresh) {
-			if (showRelease) {
-				refreshMessageRelease.setY(list.getTop());
-				refreshMessageRelease.setVisible(true);
-				refreshMessagePull.setVisible(false);
-			} else if (showPullDown) {
-				refreshMessagePull.setY(list.getTop());
-				refreshMessagePull.setVisible(true);
-				refreshMessageRelease.setVisible(false);
-			}
-		} else {
-			refreshMessagePull.setVisible(false);
-			refreshMessageRelease.setVisible(false);
-		}
 		super.act(delta);
 	}
 
@@ -135,7 +93,7 @@ public class MenuGamesRender extends MenuRender {
 							.target(CrystalClash.HEIGHT - btnLogOut.getHeight() - 10))
 					.push(Tween.to(btnMusic, ActorAccessor.Y, CrystalClash.SLOW_ANIMATION_SPEED)
 							.target(CrystalClash.HEIGHT - btnMusic.getHeight() - 10))
-					.push(Tween.to(scrollPane, ActorAccessor.X, CrystalClash.SLOW_ANIMATION_SPEED)
+					.push(Tween.to(superScroll, ActorAccessor.X, CrystalClash.SLOW_ANIMATION_SPEED)
 							.target(0));
 		} else {
 			aux.push(Tween.to(fireArcher, ActorAccessor.X, CrystalClash.SLOW_ANIMATION_SPEED).target(0))
@@ -165,7 +123,7 @@ public class MenuGamesRender extends MenuRender {
 							.target(CrystalClash.HEIGHT))
 					.push(Tween.to(btnMusic, ActorAccessor.Y, CrystalClash.SLOW_ANIMATION_SPEED)
 							.target(CrystalClash.HEIGHT))
-					.push(Tween.to(scrollPane, ActorAccessor.X, CrystalClash.SLOW_ANIMATION_SPEED)
+					.push(Tween.to(superScroll, ActorAccessor.X, CrystalClash.SLOW_ANIMATION_SPEED)
 							.target(CrystalClash.WIDTH));
 		} else {
 			aux.push(Tween.to(fireArcher, ActorAccessor.X, CrystalClash.SLOW_ANIMATION_SPEED)
@@ -220,15 +178,20 @@ public class MenuGamesRender extends MenuRender {
 		list.setWidth(CrystalClash.WIDTH);
 
 		// put the table inside a scrollpane
-		scrollPane = new ScrollPane(list);
-		scrollPane.setBounds(CrystalClash.WIDTH, 0, CrystalClash.WIDTH, CrystalClash.HEIGHT - 80);
-		scrollPane.setScrollingDisabled(true, false);
-		scrollPane.setOverscroll(false, true);
-		scrollPane.setSmoothScrolling(true);
-		scrollPane.setupOverscroll(CrystalClash.HEIGHT, 4000, 5000);
-		scrollPane.setForceScroll(false, true);
-		scrollPane.invalidate();
-		addActor(scrollPane);
+		superScroll = new SuperScrollPane(list, new SuperScrollPaneRefreshCallback() {
+			@Override
+			public void refresh() {
+				loadGameList();
+			}
+		});
+		superScroll.setBounds(CrystalClash.WIDTH, 0, CrystalClash.WIDTH, CrystalClash.HEIGHT - 80);
+		superScroll.scrollPane.setScrollingDisabled(true, false);
+		superScroll.scrollPane.setOverscroll(false, true);
+		superScroll.scrollPane.setSmoothScrolling(true);
+		superScroll.scrollPane.setupOverscroll(CrystalClash.HEIGHT, 4000, 5000);
+		superScroll.scrollPane.setForceScroll(false, true);
+		superScroll.scrollPane.invalidate();
+		addActor(superScroll);
 		gamesImage = new Image(ResourceHelper.getTexture("menu/current_games_header"));
 
 		list.addActor(gamesImage);
@@ -256,13 +219,7 @@ public class MenuGamesRender extends MenuRender {
 
 		list.addActorAfter(menuImage, inviteButtons);
 
-		refreshMessagePull = new Image(ResourceHelper.getTexture("menu/refresh_list/refresh_message_pull"));
-		refreshMessagePull.setVisible(false);
-		addActor(refreshMessagePull);
-
-		refreshMessageRelease = new Image(ResourceHelper.getTexture("menu/refresh_list/refresh_message_release"));
-		refreshMessageRelease.setVisible(false);
-		addActor(refreshMessageRelease);
+		superScroll.load();
 	}
 
 	private void loadTutorial() {
@@ -285,7 +242,7 @@ public class MenuGamesRender extends MenuRender {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
 				lblMessage.setText("");
-				controller.openTutorial();				
+				controller.openTutorial();
 				GameController.setTutorialDone();
 			}
 		});
