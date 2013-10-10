@@ -1,22 +1,34 @@
 package pruebas.Renders;
 
+import pruebas.Accessors.ActorAccessor;
 import pruebas.Audio.AudioManager;
 import pruebas.Controllers.GameController;
 import pruebas.Controllers.WorldController;
+import pruebas.CrystalClash.CrystalClash;
 import pruebas.Entities.Cell;
 import pruebas.Entities.Unit;
 import pruebas.Renders.UnitRender.FACING;
-import pruebas.Renders.helpers.ui.UnitThumbListener;
+import pruebas.Renders.helpers.ResourceHelper;
+import pruebas.Renders.helpers.ui.UnitItemSplashListener;
+import pruebas.Renders.helpers.ui.UnitListSelectListener;
 import pruebas.Renders.helpers.ui.UnitThumbsList;
 import aurelienribon.tweenengine.Timeline;
+import aurelienribon.tweenengine.Tween;
+import aurelienribon.tweenengine.TweenEquations;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
 public class SelectUnitsRender extends GameRender {
 	private int unitCount = 0;
 	private String selectedUnitName;
 	private Unit selectedUnit = null;
 	private UnitThumbsList unitList;
+
+	private boolean onSplash = false;
+	private Image unitSplash;
 
 	public SelectUnitsRender(WorldController world) {
 		super(world);
@@ -29,9 +41,9 @@ public class SelectUnitsRender extends GameRender {
 	public void load() {
 		GameController.loadUnitsStats();
 
-		unitList = new UnitThumbsList(world.player, new UnitThumbListener() {
+		unitList = new UnitThumbsList(world.player, new UnitListSelectListener() {
 			@Override
-			public void onClick(String unitName, boolean selected, float x, float y) {
+			public void select(String unitName, boolean selected, float x, float y) {
 				if (selected) {
 					selectedUnitName = unitName;
 				} else {
@@ -39,10 +51,45 @@ public class SelectUnitsRender extends GameRender {
 					selectedUnit = null;
 				}
 			}
+		}, new UnitItemSplashListener() {
+
+			@Override
+			public void openSplash(String unitName) {
+				if (!onSplash) {
+					onSplash = true;
+					unitSplash = new Image(ResourceHelper.getUnitSplash(unitName));
+					addActor(unitSplash);
+					unitSplash.setPosition(0, CrystalClash.HEIGHT);
+					unitSplash.addListener(new ClickListener() {
+						@Override
+						public void clicked(InputEvent event, float x, float y) {
+							if (onSplash) {
+								onSplash = false;
+								exitSplash();
+							}
+						}
+					});
+					enterSplash();
+				}
+			}
 		});
 		addActor(unitList);
 
 		resetUnitsCount();
+	}
+
+	private void enterSplash() {
+		GameEngine.start(Timeline.createSequence()
+				.push(Tween.to(unitSplash, ActorAccessor.Y, CrystalClash.SLOW_ANIMATION_SPEED)
+						.target(0)
+						.ease(TweenEquations.easeOutBounce)));
+	}
+
+	private void exitSplash() {
+		GameEngine.start(Timeline.createSequence()
+				.push(Tween.to(unitSplash, ActorAccessor.Y, CrystalClash.SLOW_ANIMATION_SPEED)
+						.target(CrystalClash.HEIGHT)
+						.ease(TweenEquations.easeInOutBack)));
 	}
 
 	private boolean canPlaceUnit() {
@@ -60,7 +107,7 @@ public class SelectUnitsRender extends GameRender {
 	}
 
 	private void updateUnitsCountLabel() {
-		unitList.setUnitCountText(unitCount + "/" + GameController.unitsPerPlayer);
+		unitList.setUnitCountText(unitCount + " of " + GameController.unitsPerPlayer);
 	}
 
 	@Override

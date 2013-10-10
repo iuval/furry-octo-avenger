@@ -3,48 +3,56 @@ package pruebas.Renders.helpers.ui;
 import pruebas.Renders.helpers.ResourceHelper;
 
 import com.badlogic.gdx.scenes.scene2d.Group;
+import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 
 public class UnitThumb extends Group {
-	private TextureRegionDrawable txtSelected;
-	private TextureRegionDrawable txtNotSelected;
 	private Image sprBackground;
+	private Image sprSelectedBorder;
 	private Image sprProfile;
 	private Image sprElement;
-	private TextButton btnSplash;
+	private ImageButton btnSplash;
 	private String unitName;
 
-	public UnitThumb(String unitName) {
+	public UnitThumb(String unitName, ClickListener clickListener, ClickListener splashListener) {
 		this.unitName = unitName;
-
-		txtSelected = new TextureRegionDrawable(ResourceHelper.getTexture("in_game/first_turn/item_border"));
-		txtNotSelected = new TextureRegionDrawable(ResourceHelper.getTexture("in_game/first_turn/item_border"));
-		sprBackground = new Image(txtNotSelected);
-		sprBackground.setPosition(0, 0);
-		addActor(sprBackground);
 
 		sprProfile = new Image(ResourceHelper.getUnitProfile(unitName));
 		sprProfile.setPosition(0, 0);
 		addActor(sprProfile);
 
+		sprSelectedBorder = new Image(ResourceHelper.getTexture("in_game/first_turn/item_selected"));
+		sprSelectedBorder.setPosition(0, 0);
+		sprBackground = new Image(ResourceHelper.getTexture("in_game/first_turn/item_border"));
+		sprBackground.setPosition(0, 0);
+		addActor(sprBackground);
+
 		sprElement = new Image(ResourceHelper.getUnitElementIcon(unitName));
 		sprElement.setPosition(150, 200);
 		addActor(sprElement);
 
-		btnSplash = new TextButton("View", ResourceHelper.getButtonStyle());
-		btnSplash.setSize(190, 50);
+		btnSplash = new ImageButton(new TextureRegionDrawable(ResourceHelper.getTexture("in_game/first_turn/inspect_button")),
+				new TextureRegionDrawable(ResourceHelper.getTexture("in_game/first_turn/inspect_button_pressed")));
+		btnSplash.setSize(189, 64);
 		btnSplash.setPosition(4, 6);
 		addActor(btnSplash);
+
+		sprSelectedBorder.setTouchable(Touchable.disabled);
+		sprBackground.setTouchable(Touchable.disabled);
+		sprProfile.addListener(clickListener);
+
+		btnSplash.addListener(splashListener);
 	}
 
 	public void select() {
-		sprBackground.setDrawable(txtSelected);
+		addActor(sprSelectedBorder);
 	}
 
 	public void desselect() {
-		sprBackground.setDrawable(txtNotSelected);
+		sprSelectedBorder.remove();
 	}
 
 	public String getUnitName() {

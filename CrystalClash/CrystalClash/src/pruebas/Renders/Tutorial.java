@@ -135,7 +135,7 @@ public class Tutorial extends GameRender {
 
 		imgBtnSkipBackground = new Image(skin.getRegion("exit_hud"));
 		imgBtnSkipBackground.setPosition(CrystalClash.WIDTH, CrystalClash.HEIGHT - imgBtnSkipBackground.getHeight());
-		TextButtonStyle skipStyle = new TextButtonStyle(
+		TextButtonStyle skipStyle =  new TextButtonStyle(
 				skin.getDrawable("exit_button"),
 				skin.getDrawable("exit_button_pressed"), null, ResourceHelper.getFont());
 		btnSkip = new TextButton("", skipStyle);

@@ -104,6 +104,10 @@ public class ResourceHelper {
 		return getTexture(String.format("units/%s/%s/profile", GameController.getUnitElement(unitName), unitName));
 	}
 
+	public static TextureRegion getUnitSplash(String unitName) {
+		return getTexture(String.format("units/%s/%s/splash", GameController.getUnitElement(unitName), unitName));
+	}
+
 	public static TextureRegion getElementIcon(String elementName) {
 		return getTexture(String.format("units/%s/element", elementName));
 	}

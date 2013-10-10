@@ -24,9 +24,7 @@ public class UnitThumbsList extends Group {
 	private Label lblUnitsCount;
 	private UnitThumb selectedThumb;
 
-	public UnitThumbsList(int player, UnitThumbListener unitThumbListener) {
-		final UnitThumbListener listener = unitThumbListener;
-
+	public UnitThumbsList(int player, final UnitListSelectListener unitThumbListener, final UnitItemSplashListener unitSplashListener) {
 		lblUnitsCount = new Label("", new LabelStyle(ResourceHelper.getFont(), Color.WHITE));
 
 		imgTableBg = new Image(ResourceHelper.getTexture("in_game/first_turn/list_background"));
@@ -41,7 +39,7 @@ public class UnitThumbsList extends Group {
 		} else {
 			scrollPane.setPosition(10, 155);
 			imgTableBg.setPosition(0, 0);
-			lblUnitsCount.setPosition(0, 0);
+			lblUnitsCount.setPosition(250, 50);
 		}
 		scrollPane.setScrollingDisabled(true, false);
 		scrollPane.setOverscroll(false, true);
@@ -57,6 +55,32 @@ public class UnitThumbsList extends Group {
 		Enumeration<String> unit_names = GameController.getUnitNames();
 		String unit_name;
 		int i = 0;
+		ClickListener unitItemClickListener = new ClickListener() {
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+				UnitThumb item = (UnitThumb) event.getListenerActor().getParent();
+				if (item != null) {
+					if (item == selectedThumb) {
+						item.desselect();
+						unitThumbListener.select(item.getUnitName(), false, x, y);
+						selectedThumb = null;
+					} else {
+						if (selectedThumb != null)
+							selectedThumb.desselect();
+						item.select();
+						selectedThumb = item;
+						unitThumbListener.select(item.getUnitName(), true, x, y);
+					}
+				}
+			}
+		};
+		ClickListener unitItemSplashListener = new ClickListener() {
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+				UnitThumb item = (UnitThumb) event.getListenerActor().getParent();
+				unitSplashListener.openSplash(item.getUnitName());
+			}
+		};
 		while (unit_names.hasMoreElements()) {
 			if (i == 3) {
 				table.row();
@@ -64,25 +88,7 @@ public class UnitThumbsList extends Group {
 			}
 			i++;
 			unit_name = unit_names.nextElement();
-			UnitThumb item = new UnitThumb(unit_name);
-			item.addListener((new ClickListener() {
-				@Override
-				public void clicked(InputEvent event, float x, float y) {
-					UnitThumb item = (UnitThumb) event.getListenerActor();
-					if (item != null) {
-						if (item == selectedThumb) {
-							item.desselect();
-							listener.onClick(item.getUnitName(), false, x, y);
-						} else {
-							if (selectedThumb != null)
-								selectedThumb.desselect();
-							item.select();
-							selectedThumb = item;
-							listener.onClick(item.getUnitName(), true, x, y);
-						}
-					}
-				}
-			}));
+			UnitThumb item = new UnitThumb(unit_name, unitItemClickListener, unitItemSplashListener);
 			table.add(item);
 		}
 
