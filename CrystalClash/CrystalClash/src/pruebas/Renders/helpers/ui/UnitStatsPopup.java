@@ -212,6 +212,7 @@ public class UnitStatsPopup extends Group {
 								.target(CrystalClash.HEIGHT - getHeight())));
 			}
 		}
+		visible = true;
 	}
 
 	public void hide() {

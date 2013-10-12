@@ -69,8 +69,8 @@ public class NormalGame extends GameRender {
 	public void onAttackAction() {
 		setUnitAction(new AttackUnitAction(selectedUnit.isMelee()));
 		unitAction.origin = selectedCell;
-
-		world.getRender().deselectUnitInCell(selectedCell);
+		
+		world.getRender().hideActionsRing();
 		showAbleToAttackCells();
 	}
 
@@ -126,7 +126,8 @@ public class NormalGame extends GameRender {
 		showAbleToAttackCellRecursive(selectedCell, selectedUnit.isMelee(), selectedUnit.getRange(), false);
 	}
 
-	// Method that actually "shows" (change state) the cell where units can attack
+	// Method that actually "shows" (change state) the cell where units can
+	// attack
 	private void showAbleToAttackCellRecursive(Cell cell, boolean onlyCellsWithUnit, int range, boolean hide) {
 		int[][] cells = cell.neigbours;
 
@@ -400,8 +401,6 @@ public class NormalGame extends GameRender {
 
 						world.getRender().selectUnitInCell(selectedUnit, selectedCell);
 					}
-				} else {
-					clearSelection();
 				}
 				break;
 			default:

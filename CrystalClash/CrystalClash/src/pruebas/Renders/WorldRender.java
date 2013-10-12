@@ -436,6 +436,7 @@ public class WorldRender extends Group implements InputProcessor {
 		if (cell != null)
 			cell.removeState(Cell.SELECTED);
 		hideActionsRing();
+		hideStatsPopup();
 	}
 
 	public void showStatsPopup(Unit u) {
