@@ -3,7 +3,6 @@ package pruebas.Renders.helpers.ui;
 import java.util.Enumeration;
 
 import pruebas.Controllers.GameController;
-import pruebas.CrystalClash.CrystalClash;
 import pruebas.Renders.helpers.ResourceHelper;
 
 import com.badlogic.gdx.graphics.Color;
@@ -24,7 +23,7 @@ public class UnitThumbsList extends Group {
 	private Label lblUnitsCount;
 	private UnitThumb selectedThumb;
 
-	public UnitThumbsList(int player, final UnitListSelectListener unitThumbListener, final UnitItemSplashListener unitSplashListener) {
+	public UnitThumbsList(final UnitListSelectListener unitThumbListener, final UnitItemSplashListener unitSplashListener) {
 		lblUnitsCount = new Label("", new LabelStyle(ResourceHelper.getFont(), Color.WHITE));
 
 		imgTableBg = new Image(ResourceHelper.getTexture("in_game/first_turn/list_background"));
@@ -32,15 +31,8 @@ public class UnitThumbsList extends Group {
 
 		table = new Table();
 		scrollPane = new ScrollPane(table);
-		if (player == 1) {
-			scrollPane.setPosition(CrystalClash.WIDTH / 2 + 10, 155);
-			imgTableBg.setPosition(CrystalClash.WIDTH / 2, 0);
-			lblUnitsCount.setPosition(CrystalClash.WIDTH / 2, 0);
-		} else {
-			scrollPane.setPosition(10, 155);
-			imgTableBg.setPosition(0, 0);
-			lblUnitsCount.setPosition(250, 50);
-		}
+		scrollPane.setPosition(10, 155);
+		lblUnitsCount.setPosition(250, 50);
 		scrollPane.setScrollingDisabled(true, false);
 		scrollPane.setOverscroll(false, true);
 		scrollPane.setSmoothScrolling(true);

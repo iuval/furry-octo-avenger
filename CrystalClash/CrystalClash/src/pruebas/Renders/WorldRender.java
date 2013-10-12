@@ -146,7 +146,7 @@ public class WorldRender extends Group implements InputProcessor {
 		gameRender.renderInTheFront(dt, batch);
 	}
 
-	private void load() {
+	public void load() {
 		TextureAtlas atlas = ResourceHelper.getTextureAtlas("in_game/options_bar.pack");
 		Skin skin = new Skin(atlas);
 
@@ -301,10 +301,6 @@ public class WorldRender extends Group implements InputProcessor {
 		grpBtnSend.addActor(btnSend);
 		grpBtnSend.setSize(imgBtnSendBackground.getWidth(), imgBtnSendBackground.getHeight());
 		grpBtnSend.setPosition(-grpBtnSend.getWidth(), 0);
-
-		addActor(grpBtnOptions);
-		addActor(grpOptions);
-		addActor(grpBtnSend);
 	}
 
 	private void finishLoad() {
@@ -380,6 +376,10 @@ public class WorldRender extends Group implements InputProcessor {
 		addActor(grpActionBar);
 		addActor(arrow);
 		addActor(pointingHand);
+
+		addActor(grpBtnOptions);
+		addActor(grpOptions);
+		addActor(grpBtnSend);
 
 		statsPopup = new UnitStatsPopup();
 		addActor(statsPopup);
@@ -644,10 +644,6 @@ public class WorldRender extends Group implements InputProcessor {
 
 	public void dispose() {
 		// txrTerrain.dispose();
-	}
-
-	public void init() {
-		load();
 	}
 
 	@Override

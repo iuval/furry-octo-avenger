@@ -41,7 +41,7 @@ public class SelectUnitsRender extends GameRender {
 	public void load() {
 		GameController.loadUnitsStats();
 
-		unitList = new UnitThumbsList(world.player, new UnitListSelectListener() {
+		unitList = new UnitThumbsList(new UnitListSelectListener() {
 			@Override
 			public void select(String unitName, boolean selected, float x, float y) {
 				if (selected) {
@@ -76,6 +76,12 @@ public class SelectUnitsRender extends GameRender {
 				}
 			}
 		});
+
+		if (world.player == 1) {
+			unitList.setPosition(CrystalClash.WIDTH / 2, 0);
+		} else {
+			unitList.setPosition(0, 0);
+		}
 		addActor(unitList);
 
 		resetUnitsCount();

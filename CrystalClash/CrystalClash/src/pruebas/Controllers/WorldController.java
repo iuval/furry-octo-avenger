@@ -39,7 +39,7 @@ public class WorldController {
 
 	public WorldController(JsonValue data) {
 		render = new WorldRender(this);
-		render.init();
+		render.load();
 		init();
 
 		if (data != null) {
