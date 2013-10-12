@@ -80,12 +80,12 @@ public class GameController {
 		return (int) ((getUnitLife(unitName) * 10) / unitMaxLife);
 	}
 
-	public static int getUnitAttack(String unitName) {
+	public static int getUnitDamage(String unitName) {
 		return unitValues.get(unitName)[3];
 	}
 
 	public static int getUnitAttackInScale(String unitName) {
-		return (int) ((getUnitAttack(unitName) * 10) / unitMaxAttack);
+		return (int) ((getUnitDamage(unitName) * 10) / unitMaxAttack);
 	}
 
 	public static int getUnitSpeed(String unitName) {

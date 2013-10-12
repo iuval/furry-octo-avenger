@@ -46,9 +46,11 @@ public class SelectUnitsRender extends GameRender {
 			public void select(String unitName, boolean selected, float x, float y) {
 				if (selected) {
 					selectedUnitName = unitName;
+					world.getRender().showStatsPopupFirstTurn(selectedUnitName);
 				} else {
 					selectedUnitName = null;
 					selectedUnit = null;
+					world.getRender().hideStatsPopup();
 				}
 			}
 		}, new UnitItemSplashListener() {
@@ -56,6 +58,7 @@ public class SelectUnitsRender extends GameRender {
 			@Override
 			public void openSplash(String unitName) {
 				if (!onSplash) {
+					desSelectUnit();
 					onSplash = true;
 					unitSplash = new Image(ResourceHelper.getUnitSplash(unitName));
 					addActor(unitSplash);
@@ -121,16 +124,15 @@ public class SelectUnitsRender extends GameRender {
 		if (cell != null) {
 			selectedUnit = cell.getUnit();
 			if (selectedUnit != null) {
+				unitList.desSelect();
+				world.getRender().showStatsPopupFirstTurn(selectedUnit.getName());
 				cell.removeUnit();
 				changeUnitsCountBy(-1);
 			} else {
 				if (selectedUnitName != null && canPlaceUnit()) {
-					if (selectedUnit == null) {
-						Unit u = new Unit(selectedUnitName, false);
-						if (world.player == 2)
-							u.getRender().setFacing(FACING.left);
-						selectedUnit = u;
-					}
+					selectedUnit = new Unit(selectedUnitName, false);
+					if (world.player == 2)
+						selectedUnit.getRender().setFacing(FACING.left);
 					selectedUnit.setPosition(x, y);
 				}
 			}
@@ -144,7 +146,7 @@ public class SelectUnitsRender extends GameRender {
 			if (world.placeUnit(x, y, selectedUnit)) {
 				changeUnitsCountBy(1);
 			}
-			selectedUnit = null;
+			desSelectUnit();
 		}
 		return true;
 	}
@@ -154,6 +156,13 @@ public class SelectUnitsRender extends GameRender {
 			selectedUnit.setPosition(x, y);
 		}
 		return true;
+	}
+
+	private void desSelectUnit() {
+		world.getRender().hideStatsPopup();
+		unitList.desSelect();
+		selectedUnitName = null;
+		selectedUnit = null;
 	}
 
 	@Override

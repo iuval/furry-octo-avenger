@@ -96,6 +96,11 @@ public class WorldRender extends Group implements InputProcessor {
 		addActor(gameRender);
 		finishLoad();
 		showHuds();
+		if (world.player == 1) {
+			statsPopup.setX(CrystalClash.WIDTH * 0.25f - statsPopup.getWidth() / 2);
+		} else {
+			statsPopup.setX(CrystalClash.WIDTH * 0.75f - statsPopup.getWidth() / 2);
+		}
 	}
 
 	public void initNormalTurn() {
@@ -432,15 +437,19 @@ public class WorldRender extends Group implements InputProcessor {
 			cell.removeState(Cell.SELECTED);
 		hideActionsRing();
 	}
-	
+
 	public void showStatsPopup(Unit u) {
 		statsPopup.show(u);
+	}
+
+	public void showStatsPopupFirstTurn(String unitName) {
+		statsPopup.show(unitName, UnitStatsPopup.FIXED_BOT);
 	}
 
 	public void hideStatsPopup() {
 		statsPopup.hide();
 	}
-	
+
 	public void moveActionsRing(final Cell selectedCell) {
 		if (selectedCell.getUnit() != null) {
 			Timeline t = Timeline.createSequence();

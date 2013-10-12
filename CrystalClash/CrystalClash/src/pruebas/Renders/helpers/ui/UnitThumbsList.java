@@ -98,4 +98,11 @@ public class UnitThumbsList extends Group {
 	public void setUnitCountText(String str) {
 		lblUnitsCount.setText(str);
 	}
+
+	public void desSelect() {
+		if (selectedThumb != null) {
+			selectedThumb.desselect();
+			selectedThumb = null;
+		}
+	}
 }
