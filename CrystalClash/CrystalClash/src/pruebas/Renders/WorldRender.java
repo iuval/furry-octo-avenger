@@ -95,7 +95,7 @@ public class WorldRender extends Group implements InputProcessor {
 		gameRender = new SelectUnitsRender(world);
 		addActor(gameRender);
 		finishLoad();
-		showHuds();
+		showGameMenuButtons();
 		if (world.player == 1) {
 			statsPopup.setX(CrystalClash.WIDTH * 0.25f - statsPopup.getWidth() / 2);
 		} else {
@@ -107,7 +107,7 @@ public class WorldRender extends Group implements InputProcessor {
 		gameRender = new NormalGame(world);
 		addActor(gameRender);
 		finishLoad();
-		showHuds();
+		showGameMenuButtons();
 	}
 
 	public void initTurnAnimations() {
@@ -120,7 +120,7 @@ public class WorldRender extends Group implements InputProcessor {
 		gameRender = new Tutorial(world);
 		addActor(gameRender);
 		finishLoad();
-		showHuds();
+		showGameMenuButtons();
 	}
 
 	public void render(float dt, SpriteBatch batch) {
@@ -411,12 +411,28 @@ public class WorldRender extends Group implements InputProcessor {
 						.target(grpBtnSend.getWidth() - 35).ease(TweenEquations.easeOutCirc)));
 	}
 
-	public void showHuds() {
-		GameEngine.start(Timeline.createSequence()
-				.push(Tween.to(grpBtnSend, ActorAccessor.X, CrystalClash.NORMAL_ANIMATION_SPEED)
+	public void showGameMenuButtons() {
+		GameEngine.start(pushShowGameMenuButtons(Timeline.createSequence()));
+	}
+
+	public Timeline pushShowGameMenuButtons(Timeline t) {
+		return t.beginSequence()
+				.push(Tween.to(grpBtnSend, ActorAccessor.X, CrystalClash.FAST_ANIMATION_SPEED)
 						.target(0).ease(TweenEquations.easeOutCirc))
-				.push(Tween.to(grpBtnOptions, ActorAccessor.X, CrystalClash.NORMAL_ANIMATION_SPEED)
-						.target(grpBtnSend.getWidth() - 35).ease(TweenEquations.easeOutCirc)));
+				.push(Tween.to(grpBtnOptions, ActorAccessor.X, CrystalClash.FAST_ANIMATION_SPEED)
+						.target(grpBtnSend.getWidth() - 35).ease(TweenEquations.easeOutCirc))
+				.end();
+	}
+
+	public Timeline pushHideGameMenuButtons(Timeline t) {
+		return t.beginSequence()
+				.push(Tween.to(grpOptions, ActorAccessor.X, CrystalClash.FAST_ANIMATION_SPEED)
+						.target(-grpOptions.getWidth()))
+				.push(Tween.to(grpBtnOptions, ActorAccessor.X, CrystalClash.FAST_ANIMATION_SPEED)
+						.target(-grpBtnOptions.getWidth()))
+				.push(Tween.to(grpBtnSend, ActorAccessor.X, CrystalClash.FAST_ANIMATION_SPEED)
+						.target(-grpBtnSend.getWidth()))
+				.end();
 	}
 
 	public void selectUnit(Unit unit) {
@@ -483,6 +499,8 @@ public class WorldRender extends Group implements InputProcessor {
 	}
 
 	private Timeline pushFadeOutActionsRing(Timeline t) {
+		btnSend.setVisible(true);
+		btnOptions.setVisible(true);
 		return t.beginParallel()
 				.push(Tween.to(grpActionBar, ActorAccessor.ALPHA, CrystalClash.FAST_ANIMATION_SPEED)
 						.target(0))
@@ -500,6 +518,8 @@ public class WorldRender extends Group implements InputProcessor {
 	}
 
 	private void fadeInActionsRing() {
+		btnSend.setVisible(false);
+		btnOptions.setVisible(false);
 		grpActionBar.setScale(0.8f, 0.8f);
 		GameEngine.start(Timeline.createParallel()
 				.push(Tween.to(grpActionBar, ActorAccessor.ALPHA, CrystalClash.FAST_ANIMATION_SPEED)
@@ -717,12 +737,7 @@ public class WorldRender extends Group implements InputProcessor {
 
 	public Timeline pushExitAnimation(Timeline t) {
 		t.beginSequence();
-		t.push(Tween.to(grpOptions, ActorAccessor.X, CrystalClash.NORMAL_ANIMATION_SPEED)
-				.target(-grpOptions.getWidth()))
-				.push(Tween.to(grpBtnOptions, ActorAccessor.X, CrystalClash.NORMAL_ANIMATION_SPEED)
-						.target(-grpBtnOptions.getWidth()))
-				.push(Tween.to(grpBtnSend, ActorAccessor.X, CrystalClash.NORMAL_ANIMATION_SPEED)
-						.target(-grpBtnSend.getWidth()))
+		pushHideGameMenuButtons(t)
 				.push(Tween.to(grpActionBar, ActorAccessor.Y, CrystalClash.NORMAL_ANIMATION_SPEED)
 						.target(CrystalClash.HEIGHT + grpActionBar.getHeight()))
 				.push(Tween.to(arrow, ActorAccessor.Y, CrystalClash.NORMAL_ANIMATION_SPEED)

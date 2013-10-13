@@ -160,13 +160,6 @@ public class NormalGame extends GameRender {
 						}
 					}
 				}
-				// if (hide || (onlyCellsWithUnit && (unit == null ||
-				// !unit.isEnemy()))) {
-				// neigbourCell.removeState(Cell.ABLE_TO_ATTACK);
-				// } else if (neigbourCell != selectedCell && (unit == null ||
-				// unit.isEnemy())) {
-				// neigbourCell.addState(Cell.ABLE_TO_ATTACK);
-				// }
 			}
 			if (range > 1)
 				showAbleToAttackCellRecursive(neigbourCell, onlyCellsWithUnit, range - 1, hide);
