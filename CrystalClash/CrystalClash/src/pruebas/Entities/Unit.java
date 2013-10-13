@@ -88,6 +88,18 @@ public class Unit extends GameObject {
 		getRender().updateHp();
 	}
 
+	public void setHPsoft(int hp) {
+		totalHitPoints = hp;
+		hitPoints = hp;
+	}
+
+	public void softDamage(float damage) {
+		if (inDefensePosition)
+			damage /= 2;
+
+		hitPoints -= damage;
+	}
+
 	public void damage(float damage) {
 		if (inDefensePosition)
 			damage /= 2;
