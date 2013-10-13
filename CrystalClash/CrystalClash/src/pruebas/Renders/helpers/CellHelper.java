@@ -20,7 +20,9 @@ public class CellHelper {
 	TextureAtlas atlas;
 
 	TextureRegion none;
+	TextureRegion not_able_to_attack;
 	TextureRegion able_to_attack;
+	TextureRegion not_able_to_move;
 	TextureRegion able_to_move;
 	TextureRegion able_to_place;
 
@@ -36,19 +38,28 @@ public class CellHelper {
 
 		none = skin.getRegion("none");
 		able_to_attack = skin.getRegion("able_to_attack");
+		// TODO: meter en el pack
+		not_able_to_attack = ResourceHelper.getTexture("in_game/not_able_to_attack");
 		able_to_move = skin.getRegion("able_to_move");
+		// TODO: meter en el pack
+		not_able_to_move = ResourceHelper.getTexture("in_game/not_able_to_move");
 		able_to_place = skin.getRegion("able_to_move");
 		attack_target_center = skin.getRegion("attack_target_center");
+		// TODO: meter en el pack
 		attack_target_radius = skin.getRegion("attack_target_center");
-		selected = ResourceHelper.getTexture("in_game/cell_selected");
+		selected = ResourceHelper.getTexture("in_game/selected");
 		path = skin.getRegion("path");
 	}
 
 	public void drawCellTextures(SpriteBatch batch, Cell cell) {
 		if (cell.hasState(Cell.ABLE_TO_MOVE)) {
 			batch.draw(able_to_move, cell.getX(), cell.getY());
+		} else if (cell.hasState(Cell.NOT_ABLE_TO_MOVE)) {
+			batch.draw(not_able_to_move, cell.getX(), cell.getY());
 		} else if (cell.hasState(Cell.ABLE_TO_ATTACK)) {
 			batch.draw(able_to_attack, cell.getX(), cell.getY());
+		} else if (cell.hasState(Cell.NOT_ABLE_TO_ATTACK)) {
+			batch.draw(not_able_to_attack, cell.getX(), cell.getY());
 		} else if (cell.hasState(Cell.ABLE_TO_MOVE)) {
 			batch.draw(able_to_move, cell.getX(), cell.getY());
 		} else if (cell.hasState(Cell.ABLE_TO_PLACE)) {
