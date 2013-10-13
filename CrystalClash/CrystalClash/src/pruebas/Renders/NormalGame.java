@@ -141,14 +141,33 @@ public class NormalGame extends GameRender {
 		Cell neigbourCell = null;
 		for (int i = 0; i < cells.length; i++) {
 			neigbourCell = world.cellAtByGrid(cells[i][0], cells[i][1]);
-			unit = neigbourCell.getUnit();
-			if (!neigbourCell.hasState(Cell.MOVE_TARGET | Cell.ATTACK_TARGET_CENTER) &&
-					(hide || (onlyCellsWithUnit && (unit == null || !unit.isEnemy())))) {
-				neigbourCell.removeState(Cell.ABLE_TO_ATTACK);
-			} else if (neigbourCell != selectedCell && (unit == null || unit.isEnemy()) &&
-					!neigbourCell.hasState(Cell.MOVE_TARGET | Cell.ATTACK_TARGET_CENTER))
-				neigbourCell.addState(Cell.ABLE_TO_ATTACK);
-
+			if (!neigbourCell.hasState(Cell.MOVE_TARGET | Cell.ATTACK_TARGET_CENTER)) {
+				unit = neigbourCell.getUnit();
+				if (hide) {
+					neigbourCell.removeState(Cell.ABLE_TO_ATTACK | Cell.NOT_ABLE_TO_ATTACK);
+				} else {
+					if (onlyCellsWithUnit) {
+						if (unit == null || !unit.isEnemy()) {
+							neigbourCell.addState(Cell.NOT_ABLE_TO_ATTACK);
+						} else {
+							neigbourCell.addState(Cell.ABLE_TO_ATTACK);
+						}
+					} else {
+						if (unit == null || unit.isEnemy()) {
+							neigbourCell.addState(Cell.ABLE_TO_ATTACK);
+						} else {
+							neigbourCell.addState(Cell.NOT_ABLE_TO_ATTACK);
+						}
+					}
+				}
+				// if (hide || (onlyCellsWithUnit && (unit == null ||
+				// !unit.isEnemy()))) {
+				// neigbourCell.removeState(Cell.ABLE_TO_ATTACK);
+				// } else if (neigbourCell != selectedCell && (unit == null ||
+				// unit.isEnemy())) {
+				// neigbourCell.addState(Cell.ABLE_TO_ATTACK);
+				// }
+			}
 			if (range > 1)
 				showAbleToAttackCellRecursive(neigbourCell, onlyCellsWithUnit, range - 1, hide);
 		}
