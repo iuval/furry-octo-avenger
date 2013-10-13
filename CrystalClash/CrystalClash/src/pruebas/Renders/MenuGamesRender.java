@@ -390,7 +390,13 @@ public class MenuGamesRender extends MenuRender {
 				.show();
 	}
 
-	public void enableRandomSuccess() {
+	public void enableRandomSuccess(String[] game) {
+		if (game != null) {
+			GameListItem listingItem = new GameListItem(game[0], game[1], game[2], game[3], game[4],
+					listItemSkin, surrenderListener,
+					playListener);
+			list.addActorAfter(gamesImage, listingItem);
+		}
 		btnNewRandom.setText("New random game");
 		GameEngine.hideLoading();
 	}
