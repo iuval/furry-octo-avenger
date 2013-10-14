@@ -48,9 +48,7 @@ public class SelectUnitsRender extends GameRender {
 					selectedUnitName = unitName;
 					world.getRender().showStatsPopupFirstTurn(selectedUnitName);
 				} else {
-					selectedUnitName = null;
-					selectedUnit = null;
-					world.getRender().hideStatsPopup();
+					desSelectUnit();
 				}
 			}
 		}, new UnitItemSplashListener() {

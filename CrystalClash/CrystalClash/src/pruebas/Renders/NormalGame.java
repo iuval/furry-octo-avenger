@@ -416,7 +416,7 @@ public class NormalGame extends GameRender {
 					selectedCell = cell;
 
 					maxMoves = GameController.getUnitSpeed(selectedUnit.getName());
-					world.getRender().selectUnitInCell(selectedUnit, selectedCell);
+					world.getRender().selectUnitInCell(selectedCell);
 				}
 			}
 		}

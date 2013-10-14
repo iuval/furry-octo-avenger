@@ -439,12 +439,13 @@ public class WorldRender extends Group implements InputProcessor {
 		statsPopup.show(unit);
 	}
 
-	public void selectUnitInCell(Unit unit, Cell cell) {
-		if (!unit.isEnemy()) {
+	public void selectUnitInCell(Cell cell) {
+		Unit u = cell.getUnit();
+		if (!u.isEnemy()) {
 			moveActionsRing(cell);
 		}
 		cell.addState(Cell.SELECTED);
-		showStatsPopup(unit);
+		showStatsPopup(u);
 	}
 
 	public void deselectUnitInCell(Cell cell) {
