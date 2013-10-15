@@ -118,6 +118,11 @@ public class GameController {
 		return p.isTutorialDone();
 	}
 
+	public static void resetProfile() {
+		Profile p = profileService.retrieveProfile();
+		p.reset();
+	}
+
 	public static void setTutorialDone() {
 		Profile p = profileService.retrieveProfile();
 		p.setTutorialDone();
@@ -147,6 +152,11 @@ public class GameController {
 		profileService.retrieveProfile().setUserPassword(password);
 		setUser(new User(userId, email, name));
 		GameEngine.getInstance().openMenuGames();
+	}
+
+	public static void signInSuccess(String userId, String name, String email, String password) {
+		profileService.retrieveProfile().reset();
+		logInSuccess(userId, name, email, password);
 	}
 
 	public static void logOut() {
