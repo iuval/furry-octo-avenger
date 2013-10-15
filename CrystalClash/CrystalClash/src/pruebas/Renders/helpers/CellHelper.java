@@ -14,8 +14,8 @@ public class CellHelper {
 	public static final float CELL_CENTER_X = 61f;
 	public static final float CELL_CENTER_Y = 53f;
 
-	public static final float CELL_UNIT_X = 30f;
-	public static final float CELL_UNIT_Y = 50f;
+	public static final float CELL_UNIT_X = 27f;
+	public static final float CELL_UNIT_Y = 9f;
 
 	TextureAtlas atlas;
 

@@ -284,6 +284,13 @@ public class TurnAnimations extends GameRender {
 					Unit unit = action.origin.getUnit();
 					if (type == TweenCallback.COMPLETE) {
 						Unit enemy = action.target.getUnit();
+
+						if (action.origin.getUnit().getX() > enemy.getX()) {
+							unit.getRender().setFacing(FACING.left);
+						} else {
+							unit.getRender().setFacing(FACING.right);
+						}
+
 						doDamage(enemy, unit);
 						unit.getRender().setState(STATE.fighting);
 

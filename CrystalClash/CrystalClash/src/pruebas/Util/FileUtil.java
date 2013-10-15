@@ -30,7 +30,7 @@ public class FileUtil {
 
 		SuperAnimation anim = new SuperAnimation(data.total_time, data.image_times, frames);
 		anim.handle_x = data.handle_x;
-		anim.handle_y = data.handle_x;
+		anim.handle_y = data.handle_y;
 		return anim;
 	}
 
