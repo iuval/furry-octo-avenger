@@ -2,7 +2,7 @@ animation
   sheet: 4, 5
   handle: 40, 6
   total-time: 3.75
-  image-count: 20
+  image-count: 19
 images-time
   0001: 0.1667
   0003: 0.1666
@@ -23,4 +23,3 @@ images-time
   0043: 0.0833
   0044: 0.0834
   0045: 0.0833
-  0052: 0
