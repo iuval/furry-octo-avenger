@@ -6,7 +6,7 @@ import aurelienribon.tweenengine.TweenAccessor;
 
 public class UnitAccessor implements TweenAccessor<Unit> {
 
-	public static final int X = 0, Y = 1;
+	public static final int X = 0, Y = 1, HP = 7;
 
 	@Override
 	public int getValues(Unit target, int tweenType, float[] returnValues) {
@@ -16,6 +16,9 @@ public class UnitAccessor implements TweenAccessor<Unit> {
 			return 1;
 		case Y:
 			returnValues[0] = target.getY();
+			return 1;
+		case HP:
+			returnValues[0] = target.getHP();
 			return 1;
 		default:
 			assert false;
@@ -36,6 +39,9 @@ public class UnitAccessor implements TweenAccessor<Unit> {
 			break;
 		case Y:
 			target.setPosition(target.getX(), newValues[0]);
+			break;
+		case HP:
+			target.setHPsoft((int) newValues[0]);
 			break;
 		default:
 			assert false;

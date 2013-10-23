@@ -25,8 +25,10 @@ public class WorldController {
 
 	public Cell[][] cellGrid;
 	private final float deltaX = 93F; // (float) ((3f / 4f) * hexaWidht);
-	private final float gridX = 202.0F;
-	private final float gridY = 59.0F;
+	private final float cellsLeft = 202.0F;
+	private final float cellsBot = 59.0F;
+	private final float cellsRight = cellsLeft + 866;
+	private final float cellsTop = cellsBot + 704;
 
 	public int player;
 	private String gameId;
@@ -37,7 +39,7 @@ public class WorldController {
 
 	public WorldController(JsonValue data) {
 		render = new WorldRender(this);
-		render.init();
+		render.load();
 		init();
 
 		if (data != null) {
@@ -152,7 +154,7 @@ public class WorldController {
 					yoffset = dy / 2;
 
 					for (int i = 0; i < oddNeighbours.length; i++) {
-						if (inMap(v + oddNeighbours[i][0], h + oddNeighbours[i][1])) {
+						if (inCellsGrid(v + oddNeighbours[i][0], h + oddNeighbours[i][1])) {
 							temp.add(new int[] { v + oddNeighbours[i][0], h + oddNeighbours[i][1] });
 						}
 					}
@@ -160,7 +162,7 @@ public class WorldController {
 					yoffset = 0;
 
 					for (int i = 0; i < evenNeighbours.length; i++) {
-						if (inMap(v + evenNeighbours[i][0], h + evenNeighbours[i][1])) {
+						if (inCellsGrid(v + evenNeighbours[i][0], h + evenNeighbours[i][1])) {
 							temp.add(new int[] { v + evenNeighbours[i][0], h + evenNeighbours[i][1] });
 						}
 					}
@@ -169,7 +171,7 @@ public class WorldController {
 				for (int i = 0; i < temp.size(); i++) {
 					c.neigbours[i] = temp.get(i);
 				}
-				c.setPosition(gridX + v * dx, gridY + yoffset + (h * dy));
+				c.setPosition(cellsLeft + v * dx, cellsBot + yoffset + (h * dy));
 				c.setGrisPosition(v, h);
 
 				cellGrid[v][h] = c;
@@ -184,33 +186,44 @@ public class WorldController {
 		createMap();
 	}
 
-	public void addUnit(Unit unit, int x, int y) {
+	public boolean addUnit(Unit unit, int x, int y) {
 		Cell cell = cellAt(x, y);
-		cell.placeUnit(unit);
+		if (cell != null) {
+			cell.placeUnit(unit);
+			return true;
+		}
+		return false;
 	}
 
 	public Cell cellAt(float x, float y) {
-		int cellX = 0, cellY = 0;
-		Cell cell = this.cellGrid[cellX][cellY];
+		if (inCells(x, y)) {
+			int cellX = 0, cellY = 0;
+			Cell cell = this.cellGrid[cellX][cellY];
 
-		while (cell.getX() < x && ++cellX < 9) {
+			while (cell.getX() < x && ++cellX < 9) {
+				cell = this.cellGrid[cellX][cellY];
+			}
+			if (!inCellsGrid(--cellX, cellY))
+				return null;
+
 			cell = this.cellGrid[cellX][cellY];
-		}
-		if (!inMap(--cellX, cellY))
-			return null;
+			while (cell.getY() < y && ++cellY < 6) {
+				cell = this.cellGrid[cellX][cellY];
+			}
+			if (!inCellsGrid(cellX, --cellY))
+				return null;
 
-		cell = this.cellGrid[cellX][cellY];
-		while (cell.getY() < y && ++cellY < 6) {
-			cell = this.cellGrid[cellX][cellY];
+			return this.cellGrid[cellX][cellY];
 		}
-		if (!inMap(cellX, --cellY))
-			return null;
-
-		return this.cellGrid[cellX][cellY];
+		return null;
 	}
 
-	public boolean inMap(int x, int y) {
+	public boolean inCellsGrid(int x, int y) {
 		return (x >= 0) && (x < 9) && (y >= 0) && (y < 6);
+	}
+
+	public boolean inCells(float x, float y) {
+		return (x >= cellsLeft) && (x < cellsRight) && (y >= cellsBot) && (y < cellsTop);
 	}
 
 	public boolean placeUnit(float x, float y, Unit unit) {

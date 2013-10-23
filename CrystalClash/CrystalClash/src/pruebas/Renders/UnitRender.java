@@ -82,7 +82,7 @@ public class UnitRender {
 			break;
 		case ghost: {
 			currnetAnim = walkAnim;
-			
+
 		}
 			break;
 		}
@@ -106,6 +106,9 @@ public class UnitRender {
 				currnetAnim.draw(batch, unit.getX(), unit.getY());
 				batch.setColor(c.r, c.g, c.b, 1f);
 			} else {
+				if(currnetAnim == fightAnim){
+					currnetAnim.draw(batch, unit.getX(), unit.getY());
+				}
 				currnetAnim.draw(batch, unit.getX(), unit.getY());
 				if (state != STATE.dieing) {
 					batch.draw(UnitHelper.backHPBar,

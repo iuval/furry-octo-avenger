@@ -38,7 +38,7 @@ public class ServerDriver {
 								.ProcessResponce(httpResponse);
 						if (values.getString("value").equals("ok")) {
 							JsonValue data = values.get("data");
-							GameController.logInSuccess(data.getString("id"),data.getString("name"), email, password);
+							GameController.signInSuccess(data.getString("id"), data.getString("name"), email, password);
 						} else {
 							GameEngine.getInstance().logInError(values.getString("message"));
 						}
@@ -61,7 +61,7 @@ public class ServerDriver {
 						JsonValue values = ServerDriver.ProcessResponce(httpResponse);
 						if (values.getString("value").equals("ok")) {
 							JsonValue data = values.get("data");
-							GameController.logInSuccess(data.getString("id"),data.getString("name"), email, password);
+							GameController.logInSuccess(data.getString("id"), data.getString("name"), email, password);
 						} else {
 							GameEngine.getInstance().logInError(values.getString("message"));
 						}
@@ -113,7 +113,18 @@ public class ServerDriver {
 						JsonValue values = ServerDriver
 								.ProcessResponce(httpResponse);
 						if (values.getString("value").equals("ok")) {
-							MenuGames.getInstance().enableRandomSuccess();
+							JsonValue child = values.get("data");
+							String[] game = null;
+							if (child != null && child.isObject()) {
+								game = new String[5];
+								game[0] = child.getString("game_id");
+								game[1] = child.getString("name");
+								game[2] = child.getString("victories");
+								game[3] = child.getString("turn");
+								game[4] = child.getString("state");
+
+							}
+							MenuGames.getInstance().enableRandomSuccess(game);
 						} else {
 							MenuGames.getInstance().enableRandomError(values.getString("message"));
 						}

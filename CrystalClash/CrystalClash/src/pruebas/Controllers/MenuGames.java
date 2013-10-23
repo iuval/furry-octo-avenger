@@ -46,8 +46,8 @@ public class MenuGames {
 		render.listGamesError(message);
 	}
 
-	public void enableRandomSuccess() {
-		render.enableRandomSuccess();
+	public void enableRandomSuccess(String[] game) {
+		render.enableRandomSuccess(game);
 	}
 
 	public void enableRandomError(String message) {

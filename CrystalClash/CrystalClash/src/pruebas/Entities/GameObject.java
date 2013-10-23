@@ -1,7 +1,5 @@
 package pruebas.Entities;
 
-import pruebas.Renders.helpers.CellHelper;
-
 import com.badlogic.gdx.math.Vector2;
 
 public class GameObject {

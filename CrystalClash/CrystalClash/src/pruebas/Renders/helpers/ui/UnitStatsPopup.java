@@ -18,6 +18,9 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 
 public class UnitStatsPopup extends Group {
+	public static final int NOT_FIXED = 0;
+	public static final int FIXED_TOP = 1;
+	public static final int FIXED_BOT = 2;
 
 	private Label lblTypeOfAttack;
 	private Label lblDamage;
@@ -60,11 +63,11 @@ public class UnitStatsPopup extends Group {
 		LabelStyle style = new LabelStyle(ResourceHelper.getFont(), Color.WHITE);
 
 		// Element
-		txtFireIcon = new TextureRegionDrawable(ResourceHelper.getTexture("units/fire/icon_race_fire"));
-		txtEarthIcon = new TextureRegionDrawable(ResourceHelper.getTexture("units/earth/icon_race_earth"));
-		txtWaterIcon = new TextureRegionDrawable(ResourceHelper.getTexture("units/water/icon_race_water"));
-		txtWindIcon = new TextureRegionDrawable(ResourceHelper.getTexture("units/wind/icon_race_wind"));
-		txtDarkIcon = new TextureRegionDrawable(ResourceHelper.getTexture("units/darkness/icon_race_darkness"));
+		txtFireIcon = new TextureRegionDrawable(ResourceHelper.getElementIcon("fire"));
+		txtEarthIcon = new TextureRegionDrawable(ResourceHelper.getElementIcon("earth"));
+		txtWaterIcon = new TextureRegionDrawable(ResourceHelper.getElementIcon("water"));
+		txtWindIcon = new TextureRegionDrawable(ResourceHelper.getElementIcon("wind"));
+		txtDarkIcon = new TextureRegionDrawable(ResourceHelper.getElementIcon("darkness"));
 
 		imgElement = new Image(txtFireIcon);
 		imgElement.setPosition(0, 0);
@@ -115,8 +118,8 @@ public class UnitStatsPopup extends Group {
 		setPosition(CrystalClash.WIDTH / 2 - getWidth() / 2, -100);
 	}
 
-	public void show(Unit unit) {
-		switch (GameController.getUnitElementIndex(unit.getName())) {
+	private void showCommonStats(String unitName) {
+		switch (GameController.getUnitElementIndex(unitName)) {
 		case Unit.ELEMENT_FIRE:
 			imgElement.setDrawable(txtFireIcon);
 			break;
@@ -134,7 +137,7 @@ public class UnitStatsPopup extends Group {
 			break;
 		}
 
-		switch (GameController.getUnitTypeIndex(unit.getName())) {
+		switch (GameController.getUnitTypeIndex(unitName)) {
 		case Unit.TYPE_SLAYER:
 			imgTypeOfAttack.setDrawable(txtSlayer);
 			lblTypeOfAttack.setText("Slayer");
@@ -153,13 +156,42 @@ public class UnitStatsPopup extends Group {
 			break;
 		}
 
-		lblDamage.setText("" + unit.getDamage());
-		lblHP.setText(String.format("%s/%s", unit.getHP(), GameController.getUnitLife(unit.getName())));
-		lblSpeed.setText("" + unit.getSpeed());
+		lblDamage.setText("" + GameController.getUnitDamage(unitName));
+		lblSpeed.setText("" + GameController.getUnitSpeed(unitName));
+	}
 
-		GameEngine.start(Timeline.createParallel()
-				.push(Tween.to(this, UnitAccessor.Y, CrystalClash.FAST_ANIMATION_SPEED)
-						.target(0)));
+	public void show(String unitName, int position) {
+		showCommonStats(unitName);
+		lblHP.setText(String.format("%s", GameController.getUnitLife(unitName)));
+
+		if (position == FIXED_BOT) {
+			if (visible) {
+				setY(0);
+			} else {
+				isBot = true;
+				setY(-getHeight());
+				GameEngine.start(Timeline.createParallel()
+						.push(Tween.to(this, UnitAccessor.Y, CrystalClash.FAST_ANIMATION_SPEED)
+								.target(0)));
+			}
+		} else if (position == FIXED_TOP) {
+			if (visible) {
+				setY(CrystalClash.HEIGHT - getHeight());
+			} else {
+				isBot = false;
+				setY(CrystalClash.HEIGHT + getHeight());
+				GameEngine.start(Timeline.createParallel()
+						.push(Tween.to(this, UnitAccessor.Y, CrystalClash.FAST_ANIMATION_SPEED)
+								.target(CrystalClash.HEIGHT - getHeight())));
+			}
+		}
+		visible = true;
+	}
+
+	public void show(Unit unit) {
+		showCommonStats(unit.getName());
+		lblHP.setText(String.format("%s/%s", unit.getHP(), GameController.getUnitLife(unit.getName())));
+
 		if (visible) {
 			if (isBot == unit.getY() < 150) {
 				setY(CrystalClash.HEIGHT - getHeight());

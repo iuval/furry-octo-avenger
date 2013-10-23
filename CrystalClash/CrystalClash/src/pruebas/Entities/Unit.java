@@ -43,7 +43,7 @@ public class Unit extends GameObject {
 		GameController.loadUnitsStats();
 		this.hitPoints = hp;
 		this.totalHitPoints = GameController.getUnitLife(unitName);
-		this.damage = GameController.getUnitAttack(unitName);
+		this.damage = GameController.getUnitDamage(unitName);
 		this.speed = GameController.getUnitSpeed(unitName);
 		this.range = GameController.getUnitRange(unitName);
 		inDefensePosition = false;
@@ -86,6 +86,18 @@ public class Unit extends GameObject {
 		totalHitPoints = hp;
 		hitPoints = hp;
 		getRender().updateHp();
+	}
+
+	public void setHPsoft(int hp) {
+		totalHitPoints = hp;
+		hitPoints = hp;
+	}
+
+	public void softDamage(float damage) {
+		if (inDefensePosition)
+			damage /= 2;
+
+		hitPoints -= damage;
 	}
 
 	public void damage(float damage) {

@@ -95,14 +95,19 @@ public class WorldRender extends Group implements InputProcessor {
 		gameRender = new SelectUnitsRender(world);
 		addActor(gameRender);
 		finishLoad();
-		showHuds();
+		showGameMenuButtons();
+		if (world.player == 1) {
+			statsPopup.setX(CrystalClash.WIDTH * 0.25f - statsPopup.getWidth() / 2);
+		} else {
+			statsPopup.setX(CrystalClash.WIDTH * 0.75f - statsPopup.getWidth() / 2);
+		}
 	}
 
 	public void initNormalTurn() {
 		gameRender = new NormalGame(world);
 		addActor(gameRender);
 		finishLoad();
-		showHuds();
+		showGameMenuButtons();
 	}
 
 	public void initTurnAnimations() {
@@ -115,7 +120,7 @@ public class WorldRender extends Group implements InputProcessor {
 		gameRender = new Tutorial(world);
 		addActor(gameRender);
 		finishLoad();
-		showHuds();
+		showGameMenuButtons();
 	}
 
 	public void render(float dt, SpriteBatch batch) {
@@ -141,7 +146,7 @@ public class WorldRender extends Group implements InputProcessor {
 		gameRender.renderInTheFront(dt, batch);
 	}
 
-	private void load() {
+	public void load() {
 		TextureAtlas atlas = ResourceHelper.getTextureAtlas("in_game/options_bar.pack");
 		Skin skin = new Skin(atlas);
 
@@ -296,10 +301,6 @@ public class WorldRender extends Group implements InputProcessor {
 		grpBtnSend.addActor(btnSend);
 		grpBtnSend.setSize(imgBtnSendBackground.getWidth(), imgBtnSendBackground.getHeight());
 		grpBtnSend.setPosition(-grpBtnSend.getWidth(), 0);
-
-		addActor(grpBtnOptions);
-		addActor(grpOptions);
-		addActor(grpBtnSend);
 	}
 
 	private void finishLoad() {
@@ -376,6 +377,10 @@ public class WorldRender extends Group implements InputProcessor {
 		addActor(arrow);
 		addActor(pointingHand);
 
+		addActor(grpBtnOptions);
+		addActor(grpOptions);
+		addActor(grpBtnSend);
+
 		statsPopup = new UnitStatsPopup();
 		addActor(statsPopup);
 	}
@@ -406,24 +411,41 @@ public class WorldRender extends Group implements InputProcessor {
 						.target(grpBtnSend.getWidth() - 35).ease(TweenEquations.easeOutCirc)));
 	}
 
-	public void showHuds() {
-		GameEngine.start(Timeline.createSequence()
-				.push(Tween.to(grpBtnSend, ActorAccessor.X, CrystalClash.NORMAL_ANIMATION_SPEED)
+	public void showGameMenuButtons() {
+		GameEngine.start(pushShowGameMenuButtons(Timeline.createSequence()));
+	}
+
+	public Timeline pushShowGameMenuButtons(Timeline t) {
+		return t.beginSequence()
+				.push(Tween.to(grpBtnSend, ActorAccessor.X, CrystalClash.FAST_ANIMATION_SPEED)
 						.target(0).ease(TweenEquations.easeOutCirc))
-				.push(Tween.to(grpBtnOptions, ActorAccessor.X, CrystalClash.NORMAL_ANIMATION_SPEED)
-						.target(grpBtnSend.getWidth() - 35).ease(TweenEquations.easeOutCirc)));
+				.push(Tween.to(grpBtnOptions, ActorAccessor.X, CrystalClash.FAST_ANIMATION_SPEED)
+						.target(grpBtnSend.getWidth() - 35).ease(TweenEquations.easeOutCirc))
+				.end();
+	}
+
+	public Timeline pushHideGameMenuButtons(Timeline t) {
+		return t.beginSequence()
+				.push(Tween.to(grpOptions, ActorAccessor.X, CrystalClash.FAST_ANIMATION_SPEED)
+						.target(-grpOptions.getWidth()))
+				.push(Tween.to(grpBtnOptions, ActorAccessor.X, CrystalClash.FAST_ANIMATION_SPEED)
+						.target(-grpBtnOptions.getWidth()))
+				.push(Tween.to(grpBtnSend, ActorAccessor.X, CrystalClash.FAST_ANIMATION_SPEED)
+						.target(-grpBtnSend.getWidth()))
+				.end();
 	}
 
 	public void selectUnit(Unit unit) {
 		statsPopup.show(unit);
 	}
 
-	public void selectUnitInCell(Unit unit, Cell cell) {
-		if (!unit.isEnemy()) {
+	public void selectUnitInCell(Cell cell) {
+		Unit u = cell.getUnit();
+		if (!u.isEnemy()) {
 			moveActionsRing(cell);
 		}
 		cell.addState(Cell.SELECTED);
-		showStatsPopup(unit);
+		showStatsPopup(u);
 	}
 
 	public void deselectUnitInCell(Cell cell) {
@@ -431,16 +453,21 @@ public class WorldRender extends Group implements InputProcessor {
 		if (cell != null)
 			cell.removeState(Cell.SELECTED);
 		hideActionsRing();
+		hideStatsPopup();
 	}
-	
+
 	public void showStatsPopup(Unit u) {
 		statsPopup.show(u);
+	}
+
+	public void showStatsPopupFirstTurn(String unitName) {
+		statsPopup.show(unitName, UnitStatsPopup.FIXED_BOT);
 	}
 
 	public void hideStatsPopup() {
 		statsPopup.hide();
 	}
-	
+
 	public void moveActionsRing(final Cell selectedCell) {
 		if (selectedCell.getUnit() != null) {
 			Timeline t = Timeline.createSequence();
@@ -473,6 +500,8 @@ public class WorldRender extends Group implements InputProcessor {
 	}
 
 	private Timeline pushFadeOutActionsRing(Timeline t) {
+		btnSend.setVisible(true);
+		btnOptions.setVisible(true);
 		return t.beginParallel()
 				.push(Tween.to(grpActionBar, ActorAccessor.ALPHA, CrystalClash.FAST_ANIMATION_SPEED)
 						.target(0))
@@ -490,6 +519,8 @@ public class WorldRender extends Group implements InputProcessor {
 	}
 
 	private void fadeInActionsRing() {
+		btnSend.setVisible(false);
+		btnOptions.setVisible(false);
 		grpActionBar.setScale(0.8f, 0.8f);
 		GameEngine.start(Timeline.createParallel()
 				.push(Tween.to(grpActionBar, ActorAccessor.ALPHA, CrystalClash.FAST_ANIMATION_SPEED)
@@ -637,10 +668,6 @@ public class WorldRender extends Group implements InputProcessor {
 		// txrTerrain.dispose();
 	}
 
-	public void init() {
-		load();
-	}
-
 	@Override
 	public boolean keyDown(int keycode) {
 		if (keycode == Keys.BACK)
@@ -711,12 +738,7 @@ public class WorldRender extends Group implements InputProcessor {
 
 	public Timeline pushExitAnimation(Timeline t) {
 		t.beginSequence();
-		t.push(Tween.to(grpOptions, ActorAccessor.X, CrystalClash.NORMAL_ANIMATION_SPEED)
-				.target(-grpOptions.getWidth()))
-				.push(Tween.to(grpBtnOptions, ActorAccessor.X, CrystalClash.NORMAL_ANIMATION_SPEED)
-						.target(-grpBtnOptions.getWidth()))
-				.push(Tween.to(grpBtnSend, ActorAccessor.X, CrystalClash.NORMAL_ANIMATION_SPEED)
-						.target(-grpBtnSend.getWidth()))
+		pushHideGameMenuButtons(t)
 				.push(Tween.to(grpActionBar, ActorAccessor.Y, CrystalClash.NORMAL_ANIMATION_SPEED)
 						.target(CrystalClash.HEIGHT + grpActionBar.getHeight()))
 				.push(Tween.to(arrow, ActorAccessor.Y, CrystalClash.NORMAL_ANIMATION_SPEED)

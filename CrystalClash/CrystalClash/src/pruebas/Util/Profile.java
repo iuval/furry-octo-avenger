@@ -12,10 +12,14 @@ import com.badlogic.gdx.utils.JsonValue;
 public class Profile implements Serializable {
 	private String userEmail;
 	private String userPassword;
-	private boolean tutorialDone;
+	private boolean tutorialDone = false;
 
 	public Profile()
 	{
+	}
+	
+	public void reset(){
+		tutorialDone = false;
 	}
 
 	/**
@@ -106,7 +110,7 @@ public class Profile implements Serializable {
 		if (s == null)
 			tutorialDone = false;
 		else
-			tutorialDone = Boolean.parseBoolean(s);
+			tutorialDone = Boolean.valueOf(s);
 
 		AudioManager.setVolume(json.readValue("volume", Float.class, 0.5f, jsonData));
 	}
