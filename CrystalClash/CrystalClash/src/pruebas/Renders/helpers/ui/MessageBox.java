@@ -2,7 +2,7 @@ package pruebas.Renders.helpers.ui;
 
 import pruebas.Accessors.ActorAccessor;
 import pruebas.CrystalClash.CrystalClash;
-import pruebas.Renders.GameEngine;
+import pruebas.Renders.BlackScreen;
 import pruebas.Renders.helpers.ResourceHelper;
 import aurelienribon.tweenengine.Timeline;
 import aurelienribon.tweenengine.Tween;
@@ -163,13 +163,13 @@ public class MessageBox extends Group {
 	}
 
 	protected Timeline getEnterAnimation() {
-		return GameEngine.pushShowBlackScreen(Timeline.createParallel())
+		return BlackScreen.pushShow(Timeline.createParallel())
 				.push(Tween.to(this, ActorAccessor.Y, CrystalClash.NORMAL_ANIMATION_SPEED)
 						.target(CrystalClash.HEIGHT / 4));
 	}
 
 	protected Timeline getExitAnimation() {
-		return GameEngine.pushHideBlackScreen(Timeline.createParallel())
+		return BlackScreen.pushHide(Timeline.createParallel())
 				.push(Tween.to(this, ActorAccessor.Y, CrystalClash.NORMAL_ANIMATION_SPEED)
 						.target(CrystalClash.HEIGHT + getHeight()));
 	}

@@ -15,6 +15,7 @@ public class CrystalClash extends Game {
 	public static final String VERSION = "0.1";
 	public static final boolean DEBUG = false;
 
+	public static float REALLY_SLOW_ANIMATION_SPEED = 2.0f;
 	public static float SLOW_ANIMATION_SPEED = 0.75f;
 	public static float NORMAL_ANIMATION_SPEED = 0.4f;
 	public static float FAST_ANIMATION_SPEED = 0.1f;
@@ -42,7 +43,7 @@ public class CrystalClash extends Game {
 		super.render();
 
 		// output the current FPS
-	//	fpsLogger.log();
+		// fpsLogger.log();
 	}
 
 	@Override

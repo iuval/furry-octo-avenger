@@ -37,7 +37,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Array;
 
-public class Tutorial extends GameRender {
+public class TutorialRender extends GameRender {
 
 	private static TweenManager tweenManager;
 
@@ -67,7 +67,7 @@ public class Tutorial extends GameRender {
 
 	private PathManager paths;
 
-	public Tutorial(WorldController world) {
+	public TutorialRender(WorldController world) {
 		super(world);
 		messageIndex = 0;
 		movePathX = 2;
@@ -102,7 +102,14 @@ public class Tutorial extends GameRender {
 
 		fireArcher = new Image(ResourceHelper.getTexture("tutorial/fire_archer"));
 		fireArcher.scale(-0.55f);
-		fireArcher.setPosition(-fireArcher.getWidth(), 0);
+		fireArcher.setPosition(-fireArcher.getWidth(), -10);
+
+		GameEngine.start(Timeline.createParallel()
+				.push(Tween.to(fireArcher, ActorAccessor.SCALE_Y, CrystalClash.REALLY_SLOW_ANIMATION_SPEED)
+						.target(fireArcher.getScaleY() + 0.005f))
+				.push(Tween.to(fireArcher, ActorAccessor.ROTATION, CrystalClash.REALLY_SLOW_ANIMATION_SPEED)
+						.target(0.5f))
+				.repeatYoyo(-1, 0));
 
 		balloon = new Image(ResourceHelper.getTexture("tutorial/message_balloon"));
 		balloon.scale(-0.1f);
@@ -120,13 +127,13 @@ public class Tutorial extends GameRender {
 					next();
 			}
 		});
-
 		final MessageBoxCallback confirmation = new MessageBoxCallback() {
 			@Override
 			public void onEvent(int type, Object data) {
 				if (type == MessageBoxCallback.YES) {
 					GameEngine.showLoading();
 					GameEngine.getInstance().openMenuGames();
+					GameController.setTutorialDone();
 				} else {
 					MessageBox.build().hide();
 				}
@@ -135,7 +142,7 @@ public class Tutorial extends GameRender {
 
 		imgBtnSkipBackground = new Image(skin.getRegion("exit_hud"));
 		imgBtnSkipBackground.setPosition(CrystalClash.WIDTH, CrystalClash.HEIGHT - imgBtnSkipBackground.getHeight());
-		TextButtonStyle skipStyle =  new TextButtonStyle(
+		TextButtonStyle skipStyle = new TextButtonStyle(
 				skin.getDrawable("exit_button"),
 				skin.getDrawable("exit_button_pressed"), null, ResourceHelper.getFont());
 		btnSkip = new TextButton("", skipStyle);
@@ -359,6 +366,13 @@ public class Tutorial extends GameRender {
 		Timeline.createSequence()
 				.push(Tween.to(btnNext, ActorAccessor.Y, CrystalClash.NORMAL_ANIMATION_SPEED)
 						.target(20)).start(tweenManager);
+
+		btnNext.rotate(-10f);
+		Timeline.createParallel()
+				.push(Tween.to(btnNext, ActorAccessor.ROTATION, CrystalClash.SLOW_ANIMATION_SPEED)
+						.target(20f)
+						.repeatYoyo(5, 0))
+				.repeat(-1, 2f).start(tweenManager);
 	}
 
 	@Override
@@ -1132,5 +1146,29 @@ public class Tutorial extends GameRender {
 	@Override
 	public void renderInTheFront(float dt, SpriteBatch batch) {
 		paths.render(batch, dt, PathRender.TYPE.ATTACK);
+	}
+
+	@Override
+	public void init() {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void shown() {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void closed() {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void dispose() {
+		// TODO Auto-generated method stub
+
 	}
 }

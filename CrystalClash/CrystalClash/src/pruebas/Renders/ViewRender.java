@@ -5,9 +5,9 @@ import aurelienribon.tweenengine.Timeline;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.scenes.scene2d.Group;
 
-public abstract class MenuRender extends Group implements InputProcessor {
+public abstract class ViewRender extends Group {
 
-	public MenuRender() {
+	public ViewRender() {
 	}
 
 	public abstract void init();
@@ -15,6 +15,10 @@ public abstract class MenuRender extends Group implements InputProcessor {
 	public abstract Timeline pushEnterAnimation(Timeline t);
 
 	public abstract Timeline pushExitAnimation(Timeline t);
+
+	public abstract void shown();
+
+	public abstract void closed();
 
 	public abstract void dispose();
 }

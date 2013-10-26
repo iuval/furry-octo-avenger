@@ -1,12 +1,10 @@
 package pruebas.Renders;
 
 import pruebas.Controllers.WorldController;
-import aurelienribon.tweenengine.Timeline;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.scenes.scene2d.Group;
 
-public abstract class GameRender extends Group {
+public abstract class GameRender extends ViewRender {
 	protected WorldController world;
 
 	public GameRender(WorldController world) {
@@ -30,10 +28,6 @@ public abstract class GameRender extends Group {
 	public abstract boolean touchDragged(float screenX, float screenY, int pointer);
 
 	public abstract boolean pan(float x, float y, float deltaX, float deltaY);
-
-	public abstract Timeline pushEnterAnimation(Timeline t);
-
-	public abstract Timeline pushExitAnimation(Timeline t);
 
 	public abstract void pause();
 

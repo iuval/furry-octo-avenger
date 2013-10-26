@@ -117,7 +117,7 @@ public class WorldRender extends Group implements InputProcessor {
 	}
 
 	public void initTutorial() {
-		gameRender = new Tutorial(world);
+		gameRender = new TutorialRender(world);
 		addActor(gameRender);
 		finishLoad();
 		showGameMenuButtons();

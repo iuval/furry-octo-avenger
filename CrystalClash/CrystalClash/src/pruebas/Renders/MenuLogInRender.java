@@ -14,6 +14,7 @@ import aurelienribon.tweenengine.Tween;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
+import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Group;
@@ -27,7 +28,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField.TextFieldStyle;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
-public class MenuLogInRender extends MenuRender {
+public class MenuLogInRender extends ViewRender implements InputProcessor {
 
 	private static MenuLogInRender instance;
 
@@ -376,5 +377,17 @@ public class MenuLogInRender extends MenuRender {
 	@Override
 	public boolean scrolled(int amount) {
 		return false;
+	}
+
+	@Override
+	public void shown() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void closed() {
+		// TODO Auto-generated method stub
+		
 	}
 }

@@ -55,11 +55,11 @@ public class GameEngine implements Screen {
 	private SplashScreen splashRender;
 	private MenuLogInRender menuLogInRender;
 	private MenuGamesRender menuGamesRender;
+	private TutorialRender tutorialRender;
 	private WorldController world;
 	private WorldRender worldRender;
 
 	private static TweenManager tweenManager;
-	private static Image txrBlackScreen;
 	private static SuperAnimatedActor loadingTexture;
 
 	private Image background;
@@ -90,9 +90,7 @@ public class GameEngine implements Screen {
 	private void loadInSplash() {
 		ResourceHelper.slowLoad();
 
-		txrBlackScreen = new Image(ResourceHelper.getTexture("menu/loading/background"));
-		txrBlackScreen.setColor(txrBlackScreen.getColor().r, txrBlackScreen.getColor().g, txrBlackScreen.getColor().b, 0);
-		txrBlackScreen.setVisible(false);
+		BlackScreen.load();
 
 		MessageBox.build().setTweenManager(tweenManager);
 
@@ -176,6 +174,25 @@ public class GameEngine implements Screen {
 				worldRender = null;
 			}
 			break;
+		case InTutorial:
+			stage.addActor(background);
+			stage.addActor(tutorialRender);
+			break;
+		case InTranstionMenuGamesAndTutorial:
+			stage.addActor(background);
+			stage.addActor(menuGamesRender);
+			stage.addActor(tutorialRender);
+			break;
+		case InTranstionSplashAndTutorial:
+			stage.addActor(background);
+			stage.addActor(splashRender);
+			stage.addActor(tutorialRender);
+			break;
+		case InTranstionSplashAndMenuLogIn:
+			stage.addActor(background);
+			stage.addActor(menuLogInRender);
+			stage.addActor(tutorialRender);
+			break;
 		case InTranstionMenuGamesAndGame:
 			stage.addActor(menuGamesRender);
 			break;
@@ -184,8 +201,7 @@ public class GameEngine implements Screen {
 			stage.addActor(worldRender);
 			break;
 		}
-		if (txrBlackScreen != null)
-			stage.addActor(txrBlackScreen);
+		stage.addActor(BlackScreen.getImage());
 		stage.addActor(MessageBox.build());
 		if (loadingTexture != null)
 			stage.addActor(loadingTexture);
@@ -201,6 +217,7 @@ public class GameEngine implements Screen {
 					world = new WorldController(data);
 					worldRender = world.getRender();
 				}
+				menuGamesRender.closed();
 				setState(GameState.InTranstionMenuGamesAndGame);
 				Timeline.createSequence()
 						.push(Tween.to(background, ActorAccessor.ALPHA, CrystalClash.SLOW_ANIMATION_SPEED).target(0))
@@ -245,12 +262,23 @@ public class GameEngine implements Screen {
 		t.setCallback(new TweenCallback() {
 			@Override
 			public void onEvent(int type, BaseTween<?> source) {
+				if (state == GameState.InMenuGames) {
+					menuGamesRender.closed();
+				} else if (state == GameState.InSplash) {
+					splashRender.closed();
+				}
 				if (menuLogInRender == null) {
 					menuLogInRender = MenuLogIn.getInstance().getRender();
 					menuLogInRender.init();
 				}
 				setState(GameState.InMenuLogIn);
-				menuLogInRender.pushEnterAnimation(Timeline.createSequence()).start(tweenManager);
+				menuLogInRender.pushEnterAnimation(Timeline.createSequence())
+						.setCallback(new TweenCallback() {
+							@Override
+							public void onEvent(int type, BaseTween<?> source) {
+								menuLogInRender.shown();
+							};
+						}).start(tweenManager);
 			}
 		});
 		t.start(tweenManager);
@@ -263,6 +291,7 @@ public class GameEngine implements Screen {
 			t.setCallback(new TweenCallback() {
 				@Override
 				public void onEvent(int type, BaseTween<?> source) {
+					splashRender.closed();
 					if (menuGamesRender == null) {
 						menuGamesRender = MenuGames.getInstance().getRender();
 						menuGamesRender.init();
@@ -274,6 +303,7 @@ public class GameEngine implements Screen {
 								@Override
 								public void onEvent(int type, BaseTween<?> source) {
 									setState(GameState.InMenuGames);
+									menuGamesRender.shown();
 								}
 							}).start(tweenManager);
 				}
@@ -283,17 +313,18 @@ public class GameEngine implements Screen {
 			t.setCallback(new TweenCallback() {
 				@Override
 				public void onEvent(int type, BaseTween<?> source) {
+					menuLogInRender.closed();
 					if (menuGamesRender == null) {
 						menuGamesRender = MenuGames.getInstance().getRender();
-						menuGamesRender.init();
 					}
-					MenuGames.getInstance().getGamesList();
+					menuGamesRender.init();
 					setState(GameState.InTranstionMenuLogInAndMenuGames);
 					menuGamesRender.pushEnterAnimation(Timeline.createSequence())
 							.setCallback(new TweenCallback() {
 								@Override
 								public void onEvent(int type, BaseTween<?> source) {
 									setState(GameState.InMenuGames);
+									menuGamesRender.shown();
 								}
 							}).start(tweenManager);
 				}
@@ -316,6 +347,98 @@ public class GameEngine implements Screen {
 								@Override
 								public void onEvent(int type, BaseTween<?> source) {
 									setState(GameState.InMenuGames);
+									menuGamesRender.shown();
+								}
+							}).start(tweenManager);
+				}
+			});
+		} else if (state == GameState.InTutorial) {
+			tutorialRender.pushExitAnimation(t);
+			t.setCallback(new TweenCallback() {
+				@Override
+				public void onEvent(int type, BaseTween<?> source) {
+					tutorialRender.closed();
+					if (menuGamesRender == null) {
+						menuGamesRender = MenuGames.getInstance().getRender();
+						menuGamesRender.init();
+					}
+					MenuGames.getInstance().getGamesList();
+					setState(GameState.InTranstionMenuGamesAndTutorial);
+					menuGamesRender.pushEnterAnimation(Timeline.createSequence())
+							.setCallback(new TweenCallback() {
+								@Override
+								public void onEvent(int type, BaseTween<?> source) {
+									setState(GameState.InMenuGames);
+									menuGamesRender.shown();
+								}
+							}).start(tweenManager);
+				}
+			});
+		}
+		t.start(tweenManager);
+	}
+
+	public void openTutorial() {
+		Timeline t = Timeline.createSequence();
+		if (state == GameState.InSplash) {
+			splashRender.pushExitAnimation(t);
+			t.setCallback(new TweenCallback() {
+				@Override
+				public void onEvent(int type, BaseTween<?> source) {
+					splashRender.closed();
+					if (tutorialRender == null) {
+						tutorialRender = new TutorialRender(world);
+					}
+					MenuGames.getInstance().getGamesList();
+					setState(GameState.InTranstionSplashAndTutorial);
+					tutorialRender.pushEnterAnimation(Timeline.createSequence())
+							.setCallback(new TweenCallback() {
+								@Override
+								public void onEvent(int type, BaseTween<?> source) {
+									setState(GameState.InTutorial);
+									tutorialRender.shown();
+								}
+							}).start(tweenManager);
+				}
+			});
+		} else if (state == GameState.InMenuLogIn) {
+			menuLogInRender.pushExitAnimation(t);
+			t.setCallback(new TweenCallback() {
+				@Override
+				public void onEvent(int type, BaseTween<?> source) {
+					menuLogInRender.closed();
+					if (tutorialRender == null) {
+						tutorialRender = new TutorialRender(world);
+					}
+					MenuGames.getInstance().getGamesList();
+					setState(GameState.InTranstionSplashAndTutorial);
+					menuGamesRender.pushEnterAnimation(Timeline.createSequence())
+							.setCallback(new TweenCallback() {
+								@Override
+								public void onEvent(int type, BaseTween<?> source) {
+									setState(GameState.InTutorial);
+									tutorialRender.shown();
+								}
+							}).start(tweenManager);
+				}
+			});
+		} else if (state == GameState.InMenuGames) {
+			menuGamesRender.pushExitAnimation(t);
+			t.setCallback(new TweenCallback() {
+				@Override
+				public void onEvent(int type, BaseTween<?> source) {
+					menuGamesRender.closed();
+					if (tutorialRender == null) {
+						tutorialRender = new TutorialRender(world);
+					}
+					MenuGames.getInstance().getGamesList();
+					setState(GameState.InTranstionSplashAndTutorial);
+					tutorialRender.pushEnterAnimation(Timeline.createSequence())
+							.setCallback(new TweenCallback() {
+								@Override
+								public void onEvent(int type, BaseTween<?> source) {
+									setState(GameState.InTutorial);
+									tutorialRender.shown();
 								}
 							}).start(tweenManager);
 				}
@@ -383,27 +506,7 @@ public class GameEngine implements Screen {
 		return new Vector2(vec.x, vec.y);
 	}
 
-	public static Timeline pushShowBlackScreen(Timeline t) {
-		txrBlackScreen.setVisible(true);
-		return t.push(Tween.to(txrBlackScreen, ActorAccessor.ALPHA, CrystalClash.NORMAL_ANIMATION_SPEED)
-				.target(1));
-	}
-
-	public static Timeline pushHideBlackScreen(Timeline t) {
-		return t.push(Tween.to(txrBlackScreen, ActorAccessor.ALPHA, CrystalClash.NORMAL_ANIMATION_SPEED)
-				.target(0))
-				.setCallback(new TweenCallback() {
-
-					@Override
-					public void onEvent(int type, BaseTween<?> source) {
-						txrBlackScreen.setVisible(false);
-					}
-				});
-	}
-
 	public static void showLoading() {
-		// showBlackScreen();
-		// loadingTexture.setVisible(true);
 		MessageBox.build()
 				.setMessage("Loading...")
 				.noButtonsLayout()
@@ -413,8 +516,6 @@ public class GameEngine implements Screen {
 	}
 
 	public static void hideLoading() {
-		// hideBlackScreen();
-		// loadingTexture.setVisible(false);
 		MessageBox.build().hide();
 	}
 

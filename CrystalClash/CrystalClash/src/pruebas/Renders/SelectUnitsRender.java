@@ -234,4 +234,28 @@ public class SelectUnitsRender extends GameRender {
 	@Override
 	public void onUndoAction() {
 	}
+
+	@Override
+	public void init() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void shown() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void closed() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void dispose() {
+		// TODO Auto-generated method stub
+		
+	}
 }
