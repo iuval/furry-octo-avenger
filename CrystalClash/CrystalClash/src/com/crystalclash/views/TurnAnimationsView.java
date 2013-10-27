@@ -902,6 +902,7 @@ public class TurnAnimationsView extends GameView {
 
 	}
 
+	@Override
 	public void pause() {
 		tweenManager.pause();
 	}

@@ -7,7 +7,6 @@ import aurelienribon.tweenengine.TweenCallback;
 import aurelienribon.tweenengine.TweenEquations;
 
 import com.badlogic.gdx.Input.Keys;
-import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -32,12 +31,13 @@ import com.crystalclash.renders.helpers.ui.MessageBox;
 import com.crystalclash.renders.helpers.ui.MessageBoxCallback;
 import com.crystalclash.renders.helpers.ui.UnitStatsPopup;
 import com.crystalclash.views.GameView;
+import com.crystalclash.views.InputView;
 import com.crystalclash.views.NormalGameView;
 import com.crystalclash.views.SelectUnitsView;
 import com.crystalclash.views.TurnAnimationsView;
 import com.crystalclash.views.TutorialView;
 
-public class WorldRender extends Group implements InputProcessor {
+public class WorldRender extends InputView {
 	public static CellHelper cellHelper;
 
 	private TextureRegion txrTerrain;
@@ -681,18 +681,6 @@ public class WorldRender extends Group implements InputProcessor {
 	}
 
 	@Override
-	public boolean keyUp(int keycode) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean keyTyped(char character) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
 	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
 		if (readInput) {
 			Vector2 vec = GameEngine.getRealPosition(screenX, screenY);
@@ -722,18 +710,6 @@ public class WorldRender extends Group implements InputProcessor {
 			Vector2 vec = GameEngine.getRealPosition(screenX, screenY);
 			gameRender.touchDragged(vec.x, vec.y, pointer);
 		}
-		return false;
-	}
-
-	@Override
-	public boolean mouseMoved(int screenX, int screenY) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean scrolled(int amount) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
@@ -771,5 +747,23 @@ public class WorldRender extends Group implements InputProcessor {
 
 	public void resume() {
 		gameRender.resume();
+	}
+
+	@Override
+	public void init() {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void shown() {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void closed() {
+		// TODO Auto-generated method stub
+
 	}
 }

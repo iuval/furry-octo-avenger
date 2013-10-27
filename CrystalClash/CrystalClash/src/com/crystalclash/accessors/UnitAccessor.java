@@ -1,9 +1,9 @@
 package com.crystalclash.accessors;
 
+import aurelienribon.tweenengine.TweenAccessor;
+
 import com.crystalclash.entities.Unit;
 import com.crystalclash.renders.UnitRender.FACING;
-
-import aurelienribon.tweenengine.TweenAccessor;
 
 public class UnitAccessor implements TweenAccessor<Unit> {
 

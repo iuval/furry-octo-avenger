@@ -124,6 +124,7 @@ public class SelectUnitsView extends GameView {
 		resetUnitsCount();
 	}
 
+	@Override
 	public boolean touchDown(float x, float y, int pointer, int button) {
 		Cell cell = world.cellAt(x, y);
 		if (cell != null) {
@@ -146,6 +147,7 @@ public class SelectUnitsView extends GameView {
 		return true;
 	}
 
+	@Override
 	public boolean touchUp(float x, float y, int pointer, int button) {
 		if (selectedUnit != null) {
 			if (world.placeUnit(x, y, selectedUnit)) {
@@ -156,6 +158,7 @@ public class SelectUnitsView extends GameView {
 		return true;
 	}
 
+	@Override
 	public boolean touchDragged(float x, float y, int pointer) {
 		if (selectedUnit != null) {
 			selectedUnit.setPosition(x, y);
@@ -209,6 +212,7 @@ public class SelectUnitsView extends GameView {
 	public void onSend() {
 	}
 
+	@Override
 	public void pause() {
 		// TODO Auto-generated method stub
 

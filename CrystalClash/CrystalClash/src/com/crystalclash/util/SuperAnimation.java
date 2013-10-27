@@ -170,6 +170,7 @@ public class SuperAnimation {
 	/**
 	 * All SuperAnimations clones share the frames and duration instances
 	 */
+	@Override
 	public SuperAnimation clone() {
 		SuperAnimation anim = new SuperAnimation(0, keyDurations, keyFrames);
 		anim.handle_x = handle_x;

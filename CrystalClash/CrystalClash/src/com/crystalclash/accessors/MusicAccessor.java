@@ -1,8 +1,8 @@
 package com.crystalclash.accessors;
 
-import com.crystalclash.audio.MusicWrapper;
-
 import aurelienribon.tweenengine.TweenAccessor;
+
+import com.crystalclash.audio.MusicWrapper;
 
 public class MusicAccessor implements TweenAccessor<MusicWrapper> {
 

@@ -2,10 +2,8 @@ package com.crystalclash.renders.helpers.ui;
 
 import aurelienribon.tweenengine.Timeline;
 import aurelienribon.tweenengine.Tween;
-import aurelienribon.tweenengine.TweenManager;
 
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
@@ -15,10 +13,12 @@ import com.badlogic.gdx.scenes.scene2d.utils.Align;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.crystalclash.CrystalClash;
 import com.crystalclash.accessors.ActorAccessor;
+import com.crystalclash.renders.AnimatedGroup;
 import com.crystalclash.renders.BlackScreen;
+import com.crystalclash.renders.GameEngine;
 import com.crystalclash.renders.helpers.ResourceHelper;
 
-public class MessageBox extends Group {
+public class MessageBox extends AnimatedGroup {
 	private static MessageBox instance;
 
 	private Image imgWindowBackground;
@@ -27,7 +27,6 @@ public class MessageBox extends Group {
 	private TextButton btnNo;
 	private boolean visible = false;
 
-	private TweenManager manager;
 	private MessageBoxCallback callback;
 	private boolean hideOnAction = true;
 	private Object userData;
@@ -89,11 +88,6 @@ public class MessageBox extends Group {
 		return this;
 	}
 
-	public MessageBox setTweenManager(TweenManager manager) {
-		this.manager = manager;
-		return this;
-	}
-
 	public MessageBox setUserData(Object data) {
 		userData = data;
 		return this;
@@ -138,10 +132,8 @@ public class MessageBox extends Group {
 		return this;
 	}
 
-	public static void show(TweenManager manager, String message, Object userData) {
-		build()
-				.setMessage(message)
-				.setTweenManager(manager);
+	public static void show(String message, Object userData) {
+		build().setMessage(message);
 		show(userData);
 	}
 
@@ -151,12 +143,12 @@ public class MessageBox extends Group {
 
 	public void show() {
 		setZIndex(99);
-		getEnterAnimation().start(manager);
+		GameEngine.start(BlackScreen.build().show(this, pushEnterAnimation(Timeline.createParallel())));
 		visible = true;
 	}
 
 	public void hide() {
-		getExitAnimation().start(manager);
+		GameEngine.start(BlackScreen.build().hide(pushExitAnimation(Timeline.createParallel())));
 		visible = false;
 	}
 
@@ -165,15 +157,16 @@ public class MessageBox extends Group {
 			callback.onEvent(type, userData);
 	}
 
-	protected Timeline getEnterAnimation() {
-		return BlackScreen.pushShow(Timeline.createParallel())
-				.push(Tween.to(this, ActorAccessor.Y, CrystalClash.NORMAL_ANIMATION_SPEED)
-						.target(CrystalClash.HEIGHT / 4));
+	@Override
+	public Timeline pushEnterAnimation(Timeline t) {
+		return t.push(Tween.to(this, ActorAccessor.Y, CrystalClash.NORMAL_ANIMATION_SPEED)
+				.target(CrystalClash.HEIGHT / 4));
 	}
 
-	protected Timeline getExitAnimation() {
-		return BlackScreen.pushHide(Timeline.createParallel())
-				.push(Tween.to(this, ActorAccessor.Y, CrystalClash.NORMAL_ANIMATION_SPEED)
-						.target(CrystalClash.HEIGHT + getHeight()));
+	@Override
+	public Timeline pushExitAnimation(Timeline t) {
+		return t.push(Tween.to(this, ActorAccessor.Y, CrystalClash.NORMAL_ANIMATION_SPEED)
+				.target(CrystalClash.HEIGHT + getHeight()));
 	}
+
 }

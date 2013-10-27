@@ -3,7 +3,6 @@ package com.crystalclash.networking;
 import java.util.HashMap;
 import java.util.Map;
 
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Net.HttpMethods;
 import com.badlogic.gdx.Net.HttpRequest;
@@ -33,6 +32,7 @@ public class ServerDriver {
 
 		Gdx.net.sendHttpRequest(getPost(ACTION_SIGN_IN, data),
 				new HttpResponseListener() {
+					@Override
 					public void handleHttpResponse(HttpResponse httpResponse) {
 						JsonValue values = ServerDriver
 								.ProcessResponce(httpResponse);
@@ -44,6 +44,7 @@ public class ServerDriver {
 						}
 					}
 
+					@Override
 					public void failed(Throwable t) {
 						exceptionMessage();
 					}
@@ -57,6 +58,7 @@ public class ServerDriver {
 
 		Gdx.net.sendHttpRequest(getPost(ACTION_LOG_IN, data),
 				new HttpResponseListener() {
+					@Override
 					public void handleHttpResponse(HttpResponse httpResponse) {
 						JsonValue values = ServerDriver.ProcessResponce(httpResponse);
 						if (values.getString("value").equals("ok")) {
@@ -67,6 +69,7 @@ public class ServerDriver {
 						}
 					}
 
+					@Override
 					public void failed(Throwable t) {
 						exceptionMessage();
 					}
@@ -76,6 +79,7 @@ public class ServerDriver {
 	public static void getListGames(String id) {
 		Gdx.net.sendHttpRequest(getGet(ACTION_LIST_GAMES + "/p/" + id),
 				new HttpResponseListener() {
+					@Override
 					public void handleHttpResponse(HttpResponse httpResponse) {
 						JsonValue values = ServerDriver
 								.ProcessResponce(httpResponse);
@@ -97,6 +101,7 @@ public class ServerDriver {
 						}
 					}
 
+					@Override
 					public void failed(Throwable t) {
 						exceptionMessage();
 					}
@@ -109,6 +114,7 @@ public class ServerDriver {
 
 		Gdx.net.sendHttpRequest(getPost(ACTION_ENABLE_RANDOM, data),
 				new HttpResponseListener() {
+					@Override
 					public void handleHttpResponse(HttpResponse httpResponse) {
 						JsonValue values = ServerDriver
 								.ProcessResponce(httpResponse);
@@ -130,6 +136,7 @@ public class ServerDriver {
 						}
 					}
 
+					@Override
 					public void failed(Throwable t) {
 						exceptionMessage();
 					}
@@ -150,6 +157,7 @@ public class ServerDriver {
 		System.out.println("Sending-> " + data);
 		Gdx.net.sendHttpRequest(getPost(ACTION_GAME_TURN, data),
 				new HttpResponseListener() {
+					@Override
 					public void handleHttpResponse(HttpResponse httpResponse) {
 						JsonValue values = ServerDriver
 								.ProcessResponce(httpResponse);
@@ -160,6 +168,7 @@ public class ServerDriver {
 						}
 					}
 
+					@Override
 					public void failed(Throwable t) {
 						exceptionMessage();
 					}
@@ -169,6 +178,7 @@ public class ServerDriver {
 	public static void getGameTurn(String playerId, String gameId) {
 		Gdx.net.sendHttpRequest(getGet(ACTION_GAME_TURN + "/p/" + playerId
 				+ "/g/" + gameId), new HttpResponseListener() {
+			@Override
 			public void handleHttpResponse(HttpResponse httpResponse) {
 				JsonValue values =
 						ServerDriver.ProcessResponce(httpResponse);
@@ -179,6 +189,7 @@ public class ServerDriver {
 				}
 			}
 
+			@Override
 			public void failed(Throwable t) {
 				exceptionMessage();
 			}

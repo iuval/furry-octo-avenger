@@ -50,7 +50,7 @@ public class MenuLogInView extends InputView {
 	private Image characters;
 
 	private Group groupInitialScreen;
-	// private Group popUp;
+	private Group popUp;
 
 	private StringWriting stringWriting;
 	public MenuLogInState state;
@@ -87,8 +87,7 @@ public class MenuLogInView extends InputView {
 		txtPassword.setText("");
 		txtPassword.setMessageText("");
 
-		return t;// t.push(Tween.to(popUp, ActorAccessor.Y,
-					// CrystalClash.SLOW_ANIMATION_SPEED).target(CrystalClash.HEIGHT));
+		return t.push(Tween.to(popUp, ActorAccessor.Y, CrystalClash.SLOW_ANIMATION_SPEED).target(CrystalClash.HEIGHT));
 	}
 
 	private void load() {
@@ -223,30 +222,21 @@ public class MenuLogInView extends InputView {
 			}
 		});
 
-		addActor(popupPanel);
-		addActor(lblHeading);
-		addActor(textFieldEmail);
-		addActor(textFieldPassword);
-		addActor(txtEmail);
-		addActor(txtPassword);
-		addActor(btnConfirm);
-		addActor(btnBack);
+		popUp = new Group();
+		popUp.addActor(popupPanel);
+		popUp.addActor(lblHeading);
+		popUp.addActor(textFieldEmail);
+		popUp.addActor(textFieldPassword);
+		popUp.addActor(txtEmail);
+		popUp.addActor(txtPassword);
+		popUp.addActor(btnConfirm);
+		popUp.addActor(btnBack);
 
-		// popUp = new Group();
-		// popUp.addActor(popupPanel);
-		// popUp.addActor(lblHeading);
-		// popUp.addActor(textFieldEmail);
-		// popUp.addActor(textFieldPassword);
-		// popUp.addActor(txtEmail);
-		// popUp.addActor(txtPassword);
-		// popUp.addActor(btnConfirm);
-		// popUp.addActor(btnBack);
-
-		// popUp.setSize(popupPanel.getWidth(), popupPanel.getHeight());
-		// popUp.setPosition(CrystalClash.WIDTH / 2 - popUp.getWidth() / 2,
-		// (CrystalClash.HEIGHT / 2 - popUp.getHeight() / 2)
-		// + CrystalClash.HEIGHT);
-		// addActor(popUp);
+		popUp.setSize(popupPanel.getWidth(), popupPanel.getHeight());
+		popUp.setPosition(CrystalClash.WIDTH / 2 - popUp.getWidth() / 2,
+				(CrystalClash.HEIGHT / 2 - popUp.getHeight() / 2)
+						+ CrystalClash.HEIGHT);
+		addActor(popUp);
 	}
 
 	public void logInError(String message) {
@@ -261,24 +251,24 @@ public class MenuLogInView extends InputView {
 	// los otros botones
 	private void moveUp(MenuLogInState state) {
 		float speed = CrystalClash.SLOW_ANIMATION_SPEED;
-		// GameEngine.start(Timeline.createParallel()
-		// .push(Tween.to(popUp, ActorAccessor.ALPHA, speed).target(0))
-		// .push(Tween.to(groupInitialScreen, ActorAccessor.ALPHA,
-		// speed).target(1))
-		// .push(Tween.to(popUp, ActorAccessor.Y, speed).target(
-		// popUp.getY() + CrystalClash.HEIGHT)));
+		GameEngine.start(Timeline.createParallel()
+				.push(Tween.to(popUp, ActorAccessor.ALPHA, speed).target(0))
+				.push(Tween.to(groupInitialScreen, ActorAccessor.ALPHA,
+						speed).target(1))
+				.push(Tween.to(popUp, ActorAccessor.Y, speed).target(
+						popUp.getY() + CrystalClash.HEIGHT)));
 
 		this.state = state;
 	}
 
 	private void moveDown(MenuLogInState state) {
 		float speed = CrystalClash.SLOW_ANIMATION_SPEED;
-		// GameEngine.start(Timeline.createParallel()
-		// .push(Tween.to(popUp, ActorAccessor.Y, speed).target(
-		// CrystalClash.HEIGHT / 2 - popUp.getHeight() / 2))
-		// .push(Tween.to(popUp, ActorAccessor.ALPHA, speed).target(1))
-		// .push(Tween.to(groupInitialScreen, ActorAccessor.ALPHA,
-		// speed).target(0)));
+		GameEngine.start(Timeline.createParallel()
+				.push(Tween.to(popUp, ActorAccessor.Y, speed).target(
+						CrystalClash.HEIGHT / 2 - popUp.getHeight() / 2))
+				.push(Tween.to(popUp, ActorAccessor.ALPHA, speed).target(1))
+				.push(Tween.to(groupInitialScreen, ActorAccessor.ALPHA,
+						speed).target(0)));
 
 		this.state = state;
 	}
@@ -286,15 +276,16 @@ public class MenuLogInView extends InputView {
 	private void adjustToKeyboard(boolean up) {
 		Gdx.input.setOnscreenKeyboardVisible(up);
 		// true mueve hacia arriba, false mueve hacia abajo
-		// float jump = CrystalClash.HEIGHT / 2 - popUp.getHeight() / 2;
-		// if (up)
-		// jump = CrystalClash.HEIGHT / 2 - 30;
-		//
-		// float speed = CrystalClash.SLOW_ANIMATION_SPEED;
-		// GameEngine.start(Timeline.createParallel()
-		// .push(Tween.to(popUp, ActorAccessor.Y, speed).target(jump)));
+		float jump = CrystalClash.HEIGHT / 2 - popUp.getHeight() / 2;
+		if (up)
+			jump = CrystalClash.HEIGHT / 2 - 30;
+
+		float speed = CrystalClash.SLOW_ANIMATION_SPEED;
+		GameEngine.start(Timeline.createParallel()
+				.push(Tween.to(popUp, ActorAccessor.Y, speed).target(jump)));
 	}
 
+	@Override
 	public void dispose() {
 	}
 
@@ -331,7 +322,7 @@ public class MenuLogInView extends InputView {
 
 	@Override
 	public boolean keyUp(int keycode) {
-		return false;
+		return true;
 	}
 
 	@Override

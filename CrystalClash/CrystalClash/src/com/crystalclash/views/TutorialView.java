@@ -685,6 +685,7 @@ public class TutorialView extends GameView {
 		}
 	}
 
+	@Override
 	public void pause() {
 		tweenManager.pause();
 	}

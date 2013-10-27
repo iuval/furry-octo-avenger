@@ -13,6 +13,7 @@ public abstract class UnitAction {
 
 	public abstract UnitActionType getActionType();
 	
+	@Override
 	public boolean equals(Object other){
 		UnitAction action = (UnitAction) other;
 		return this.origin == action.origin;

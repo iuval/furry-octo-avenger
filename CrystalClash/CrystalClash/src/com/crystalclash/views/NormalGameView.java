@@ -18,7 +18,6 @@ import com.crystalclash.entities.helpers.UnitAction;
 import com.crystalclash.entities.helpers.UnitAction.UnitActionType;
 import com.crystalclash.renders.GameEngine;
 import com.crystalclash.renders.PathRender;
-import com.crystalclash.renders.PathRender.TYPE;
 import com.crystalclash.renders.UnitRender.STATE;
 import com.crystalclash.renders.helpers.PathManager;
 
@@ -69,6 +68,7 @@ public class NormalGameView extends GameView {
 		PathManager.load();
 	}
 
+	@Override
 	public void onAttackAction() {
 		setUnitAction(new AttackUnitAction(selectedUnit.isMelee()));
 		unitAction.origin = selectedCell;
@@ -77,6 +77,7 @@ public class NormalGameView extends GameView {
 		showAbleToAttackCells();
 	}
 
+	@Override
 	public void onDefendAction() {
 		setUnitAction(new DefendUnitAction());
 		unitAction.origin = selectedCell;
@@ -86,6 +87,7 @@ public class NormalGameView extends GameView {
 		world.getRender().hideActionsRing();
 	}
 
+	@Override
 	public void onMoveAction() {
 		setUnitAction(new MoveUnitAction());
 		unitAction.origin = selectedCell;
@@ -96,6 +98,7 @@ public class NormalGameView extends GameView {
 		showAbleToMoveCells();
 	}
 
+	@Override
 	public void onUndoAction() {
 		undoAction();
 	}
@@ -513,6 +516,7 @@ public class NormalGameView extends GameView {
 		}
 	}
 
+	@Override
 	public void pause() {
 	}
 

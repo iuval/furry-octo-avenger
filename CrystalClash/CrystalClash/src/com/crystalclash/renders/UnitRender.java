@@ -134,6 +134,7 @@ public class UnitRender {
 		}
 	}
 
+	@Override
 	public UnitRender clone() {
 		UnitRender ren = new UnitRender();
 		ren.idleAnim = idleAnim.clone();

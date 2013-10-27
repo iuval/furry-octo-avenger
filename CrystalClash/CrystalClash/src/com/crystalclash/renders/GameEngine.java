@@ -16,7 +16,6 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.utils.JsonValue;
@@ -64,9 +63,6 @@ public class GameEngine implements Screen {
 	private WorldController world;
 	private WorldRender worldRender;
 
-	private Group grpBack;
-	private Group grpFront;
-
 	private static TweenManager tweenManager;
 	private static SuperAnimatedActor loadingTexture;
 
@@ -80,6 +76,9 @@ public class GameEngine implements Screen {
 		Tween.registerAccessor(Unit.class, new UnitAccessor());
 
 		inputManager = new InputMultiplexer();
+		Gdx.input.setCatchBackKey(true);
+		Gdx.input.setInputProcessor(inputManager);
+
 		batch = new SpriteBatch();
 		stage = new Stage();
 		camera = new OrthographicCamera();
@@ -96,15 +95,8 @@ public class GameEngine implements Screen {
 	}
 
 	private void loadInSplash() {
-
-		grpFront = new Group();
-
-		BlackScreen.load();
-		MessageBox.build().setTweenManager(tweenManager);
-		stage.addActor(BlackScreen.getImage());
-		stage.addActor(grpFront);
-		stage.addActor(MessageBox.build());
-		inputManager.addProcessor(stage);
+		stage.addActor(BlackScreen.build());
+		// stage.addActor(MessageBox.build());
 		// if (loadingTexture != null)
 		// stage.addActor(loadingTexture);
 		// loadingTexture = new
@@ -112,8 +104,6 @@ public class GameEngine implements Screen {
 		// true, FACING.right);
 		// hideLoading();
 
-		Gdx.input.setCatchBackKey(true);
-		Gdx.input.setInputProcessor(stage);
 	}
 
 	public static GameState getState() {
@@ -125,10 +115,6 @@ public class GameEngine implements Screen {
 
 		TextureRegion backgroundTexture = ResourceHelper.getTexture("menu/menu_background");
 		imgBackground = new Image(backgroundTexture);
-
-		grpBack = new Group();
-
-		stage.addActor(grpBack);
 
 		Timeline.createSequence()
 				.push(Tween.set(imgBackground, ActorAccessor.ALPHA).target(0))
@@ -167,64 +153,61 @@ public class GameEngine implements Screen {
 
 	private void setState(GameState newState) {
 		state = newState;
-		grpBack.clearChildren();
+		stage.clear();
+		inputManager.clear();
+		inputManager.addProcessor(stage);
 		switch (newState) {
 		case InMenuLogIn:
-			grpBack.addActor(imgBackground);
-			grpBack.addActor(menuLogInRender);
+			inputManager.addProcessor(menuLogInRender);
+			stage.addActor(imgBackground);
+			stage.addActor(menuLogInRender);
 			break;
 		case InTranstionMenuLogInAndMenuGames:
-			grpBack.addActor(menuLogInRender);
-			grpBack.addActor(menuGamesRender);
+			stage.addActor(menuLogInRender);
+			stage.addActor(menuGamesRender);
 			break;
 		case InTranstionSplashAndMenuGames:
-			grpBack.addActor(imgBackground);
-			grpBack.addActor(splashRender);
-			grpBack.addActor(menuGamesRender);
+			stage.addActor(imgBackground);
+			stage.addActor(splashRender);
+			stage.addActor(menuGamesRender);
 			break;
 		case InMenuGames:
-			grpBack.addActor(imgBackground);
-			grpBack.addActor(menuGamesRender);
+			inputManager.addProcessor(menuGamesRender);
+			stage.addActor(imgBackground);
+			stage.addActor(menuGamesRender);
 			if (worldRender != null) {
 				worldRender.dispose();
 				worldRender = null;
 			}
 			break;
 		case InTutorial:
-			grpBack.addActor(imgBackground);
-			grpBack.addActor(tutorialRender);
+			stage.addActor(imgBackground);
+			stage.addActor(tutorialRender);
 			break;
 		case InTranstionMenuGamesAndTutorial:
-			grpBack.addActor(imgBackground);
-			grpBack.addActor(menuGamesRender);
-			grpBack.addActor(tutorialRender);
+			stage.addActor(imgBackground);
+			stage.addActor(menuGamesRender);
+			stage.addActor(tutorialRender);
 			break;
 		case InTranstionSplashAndTutorial:
-			grpBack.addActor(imgBackground);
-			grpBack.addActor(splashRender);
-			grpBack.addActor(tutorialRender);
+			stage.addActor(imgBackground);
+			stage.addActor(splashRender);
+			stage.addActor(tutorialRender);
 			break;
 		case InTranstionSplashAndMenuLogIn:
-			grpBack.addActor(imgBackground);
-			grpBack.addActor(menuLogInRender);
-			grpBack.addActor(tutorialRender);
+			stage.addActor(imgBackground);
+			stage.addActor(menuLogInRender);
+			stage.addActor(tutorialRender);
 			break;
 		case InTranstionMenuGamesAndGame:
-			grpBack.addActor(menuGamesRender);
+			stage.addActor(menuGamesRender);
 			break;
 		case InGame:
 			inputManager.addProcessor(worldRender);
-			grpBack.addActor(worldRender);
+			stage.addActor(worldRender);
 			break;
 		}
-	}
-
-	public void addActorInBack(Actor actor) {
-		grpBack.addActor(actor);
-	}
-
-	public void addActorInFront(Actor actor) {
-		grpFront.addActor(actor);
+		stage.addActor(BlackScreen.build());
 	}
 
 	public void openGame(final JsonValue data) {

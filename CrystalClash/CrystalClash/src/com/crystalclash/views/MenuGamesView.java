@@ -23,6 +23,7 @@ import com.crystalclash.accessors.ActorAccessor;
 import com.crystalclash.audio.AudioManager;
 import com.crystalclash.controllers.GameController;
 import com.crystalclash.controllers.MenuGames;
+import com.crystalclash.renders.AnimatedGroup;
 import com.crystalclash.renders.BlackScreen;
 import com.crystalclash.renders.GameEngine;
 import com.crystalclash.renders.helpers.ResourceHelper;
@@ -53,7 +54,7 @@ public class MenuGamesView extends InputView {
 	private TextButton btnMusic;
 
 	private boolean isTutoInvVisible = false;
-	private Group grpTutoInvitation;
+	private AnimatedGroup grpTutoInvitation;
 	private TextButton btnPlayTutorial;
 	private TextButton btnSkipTutorial;
 	private Image imgFireArcher;
@@ -112,7 +113,7 @@ public class MenuGamesView extends InputView {
 				.push(Tween.to(superScroll, ActorAccessor.X, CrystalClash.SLOW_ANIMATION_SPEED)
 						.target(CrystalClash.WIDTH));
 		if (isTutoInvVisible) {
-			BlackScreen.pushHide(t)
+			BlackScreen.build().hide(t)
 					.push(Tween.to(imgFireArcher, ActorAccessor.X, CrystalClash.SLOW_ANIMATION_SPEED)
 							.target(-imgFireArcher.getWidth()))
 					.push(Tween.to(imgBalloon, ActorAccessor.Y, CrystalClash.SLOW_ANIMATION_SPEED)
@@ -206,7 +207,7 @@ public class MenuGamesView extends InputView {
 	}
 
 	private void loadTutorial() {
-		grpTutoInvitation = new Group();
+		grpTutoInvitation = new AnimatedGroup();
 		grpTutoInvitation.setBounds(0, 0, CrystalClash.WIDTH, CrystalClash.HEIGHT);
 
 		imgFireArcher = new Image(ResourceHelper.getTexture("tutorial/fire_archer"));
@@ -246,6 +247,7 @@ public class MenuGamesView extends InputView {
 				if (type == MessageBoxCallback.YES) {
 					closeTutorialInvitation();
 					MessageBox.build().hide();
+					isTutoInvVisible = false;
 				} else {
 					lblMessage.setText("");
 					controller.openTutorial();
@@ -267,13 +269,11 @@ public class MenuGamesView extends InputView {
 			}
 		});
 		grpTutoInvitation.addActor(btnSkipTutorial);
-
-		GameEngine.getInstance().addActorInFront(grpTutoInvitation);
 	}
 
 	private void closeTutorialInvitation() {
 		GameController.setTutorialDone();
-		GameEngine.start(BlackScreen.pushHide(Timeline.createParallel())
+		GameEngine.start(BlackScreen.build().hide(Timeline.createParallel())
 				.push(Tween.to(imgFireArcher, ActorAccessor.X, CrystalClash.SLOW_ANIMATION_SPEED)
 						.target(-imgFireArcher.getWidth()))
 				.push(Tween.to(imgBalloon, ActorAccessor.Y, CrystalClash.SLOW_ANIMATION_SPEED)
@@ -421,7 +421,7 @@ public class MenuGamesView extends InputView {
 	public void shown() {
 		if (!GameController.isTutorialDone()) {
 			isTutoInvVisible = true;
-			GameEngine.start(BlackScreen.pushShow(Timeline.createParallel())
+			GameEngine.start(BlackScreen.build().show(grpTutoInvitation, Timeline.createParallel())
 					.push(Tween.to(imgFireArcher, ActorAccessor.X, CrystalClash.SLOW_ANIMATION_SPEED).target(0))
 					.push(Tween.to(imgBalloon, ActorAccessor.Y, CrystalClash.SLOW_ANIMATION_SPEED).target(CrystalClash.HEIGHT / 2))
 					.push(Tween.to(btnPlayTutorial, ActorAccessor.Y, CrystalClash.SLOW_ANIMATION_SPEED)

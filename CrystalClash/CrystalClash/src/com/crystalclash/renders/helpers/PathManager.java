@@ -3,7 +3,6 @@ package com.crystalclash.renders.helpers;
 import java.util.Enumeration;
 import java.util.Hashtable;
 
-
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.crystalclash.entities.Path;
