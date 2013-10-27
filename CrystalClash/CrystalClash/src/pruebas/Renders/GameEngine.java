@@ -16,6 +16,10 @@ import pruebas.renders.helpers.ResourceHelper;
 import pruebas.renders.helpers.ui.MessageBox;
 import pruebas.renders.helpers.ui.MessageBoxCallback;
 import pruebas.renders.helpers.ui.SuperAnimatedActor;
+import pruebas.renders.views.MenuGamesView;
+import pruebas.renders.views.MenuLogInView;
+import pruebas.renders.views.SplashView;
+import pruebas.renders.views.TutorialView;
 import aurelienribon.tweenengine.BaseTween;
 import aurelienribon.tweenengine.Timeline;
 import aurelienribon.tweenengine.Tween;
@@ -56,7 +60,7 @@ public class GameEngine implements Screen {
 	private SplashView splashRender;
 	private MenuLogInView menuLogInRender;
 	private MenuGamesView menuGamesRender;
-	private TutorialRender tutorialRender;
+	private TutorialView tutorialRender;
 	private WorldController world;
 	private WorldRender worldRender;
 
@@ -402,7 +406,7 @@ public class GameEngine implements Screen {
 				public void onEvent(int type, BaseTween<?> source) {
 					splashRender.closed();
 					if (tutorialRender == null) {
-						tutorialRender = new TutorialRender(world);
+						tutorialRender = new TutorialView(world);
 					}
 					MenuGames.getInstance().getGamesList();
 					setState(GameState.InTranstionSplashAndTutorial);
@@ -423,7 +427,7 @@ public class GameEngine implements Screen {
 				public void onEvent(int type, BaseTween<?> source) {
 					menuLogInRender.closed();
 					if (tutorialRender == null) {
-						tutorialRender = new TutorialRender(world);
+						tutorialRender = new TutorialView(world);
 					}
 					MenuGames.getInstance().getGamesList();
 					setState(GameState.InTranstionSplashAndTutorial);
@@ -444,7 +448,7 @@ public class GameEngine implements Screen {
 				public void onEvent(int type, BaseTween<?> source) {
 					menuGamesRender.closed();
 					if (tutorialRender == null) {
-						tutorialRender = new TutorialRender(world);
+						tutorialRender = new TutorialView(world);
 					}
 					MenuGames.getInstance().getGamesList();
 					setState(GameState.InTranstionSplashAndTutorial);

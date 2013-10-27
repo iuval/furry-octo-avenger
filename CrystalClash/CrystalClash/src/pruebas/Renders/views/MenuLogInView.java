@@ -1,4 +1,4 @@
-package pruebas.renders;
+package pruebas.renders.views;
 
 import pruebas.Accessors.ActorAccessor;
 import pruebas.Controllers.GameController;
@@ -6,6 +6,7 @@ import pruebas.Controllers.MenuLogIn;
 import pruebas.CrystalClash.CrystalClash;
 import pruebas.Enumerators.MenuLogInState;
 import pruebas.Enumerators.StringWriting;
+import pruebas.renders.GameEngine;
 import pruebas.renders.helpers.ResourceHelper;
 import pruebas.renders.helpers.ui.MessageBox;
 import pruebas.Util.Profile;

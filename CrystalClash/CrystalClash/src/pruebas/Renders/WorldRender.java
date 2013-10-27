@@ -12,6 +12,11 @@ import pruebas.renders.helpers.UnitHelper;
 import pruebas.renders.helpers.ui.MessageBox;
 import pruebas.renders.helpers.ui.MessageBoxCallback;
 import pruebas.renders.helpers.ui.UnitStatsPopup;
+import pruebas.renders.views.GameView;
+import pruebas.renders.views.NormalGameView;
+import pruebas.renders.views.SelectUnitsView;
+import pruebas.renders.views.TurnAnimationsView;
+import pruebas.renders.views.TutorialView;
 import aurelienribon.tweenengine.BaseTween;
 import aurelienribon.tweenengine.Timeline;
 import aurelienribon.tweenengine.Tween;
@@ -70,7 +75,7 @@ public class WorldRender extends Group implements InputProcessor {
 	private UnitStatsPopup statsPopup;
 
 	private WorldController world;
-	GameRender gameRender;
+	GameView gameRender;
 
 	private boolean readInput = true;
 
@@ -92,7 +97,7 @@ public class WorldRender extends Group implements InputProcessor {
 	}
 
 	public void initFirstTurn() {
-		gameRender = new SelectUnitsRender(world);
+		gameRender = new SelectUnitsView(world);
 		addActor(gameRender);
 		finishLoad();
 		showGameMenuButtons();
@@ -104,20 +109,20 @@ public class WorldRender extends Group implements InputProcessor {
 	}
 
 	public void initNormalTurn() {
-		gameRender = new NormalGame(world);
+		gameRender = new NormalGameView(world);
 		addActor(gameRender);
 		finishLoad();
 		showGameMenuButtons();
 	}
 
 	public void initTurnAnimations() {
-		gameRender = new TurnAnimations(world);
+		gameRender = new TurnAnimationsView(world);
 		addActor(gameRender);
 		finishLoad();
 	}
 
 	public void initTutorial() {
-		gameRender = new TutorialRender(world);
+		gameRender = new TutorialView(world);
 		addActor(gameRender);
 		finishLoad();
 		showGameMenuButtons();

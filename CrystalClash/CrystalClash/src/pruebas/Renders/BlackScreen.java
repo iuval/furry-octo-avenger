@@ -14,6 +14,7 @@ public class BlackScreen {
 	private static Image txrBlackScreen;
 	private static int callsCount = 0;
 
+	
 	public static void load() {
 		txrBlackScreen = new Image(ResourceHelper.getTexture("menu/loading/background"));
 		txrBlackScreen.setColor(txrBlackScreen.getColor().r, txrBlackScreen.getColor().g, txrBlackScreen.getColor().b, 0);

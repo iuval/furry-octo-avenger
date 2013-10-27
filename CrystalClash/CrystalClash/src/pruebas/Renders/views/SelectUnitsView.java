@@ -1,4 +1,4 @@
-package pruebas.renders;
+package pruebas.renders.views;
 
 import pruebas.Accessors.ActorAccessor;
 import pruebas.Audio.AudioManager;
@@ -7,6 +7,7 @@ import pruebas.Controllers.WorldController;
 import pruebas.CrystalClash.CrystalClash;
 import pruebas.Entities.Cell;
 import pruebas.Entities.Unit;
+import pruebas.renders.GameEngine;
 import pruebas.renders.helpers.ResourceHelper;
 import pruebas.renders.helpers.ui.UnitItemSplashListener;
 import pruebas.renders.helpers.ui.UnitListSelectListener;
@@ -21,7 +22,7 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
-public class SelectUnitsRender extends GameRender {
+public class SelectUnitsView extends GameView {
 	private int unitCount = 0;
 	private String selectedUnitName;
 	private Unit selectedUnit = null;
@@ -30,7 +31,7 @@ public class SelectUnitsRender extends GameRender {
 	private boolean onSplash = false;
 	private Image unitSplash;
 
-	public SelectUnitsRender(WorldController world) {
+	public SelectUnitsView(WorldController world) {
 		super(world);
 		world.assignFirstTurnAvailablePlaces();
 

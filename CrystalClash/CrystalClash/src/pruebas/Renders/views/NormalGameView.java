@@ -1,4 +1,4 @@
-package pruebas.renders;
+package pruebas.renders.views;
 
 import pruebas.Audio.AudioManager;
 import pruebas.Controllers.GameController;
@@ -11,7 +11,10 @@ import pruebas.Entities.helpers.MoveUnitAction;
 import pruebas.Entities.helpers.NoneUnitAction;
 import pruebas.Entities.helpers.UnitAction;
 import pruebas.Entities.helpers.UnitAction.UnitActionType;
+import pruebas.renders.GameEngine;
+import pruebas.renders.PathRender;
 import pruebas.renders.helpers.PathManager;
+import pruebas.renders.PathRender.TYPE;
 import pruebas.renders.UnitRender.STATE;
 import aurelienribon.tweenengine.Timeline;
 import aurelienribon.tweenengine.TweenManager;
@@ -19,7 +22,7 @@ import aurelienribon.tweenengine.TweenManager;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.Array;
 
-public class NormalGame extends GameRender {
+public class NormalGameView extends GameView {
 	private Unit selectedUnit;
 	private Cell selectedCell;
 
@@ -36,7 +39,7 @@ public class NormalGame extends GameRender {
 
 	private PathManager paths;
 
-	public NormalGame(WorldController world) {
+	public NormalGameView(WorldController world) {
 		super(world);
 		AudioManager.playMusic("to battle!");
 		selectedUnit = null;

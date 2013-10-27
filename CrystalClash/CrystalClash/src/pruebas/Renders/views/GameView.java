@@ -1,13 +1,13 @@
-package pruebas.renders;
+package pruebas.renders.views;
 
 import pruebas.Controllers.WorldController;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
-public abstract class GameRender extends ViewRender {
+public abstract class GameView extends ViewRender {
 	protected WorldController world;
 
-	public GameRender(WorldController world) {
+	public GameView(WorldController world) {
 		this.world = world;
 	}
 

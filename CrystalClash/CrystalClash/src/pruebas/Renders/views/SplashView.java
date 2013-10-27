@@ -1,4 +1,4 @@
-package pruebas.renders;
+package pruebas.renders.views;
 
 import pruebas.Accessors.ActorAccessor;
 import pruebas.CrystalClash.CrystalClash;

@@ -1,10 +1,12 @@
-package pruebas.renders;
+package pruebas.renders.views;
 
 import pruebas.Accessors.ActorAccessor;
 import pruebas.Audio.AudioManager;
 import pruebas.Controllers.GameController;
 import pruebas.Controllers.MenuGames;
 import pruebas.CrystalClash.CrystalClash;
+import pruebas.renders.BlackScreen;
+import pruebas.renders.GameEngine;
 import pruebas.renders.helpers.ResourceHelper;
 import pruebas.renders.helpers.ui.GameListItem;
 import pruebas.renders.helpers.ui.MessageBox;

@@ -1,4 +1,4 @@
-package pruebas.renders;
+package pruebas.renders.views;
 
 import pruebas.Accessors.ActorAccessor;
 import pruebas.Accessors.UnitAccessor;
@@ -9,12 +9,15 @@ import pruebas.Entities.Cell;
 import pruebas.Entities.Unit;
 import pruebas.Entities.helpers.MoveUnitAction;
 import pruebas.Entities.helpers.NoneUnitAction;
+import pruebas.renders.GameEngine;
+import pruebas.renders.PathRender;
 import pruebas.renders.helpers.CellHelper;
 import pruebas.renders.helpers.PathManager;
 import pruebas.renders.helpers.ResourceHelper;
 import pruebas.renders.helpers.ui.MessageBox;
 import pruebas.renders.helpers.ui.MessageBoxCallback;
 import pruebas.Util.I18n;
+import pruebas.renders.PathRender.TYPE;
 import pruebas.renders.UnitRender.FACING;
 import pruebas.renders.UnitRender.STATE;
 import aurelienribon.tweenengine.BaseTween;
@@ -37,7 +40,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Array;
 
-public class TutorialRender extends GameRender {
+public class TutorialView extends GameView {
 
 	private static TweenManager tweenManager;
 
@@ -67,7 +70,7 @@ public class TutorialRender extends GameRender {
 
 	private PathManager paths;
 
-	public TutorialRender(WorldController world) {
+	public TutorialView(WorldController world) {
 		super(world);
 		messageIndex = 0;
 		movePathX = 2;

@@ -1,7 +1,7 @@
 package pruebas.Controllers;
 
 import pruebas.Networking.ServerDriver;
-import pruebas.renders.MenuLogInView;
+import pruebas.renders.views.MenuLogInView;
 
 public class MenuLogIn {
 

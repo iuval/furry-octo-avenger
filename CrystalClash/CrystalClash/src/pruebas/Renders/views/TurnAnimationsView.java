@@ -1,4 +1,4 @@
-package pruebas.renders;
+package pruebas.renders.views;
 
 import java.util.Random;
 
@@ -16,6 +16,7 @@ import pruebas.Entities.helpers.MoveUnitAction;
 import pruebas.Entities.helpers.NoneUnitAction;
 import pruebas.Entities.helpers.PlaceUnitAction;
 import pruebas.Entities.helpers.UnitAction;
+import pruebas.renders.GameEngine;
 import pruebas.renders.helpers.CellHelper;
 import pruebas.renders.helpers.ResourceHelper;
 import pruebas.renders.UnitRender.FACING;
@@ -37,7 +38,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Array;
 
-public class TurnAnimations extends GameRender {
+public class TurnAnimationsView extends GameView {
 
 	private Array<Unit> units;
 	private Array<PlaceUnitAction> player1Places;
@@ -67,7 +68,7 @@ public class TurnAnimations extends GameRender {
 	private Random rand;
 	Timeline mainTimeline = Timeline.createSequence();
 
-	public TurnAnimations(WorldController world) {
+	public TurnAnimationsView(WorldController world) {
 		super(world);
 
 		units = new Array<Unit>();
