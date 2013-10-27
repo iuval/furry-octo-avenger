@@ -1,8 +1,7 @@
 package com.crystalclash.controllers;
 
-import com.crystalclash.networking.ServerDriver;
+import com.crystalclash.renders.helpers.ui.MessageBox;
 import com.crystalclash.views.MenuLogInView;
-
 
 public class MenuLogIn {
 
@@ -43,13 +42,16 @@ public class MenuLogIn {
 	}
 
 	public void serverError(String message) {
-		System.out.println(message);
+		MessageBox.build()
+				.setMessage(message)
+				.oneButtonsLayout("D:")
+				.setCallback(null)
+				.show();
 	}
 
 	public void sendSignIn(String email, String password) {
 		this.email = email;
 		this.password = password;
-
-		ServerDriver.sendSignIn(email, password);
+		GameController.signIn(email, password);
 	}
 }

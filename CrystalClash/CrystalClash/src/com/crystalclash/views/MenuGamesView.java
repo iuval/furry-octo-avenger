@@ -1,9 +1,7 @@
 package com.crystalclash.views;
 
-import aurelienribon.tweenengine.BaseTween;
 import aurelienribon.tweenengine.Timeline;
 import aurelienribon.tweenengine.Tween;
-import aurelienribon.tweenengine.TweenCallback;
 
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.Color;
@@ -23,9 +21,8 @@ import com.crystalclash.accessors.ActorAccessor;
 import com.crystalclash.audio.AudioManager;
 import com.crystalclash.controllers.GameController;
 import com.crystalclash.controllers.MenuGames;
-import com.crystalclash.renders.AnimatedGroup;
-import com.crystalclash.renders.BlackScreen;
 import com.crystalclash.renders.GameEngine;
+import com.crystalclash.renders.TutorialInvitation;
 import com.crystalclash.renders.helpers.ResourceHelper;
 import com.crystalclash.renders.helpers.ui.GameListItem;
 import com.crystalclash.renders.helpers.ui.MessageBox;
@@ -53,13 +50,7 @@ public class MenuGamesView extends InputView {
 	private TextButton btnNewInvite;
 	private TextButton btnMusic;
 
-	private boolean isTutoInvVisible = false;
-	private AnimatedGroup grpTutoInvitation;
-	private TextButton btnPlayTutorial;
-	private TextButton btnSkipTutorial;
-	private Image imgFireArcher;
-	private Image imgBalloon;
-	private Label lblMessage;
+	private TutorialInvitation tutoInv;
 
 	public MenuGamesView(MenuGames menu) {
 		this.controller = menu;
@@ -112,17 +103,6 @@ public class MenuGamesView extends InputView {
 						.target(CrystalClash.HEIGHT))
 				.push(Tween.to(superScroll, ActorAccessor.X, CrystalClash.SLOW_ANIMATION_SPEED)
 						.target(CrystalClash.WIDTH));
-		if (isTutoInvVisible) {
-			BlackScreen.build().hide(t)
-					.push(Tween.to(imgFireArcher, ActorAccessor.X, CrystalClash.SLOW_ANIMATION_SPEED)
-							.target(-imgFireArcher.getWidth()))
-					.push(Tween.to(imgBalloon, ActorAccessor.Y, CrystalClash.SLOW_ANIMATION_SPEED)
-							.target(CrystalClash.HEIGHT + imgBalloon.getHeight()))
-					.push(Tween.to(btnPlayTutorial, ActorAccessor.Y, CrystalClash.SLOW_ANIMATION_SPEED)
-							.target(0 - btnPlayTutorial.getHeight()))
-					.push(Tween.to(btnSkipTutorial, ActorAccessor.Y, CrystalClash.SLOW_ANIMATION_SPEED)
-							.target(0 - btnPlayTutorial.getHeight() - btnSkipTutorial.getHeight()));
-		}
 		return t.end();
 	}
 
@@ -207,88 +187,8 @@ public class MenuGamesView extends InputView {
 	}
 
 	private void loadTutorial() {
-		grpTutoInvitation = new AnimatedGroup();
-		grpTutoInvitation.setBounds(0, 0, CrystalClash.WIDTH, CrystalClash.HEIGHT);
-
-		imgFireArcher = new Image(ResourceHelper.getTexture("tutorial/fire_archer"));
-		imgFireArcher.setPosition(-imgFireArcher.getWidth(), -10);
-		grpTutoInvitation.addActor(imgFireArcher);
-
-		GameEngine.start(Timeline.createParallel()
-				.push(Tween.to(imgFireArcher, ActorAccessor.SCALE_Y, CrystalClash.REALLY_SLOW_ANIMATION_SPEED)
-						.target(1.005f))
-				.push(Tween.to(imgFireArcher, ActorAccessor.ROTATION, CrystalClash.REALLY_SLOW_ANIMATION_SPEED)
-						.target(0.5f))
-				.repeatYoyo(-1, 0));
-
-		imgBalloon = new Image(ResourceHelper.getTexture("tutorial/message_balloon"));
-		imgBalloon.setPosition(CrystalClash.WIDTH / 3, CrystalClash.HEIGHT + imgBalloon.getHeight());
-		grpTutoInvitation.addActor(imgBalloon);
-
-		lblMessage = new Label("Welcome " + GameController.getUser().getName() +
-				"\n\nI can help you learn the\nbasics... Do you want me to?", new LabelStyle(ResourceHelper.getFont(), Color.BLACK));
-		lblMessage.setPosition(imgBalloon.getX() + 145, imgBalloon.getTop() - 65);
-		grpTutoInvitation.addActor(lblMessage);
-
-		btnPlayTutorial = new TextButton("Lets Do It!", ResourceHelper.getOuterButtonStyle());
-		btnPlayTutorial.setPosition(CrystalClash.WIDTH / 3 * 2 - btnPlayTutorial.getWidth() / 2 + 130, 0 - btnPlayTutorial.getHeight());
-		btnPlayTutorial.addListener(new ClickListener() {
-			@Override
-			public void clicked(InputEvent event, float x, float y) {
-				lblMessage.setText("");
-				controller.openTutorial();
-			}
-		});
-		grpTutoInvitation.addActor(btnPlayTutorial);
-
-		final MessageBoxCallback confirmation = new MessageBoxCallback() {
-			@Override
-			public void onEvent(int type, Object data) {
-				if (type == MessageBoxCallback.YES) {
-					closeTutorialInvitation();
-					MessageBox.build().hide();
-					isTutoInvVisible = false;
-				} else {
-					lblMessage.setText("");
-					controller.openTutorial();
-				}
-			}
-		};
-		btnSkipTutorial = new TextButton("No, thx", ResourceHelper.getOuterSmallButtonStyle());
-		btnSkipTutorial.setPosition(CrystalClash.WIDTH / 3 * 2 - btnSkipTutorial.getWidth() / 2 + 130,
-				0 - btnPlayTutorial.getHeight() - btnSkipTutorial.getHeight());
-		btnSkipTutorial.addListener(new ClickListener() {
-			@Override
-			public void clicked(InputEvent event, float x, float y) {
-				MessageBox.build()
-						.setMessage("It's not safe going to the battle field without training...\nAre you sure you don't want to try?")
-						.twoButtonsLayout("Yes, i'm sure", "Lets do it!")
-						.setCallback(confirmation)
-						.setHideOnAction(false)
-						.show();
-			}
-		});
-		grpTutoInvitation.addActor(btnSkipTutorial);
-	}
-
-	private void closeTutorialInvitation() {
-		GameController.setTutorialDone();
-		GameEngine.start(BlackScreen.build().hide(Timeline.createParallel())
-				.push(Tween.to(imgFireArcher, ActorAccessor.X, CrystalClash.SLOW_ANIMATION_SPEED)
-						.target(-imgFireArcher.getWidth()))
-				.push(Tween.to(imgBalloon, ActorAccessor.Y, CrystalClash.SLOW_ANIMATION_SPEED)
-						.target(CrystalClash.HEIGHT + imgBalloon.getHeight()))
-				.push(Tween.to(btnPlayTutorial, ActorAccessor.Y, CrystalClash.SLOW_ANIMATION_SPEED)
-						.target(0 - btnPlayTutorial.getHeight()))
-				.push(Tween.to(btnSkipTutorial, ActorAccessor.Y, CrystalClash.SLOW_ANIMATION_SPEED)
-						.target(0 - btnSkipTutorial.getHeight()))
-				.setCallback(new TweenCallback() {
-					@Override
-					public void onEvent(int type, BaseTween<?> source) {
-						lblMessage.setPosition(imgBalloon.getX() + 50, imgBalloon.getTop() - 150);
-						GameEngine.start(pushEnterAnimation(Timeline.createParallel()));
-					}
-				}));
+		tutoInv = new TutorialInvitation();
+		addActor(tutoInv);
 	}
 
 	private void loadGameList() {
@@ -420,20 +320,7 @@ public class MenuGamesView extends InputView {
 	@Override
 	public void shown() {
 		if (!GameController.isTutorialDone()) {
-			isTutoInvVisible = true;
-			GameEngine.start(BlackScreen.build().show(grpTutoInvitation, Timeline.createParallel())
-					.push(Tween.to(imgFireArcher, ActorAccessor.X, CrystalClash.SLOW_ANIMATION_SPEED).target(0))
-					.push(Tween.to(imgBalloon, ActorAccessor.Y, CrystalClash.SLOW_ANIMATION_SPEED).target(CrystalClash.HEIGHT / 2))
-					.push(Tween.to(btnPlayTutorial, ActorAccessor.Y, CrystalClash.SLOW_ANIMATION_SPEED)
-							.target(CrystalClash.HEIGHT / 2 - btnPlayTutorial.getHeight()))
-					.push(Tween.to(btnSkipTutorial, ActorAccessor.Y, CrystalClash.SLOW_ANIMATION_SPEED).target(100))
-					.setCallbackTriggers(TweenCallback.COMPLETE)
-					.setCallback(new TweenCallback() {
-						@Override
-						public void onEvent(int type, BaseTween<?> source) {
-							lblMessage.setPosition(imgBalloon.getX() + 145, imgBalloon.getTop() - 200);
-						}
-					}));
+			tutoInv.show();
 		}
 	}
 

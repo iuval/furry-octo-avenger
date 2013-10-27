@@ -11,22 +11,22 @@ import com.crystalclash.CrystalClash;
 import com.crystalclash.accessors.ActorAccessor;
 import com.crystalclash.renders.helpers.ResourceHelper;
 
-public class BlackScreen extends Group {
-	private static BlackScreen instance;
+public class BlackOverlay extends Group {
+	private static BlackOverlay instance;
 	private Image txrBlackScreen;
 	private int callsCount = 0;
 	private AnimatedGroup onTop;
 
-	public BlackScreen() {
+	public BlackOverlay() {
 		txrBlackScreen = new Image(ResourceHelper.getTexture("menu/loading/background"));
 		txrBlackScreen.setColor(txrBlackScreen.getColor().r, txrBlackScreen.getColor().g, txrBlackScreen.getColor().b, 0);
 		addActor(txrBlackScreen);
 		setVisible(false);
 	}
 
-	public static BlackScreen build() {
+	public static BlackOverlay build() {
 		if (instance == null)
-			instance = new BlackScreen();
+			instance = new BlackOverlay();
 		return instance;
 	}
 
@@ -55,30 +55,19 @@ public class BlackScreen extends Group {
 	}
 
 	private Timeline pushShow(Timeline t) {
-		callsCount++;
-		// Only animate if it's the first one
-		if (callsCount == 1) {
-			setVisible(true);
-			return t.push(Tween.to(txrBlackScreen, ActorAccessor.ALPHA, CrystalClash.NORMAL_ANIMATION_SPEED)
-					.target(1));
-		} else {
-			return t;
-		}
+		setVisible(true);
+		return t.push(Tween.to(txrBlackScreen, ActorAccessor.ALPHA, CrystalClash.NORMAL_ANIMATION_SPEED)
+				.target(1));
 	}
 
 	private Timeline pushHide(Timeline t) {
-		callsCount--;
-		if (callsCount == 0) {
-			return t.push(Tween.to(txrBlackScreen, ActorAccessor.ALPHA, CrystalClash.NORMAL_ANIMATION_SPEED)
-					.target(0))
-					.setCallback(new TweenCallback() {
-						@Override
-						public void onEvent(int type, BaseTween<?> source) {
-							setVisible(false);
-						}
-					});
-		} else {
-			return t;
-		}
+		return t.push(Tween.to(txrBlackScreen, ActorAccessor.ALPHA, CrystalClash.NORMAL_ANIMATION_SPEED)
+				.target(0))
+				.setCallback(new TweenCallback() {
+					@Override
+					public void onEvent(int type, BaseTween<?> source) {
+						setVisible(false);
+					}
+				});
 	}
 }

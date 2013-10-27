@@ -13,7 +13,6 @@ import com.crystalclash.util.ProfileService;
 import com.crystalclash.util.UnitSharedDataPrefReader;
 import com.crystalclash.util.UnitStatsPrefReader;
 
-
 public class GameController {
 
 	private static boolean dataLoaded = false;
@@ -141,11 +140,20 @@ public class GameController {
 
 	public static void logIn(String email, String password) {
 		MessageBox.build()
-				.setMessage("Authenticating...\nIn this last step we will require the blood of a virgin.")
+				.setMessage("Authenticating...")
 				.noButtonsLayout()
 				.setCallback(null)
 				.show();
 		ServerDriver.sendLogIn(email, password);
+	}
+
+	public static void signIn(String email, String password) {
+		MessageBox.build()
+				.setMessage("Creating account...")
+				.noButtonsLayout()
+				.setCallback(null)
+				.show();
+		ServerDriver.sendSignIn(email, password);
 	}
 
 	public static void logInSuccess(String userId, String name, String email, String password) {

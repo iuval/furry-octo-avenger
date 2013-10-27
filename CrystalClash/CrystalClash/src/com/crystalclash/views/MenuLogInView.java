@@ -204,14 +204,12 @@ public class MenuLogInView extends InputView {
 					break;
 				case LogIn:
 					if (!email.isEmpty() && !password.isEmpty()) {
-						GameEngine.showLoading();
 						Gdx.input.setOnscreenKeyboardVisible(false);
 						controller.sendLogIn(email, password);
 					}
 					break;
 				case SignIn:
 					if (!email.isEmpty() && !password.isEmpty()) {
-						GameEngine.showLoading();
 						Gdx.input.setOnscreenKeyboardVisible(false);
 						controller.sendSignIn(email, password);
 					}

@@ -40,7 +40,7 @@ public class ServerDriver {
 							JsonValue data = values.get("data");
 							GameController.signInSuccess(data.getString("id"), data.getString("name"), email, password);
 						} else {
-							GameEngine.getInstance().logInError(values.getString("message"));
+							GameEngine.getInstance().singUpError(values.getString("message"));
 						}
 					}
 

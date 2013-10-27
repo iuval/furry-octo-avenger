@@ -14,7 +14,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.crystalclash.CrystalClash;
 import com.crystalclash.accessors.ActorAccessor;
 import com.crystalclash.renders.AnimatedGroup;
-import com.crystalclash.renders.BlackScreen;
+import com.crystalclash.renders.BlackOverlay;
 import com.crystalclash.renders.GameEngine;
 import com.crystalclash.renders.helpers.ResourceHelper;
 
@@ -143,12 +143,12 @@ public class MessageBox extends AnimatedGroup {
 
 	public void show() {
 		setZIndex(99);
-		GameEngine.start(BlackScreen.build().show(this, pushEnterAnimation(Timeline.createParallel())));
+		GameEngine.start(BlackOverlay.build().show(this, pushEnterAnimation(Timeline.createParallel())));
 		visible = true;
 	}
 
 	public void hide() {
-		GameEngine.start(BlackScreen.build().hide(pushExitAnimation(Timeline.createParallel())));
+		GameEngine.start(BlackOverlay.build().hide(pushExitAnimation(Timeline.createParallel())));
 		visible = false;
 	}
 
