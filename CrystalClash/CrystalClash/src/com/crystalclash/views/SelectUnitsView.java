@@ -182,13 +182,16 @@ public class SelectUnitsView extends GameView {
 	@Override
 	public Timeline pushEnterAnimation(Timeline t) {
 		AudioManager.playMusic("choose your destiny");
-		return t;
+		return t.push(Tween.set(unitList, ActorAccessor.ALPHA)
+				.target(0))
+				.push(Tween.to(unitList, ActorAccessor.ALPHA, CrystalClash.NORMAL_ANIMATION_SPEED)
+						.target(1));
 	}
 
 	@Override
 	public Timeline pushExitAnimation(Timeline t) {
-		// TODO Auto-generated method stub
-		return t;
+		return t.push(Tween.to(unitList, ActorAccessor.ALPHA, CrystalClash.NORMAL_ANIMATION_SPEED)
+				.target(0));
 	}
 
 	@Override
@@ -243,24 +246,24 @@ public class SelectUnitsView extends GameView {
 	@Override
 	public void init() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void shown() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void closed() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void dispose() {
 		// TODO Auto-generated method stub
-		
+
 	}
 }

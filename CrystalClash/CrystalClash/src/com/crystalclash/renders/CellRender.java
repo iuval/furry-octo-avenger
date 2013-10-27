@@ -4,6 +4,7 @@ package com.crystalclash.renders;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.crystalclash.entities.Cell;
 import com.crystalclash.entities.Unit;
+import com.crystalclash.views.WorldView;
 
 public class CellRender {
 	private Cell cell;
@@ -13,7 +14,7 @@ public class CellRender {
 	}
 
 	public void draw(float dt, SpriteBatch batch) {
-		WorldRender.cellHelper.drawCellTextures(batch, cell);
+		WorldView.cellHelper.drawCellTextures(batch, cell);
 	}
 
 	public void drawUnits(float dt, SpriteBatch batch) {

@@ -15,12 +15,12 @@ import com.crystalclash.networking.ServerDriver;
 import com.crystalclash.renders.GameEngine;
 import com.crystalclash.renders.UnitRender.FACING;
 import com.crystalclash.renders.UnitRender.STATE;
-import com.crystalclash.renders.WorldRender;
 import com.crystalclash.renders.helpers.CellHelper;
+import com.crystalclash.views.WorldView;
 
 public class WorldController {
 
-	private WorldRender render;
+	private WorldView render;
 
 	public Cell[][] cellGrid;
 	private final float deltaX = 93F; // (float) ((3f / 4f) * hexaWidht);
@@ -37,7 +37,7 @@ public class WorldController {
 	public boolean gameEnded = false;
 
 	public WorldController(JsonValue data) {
-		render = new WorldRender(this);
+		render = new WorldView(this);
 		render.load();
 		init();
 
@@ -344,7 +344,7 @@ public class WorldController {
 				gameId, "ended", "defeat");
 	}
 
-	public WorldRender getRender() {
+	public WorldView getRender() {
 		return render;
 	}
 

@@ -1,4 +1,4 @@
-package com.crystalclash.renders;
+package com.crystalclash.views;
 
 import aurelienribon.tweenengine.BaseTween;
 import aurelienribon.tweenengine.Timeline;
@@ -24,20 +24,15 @@ import com.crystalclash.controllers.WorldController;
 import com.crystalclash.entities.Cell;
 import com.crystalclash.entities.Unit;
 import com.crystalclash.entities.helpers.UnitAction.UnitActionType;
+import com.crystalclash.renders.GameEngine;
 import com.crystalclash.renders.helpers.CellHelper;
 import com.crystalclash.renders.helpers.ResourceHelper;
 import com.crystalclash.renders.helpers.UnitHelper;
 import com.crystalclash.renders.helpers.ui.MessageBox;
 import com.crystalclash.renders.helpers.ui.MessageBoxCallback;
 import com.crystalclash.renders.helpers.ui.UnitStatsPopup;
-import com.crystalclash.views.GameView;
-import com.crystalclash.views.InputView;
-import com.crystalclash.views.NormalGameView;
-import com.crystalclash.views.SelectUnitsView;
-import com.crystalclash.views.TurnAnimationsView;
-import com.crystalclash.views.TutorialView;
 
-public class WorldRender extends InputView {
+public class WorldView extends InputView {
 	public static CellHelper cellHelper;
 
 	private TextureRegion txrTerrain;
@@ -81,7 +76,7 @@ public class WorldRender extends InputView {
 
 	private MessageBoxCallback backCallback;
 
-	public WorldRender(WorldController world) {
+	public WorldView(WorldController world) {
 		this.world = world;
 
 		cellHelper = new CellHelper();

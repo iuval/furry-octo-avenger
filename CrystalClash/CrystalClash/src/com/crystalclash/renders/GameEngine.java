@@ -39,6 +39,7 @@ import com.crystalclash.views.MenuGamesView;
 import com.crystalclash.views.MenuLogInView;
 import com.crystalclash.views.SplashView;
 import com.crystalclash.views.TutorialView;
+import com.crystalclash.views.WorldView;
 
 public class GameEngine implements Screen {
 	private static GameEngine instance;
@@ -61,7 +62,7 @@ public class GameEngine implements Screen {
 	private MenuGamesView menuGamesRender;
 	private TutorialView tutorialRender;
 	private WorldController world;
-	private WorldRender worldRender;
+	private WorldView worldRender;
 
 	private static TweenManager tweenManager;
 	private static SuperAnimatedActor loadingTexture;
@@ -144,8 +145,7 @@ public class GameEngine implements Screen {
 		Gdx.gl.glClearColor(0, 0, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		if (state == GameState.InGame ||
-				state == GameState.InTranstionMenuGamesAndGame ||
-				state == GameState.InTutorial) {
+				state == GameState.InTranstionMenuGamesAndGame) {
 			batch.begin();
 			worldRender.render(dt, batch);
 			batch.end();
@@ -181,16 +181,6 @@ public class GameEngine implements Screen {
 				worldRender.dispose();
 				worldRender = null;
 			}
-			break;
-		case InTranstionMenuGamesAndTutorial:
-			stage.addActor(imgBackground);
-			stage.addActor(menuGamesRender);
-			stage.addActor(tutorialRender);
-			break;
-		case InTranstionSplashAndTutorial:
-			stage.addActor(imgBackground);
-			stage.addActor(splashRender);
-			stage.addActor(tutorialRender);
 			break;
 		case InTranstionSplashAndMenuLogIn:
 			stage.addActor(imgBackground);
@@ -345,27 +335,6 @@ public class GameEngine implements Screen {
 					}
 					menuGamesRender.init();
 					setState(GameState.InTranstionMenuGamesAndGame);
-					menuGamesRender.pushEnterAnimation(Timeline.createSequence())
-							.setCallback(new TweenCallback() {
-								@Override
-								public void onEvent(int type, BaseTween<?> source) {
-									setState(GameState.InMenuGames);
-									menuGamesRender.shown();
-								}
-							}).start(tweenManager);
-				}
-			});
-		} else if (state == GameState.InTutorial) {
-			tutorialRender.pushExitAnimation(t);
-			t.setCallback(new TweenCallback() {
-				@Override
-				public void onEvent(int type, BaseTween<?> source) {
-					tutorialRender.closed();
-					if (menuGamesRender == null) {
-						menuGamesRender = MenuGames.getInstance().getRender();
-					}
-					menuGamesRender.init();
-					setState(GameState.InTranstionMenuGamesAndTutorial);
 					menuGamesRender.pushEnterAnimation(Timeline.createSequence())
 							.setCallback(new TweenCallback() {
 								@Override
