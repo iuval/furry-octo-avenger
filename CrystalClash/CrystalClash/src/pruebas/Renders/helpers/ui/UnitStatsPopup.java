@@ -1,11 +1,11 @@
-package pruebas.Renders.helpers.ui;
+package pruebas.renders.helpers.ui;
 
 import pruebas.Accessors.UnitAccessor;
 import pruebas.Controllers.GameController;
 import pruebas.CrystalClash.CrystalClash;
 import pruebas.Entities.Unit;
-import pruebas.Renders.GameEngine;
-import pruebas.Renders.helpers.ResourceHelper;
+import pruebas.renders.helpers.ResourceHelper;
+import pruebas.renders.GameEngine;
 import aurelienribon.tweenengine.Timeline;
 import aurelienribon.tweenengine.Tween;
 

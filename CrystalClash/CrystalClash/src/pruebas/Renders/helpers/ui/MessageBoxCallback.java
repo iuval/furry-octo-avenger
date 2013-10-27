@@ -1,4 +1,4 @@
-package pruebas.Renders.helpers.ui;
+package pruebas.renders.helpers.ui;
 
 public interface MessageBoxCallback {
 	public static final int YES = 0x01;

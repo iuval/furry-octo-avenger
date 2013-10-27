@@ -5,8 +5,8 @@ import java.util.Map;
 
 import pruebas.Controllers.GameController;
 import pruebas.Controllers.MenuGames;
-import pruebas.Renders.GameEngine;
-import pruebas.Renders.helpers.ui.MessageBox;
+import pruebas.renders.helpers.ui.MessageBox;
+import pruebas.renders.GameEngine;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Net.HttpMethods;

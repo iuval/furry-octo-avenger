@@ -1,8 +1,7 @@
-package pruebas.Renders;
+package pruebas.renders;
 
 import aurelienribon.tweenengine.Timeline;
 
-import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.scenes.scene2d.Group;
 
 public abstract class ViewRender extends Group {

@@ -1,6 +1,6 @@
-package pruebas.Renders.helpers;
+package pruebas.renders.helpers;
 
-import pruebas.Renders.UnitRender;
+import pruebas.renders.UnitRender;
 
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Pixmap.Format;

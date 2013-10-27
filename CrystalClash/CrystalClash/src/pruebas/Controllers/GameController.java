@@ -6,12 +6,12 @@ import java.util.Hashtable;
 import pruebas.Entities.Unit;
 import pruebas.Entities.User;
 import pruebas.Networking.ServerDriver;
-import pruebas.Renders.GameEngine;
-import pruebas.Renders.helpers.ui.MessageBox;
+import pruebas.renders.helpers.ui.MessageBox;
 import pruebas.Util.Profile;
 import pruebas.Util.ProfileService;
 import pruebas.Util.UnitSharedDataPrefReader;
 import pruebas.Util.UnitStatsPrefReader;
+import pruebas.renders.GameEngine;
 
 public class GameController {
 

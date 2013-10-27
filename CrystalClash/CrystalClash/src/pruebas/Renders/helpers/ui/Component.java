@@ -1,4 +1,4 @@
-package pruebas.Renders.helpers.ui;
+package pruebas.renders.helpers.ui;
 
 
 public class Component {

@@ -1,4 +1,4 @@
-package pruebas.Renders;
+package pruebas.renders;
 
 import pruebas.Controllers.WorldController;
 

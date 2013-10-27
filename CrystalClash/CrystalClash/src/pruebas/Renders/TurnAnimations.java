@@ -1,4 +1,4 @@
-package pruebas.Renders;
+package pruebas.renders;
 
 import java.util.Random;
 
@@ -16,10 +16,10 @@ import pruebas.Entities.helpers.MoveUnitAction;
 import pruebas.Entities.helpers.NoneUnitAction;
 import pruebas.Entities.helpers.PlaceUnitAction;
 import pruebas.Entities.helpers.UnitAction;
-import pruebas.Renders.UnitRender.FACING;
-import pruebas.Renders.UnitRender.STATE;
-import pruebas.Renders.helpers.CellHelper;
-import pruebas.Renders.helpers.ResourceHelper;
+import pruebas.renders.helpers.CellHelper;
+import pruebas.renders.helpers.ResourceHelper;
+import pruebas.renders.UnitRender.FACING;
+import pruebas.renders.UnitRender.STATE;
 import aurelienribon.tweenengine.BaseTween;
 import aurelienribon.tweenengine.Timeline;
 import aurelienribon.tweenengine.Tween;

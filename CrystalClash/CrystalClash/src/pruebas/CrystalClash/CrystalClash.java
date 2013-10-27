@@ -1,6 +1,6 @@
 package pruebas.CrystalClash;
 
-import pruebas.Renders.GameEngine;
+import pruebas.renders.GameEngine;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.graphics.FPSLogger;

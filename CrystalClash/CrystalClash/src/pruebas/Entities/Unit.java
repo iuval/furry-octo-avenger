@@ -1,9 +1,9 @@
 package pruebas.Entities;
 
 import pruebas.Controllers.GameController;
-import pruebas.Renders.UnitRender;
-import pruebas.Renders.UnitRender.FACING;
-import pruebas.Renders.helpers.UnitHelper;
+import pruebas.renders.helpers.UnitHelper;
+import pruebas.renders.UnitRender;
+import pruebas.renders.UnitRender.FACING;
 
 public class Unit extends GameObject {
 

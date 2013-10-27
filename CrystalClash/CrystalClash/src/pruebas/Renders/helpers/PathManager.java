@@ -1,12 +1,12 @@
-package pruebas.Renders.helpers;
+package pruebas.renders.helpers;
 
 import java.util.Enumeration;
 import java.util.Hashtable;
 
 import pruebas.Entities.Path;
 import pruebas.Entities.Unit;
-import pruebas.Renders.PathRender;
-import pruebas.Renders.PathRender.TYPE;
+import pruebas.renders.PathRender;
+import pruebas.renders.PathRender.TYPE;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;

@@ -1,7 +1,7 @@
-package pruebas.Renders;
+package pruebas.renders;
 
 import pruebas.Entities.Path;
-import pruebas.Renders.helpers.PathManager;
+import pruebas.renders.helpers.PathManager;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;

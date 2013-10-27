@@ -1,7 +1,7 @@
-package pruebas.Renders.helpers.ui;
+package pruebas.renders.helpers.ui;
 
-import pruebas.Renders.UnitRender.FACING;
 import pruebas.Util.SuperAnimation;
+import pruebas.renders.UnitRender.FACING;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;

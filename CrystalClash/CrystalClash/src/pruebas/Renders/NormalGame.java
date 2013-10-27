@@ -1,4 +1,4 @@
-package pruebas.Renders;
+package pruebas.renders;
 
 import pruebas.Audio.AudioManager;
 import pruebas.Controllers.GameController;
@@ -11,8 +11,8 @@ import pruebas.Entities.helpers.MoveUnitAction;
 import pruebas.Entities.helpers.NoneUnitAction;
 import pruebas.Entities.helpers.UnitAction;
 import pruebas.Entities.helpers.UnitAction.UnitActionType;
-import pruebas.Renders.UnitRender.STATE;
-import pruebas.Renders.helpers.PathManager;
+import pruebas.renders.helpers.PathManager;
+import pruebas.renders.UnitRender.STATE;
 import aurelienribon.tweenengine.Timeline;
 import aurelienribon.tweenengine.TweenManager;
 

@@ -1,8 +1,8 @@
-package pruebas.Renders;
+package pruebas.renders;
 
 import pruebas.Audio.AudioManager;
 import pruebas.Entities.Unit;
-import pruebas.Renders.helpers.UnitHelper;
+import pruebas.renders.helpers.UnitHelper;
 import pruebas.Util.SuperAnimation;
 
 import com.badlogic.gdx.graphics.Color;

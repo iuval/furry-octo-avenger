@@ -1,6 +1,6 @@
-package pruebas.Renders.helpers.ui;
+package pruebas.renders.helpers.ui;
 
-import pruebas.Renders.helpers.ResourceHelper;
+import pruebas.renders.helpers.ResourceHelper;
 
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.Touchable;

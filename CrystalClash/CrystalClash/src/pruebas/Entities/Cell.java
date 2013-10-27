@@ -2,8 +2,8 @@ package pruebas.Entities;
 
 import pruebas.Entities.helpers.PlaceUnitAction;
 import pruebas.Entities.helpers.UnitAction;
-import pruebas.Renders.CellRender;
-import pruebas.Renders.helpers.CellHelper;
+import pruebas.renders.helpers.CellHelper;
+import pruebas.renders.CellRender;
 
 public class Cell extends GameObject {
 	public final static int NONE = 0; // 0

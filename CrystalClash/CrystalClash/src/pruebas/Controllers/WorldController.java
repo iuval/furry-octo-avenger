@@ -11,11 +11,11 @@ import pruebas.Entities.helpers.NoneUnitAction;
 import pruebas.Entities.helpers.PlaceUnitAction;
 import pruebas.Entities.helpers.UnitAction;
 import pruebas.Networking.ServerDriver;
-import pruebas.Renders.GameEngine;
-import pruebas.Renders.UnitRender.FACING;
-import pruebas.Renders.UnitRender.STATE;
-import pruebas.Renders.WorldRender;
-import pruebas.Renders.helpers.CellHelper;
+import pruebas.renders.helpers.CellHelper;
+import pruebas.renders.GameEngine;
+import pruebas.renders.WorldRender;
+import pruebas.renders.UnitRender.FACING;
+import pruebas.renders.UnitRender.STATE;
 
 import com.badlogic.gdx.utils.JsonValue;
 

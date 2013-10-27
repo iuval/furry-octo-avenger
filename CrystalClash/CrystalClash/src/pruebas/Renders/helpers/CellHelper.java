@@ -1,4 +1,4 @@
-package pruebas.Renders.helpers;
+package pruebas.renders.helpers;
 
 import pruebas.Entities.Cell;
 

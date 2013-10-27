@@ -1,7 +1,7 @@
 package pruebas.Accessors;
 
 import pruebas.Entities.Unit;
-import pruebas.Renders.UnitRender.FACING;
+import pruebas.renders.UnitRender.FACING;
 import aurelienribon.tweenengine.TweenAccessor;
 
 public class UnitAccessor implements TweenAccessor<Unit> {

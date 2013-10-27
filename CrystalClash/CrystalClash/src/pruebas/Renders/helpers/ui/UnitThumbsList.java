@@ -1,9 +1,9 @@
-package pruebas.Renders.helpers.ui;
+package pruebas.renders.helpers.ui;
 
 import java.util.Enumeration;
 
 import pruebas.Controllers.GameController;
-import pruebas.Renders.helpers.ResourceHelper;
+import pruebas.renders.helpers.ResourceHelper;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.Group;

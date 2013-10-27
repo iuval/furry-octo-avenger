@@ -1,15 +1,15 @@
-package pruebas.Renders;
+package pruebas.renders;
 
 import pruebas.Accessors.ActorAccessor;
 import pruebas.CrystalClash.CrystalClash;
-import pruebas.Renders.helpers.ResourceHelper;
+import pruebas.renders.helpers.ResourceHelper;
 import aurelienribon.tweenengine.Timeline;
 import aurelienribon.tweenengine.Tween;
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 
-public class SplashScreen extends ViewRender {
+public class SplashView extends ViewRender {
 	private TextureRegion backgroundTexture;
 	private TextureRegion crystalTexture;
 	private TextureRegion nameTexture;
@@ -18,7 +18,7 @@ public class SplashScreen extends ViewRender {
 	private Image crystal;
 	private Image name;
 
-	public SplashScreen() {
+	public SplashView() {
 		load();
 	}
 

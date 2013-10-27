@@ -1,10 +1,10 @@
 package pruebas.Controllers;
 
 import pruebas.Networking.ServerDriver;
-import pruebas.Renders.GameEngine;
-import pruebas.Renders.MenuGamesRender;
-import pruebas.Renders.helpers.ui.MessageBox;
-import pruebas.Renders.helpers.ui.MessageBoxCallback;
+import pruebas.renders.helpers.ui.MessageBox;
+import pruebas.renders.helpers.ui.MessageBoxCallback;
+import pruebas.renders.GameEngine;
+import pruebas.renders.MenuGamesView;
 
 import com.badlogic.gdx.utils.JsonValue;
 
@@ -18,13 +18,13 @@ public class MenuGames {
 		return instance;
 	}
 
-	public MenuGamesRender render;
+	public MenuGamesView render;
 
 	private MenuGames() {
-		render = MenuGamesRender.getInstance(this);
+		render = MenuGamesView.getInstance(this);
 	}
 
-	public MenuGamesRender getRender() {
+	public MenuGamesView getRender() {
 		return render;
 	}
 

@@ -1,9 +1,9 @@
-package pruebas.Renders.helpers.ui;
+package pruebas.renders.helpers.ui;
 
 import pruebas.Accessors.ActorAccessor;
 import pruebas.CrystalClash.CrystalClash;
-import pruebas.Renders.BlackScreen;
-import pruebas.Renders.helpers.ResourceHelper;
+import pruebas.renders.helpers.ResourceHelper;
+import pruebas.renders.BlackScreen;
 import aurelienribon.tweenengine.Timeline;
 import aurelienribon.tweenengine.Tween;
 import aurelienribon.tweenengine.TweenManager;
@@ -25,6 +25,7 @@ public class MessageBox extends Group {
 	private Label lblMessage;
 	private TextButton btnYes;
 	private TextButton btnNo;
+	private boolean visible = false;
 
 	private TweenManager manager;
 	private MessageBoxCallback callback;
@@ -151,10 +152,12 @@ public class MessageBox extends Group {
 	public void show() {
 		setZIndex(99);
 		getEnterAnimation().start(manager);
+		visible = true;
 	}
 
 	public void hide() {
 		getExitAnimation().start(manager);
+		visible = false;
 	}
 
 	protected void callCallback(int type) {

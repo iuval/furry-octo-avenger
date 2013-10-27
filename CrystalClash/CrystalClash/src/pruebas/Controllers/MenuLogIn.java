@@ -1,7 +1,7 @@
 package pruebas.Controllers;
 
 import pruebas.Networking.ServerDriver;
-import pruebas.Renders.MenuLogInRender;
+import pruebas.renders.MenuLogInView;
 
 public class MenuLogIn {
 
@@ -15,15 +15,15 @@ public class MenuLogIn {
 
 	private String email;
 	private String password;
-	private MenuLogInRender render;
+	private MenuLogInView render;
 
 	private MenuLogIn() {
-		render = MenuLogInRender.getInstance(this);
+		render = MenuLogInView.getInstance(this);
 		email = "";
 		password = "";
 	}
 
-	public MenuLogInRender getRender() {
+	public MenuLogInView getRender() {
 		return render;
 	}
 

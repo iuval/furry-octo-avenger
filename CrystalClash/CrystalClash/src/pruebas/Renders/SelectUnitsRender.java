@@ -1,4 +1,4 @@
-package pruebas.Renders;
+package pruebas.renders;
 
 import pruebas.Accessors.ActorAccessor;
 import pruebas.Audio.AudioManager;
@@ -7,11 +7,11 @@ import pruebas.Controllers.WorldController;
 import pruebas.CrystalClash.CrystalClash;
 import pruebas.Entities.Cell;
 import pruebas.Entities.Unit;
-import pruebas.Renders.UnitRender.FACING;
-import pruebas.Renders.helpers.ResourceHelper;
-import pruebas.Renders.helpers.ui.UnitItemSplashListener;
-import pruebas.Renders.helpers.ui.UnitListSelectListener;
-import pruebas.Renders.helpers.ui.UnitThumbsList;
+import pruebas.renders.helpers.ResourceHelper;
+import pruebas.renders.helpers.ui.UnitItemSplashListener;
+import pruebas.renders.helpers.ui.UnitListSelectListener;
+import pruebas.renders.helpers.ui.UnitThumbsList;
+import pruebas.renders.UnitRender.FACING;
 import aurelienribon.tweenengine.Timeline;
 import aurelienribon.tweenengine.Tween;
 import aurelienribon.tweenengine.TweenEquations;

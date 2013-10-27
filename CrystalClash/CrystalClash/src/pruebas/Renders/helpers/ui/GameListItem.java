@@ -1,4 +1,4 @@
-package pruebas.Renders.helpers.ui;
+package pruebas.renders.helpers.ui;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.EventListener;

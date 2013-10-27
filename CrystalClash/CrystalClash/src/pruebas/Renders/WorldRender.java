@@ -1,4 +1,4 @@
-package pruebas.Renders;
+package pruebas.renders;
 
 import pruebas.Accessors.ActorAccessor;
 import pruebas.Controllers.WorldController;
@@ -6,12 +6,12 @@ import pruebas.CrystalClash.CrystalClash;
 import pruebas.Entities.Cell;
 import pruebas.Entities.Unit;
 import pruebas.Entities.helpers.UnitAction.UnitActionType;
-import pruebas.Renders.helpers.CellHelper;
-import pruebas.Renders.helpers.ResourceHelper;
-import pruebas.Renders.helpers.UnitHelper;
-import pruebas.Renders.helpers.ui.MessageBox;
-import pruebas.Renders.helpers.ui.MessageBoxCallback;
-import pruebas.Renders.helpers.ui.UnitStatsPopup;
+import pruebas.renders.helpers.CellHelper;
+import pruebas.renders.helpers.ResourceHelper;
+import pruebas.renders.helpers.UnitHelper;
+import pruebas.renders.helpers.ui.MessageBox;
+import pruebas.renders.helpers.ui.MessageBoxCallback;
+import pruebas.renders.helpers.ui.UnitStatsPopup;
 import aurelienribon.tweenengine.BaseTween;
 import aurelienribon.tweenengine.Timeline;
 import aurelienribon.tweenengine.Tween;
