@@ -1,9 +1,9 @@
 package pruebas.CrystalClash.client;
 
-import pruebas.CrystalClash.CrystalClash;
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.backends.gwt.GwtApplication;
 import com.badlogic.gdx.backends.gwt.GwtApplicationConfiguration;
+import com.crystalclash.CrystalClash;
 
 public class GwtLauncher extends GwtApplication {
 	@Override
