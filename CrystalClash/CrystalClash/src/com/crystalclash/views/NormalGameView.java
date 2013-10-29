@@ -96,7 +96,7 @@ public class NormalGameView extends GameView {
 		selectedCell.addState(Cell.MOVE_TARGET);
 
 		world.getRender().hideActionsRing();
-		showAbleToMoveCells();
+		mapAbleToMoveCells(false);
 	}
 
 	@Override
@@ -104,28 +104,37 @@ public class NormalGameView extends GameView {
 		undoAction();
 	}
 
-	private void showAbleToMoveCells() {
-		clearAvailableCells();
+	private void mapAbleToMoveCells(boolean clear) {
 		actionType = UnitActionType.MOVE;
 
 		Array<Cell> moves = ((MoveUnitAction) unitAction).moves;
 		if (moves.size <= maxMoves) {
 			Cell top = moves.peek();
-			boolean continueMoving = true;
+			showAbleToMoveNeighbours(top, moves, maxMoves - moves.size, clear);
+		}
+	}
 
-			if (top.Equals(unitAction.origin))
-				continueMoving = true;
+	private void showAbleToMoveNeighbours(Cell cell, Array<Cell> moves, int step, boolean clear) {
+		if (step >= 0) {
+			int[][] cells = cell.neigbours;
+			Cell aux = null;
+			for (int i = 0; i < cell.neigbours.length; i++) {
+				aux = world.cellAtByGrid(cells[i][0], cells[i][1]);
+				if (clear) {
+					if (aux.hasState(Cell.NOT_ABLE_TO_MOVE))
+						aux.removeState(Cell.NOT_ABLE_TO_MOVE);
 
-			if (continueMoving) {
-				int[][] cells = top.neigbours;
-				Cell aux = null;
-				for (int i = 0; i < top.neigbours.length; i++) {
-					aux = world.cellAtByGrid(cells[i][0], cells[i][1]);
-					if (!moves.contains(aux, true)) {
-						if (aux.hasState(Cell.MOVE_TARGET) || aux.getUnit() != null) {
+					if (aux.hasState(Cell.ABLE_TO_MOVE))
+						aux.removeState(Cell.ABLE_TO_MOVE);
+
+					showAbleToMoveNeighbours(aux, moves, step - 1, clear);
+				} else {
+					if (!aux.hasState(Cell.MOVE_TARGET) && !moves.contains(aux, true)) {
+						if (aux.getUnit() != null) {
 							aux.addState(Cell.NOT_ABLE_TO_MOVE);
 						} else {
 							aux.addState(Cell.ABLE_TO_MOVE);
+							showAbleToMoveNeighbours(aux, moves, step - 1, clear);
 						}
 					}
 				}
@@ -183,14 +192,18 @@ public class NormalGameView extends GameView {
 		case DEFENSE:
 			break;
 		case MOVE:
-			Cell cell = null;
-			for (int i = 0; i < ((MoveUnitAction) unitAction).moves.size; i++) {
-				cell = ((MoveUnitAction) unitAction).moves.get(i);
-				int[][] cells = cell.neigbours;
-				for (int j = 0; j < cell.neigbours.length; j++) {
-					world.cellAtByGrid(cells[j][0], cells[j][1]).removeState(Cell.ABLE_TO_MOVE | Cell.NOT_ABLE_TO_MOVE);
-				}
-			}
+			// Cell cell = null;
+			// for (int i = 0; i < ((MoveUnitAction) unitAction).moves.size;
+			// i++) {
+			// cell = ((MoveUnitAction) unitAction).moves.get(i);
+			// int[][] cells = cell.neigbours;
+			// for (int j = 0; j < cell.neigbours.length; j++) {
+			// world.cellAtByGrid(cells[j][0],
+			// cells[j][1]).removeState(Cell.ABLE_TO_MOVE |
+			// Cell.NOT_ABLE_TO_MOVE);
+			// }
+			// }
+			mapAbleToMoveCells(true);
 			break;
 		case NONE:
 			break;
@@ -330,7 +343,8 @@ public class NormalGameView extends GameView {
 			break;
 		case MOVE:
 			if (cell != null && cell.hasState(Cell.ABLE_TO_MOVE)) {
-				clearAvailableCells();
+				mapAbleToMoveCells(true);
+
 				Array<Cell> moves = ((MoveUnitAction) unitAction).moves;
 				PathRender p = paths.getOrCreatePath(selectedUnit, PathRender.TYPE.MOVE);
 
@@ -361,7 +375,7 @@ public class NormalGameView extends GameView {
 
 				moves.add(cell);
 
-				showAbleToMoveCells();
+				mapAbleToMoveCells(false);
 			} else if (cell != null && cell.hasState(Cell.MOVE_TARGET)) {
 				clearAvailableCells();
 				Array<Cell> moves = ((MoveUnitAction) unitAction).moves;
@@ -397,7 +411,7 @@ public class NormalGameView extends GameView {
 						}
 						moves.truncate(1);
 					}
-					showAbleToMoveCells();
+					mapAbleToMoveCells(false);
 				}
 			} else {
 				saveMove();
@@ -528,24 +542,24 @@ public class NormalGameView extends GameView {
 	@Override
 	public void init() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void shown() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void closed() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void dispose() {
 		// TODO Auto-generated method stub
-		
+
 	}
 }
