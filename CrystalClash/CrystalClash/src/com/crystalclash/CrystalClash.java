@@ -19,7 +19,7 @@ public class CrystalClash extends Game {
 	public static float SLOW_ANIMATION_SPEED = 0.75f;
 	public static float NORMAL_ANIMATION_SPEED = 0.4f;
 	public static float FAST_ANIMATION_SPEED = 0.1f;
-	public static float FIGTH_ANIMATION_SPEED = 2.5f;
+	public static float FIGTH_ANIMATION_SPEED = 1.5f;
 	public static float ENTRANCE_ANIMATION_SPEED = 2.5f;
 	public static float WALK_ANIMATION_SPEED = 1;
 	public static float WIDTH = 1280;

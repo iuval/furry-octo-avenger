@@ -17,6 +17,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
+import com.badlogic.gdx.scenes.scene2d.utils.Align;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Array;
 import com.crystalclash.CrystalClash;
@@ -68,6 +69,14 @@ public class TutorialView extends GameView {
 	private int movePathX;
 
 	private PathManager paths;
+	
+	private Image imgAttackIcon;
+	private Image imgMoveIcon;
+	private Image imgDefendIcon;
+	private Image imgUndoIcon;
+	private Image imgLifeIcon;
+	private Image imgDamageIcon;
+	private Image imgMobilityIcon;
 
 	public TutorialView(WorldController world) {
 		super(world);
@@ -118,7 +127,7 @@ public class TutorialView extends GameView {
 		balloon.setPosition(160 + fireArcher.getWidth() * 0.45f, -balloon.getHeight());
 
 		lblMessage = new Label("", new LabelStyle(ResourceHelper.getFont(), Color.BLACK));
-		lblMessage.setPosition(balloon.getX() + 145, balloon.getTop() - 50);
+		lblMessage.setAlignment(Align.top | Align.left);
 
 		btnNext = new TextButton("Next", ResourceHelper.getNextButtonStyle());
 		btnNext.setPosition(CrystalClash.WIDTH - btnNext.getWidth() - 20, -balloon.getHeight() - btnNext.getHeight());
@@ -175,6 +184,30 @@ public class TutorialView extends GameView {
 		addActor(btnSkip);
 
 		PathManager.load();
+		
+		imgAttackIcon = new Image(skin.getRegion("action_attack_button"));
+		imgMoveIcon = new Image(skin.getRegion("action_run_button"));
+		imgDefendIcon = new Image(skin.getRegion("action_defensive_button"));
+		imgUndoIcon = new Image(skin.getRegion("action_cancel_button"));
+		
+		imgAttackIcon.scale(-0.5f);
+		imgMoveIcon.scale(-0.5f);
+		imgDefendIcon.scale(-0.5f);
+		imgUndoIcon.scale(-0.5f);
+		
+		imgAttackIcon.setPosition(760, 180);
+		imgMoveIcon.setPosition(990, 180);
+		imgDefendIcon.setPosition(760, 110);
+		imgUndoIcon.setPosition(990, 110);
+		
+		atlas = ResourceHelper.getTextureAtlas("in_game/unit_stats_popup/unit_stats_popup.pack");
+		imgLifeIcon = new Image(atlas.findRegion("icon_life"));
+		imgDamageIcon = new Image(atlas.findRegion("icon_attack"));
+		imgMobilityIcon = new Image(atlas.findRegion("icon_speed"));
+		
+		imgDamageIcon.setPosition(755, 220);
+		imgLifeIcon.setPosition(990, 220);
+		imgMobilityIcon.setPosition(805, 150);
 	}
 
 	private void readTutorialScript() {
@@ -270,15 +303,34 @@ public class TutorialView extends GameView {
 			hideNext();
 			break;
 		case 4:
+			addActor(imgAttackIcon);
+			addActor(imgMoveIcon);
+			addActor(imgDefendIcon);
+			addActor(imgUndoIcon);
+			
 			world.getRender().setReadInput(false);
 			showNext();
 			break;
+		case 5:
+			removeActor(imgAttackIcon);
+			removeActor(imgMoveIcon);
+			removeActor(imgDefendIcon);
+			removeActor(imgUndoIcon);
+			break;
 		case 6:
+			addActor(imgLifeIcon);
+			addActor(imgDamageIcon);
+			addActor(imgMobilityIcon);
+			
 			world.getRender().hideActionsRing();
 			actionRingVisible = false;
 			world.getRender().showStatsPopup(slayer);
 			break;
 		case 7:
+			removeActor(imgLifeIcon);
+			removeActor(imgDamageIcon);
+			removeActor(imgMobilityIcon);
+			
 			world.getRender().hideStatsPopup();
 			world.getRender().moveArrow(tank);
 			break;
@@ -576,7 +628,7 @@ public class TutorialView extends GameView {
 					@Override
 					public void onEvent(int type, BaseTween<?> source) {
 						if (type == COMPLETE) {
-							lblMessage.setPosition(balloon.getX() + 145, balloon.getTop() - 150);
+							lblMessage.setPosition(balloon.getX() + 145, balloon.getTop() - 100);
 							lblMessage.setText(messages.get(messageIndex));
 
 							btnNext.setDisabled(false);
