@@ -144,6 +144,7 @@ public class PathManager {
 					p.add(x, y);
 				}
 			}
+			p.add(endX, endY);
 		}
 	}
 
