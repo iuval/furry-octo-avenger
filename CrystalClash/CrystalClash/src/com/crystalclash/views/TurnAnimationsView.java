@@ -235,6 +235,7 @@ public class TurnAnimationsView extends GameView {
 
 					if (type == TweenCallback.COMPLETE) {
 						unit.getRender().setState(STATE.idle);
+						action.origin.setAction(new NoneUnitAction());
 					} else if (type == TweenCallback.BEGIN) {
 						unit.getRender().setState(STATE.walking);
 					}
@@ -932,24 +933,24 @@ public class TurnAnimationsView extends GameView {
 	@Override
 	public void init() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void shown() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void closed() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void dispose() {
 		// TODO Auto-generated method stub
-		
+
 	}
 }

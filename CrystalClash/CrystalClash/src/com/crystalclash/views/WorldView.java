@@ -404,11 +404,13 @@ public class WorldView extends InputView {
 	}
 
 	private void hideOptions() {
+		GameEngine.kill(grpOptions);
 		GameEngine.start(Timeline.createSequence()
 				.push(Tween.to(grpOptions, ActorAccessor.X, CrystalClash.NORMAL_ANIMATION_SPEED)
 						.target(-grpOptions.getWidth()))
 				.push(Tween.to(grpBtnOptions, ActorAccessor.X, CrystalClash.NORMAL_ANIMATION_SPEED)
 						.target(grpBtnSend.getWidth() - 35).ease(TweenEquations.easeOutCirc)));
+		hideMoreOptions = false;
 	}
 
 	public void showGameMenuButtons() {
@@ -425,6 +427,7 @@ public class WorldView extends InputView {
 	}
 
 	public Timeline pushHideGameMenuButtons(Timeline t) {
+		GameEngine.kill(grpBtnOptions);
 		return t.beginSequence()
 				.push(Tween.to(grpOptions, ActorAccessor.X, CrystalClash.FAST_ANIMATION_SPEED)
 						.target(-grpOptions.getWidth()))
@@ -473,8 +476,9 @@ public class WorldView extends InputView {
 			t.setCallback(new TweenCallback() {
 				@Override
 				public void onEvent(int type, BaseTween<?> source) {
-					UnitActionType actionType = selectedCell.getAction().getActionType();
-					if (actionType.equals(UnitActionType.PLACE) || actionType.equals(UnitActionType.NONE)) {
+					if (selectedCell.getAction() == null ||
+							selectedCell.getAction().getActionType().equals(UnitActionType.PLACE) ||
+							selectedCell.getAction().getActionType().equals(UnitActionType.NONE)) {
 						btnAttack.setVisible(true);
 						btnDefense.setVisible(true);
 						btnMove.setVisible(true);
@@ -673,7 +677,6 @@ public class WorldView extends InputView {
 	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
 		if (readInput) {
 			Vector2 vec = GameEngine.getRealPosition(screenX, screenY);
-
 			if (hideMoreOptions
 					&& (vec.x > imgOptionsBackground.getX() + imgOptionsBackground.getWidth() || vec.y > btnSurrender
 							.getTop() + 25)) {
@@ -731,10 +734,12 @@ public class WorldView extends InputView {
 	}
 
 	public void pause() {
+		setReadInput(false);
 		gameRender.pause();
 	}
 
 	public void resume() {
+		setReadInput(true);
 		gameRender.resume();
 	}
 

@@ -5,7 +5,6 @@ import com.crystalclash.entities.helpers.UnitAction;
 import com.crystalclash.renders.CellRender;
 import com.crystalclash.renders.helpers.CellHelper;
 
-
 public class Cell extends GameObject {
 	public final static int NONE = 0; // 0
 	public final static int ABLE_TO_ATTACK = 1 << 0; // 1
@@ -93,7 +92,9 @@ public class Cell extends GameObject {
 	}
 
 	public void setAction(UnitAction action) {
-		action.origin = this;
+		if (action != null) {
+			action.origin = this;
+		}
 		this.action = action;
 	}
 

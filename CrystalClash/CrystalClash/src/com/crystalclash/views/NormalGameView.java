@@ -60,6 +60,7 @@ public class NormalGameView extends GameView {
 		tweenManager = new TweenManager();
 
 		load();
+		clearAllChanges();
 		GameEngine.hideLoading();
 	}
 
@@ -316,7 +317,7 @@ public class NormalGameView extends GameView {
 		setUnitAction(new NoneUnitAction());
 		for (int i = 0; i < world.cellGrid.length; i++) {
 			for (int j = 0; j < world.cellGrid[0].length; j++) {
-				world.cellGrid[i][j].setAction(unitAction);
+				world.cellGrid[i][j].setAction(null);
 				world.cellGrid[i][j].state = Cell.NONE;
 			}
 		}
