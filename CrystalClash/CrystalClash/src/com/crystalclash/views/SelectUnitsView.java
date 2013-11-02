@@ -11,6 +11,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.crystalclash.CrystalClash;
 import com.crystalclash.accessors.ActorAccessor;
 import com.crystalclash.audio.AudioManager;
+import com.crystalclash.audio.AudioManager.MUSIC;
 import com.crystalclash.controllers.GameController;
 import com.crystalclash.controllers.WorldController;
 import com.crystalclash.entities.Cell;
@@ -181,7 +182,7 @@ public class SelectUnitsView extends GameView {
 
 	@Override
 	public Timeline pushEnterAnimation(Timeline t) {
-		AudioManager.playMusic("choose your destiny");
+		AudioManager.playMusic(MUSIC.select_units);
 		return t.push(Tween.set(unitList, ActorAccessor.ALPHA)
 				.target(0))
 				.push(Tween.to(unitList, ActorAccessor.ALPHA, CrystalClash.NORMAL_ANIMATION_SPEED)

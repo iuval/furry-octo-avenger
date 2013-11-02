@@ -19,6 +19,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.crystalclash.CrystalClash;
 import com.crystalclash.accessors.ActorAccessor;
 import com.crystalclash.audio.AudioManager;
+import com.crystalclash.audio.AudioManager.MUSIC;
 import com.crystalclash.controllers.GameController;
 import com.crystalclash.controllers.MenuGames;
 import com.crystalclash.renders.GameEngine;
@@ -77,7 +78,7 @@ public class MenuGamesView extends InputView {
 
 	@Override
 	public Timeline pushEnterAnimation(Timeline t) {
-		AudioManager.playMusic("march for glory");
+		AudioManager.playMusic(MUSIC.menu);
 		Timeline aux = Timeline.createParallel();
 
 		lblHeading.setText("Welcome " + GameController.getUser().getName());

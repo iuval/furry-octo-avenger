@@ -22,6 +22,7 @@ import com.crystalclash.CrystalClash;
 import com.crystalclash.accessors.ActorAccessor;
 import com.crystalclash.accessors.UnitAccessor;
 import com.crystalclash.audio.AudioManager;
+import com.crystalclash.audio.AudioManager.MUSIC;
 import com.crystalclash.controllers.GameController;
 import com.crystalclash.controllers.WorldController;
 import com.crystalclash.entities.Cell;
@@ -860,7 +861,7 @@ public class TurnAnimationsView extends GameView {
 
 	@Override
 	public Timeline pushEnterAnimation(Timeline t) {
-		AudioManager.playMusic("some thingy");
+		AudioManager.playMusic(MUSIC.animations);
 		return t;
 	}
 
