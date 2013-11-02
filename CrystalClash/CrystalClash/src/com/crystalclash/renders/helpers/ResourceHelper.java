@@ -37,10 +37,10 @@ public class ResourceHelper {
 	public static void slowLoad() {
 		atlas = getTextureAtlas("buttons/buttons.pack", false);
 		skin = new Skin(atlas);
-		bigFont = new BitmapFont(Gdx.files.internal("data/fonts/acme_secret_agent.fnt"), false);
+		bigFont = new BitmapFont(Gdx.files.internal("data/fonts/action_man.fnt"), false);
 		bigFont.getRegion().getTexture().setFilter(TextureFilter.Linear, TextureFilter.Linear);
 		bigFont.setScale(0.9f);
-		smallFont = new BitmapFont(Gdx.files.internal("data/fonts/acme_secret_agent.fnt"), false);
+		smallFont = new BitmapFont(Gdx.files.internal("data/fonts/action_man.fnt"), false);
 		smallFont.getRegion().getTexture().setFilter(TextureFilter.Linear, TextureFilter.Linear);
 		smallFont.setScale(0.7f);
 		buttonStyle = new TextButtonStyle(
