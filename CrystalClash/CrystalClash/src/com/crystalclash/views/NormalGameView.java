@@ -60,7 +60,6 @@ public class NormalGameView extends GameView {
 		tweenManager = new TweenManager();
 
 		load();
-		clearAllChanges();
 		GameEngine.hideLoading();
 	}
 
@@ -302,8 +301,13 @@ public class NormalGameView extends GameView {
 		clearSelection();
 
 		moveActions.clear();
+		for (int j = 0; j < ghostlyCells.size; j++) {
+			ghostlyCells.get(j).removeUnit();
+		}
 		ghostlyCells.clear();
 		attackActions.clear();
+
+		paths.clearAll();
 
 		for (int i = 0; i < defensiveUnits.size; i++) {
 			defensiveUnits.get(i).setDefendingPosition(false);
@@ -397,8 +401,8 @@ public class NormalGameView extends GameView {
 					if (ghost == null) {
 						ghost = new Unit(selectedUnit.getName(), world.player);
 						ghost.getRender().setState(STATE.ghost);
-						ghostlyCells.add(moves.peek());
 					}
+					ghostlyCells.add(moves.peek());
 					cell.setUnit(ghost);
 				}
 				mapAbleToMoveCells(false);
