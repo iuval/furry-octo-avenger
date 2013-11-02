@@ -126,7 +126,7 @@ public class TutorialView extends GameView {
 		balloon.scale(-0.1f);
 		balloon.setPosition(160 + fireArcher.getWidth() * 0.45f, -balloon.getHeight());
 
-		lblMessage = new Label("", new LabelStyle(ResourceHelper.getFont(), Color.BLACK));
+		lblMessage = new Label("", new LabelStyle(ResourceHelper.getBigFont(), Color.BLACK));
 		lblMessage.setAlignment(Align.top | Align.left);
 
 		btnNext = new TextButton("Next", ResourceHelper.getNextButtonStyle());
@@ -155,7 +155,7 @@ public class TutorialView extends GameView {
 		imgBtnSkipBackground.setPosition(CrystalClash.WIDTH, CrystalClash.HEIGHT - imgBtnSkipBackground.getHeight());
 		TextButtonStyle skipStyle = new TextButtonStyle(
 				skin.getDrawable("exit_button"),
-				skin.getDrawable("exit_button_pressed"), null, ResourceHelper.getFont());
+				skin.getDrawable("exit_button_pressed"), null, ResourceHelper.getBigFont());
 		btnSkip = new TextButton("", skipStyle);
 		btnSkip.setPosition(CrystalClash.WIDTH, CrystalClash.HEIGHT - btnSkip.getHeight());
 		btnSkip.addListener(new ClickListener() {

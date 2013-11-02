@@ -111,7 +111,7 @@ public class MenuGamesView extends InputView {
 		initSkin();
 
 		lblHeading = new Label(String.format("Welcome %s", GameController.getUser().getName()),
-				new LabelStyle(ResourceHelper.getFont(), Color.WHITE));
+				new LabelStyle(ResourceHelper.getBigFont(), Color.WHITE));
 		lblHeading.setPosition(-CrystalClash.WIDTH, CrystalClash.HEIGHT - 50);
 		addActor(lblHeading);
 
@@ -248,7 +248,7 @@ public class MenuGamesView extends InputView {
 		};
 
 		listItemSkin = new Skin();
-		listItemSkin.add("font", ResourceHelper.getFont());
+		listItemSkin.add("font", ResourceHelper.getBigFont());
 		listItemSkin.add("play_up", ResourceHelper.getTexture("menu/games_list_item_green"));
 		listItemSkin.add("play_down", ResourceHelper.getTexture("menu/games_list_item_green"));
 		listItemSkin.add("wait_up", ResourceHelper.getTexture("menu/games_list_item_red"));
