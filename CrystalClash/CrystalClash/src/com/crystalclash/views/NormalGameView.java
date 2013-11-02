@@ -168,9 +168,7 @@ public class NormalGameView extends GameView {
 				} else {
 					if (!aux.hasState(Cell.MOVE_TARGET)) {
 						if (aux.getUnit() == null) {
-							if (moves.contains(aux, true)) {
-								aux.addState(Cell.MOVE_TARGET);
-							} else {
+							if (!moves.contains(aux, true)) {
 								aux.addState(Cell.ABLE_TO_MOVE);
 								mapAbleToMoveNeighbours(aux, moves, step - 1, clear);
 							}
