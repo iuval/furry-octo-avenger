@@ -20,7 +20,8 @@ public class ResourceHelper {
 
 	private static TextureAtlas atlas;
 	private static Skin skin;
-	private static BitmapFont font;
+	private static BitmapFont bigFont;
+	private static BitmapFont smallFont;
 
 	private static TextButtonStyle buttonStyle;
 	private static TextButtonStyle outerButtonStyle;
@@ -36,23 +37,27 @@ public class ResourceHelper {
 	public static void slowLoad() {
 		atlas = getTextureAtlas("buttons/buttons.pack", false);
 		skin = new Skin(atlas);
-		font = new BitmapFont(Gdx.files.internal("data/fonts/font.fnt"), false);
-		font.getRegion().getTexture().setFilter(TextureFilter.Linear, TextureFilter.Linear);
+		bigFont = new BitmapFont(Gdx.files.internal("data/fonts/action_man.fnt"), false);
+		bigFont.getRegion().getTexture().setFilter(TextureFilter.Linear, TextureFilter.Linear);
+		bigFont.setScale(0.9f);
+		smallFont = new BitmapFont(Gdx.files.internal("data/fonts/action_man.fnt"), false);
+		smallFont.getRegion().getTexture().setFilter(TextureFilter.Linear, TextureFilter.Linear);
+		smallFont.setScale(0.7f);
 		buttonStyle = new TextButtonStyle(
 				skin.getDrawable("button_orange"),
-				skin.getDrawable("button_orange_pressed"), null, font);
+				skin.getDrawable("button_orange_pressed"), null, bigFont);
 
 		outerButtonStyle = new TextButtonStyle(
 				skin.getDrawable("outer_button_orange"),
-				skin.getDrawable("outer_button_orange_pressed"), null, font);
+				skin.getDrawable("outer_button_orange_pressed"), null, bigFont);
 
 		outerSmallButtonStyle = new TextButtonStyle(
 				skin.getDrawable("outer_button_small"),
-				skin.getDrawable("outer_button_small_pressed"), null, font);
+				skin.getDrawable("outer_button_small_pressed"), null, bigFont);
 
 		nextButtonStyle = new TextButtonStyle(
 				skin.getDrawable("next_button"),
-				skin.getDrawable("next_button_pressed"), null, font);
+				skin.getDrawable("next_button_pressed"), null, bigFont);
 	}
 
 	public static TextureRegion getTexture(String path) {
@@ -129,8 +134,12 @@ public class ResourceHelper {
 		return skin;
 	}
 
-	public static BitmapFont getFont() {
-		return font;
+	public static BitmapFont getBigFont() {
+		return bigFont;
+	}
+
+	public static BitmapFont getSmallFont() {
+		return smallFont;
 	}
 
 	public static TextButtonStyle getButtonStyle() {

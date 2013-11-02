@@ -40,7 +40,7 @@ public class MessageBox extends AnimatedGroup {
 		imgWindowBackground.setPosition(0, 0);
 		addActor(imgWindowBackground);
 
-		lblMessage = new Label("", new LabelStyle(ResourceHelper.getFont(), Color.WHITE));
+		lblMessage = new Label("", new LabelStyle(ResourceHelper.getBigFont(), Color.WHITE));
 		lblMessage.setAlignment(Align.center);
 		lblMessage.setWrap(true);
 		addActor(lblMessage);

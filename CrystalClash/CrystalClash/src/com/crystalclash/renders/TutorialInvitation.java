@@ -46,7 +46,7 @@ public class TutorialInvitation extends AnimatedGroup {
 		addActor(imgBalloon);
 
 		lblMessage = new Label("Welcome " + GameController.getUser().getName() +
-				"\n\nI can help you learn the\nbasics... Do you want me to?", new LabelStyle(ResourceHelper.getFont(), Color.BLACK));
+				"\n\nI can help you learn the\nbasics... Do you want me to?", new LabelStyle(ResourceHelper.getBigFont(), Color.BLACK));
 		lblMessage.setPosition(imgBalloon.getX() + 145, imgBalloon.getTop() - 65);
 		addActor(lblMessage);
 
