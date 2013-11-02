@@ -96,7 +96,7 @@ public class NormalGameView extends GameView {
 		selectedCell.addState(Cell.MOVE_TARGET);
 
 		world.getRender().hideActionsRing();
-		showAbleToMoveCells();
+		mapAbleToMoveCells(false);
 	}
 
 	@Override
@@ -104,28 +104,74 @@ public class NormalGameView extends GameView {
 		undoAction();
 	}
 
-	private void showAbleToMoveCells() {
-		clearAvailableCells();
+	private Array<Cell> buildCellPath(Cell ori, Cell dest, int steps, Array<Cell> cells) {
+		if (ori != dest) {
+			if (steps > 0) {
+				int[][] neigbours = ori.neigbours;
+				Cell aux = null;
+				for (int i = 0; i < neigbours.length; i++) {
+					aux = world.cellAtByGrid(neigbours[i][0], neigbours[i][1]);
+					if (dest == aux) {
+						cells.insert(cells.size, aux);
+						break;
+					} else if (aux.hasState(Cell.ABLE_TO_MOVE)) {
+						if (cells.size == 0) {
+							cells.add(aux);
+						} else {
+							int j = cells.size - 1;
+							while (j >= 0 &&
+									cells.get(j).getPosition().dst(dest.getPosition()) <= aux.getPosition().dst(dest.getPosition())) {
+								j--;
+							}
+							cells.insert(j + 1, aux);
+						}
+					}
+				}
+				if (steps > 0) {
+					while (cells.size > 0) {
+						aux = cells.pop();
+						Array<Cell> path = buildCellPath(aux, dest, steps - 1, cells);
+						if (path != null) {
+							path.add(aux);
+							return path;
+						}
+					}
+				}
+			}
+			return null;
+		} else {
+			return new Array<Cell>();
+		}
+	}
+
+	private void mapAbleToMoveCells(boolean clear) {
 		actionType = UnitActionType.MOVE;
 
 		Array<Cell> moves = ((MoveUnitAction) unitAction).moves;
 		if (moves.size <= maxMoves) {
 			Cell top = moves.peek();
-			boolean continueMoving = true;
+			mapAbleToMoveNeighbours(top, moves, maxMoves - moves.size, clear);
+		}
+	}
 
-			if (top.Equals(unitAction.origin))
-				continueMoving = true;
+	private void mapAbleToMoveNeighbours(Cell cell, Array<Cell> moves, int step, boolean clear) {
+		if (step >= 0) {
+			int[][] cells = cell.neigbours;
+			Cell aux = null;
+			for (int i = 0; i < cell.neigbours.length; i++) {
+				aux = world.cellAtByGrid(cells[i][0], cells[i][1]);
+				if (clear) {
+					if (aux.hasState(Cell.ABLE_TO_MOVE))
+						aux.removeState(Cell.ABLE_TO_MOVE);
 
-			if (continueMoving) {
-				int[][] cells = top.neigbours;
-				Cell aux = null;
-				for (int i = 0; i < top.neigbours.length; i++) {
-					aux = world.cellAtByGrid(cells[i][0], cells[i][1]);
-					if (!moves.contains(aux, true)) {
-						if (aux.hasState(Cell.MOVE_TARGET) || aux.getUnit() != null) {
-							aux.addState(Cell.NOT_ABLE_TO_MOVE);
-						} else {
-							aux.addState(Cell.ABLE_TO_MOVE);
+					mapAbleToMoveNeighbours(aux, moves, step - 1, clear);
+				} else {
+					if (!aux.hasState(Cell.MOVE_TARGET)) {
+						if (aux.getUnit() == null) {
+							if (!moves.contains(aux, true)) {
+								aux.addState(Cell.ABLE_TO_MOVE);
+								mapAbleToMoveNeighbours(aux, moves, step - 1, clear);
+							}
 						}
 					}
 				}
@@ -183,14 +229,7 @@ public class NormalGameView extends GameView {
 		case DEFENSE:
 			break;
 		case MOVE:
-			Cell cell = null;
-			for (int i = 0; i < ((MoveUnitAction) unitAction).moves.size; i++) {
-				cell = ((MoveUnitAction) unitAction).moves.get(i);
-				int[][] cells = cell.neigbours;
-				for (int j = 0; j < cell.neigbours.length; j++) {
-					world.cellAtByGrid(cells[j][0], cells[j][1]).removeState(Cell.ABLE_TO_MOVE | Cell.NOT_ABLE_TO_MOVE);
-				}
-			}
+			mapAbleToMoveCells(true);
 			break;
 		case NONE:
 			break;
@@ -330,38 +369,39 @@ public class NormalGameView extends GameView {
 			break;
 		case MOVE:
 			if (cell != null && cell.hasState(Cell.ABLE_TO_MOVE)) {
-				clearAvailableCells();
 				Array<Cell> moves = ((MoveUnitAction) unitAction).moves;
 				PathRender p = paths.getOrCreatePath(selectedUnit, PathRender.TYPE.MOVE);
 
-				if (moves.size == 0) {
-					PathManager.addLine(p,
-							selectedCell.getCenterX(),
-							selectedCell.getCenterY(),
-							cell.getCenterX(),
-							cell.getCenterY());
-				} else {
-					PathManager.addLine(p,
-							moves.get(moves.size - 1).getCenterX(),
-							moves.get(moves.size - 1).getCenterY(),
-							cell.getCenterX(),
-							cell.getCenterY());
+				Array<Cell> path = buildCellPath(moves.peek(), cell, selectedUnit.getSpeed() - (moves.size - 1), new Array<Cell>());
+				mapAbleToMoveCells(true);
+				if (path != null) {
+					Unit ghost = popUnitFromPath(moves);
+					for (int i = path.size - 1; i >= 0; i--) {
+						cell = path.get(i);
+						if (moves.size == 0) {
+							PathManager.addLine(p,
+									selectedCell.getCenterX(),
+									selectedCell.getCenterY(),
+									cell.getCenterX(),
+									cell.getCenterY());
+						} else {
+							PathManager.addLine(p,
+									moves.peek().getCenterX(),
+									moves.peek().getCenterY(),
+									cell.getCenterX(),
+									cell.getCenterY());
+						}
+						moves.add(cell);
+						cell.addState(Cell.MOVE_TARGET);
+					}
+					if (ghost == null) {
+						ghost = new Unit(selectedUnit.getName(), world.player);
+						ghost.getRender().setState(STATE.ghost);
+						ghostlyCells.add(moves.peek());
+					}
+					cell.setUnit(ghost);
 				}
-				Unit ghost;
-				if (moves.size > 1) {
-					ghost = popUnitFromPath(moves);
-				} else {
-					ghost = new Unit(selectedUnit.getName(), world.player);
-					ghost.getRender().setState(STATE.ghost);
-					ghostlyCells.add(cell);
-				}
-				cell.setUnit(ghost);
-				cell.addState(Cell.MOVE_TARGET);
-				cell.removeState(Cell.ABLE_TO_MOVE);
-
-				moves.add(cell);
-
-				showAbleToMoveCells();
+				mapAbleToMoveCells(false);
 			} else if (cell != null && cell.hasState(Cell.MOVE_TARGET)) {
 				clearAvailableCells();
 				Array<Cell> moves = ((MoveUnitAction) unitAction).moves;
@@ -397,7 +437,7 @@ public class NormalGameView extends GameView {
 						}
 						moves.truncate(1);
 					}
-					showAbleToMoveCells();
+					mapAbleToMoveCells(false);
 				}
 			} else {
 				saveMove();
@@ -430,9 +470,13 @@ public class NormalGameView extends GameView {
 	}
 
 	private Unit popUnitFromPath(Array<Cell> moves) {
-		Unit ghost = moves.get(moves.size - 1).getUnit();
-		moves.get(moves.size - 1).removeUnit();
-		return ghost;
+		if (moves.size > 1) {
+			Unit ghost = moves.peek().getUnit();
+			moves.peek().removeUnit();
+			return ghost;
+		} else {
+			return null;
+		}
 	}
 
 	private void setUnitAction(UnitAction act) {
@@ -528,24 +572,24 @@ public class NormalGameView extends GameView {
 	@Override
 	public void init() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void shown() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void closed() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void dispose() {
 		// TODO Auto-generated method stub
-		
+
 	}
 }
