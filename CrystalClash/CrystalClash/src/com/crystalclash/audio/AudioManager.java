@@ -15,6 +15,10 @@ import com.crystalclash.util.FileUtil;
 
 public class AudioManager {
 
+	public enum MUSIC {
+		menu, tutorial, in_game, select_units, animations
+	}
+	
 	private static Hashtable<String, Music> musicMap;
 	private static Hashtable<String, Sound> soundMap;
 	private static float volume;
@@ -49,11 +53,11 @@ public class AudioManager {
 		}
 	}
 
-	public static void playMusic(String name) {
+	public static void playMusic(MUSIC music) {
 		if (playing != null && playing.isPlaying())
-			fadeOut(name);
+			fadeOut(music.toString());
 		else
-			fadeIn(name);
+			fadeIn(music.toString());
 
 	}
 

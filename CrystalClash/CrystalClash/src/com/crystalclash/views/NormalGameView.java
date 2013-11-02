@@ -6,6 +6,7 @@ import aurelienribon.tweenengine.TweenManager;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.Array;
 import com.crystalclash.audio.AudioManager;
+import com.crystalclash.audio.AudioManager.MUSIC;
 import com.crystalclash.controllers.GameController;
 import com.crystalclash.controllers.WorldController;
 import com.crystalclash.entities.Cell;
@@ -40,7 +41,7 @@ public class NormalGameView extends GameView {
 
 	public NormalGameView(WorldController world) {
 		super(world);
-		AudioManager.playMusic("to battle!");
+		AudioManager.playMusic(MUSIC.in_game);
 		selectedUnit = null;
 		selectedCell = null;
 
