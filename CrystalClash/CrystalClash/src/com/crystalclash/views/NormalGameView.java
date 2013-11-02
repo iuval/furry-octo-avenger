@@ -83,8 +83,7 @@ public class NormalGameView extends GameView {
 		unitAction.origin = selectedCell;
 		defensiveUnits.add(selectedUnit);
 		selectedUnit.setDefendingPosition(true);
-
-		world.getRender().hideActionsRing();
+		saveDefense();
 	}
 
 	@Override
