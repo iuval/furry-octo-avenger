@@ -552,17 +552,6 @@ public class NormalGameView extends GameView {
 
 	@Override
 	public void onSend() {
-		switch (actionType) {
-		case ATTACK:
-			saveAttack();
-			break;
-		case DEFENSE:
-			saveDefense();
-			break;
-		case MOVE:
-			saveMove();
-			break;
-		}
 	}
 
 	@Override
