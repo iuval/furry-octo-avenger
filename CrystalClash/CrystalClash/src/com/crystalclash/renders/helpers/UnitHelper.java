@@ -10,14 +10,14 @@ public class UnitHelper {
 	public static final float WIDTH = 135;
 	public static final float HEIGHT = 150;
 
-	public static final int HP_BAR_BACK_HEIGHT = 14;
-	public static final int HP_BAR_BACK_WIDTH = 54;
-	public static final int HP_BAR_HEIGHT = 10;
-	public static final int HP_BAR_WIDTH = 50;
+	public static final int HP_BAR_BACK_HEIGHT = 10;
+	public static final int HP_BAR_BACK_WIDTH = 70;
+	public static final int HP_BAR_HEIGHT = 6;
+	public static final int HP_BAR_WIDTH = 66;
 	public static final int HP_BAR_BACK_Y = 128;
-	public static final int HP_BAR_BACK_X = 8;
+	public static final int HP_BAR_BACK_X = 0;
 	public static final int HP_BAR_Y = 130;
-	public static final int HP_BAR_X = 10;
+	public static final int HP_BAR_X = 2;
 
 	public static Texture backHPBar;
 	public static Texture enemyHPBar;

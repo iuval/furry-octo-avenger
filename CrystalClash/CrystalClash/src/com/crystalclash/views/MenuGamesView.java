@@ -207,12 +207,25 @@ public class MenuGamesView extends InputView {
 		gamesList = new GameListItem[games.length];
 
 		GameListItem listingItem;
+		GameListItem canPlayItem = null;
 		for (int i = 0, len = games.length; i < len; i++) {
 			listingItem = new GameListItem(games[i][0], games[i][1], games[i][2], games[i][3], games[i][4],
 					listItemSkin, surrenderListener,
 					playListener);
 			gamesList[i] = listingItem;
-			list.addActorAfter(gamesImage, listingItem);
+			
+			if(canPlayItem == null) {
+				if(games[i][4].equals("play")) {
+					canPlayItem = listingItem;
+				}
+				list.addActorAfter(gamesImage, listingItem);
+			} else {
+				if(games[i][4].equals("play")){
+					list.addActorAfter(gamesImage, listingItem);
+				} else {
+					list.addActorAfter(canPlayItem, listingItem);
+				}
+			}
 		}
 		GameEngine.hideLoading();
 	}
