@@ -157,4 +157,8 @@ public class PathManager {
 			return PathManager.BIG_DOT_MOVE_TEXTURE;
 		}
 	}
+
+	public void clearAll() {
+		paths.clear();
+	}
 }

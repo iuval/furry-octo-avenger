@@ -84,8 +84,7 @@ public class NormalGameView extends GameView {
 		unitAction.origin = selectedCell;
 		defensiveUnits.add(selectedUnit);
 		selectedUnit.setDefendingPosition(true);
-
-		world.getRender().hideActionsRing();
+		saveDefense();
 	}
 
 	@Override
@@ -302,8 +301,13 @@ public class NormalGameView extends GameView {
 		clearSelection();
 
 		moveActions.clear();
+		for (int j = 0; j < ghostlyCells.size; j++) {
+			ghostlyCells.get(j).removeUnit();
+		}
 		ghostlyCells.clear();
 		attackActions.clear();
+
+		paths.clearAll();
 
 		for (int i = 0; i < defensiveUnits.size; i++) {
 			defensiveUnits.get(i).setDefendingPosition(false);
@@ -313,7 +317,7 @@ public class NormalGameView extends GameView {
 		setUnitAction(new NoneUnitAction());
 		for (int i = 0; i < world.cellGrid.length; i++) {
 			for (int j = 0; j < world.cellGrid[0].length; j++) {
-				world.cellGrid[i][j].setAction(unitAction);
+				world.cellGrid[i][j].setAction(null);
 				world.cellGrid[i][j].state = Cell.NONE;
 			}
 		}
@@ -397,8 +401,8 @@ public class NormalGameView extends GameView {
 					if (ghost == null) {
 						ghost = new Unit(selectedUnit.getName(), world.player);
 						ghost.getRender().setState(STATE.ghost);
-						ghostlyCells.add(moves.peek());
 					}
+					ghostlyCells.add(moves.peek());
 					cell.setUnit(ghost);
 				}
 				mapAbleToMoveCells(false);
@@ -548,17 +552,6 @@ public class NormalGameView extends GameView {
 
 	@Override
 	public void onSend() {
-		switch (actionType) {
-		case ATTACK:
-			saveAttack();
-			break;
-		case DEFENSE:
-			saveDefense();
-			break;
-		case MOVE:
-			saveMove();
-			break;
-		}
 	}
 
 	@Override

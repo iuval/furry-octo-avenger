@@ -404,11 +404,13 @@ public class WorldView extends InputView {
 	}
 
 	private void hideOptions() {
+		GameEngine.kill(grpOptions);
 		GameEngine.start(Timeline.createSequence()
 				.push(Tween.to(grpOptions, ActorAccessor.X, CrystalClash.NORMAL_ANIMATION_SPEED)
 						.target(-grpOptions.getWidth()))
 				.push(Tween.to(grpBtnOptions, ActorAccessor.X, CrystalClash.NORMAL_ANIMATION_SPEED)
 						.target(grpBtnSend.getWidth() - 35).ease(TweenEquations.easeOutCirc)));
+		hideMoreOptions = false;
 	}
 
 	public void showGameMenuButtons() {
@@ -425,6 +427,7 @@ public class WorldView extends InputView {
 	}
 
 	public Timeline pushHideGameMenuButtons(Timeline t) {
+		GameEngine.kill(grpBtnOptions);
 		return t.beginSequence()
 				.push(Tween.to(grpOptions, ActorAccessor.X, CrystalClash.FAST_ANIMATION_SPEED)
 						.target(-grpOptions.getWidth()))
@@ -435,10 +438,6 @@ public class WorldView extends InputView {
 				.end();
 	}
 
-	public void selectUnit(Unit unit) {
-		statsPopup.show(unit);
-	}
-
 	public void selectUnitInCell(Cell cell) {
 		Unit u = cell.getUnit();
 		if (!u.isEnemy()) {
@@ -446,6 +445,7 @@ public class WorldView extends InputView {
 		}
 		cell.addState(Cell.SELECTED);
 		showStatsPopup(u);
+		GameEngine.start(pushHideGameMenuButtons(Timeline.createParallel()));
 	}
 
 	public void deselectUnitInCell(Cell cell) {
@@ -454,6 +454,7 @@ public class WorldView extends InputView {
 			cell.removeState(Cell.SELECTED);
 		hideActionsRing();
 		hideStatsPopup();
+		GameEngine.start(pushShowGameMenuButtons(Timeline.createParallel()));
 	}
 
 	public void showStatsPopup(Unit u) {
@@ -475,8 +476,9 @@ public class WorldView extends InputView {
 			t.setCallback(new TweenCallback() {
 				@Override
 				public void onEvent(int type, BaseTween<?> source) {
-					UnitActionType actionType = selectedCell.getAction().getActionType();
-					if (actionType.equals(UnitActionType.PLACE) || actionType.equals(UnitActionType.NONE)) {
+					if (selectedCell.getAction() == null ||
+							selectedCell.getAction().getActionType().equals(UnitActionType.PLACE) ||
+							selectedCell.getAction().getActionType().equals(UnitActionType.NONE)) {
 						btnAttack.setVisible(true);
 						btnDefense.setVisible(true);
 						btnMove.setVisible(true);
@@ -500,8 +502,6 @@ public class WorldView extends InputView {
 	}
 
 	private Timeline pushFadeOutActionsRing(Timeline t) {
-		btnSend.setVisible(true);
-		btnOptions.setVisible(true);
 		return t.beginParallel()
 				.push(Tween.to(grpActionBar, ActorAccessor.ALPHA, CrystalClash.FAST_ANIMATION_SPEED)
 						.target(0))
@@ -519,8 +519,6 @@ public class WorldView extends InputView {
 	}
 
 	private void fadeInActionsRing() {
-		btnSend.setVisible(false);
-		btnOptions.setVisible(false);
 		grpActionBar.setScale(0.8f, 0.8f);
 		GameEngine.start(Timeline.createParallel()
 				.push(Tween.to(grpActionBar, ActorAccessor.ALPHA, CrystalClash.FAST_ANIMATION_SPEED)
@@ -679,7 +677,6 @@ public class WorldView extends InputView {
 	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
 		if (readInput) {
 			Vector2 vec = GameEngine.getRealPosition(screenX, screenY);
-
 			if (hideMoreOptions
 					&& (vec.x > imgOptionsBackground.getX() + imgOptionsBackground.getWidth() || vec.y > btnSurrender
 							.getTop() + 25)) {
@@ -737,10 +734,12 @@ public class WorldView extends InputView {
 	}
 
 	public void pause() {
+		setReadInput(false);
 		gameRender.pause();
 	}
 
 	public void resume() {
+		setReadInput(true);
 		gameRender.resume();
 	}
 
