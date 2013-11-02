@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.crystalclash.audio.AudioManager;
+import com.crystalclash.audio.AudioManager.SOUND;
 import com.crystalclash.entities.Unit;
 import com.crystalclash.renders.helpers.UnitHelper;
 import com.crystalclash.util.SuperAnimation;
@@ -65,7 +66,7 @@ public class UnitRender {
 			break;
 		case fighting: {
 			currnetAnim = fightAnim;
-			AudioManager.playSound(unit.getName() + "_attack");
+			AudioManager.playSound(unit.getName(), SOUND.attack);
 		}
 			break;
 		case walking: {

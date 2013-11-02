@@ -5,6 +5,12 @@ fire_archer
   attack: 150
   speed: 1
   range: 2
+  sound_chose_attack: 0
+  sound_chose_move: 0
+  sound_chose_defend: 0
+  sound_place: 0
+  sound_select: 0
+  sound_attack: 1
 earth_tank
   element: 1
   type: 1
@@ -12,6 +18,12 @@ earth_tank
   attack: 50
   speed: 2
   range: 1
+  sound_chose_attack: 0
+  sound_chose_move: 0
+  sound_chose_defend: 0
+  sound_place: 0
+  sound_select: 0
+  sound_attack: 1
 darkness_mage
   element: 4
   type: 2
@@ -19,6 +31,12 @@ darkness_mage
   attack: 150
   speed: 1
   range: 3
+  sound_chose_attack: 0
+  sound_chose_move: 0
+  sound_chose_defend: 0
+  sound_place: 0
+  sound_select: 0
+  sound_attack: 1
 wind_slayer
   element: 2
   type: 0
@@ -26,3 +44,9 @@ wind_slayer
   attack: 150
   speed: 4
   range: 1
+  sound_chose_attack: 3
+  sound_chose_move: 3
+  sound_chose_defend: 3
+  sound_place: 3
+  sound_select: 3
+  sound_attack: 1

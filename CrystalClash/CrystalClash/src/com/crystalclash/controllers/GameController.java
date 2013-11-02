@@ -3,6 +3,7 @@ package com.crystalclash.controllers;
 import java.util.Enumeration;
 import java.util.Hashtable;
 
+import com.crystalclash.audio.AudioManager.SOUND;
 import com.crystalclash.entities.Unit;
 import com.crystalclash.entities.User;
 import com.crystalclash.networking.ServerDriver;
@@ -101,6 +102,25 @@ public class GameController {
 
 	public static int getUnitRange(String unitName) {
 		return unitValues.get(unitName)[5];
+	}
+	
+	public static int getUnitSoundCount(String unitName, SOUND type) {
+		switch (type) {
+		case chose_attack:
+			return unitValues.get(unitName)[6];
+		case chose_move:
+			return unitValues.get(unitName)[7];
+		case chose_defend:
+			return unitValues.get(unitName)[8];
+		case place:
+			return unitValues.get(unitName)[9];
+		case select:
+			return unitValues.get(unitName)[10];
+		case attack:
+			return unitValues.get(unitName)[11];
+		default:
+			return -1;
+		}
 	}
 
 	public static Enumeration<String> getUnitNames() {

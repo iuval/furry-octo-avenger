@@ -27,13 +27,19 @@ public class UnitStatsPrefReader {
 				if (line.trim().length() == 0)
 					break;
 				else {
-					int[] data = new int[6];
+					int[] data = new int[12];
 					data[0] = Integer.parseInt(readValue(reader));
 					data[1] = Integer.parseInt(readValue(reader));
 					data[2] = Integer.parseInt(readValue(reader));
 					data[3] = Integer.parseInt(readValue(reader));
 					data[4] = Integer.parseInt(readValue(reader));
 					data[5] = Integer.parseInt(readValue(reader));
+					data[6] = Integer.parseInt(readValue(reader));
+					data[7] = Integer.parseInt(readValue(reader));
+					data[8] = Integer.parseInt(readValue(reader));
+					data[9] = Integer.parseInt(readValue(reader));
+					data[10] = Integer.parseInt(readValue(reader));
+					data[11] = Integer.parseInt(readValue(reader));
 
 					unitValues.put(line, data);
 				}

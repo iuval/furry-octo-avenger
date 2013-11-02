@@ -1,6 +1,7 @@
 package com.crystalclash.audio;
 
 import java.util.Hashtable;
+import java.util.Random;
 
 import aurelienribon.tweenengine.BaseTween;
 import aurelienribon.tweenengine.Timeline;
@@ -10,6 +11,7 @@ import aurelienribon.tweenengine.TweenCallback;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import com.crystalclash.accessors.MusicAccessor;
+import com.crystalclash.controllers.GameController;
 import com.crystalclash.renders.GameEngine;
 import com.crystalclash.util.FileUtil;
 
@@ -17,6 +19,10 @@ public class AudioManager {
 
 	public enum MUSIC {
 		menu, tutorial, in_game, select_units, animations
+	}
+	
+	public enum SOUND {
+		chose_attack, chose_move, chose_defend, place, select, attack
 	}
 	
 	private static Hashtable<String, Music> musicMap;
@@ -43,11 +49,12 @@ public class AudioManager {
 		}
 	}
 
-	public static Sound getSound(String path) {
+	public static Sound getSound(String unitName, String file) {
+		String path = String.format("%s/%s", unitName, file);
 		if (soundMap.contains(path)) {
 			return soundMap.get(path);
 		} else {
-			Sound s = FileUtil.getSound(path);
+			Sound s = FileUtil.getSound(unitName, file);
 			soundMap.put(path, s);
 			return s;
 		}
@@ -61,9 +68,14 @@ public class AudioManager {
 
 	}
 
-	public static void playSound(String name) {
+	public static void playSound(String unitName, SOUND sound) {
+		int count = GameController.getUnitSoundCount(unitName, sound);
+		Random rand = new Random();
+		int index = rand.nextInt(count);
+		String file = String.format("%s_%s", sound.toString(), index);
+		
 		playing.setVolume(volume / 2);
-		getSound(String.format("data/audio/sfx/%s.mp3", name)).play(volume);
+		getSound(unitName, file).play(volume);
 		playing.setVolume(volume);
 	}
 
