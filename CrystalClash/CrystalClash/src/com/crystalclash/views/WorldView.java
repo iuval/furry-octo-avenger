@@ -435,10 +435,6 @@ public class WorldView extends InputView {
 				.end();
 	}
 
-	public void selectUnit(Unit unit) {
-		statsPopup.show(unit);
-	}
-
 	public void selectUnitInCell(Cell cell) {
 		Unit u = cell.getUnit();
 		if (!u.isEnemy()) {
@@ -446,6 +442,7 @@ public class WorldView extends InputView {
 		}
 		cell.addState(Cell.SELECTED);
 		showStatsPopup(u);
+		GameEngine.start(pushHideGameMenuButtons(Timeline.createParallel()));
 	}
 
 	public void deselectUnitInCell(Cell cell) {
@@ -454,6 +451,7 @@ public class WorldView extends InputView {
 			cell.removeState(Cell.SELECTED);
 		hideActionsRing();
 		hideStatsPopup();
+		GameEngine.start(pushShowGameMenuButtons(Timeline.createParallel()));
 	}
 
 	public void showStatsPopup(Unit u) {
@@ -500,8 +498,6 @@ public class WorldView extends InputView {
 	}
 
 	private Timeline pushFadeOutActionsRing(Timeline t) {
-		btnSend.setVisible(true);
-		btnOptions.setVisible(true);
 		return t.beginParallel()
 				.push(Tween.to(grpActionBar, ActorAccessor.ALPHA, CrystalClash.FAST_ANIMATION_SPEED)
 						.target(0))
@@ -519,8 +515,6 @@ public class WorldView extends InputView {
 	}
 
 	private void fadeInActionsRing() {
-		btnSend.setVisible(false);
-		btnOptions.setVisible(false);
 		grpActionBar.setScale(0.8f, 0.8f);
 		GameEngine.start(Timeline.createParallel()
 				.push(Tween.to(grpActionBar, ActorAccessor.ALPHA, CrystalClash.FAST_ANIMATION_SPEED)
