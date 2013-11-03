@@ -409,6 +409,7 @@ public class TurnAnimationsView extends GameView {
 			action = allyMoveActions.get(m);
 			Timeline walkTimeline = Timeline.createSequence()
 					.setUserData(new Object[] { action.origin, action.moves.get(action.moves.size - 1) });
+			walkTimeline.delay(rand.nextFloat());
 			for (int i = 1; i < action.moves.size; i++) {
 				pushUnitStep(action.origin.getUnit(), action.moves.get(i), walkTimeline);
 			}
