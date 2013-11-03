@@ -26,14 +26,14 @@ public class UnitHelper {
 		backHPBar = createBar(0, 0, 0, 0.9f, UnitHelper.HP_BAR_BACK_WIDTH, UnitHelper.HP_BAR_BACK_HEIGHT);
 	}
 
-	public static UnitRender getUnitRender(String unitName) {
+	public static UnitRender getUnitRender(String unitName, boolean isEnemy) {
 		UnitRender render = new UnitRender();
-		render.idleAnim = ResourceHelper.getUnitSuperAnimation(unitName, "idle");
+		render.idleAnim = ResourceHelper.getUnitSuperAnimation(unitName, "idle", isEnemy);
 		render.idleAnim.randomCurrentFrame();
-		render.fightAnim = ResourceHelper.getUnitSuperAnimation(unitName, "attack");
+		render.fightAnim = ResourceHelper.getUnitSuperAnimation(unitName, "attack", isEnemy);
 		render.fightAnim.setLooping(false);
-		render.walkAnim = ResourceHelper.getUnitSuperAnimation(unitName, "run");
-		render.dieAnim = ResourceHelper.getUnitSuperAnimation(unitName, "die");
+		render.walkAnim = ResourceHelper.getUnitSuperAnimation(unitName, "run", isEnemy);
+		render.dieAnim = ResourceHelper.getUnitSuperAnimation(unitName, "die", isEnemy);
 		render.dieAnim.setLooping(false);
 		render.shieldAnim = ResourceHelper.getSuperAnimation("units/defensive_shield");
 		render.setState(UnitRender.STATE.idle);
