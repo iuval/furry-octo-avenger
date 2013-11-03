@@ -49,6 +49,6 @@ public class FileUtil {
 	}
 
 	public static Sound getSound(String unitName, String file) {
-		return Gdx.audio.newSound(Gdx.files.internal(String.format("audio/units/%s/%s/%s.mp3", GameController.getUnitElement(unitName), unitName, file)));
+		return Gdx.audio.newSound(Gdx.files.internal(String.format("data/audio/units/%s/%s/%s.mp3", GameController.getUnitElement(unitName), unitName, file)));
 	}
 }

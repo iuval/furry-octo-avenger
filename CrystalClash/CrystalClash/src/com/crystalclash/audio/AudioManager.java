@@ -74,9 +74,7 @@ public class AudioManager {
 		int index = rand.nextInt(count);
 		String file = String.format("%s_%s", sound.toString(), index);
 		
-		playing.setVolume(volume / 2);
 		getSound(unitName, file).play(volume);
-		playing.setVolume(volume);
 	}
 
 	public static void volumeUp() {
@@ -130,6 +128,6 @@ public class AudioManager {
 		playing.play();
 
 		GameEngine.start(Timeline.createSequence()
-				.push(Tween.to(playing, MusicAccessor.VOLUME, 1f).target(volume)));
+				.push(Tween.to(playing, MusicAccessor.VOLUME, 1f).target(volume / 3)));
 	}
 }
