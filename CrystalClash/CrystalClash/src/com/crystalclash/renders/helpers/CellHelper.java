@@ -1,6 +1,5 @@
 package com.crystalclash.renders.helpers;
 
-
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -8,11 +7,11 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.crystalclash.entities.Cell;
 
 public class CellHelper {
-	public final static float CELL_WIDTH = 122.0F;
-	public final static float CELL_HEIGHT = 106.0F;
+	public final static float CELL_WIDTH = 116.0F;
+	public final static float CELL_HEIGHT = 136.0F;
 
-	public static final float CELL_CENTER_X = 61f;
-	public static final float CELL_CENTER_Y = 53f;
+	public static final float CELL_CENTER_X = 58f;
+	public static final float CELL_CENTER_Y = 68f;
 
 	public static final float CELL_UNIT_X = 27f;
 	public static final float CELL_UNIT_Y = 9f;
@@ -20,9 +19,7 @@ public class CellHelper {
 	TextureAtlas atlas;
 
 	TextureRegion none;
-	TextureRegion not_able_to_attack;
 	TextureRegion able_to_attack;
-	TextureRegion not_able_to_move;
 	TextureRegion able_to_move;
 	TextureRegion able_to_place;
 
@@ -38,28 +35,18 @@ public class CellHelper {
 
 		none = skin.getRegion("none");
 		able_to_attack = skin.getRegion("able_to_attack");
-		// TODO: meter en el pack
-		not_able_to_attack = ResourceHelper.getTexture("in_game/not_able_to_attack");
 		able_to_move = skin.getRegion("able_to_move");
-		// TODO: meter en el pack
-		not_able_to_move = ResourceHelper.getTexture("in_game/not_able_to_move");
 		able_to_place = skin.getRegion("able_to_move");
-		attack_target_center = skin.getRegion("attack_target_center");
-		// TODO: meter en el pack
-		attack_target_radius = skin.getRegion("attack_target_center");
-		selected = ResourceHelper.getTexture("in_game/selected");
-		path = skin.getRegion("path");
+		attack_target_center = skin.getRegion("selected");// skin.getRegion("attack_target_center");
+		attack_target_radius = skin.getRegion("selected");// skin.getRegion("attack_target_center");
+		selected = skin.getRegion("selected");
 	}
 
 	public void drawCellTextures(SpriteBatch batch, Cell cell) {
 		if (cell.hasState(Cell.ABLE_TO_MOVE)) {
 			batch.draw(able_to_move, cell.getX(), cell.getY());
-		} else if (cell.hasState(Cell.NOT_ABLE_TO_MOVE)) {
-			batch.draw(not_able_to_move, cell.getX(), cell.getY());
 		} else if (cell.hasState(Cell.ABLE_TO_ATTACK)) {
 			batch.draw(able_to_attack, cell.getX(), cell.getY());
-		} else if (cell.hasState(Cell.NOT_ABLE_TO_ATTACK)) {
-			batch.draw(not_able_to_attack, cell.getX(), cell.getY());
 		} else if (cell.hasState(Cell.ABLE_TO_MOVE)) {
 			batch.draw(able_to_move, cell.getX(), cell.getY());
 		} else if (cell.hasState(Cell.ABLE_TO_PLACE)) {
@@ -68,9 +55,6 @@ public class CellHelper {
 			batch.draw(none, cell.getX(), cell.getY());
 		}
 
-		if (cell.hasState(Cell.MOVE_TARGET)) {
-			batch.draw(path, cell.getX(), cell.getY());
-		}
 		if (cell.hasState(Cell.ATTACK_TARGET_CENTER)) {
 			batch.draw(attack_target_center, cell.getX(), cell.getY());
 		}

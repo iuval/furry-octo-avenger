@@ -79,29 +79,29 @@ public class PathManager {
 	public static void addLine(Path p, float iniX, float iniY, float endX, float endY) {
 		float dx = 0;
 		float dy = 0;
-		if (iniX == endX) {
+		if (iniY == endY) {
 			dx = 0;
-			if (endY > iniY) {
-				dy = 36;
+			if (endX > iniX) {
+				dx = 36;
 			} else {
-				dy = -36;
+				dx = -36;
 			}
 		} else {
 			if (endX > iniX) {
 				if (endY > iniY) {
-					dx = 31;
-					dy = 18;
+					dx = 18;
+					dy = 31;
 				} else {
-					dx = 31;
-					dy = -18;
+					dx = 18;
+					dy = -31;
 				}
 			} else {
 				if (endY > iniY) {
-					dx = -31;
-					dy = 18;
+					dx = -18;
+					dy = 31;
 				} else {
-					dx = -31;
-					dy = -18;
+					dx = -18;
+					dy = -31;
 				}
 			}
 		}
@@ -113,7 +113,7 @@ public class PathManager {
 	}
 
 	public static void addArc(Path p, float iniX, float iniY, float endX, float endY) {
-		if (iniX == endX)
+		if (iniY == endY)
 			addLine(p, iniX, iniY, endX, endY);
 		else {
 			double a = 0;

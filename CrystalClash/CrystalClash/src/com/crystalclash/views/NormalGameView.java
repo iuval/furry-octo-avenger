@@ -196,19 +196,15 @@ public class NormalGameView extends GameView {
 			if (!neigbourCell.hasState(Cell.MOVE_TARGET | Cell.ATTACK_TARGET_CENTER)) {
 				unit = neigbourCell.getUnit();
 				if (hide) {
-					neigbourCell.removeState(Cell.ABLE_TO_ATTACK | Cell.NOT_ABLE_TO_ATTACK);
+					neigbourCell.removeState(Cell.ABLE_TO_ATTACK);
 				} else {
 					if (onlyCellsWithUnit) {
-						if (unit == null || !unit.isEnemy()) {
-							neigbourCell.addState(Cell.NOT_ABLE_TO_ATTACK);
-						} else {
+						if (unit != null || unit.isEnemy()) {
 							neigbourCell.addState(Cell.ABLE_TO_ATTACK);
 						}
 					} else {
 						if (unit == null || unit.isEnemy()) {
 							neigbourCell.addState(Cell.ABLE_TO_ATTACK);
-						} else {
-							neigbourCell.addState(Cell.NOT_ABLE_TO_ATTACK);
 						}
 					}
 				}

@@ -126,19 +126,19 @@ public class WorldView extends InputView {
 	public void render(float dt, SpriteBatch batch) {
 		imgTerrain.draw(batch, 1);
 
-		for (int i = 0; i < world.cellGrid.length; i++) {
-			for (int j = world.cellGrid[i].length - 1; j >= 0; j--) {
+		for (int i = 0; i < world.gridW; i++) {
+			for (int j = world.gridH - 1; j >= 0; j--) {
 				world.cellGrid[i][j].getRender().draw(dt, batch);
 			}
 		}
 
 		gameRender.renderInTheBack(dt, batch);
 
-		for (int j = 5; j >= 0; j--) {
-			for (int i = 0; i < 9; i += 2) {
+		for (int j = world.gridH - 1; j >= 0; j--) {
+			for (int i = 0; i < world.gridW; i += 2) {
 				world.cellGrid[i][j].getRender().drawUnits(dt, batch);
 			}
-			for (int i = 1; i < 9; i += 2) {
+			for (int i = 1; i < world.gridW; i += 2) {
 				world.cellGrid[i][j].getRender().drawUnits(dt, batch);
 			}
 		}

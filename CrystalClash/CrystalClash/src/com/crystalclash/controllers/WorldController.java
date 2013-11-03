@@ -23,11 +23,15 @@ public class WorldController {
 	private WorldView render;
 
 	public Cell[][] cellGrid;
-	private final float deltaX = 93F; // (float) ((3f / 4f) * hexaWidht);
-	private final float cellsLeft = 202.0F;
-	private final float cellsBot = 59.0F;
-	private final float cellsRight = cellsLeft + 866;
-	private final float cellsTop = cellsBot + 704;
+	public static final float deltaY = 105F;
+	public static final float deltaX = CellHelper.CELL_WIDTH + 3;
+	private final float cellsLeft = 134.0F;
+	private final float cellsBot = 100.0F;
+	private final float cellsRight = cellsLeft + 1005;
+	private final float cellsTop = cellsBot + 660;
+
+	public final int gridW = 8;
+	public final int gridH = 6;
 
 	public int player;
 	private String gameId;
@@ -130,17 +134,14 @@ public class WorldController {
 	}
 
 	private void createMap() {
-		int[][] oddNeighbours = { { 0, -1 }, { -1, 1 }, { 1, 0 }, { 1, 1 }, { 0, 1 }, { -1, 0 } };
+		int[][] oddNeighbours = { { 1, 0 }, { 1, 1 }, { 0, 1 }, { -1, 0 }, { 0, -1 }, { 1, -1 } };
+		int[][] evenNeighbours = { { 0, 1 }, { -1, 1 }, { -1, 0 }, { -1, -1 }, { 0, -1 }, { 1, 0 } };
 
-		int[][] evenNeighbours = { { -1, -1 }, { 0, -1 }, { 1, 0 }, { 0, 1 }, { 1, -1 }, { -1, 0 } };
-
-		float yoffset = 0f;
-		float dx = deltaX;
-		float dy = CellHelper.CELL_HEIGHT + 3;
+		float xoffset = 0f;
 
 		ArrayList<int[]> temp = new ArrayList<int[]>();
-		for (int h = 0; h < 6; h++) {
-			for (int v = 0; v < 9; v++) {
+		for (int h = 0; h < gridH; h++) {
+			for (int v = 0; v < gridW; v++) {
 				if (h == 5) {
 					int kk = 0;
 					System.out.print(kk);
@@ -149,8 +150,8 @@ public class WorldController {
 				c.setVisible(true);
 				temp.clear();
 
-				if (v % 2 == 0) {
-					yoffset = dy / 2;
+				if (h % 2 == 0) {
+					xoffset = deltaX / 2;
 
 					for (int i = 0; i < oddNeighbours.length; i++) {
 						if (inCellsGrid(v + oddNeighbours[i][0], h + oddNeighbours[i][1])) {
@@ -158,7 +159,7 @@ public class WorldController {
 						}
 					}
 				} else {
-					yoffset = 0;
+					xoffset = 0;
 
 					for (int i = 0; i < evenNeighbours.length; i++) {
 						if (inCellsGrid(v + evenNeighbours[i][0], h + evenNeighbours[i][1])) {
@@ -170,7 +171,7 @@ public class WorldController {
 				for (int i = 0; i < temp.size(); i++) {
 					c.neigbours[i] = temp.get(i);
 				}
-				c.setPosition(cellsLeft + v * dx, cellsBot + yoffset + (h * dy));
+				c.setPosition(cellsLeft + xoffset + (v * deltaX), cellsBot + (h * deltaY));
 				c.setGrisPosition(v, h);
 
 				cellGrid[v][h] = c;
@@ -180,7 +181,7 @@ public class WorldController {
 	}
 
 	protected void init() {
-		this.cellGrid = new Cell[9][6];
+		this.cellGrid = new Cell[gridW][gridH];
 
 		createMap();
 	}
@@ -199,17 +200,17 @@ public class WorldController {
 			int cellX = 0, cellY = 0;
 			Cell cell = this.cellGrid[cellX][cellY];
 
-			while (cell.getX() < x && ++cellX < 9) {
-				cell = this.cellGrid[cellX][cellY];
-			}
-			if (!inCellsGrid(--cellX, cellY))
-				return null;
-
-			cell = this.cellGrid[cellX][cellY];
-			while (cell.getY() < y && ++cellY < 6) {
+			while (cell.getY() < y && ++cellY < gridH) {
 				cell = this.cellGrid[cellX][cellY];
 			}
 			if (!inCellsGrid(cellX, --cellY))
+				return null;
+
+			cell = this.cellGrid[cellX][cellY];
+			while (cell.getX() < x && ++cellX < gridW) {
+				cell = this.cellGrid[cellX][cellY];
+			}
+			if (!inCellsGrid(--cellX, cellY))
 				return null;
 
 			return this.cellGrid[cellX][cellY];
@@ -218,7 +219,7 @@ public class WorldController {
 	}
 
 	public boolean inCellsGrid(int x, int y) {
-		return (x >= 0) && (x < 9) && (y >= 0) && (y < 6);
+		return (x >= 0) && (x < gridW) && (y >= 0) && (y < gridH);
 	}
 
 	public boolean inCells(float x, float y) {
@@ -251,53 +252,26 @@ public class WorldController {
 	}
 
 	public void assignFirstTurnAvailablePlaces() {
-		if (player == 1) {
-			cellGrid[0][5].state = Cell.ABLE_TO_PLACE;
-			cellGrid[0][4].state = Cell.ABLE_TO_PLACE;
-			cellGrid[0][3].state = Cell.ABLE_TO_PLACE;
-			cellGrid[0][2].state = Cell.ABLE_TO_PLACE;
-			cellGrid[0][1].state = Cell.ABLE_TO_PLACE;
-			cellGrid[0][0].state = Cell.ABLE_TO_PLACE;
-			cellGrid[1][5].state = Cell.ABLE_TO_PLACE;
-			cellGrid[1][4].state = Cell.ABLE_TO_PLACE;
-			cellGrid[1][3].state = Cell.ABLE_TO_PLACE;
-			cellGrid[1][3].state = Cell.ABLE_TO_PLACE;
-			cellGrid[1][2].state = Cell.ABLE_TO_PLACE;
-			cellGrid[1][1].state = Cell.ABLE_TO_PLACE;
-			cellGrid[2][1].state = Cell.ABLE_TO_PLACE;
-			cellGrid[2][2].state = Cell.ABLE_TO_PLACE;
-			cellGrid[2][3].state = Cell.ABLE_TO_PLACE;
-			cellGrid[2][4].state = Cell.ABLE_TO_PLACE;
-		} else {
-			cellGrid[6][4].state = Cell.ABLE_TO_PLACE;
-			cellGrid[6][3].state = Cell.ABLE_TO_PLACE;
-			cellGrid[6][2].state = Cell.ABLE_TO_PLACE;
-			cellGrid[6][1].state = Cell.ABLE_TO_PLACE;
-			cellGrid[7][5].state = Cell.ABLE_TO_PLACE;
-			cellGrid[7][4].state = Cell.ABLE_TO_PLACE;
-			cellGrid[7][3].state = Cell.ABLE_TO_PLACE;
-			cellGrid[7][2].state = Cell.ABLE_TO_PLACE;
-			cellGrid[7][1].state = Cell.ABLE_TO_PLACE;
-			cellGrid[8][5].state = Cell.ABLE_TO_PLACE;
-			cellGrid[8][4].state = Cell.ABLE_TO_PLACE;
-			cellGrid[8][3].state = Cell.ABLE_TO_PLACE;
-			cellGrid[8][2].state = Cell.ABLE_TO_PLACE;
-			cellGrid[8][1].state = Cell.ABLE_TO_PLACE;
-			cellGrid[8][0].state = Cell.ABLE_TO_PLACE;
+		int xIni = player == 1 ? 0 : gridW - 3;
+		int xEnd = player == 1 ? 3 : gridW;
+		for (int i = xIni; i < xEnd; i++) {
+			for (int j = 0; j < gridH; j++) {
+				cellGrid[i][j].state = Cell.ABLE_TO_PLACE;
+			}
 		}
 	}
 
 	public void deleteAllUnits() {
-		for (int h = 0; h < 6; h++) {
-			for (int v = 0; v < 9; v++) {
+		for (int h = 0; h < gridH; h++) {
+			for (int v = 0; v < gridW; v++) {
 				cellGrid[v][h].removeUnit();
 			}
 		}
 	}
 
 	public void removeAllDeadUnits() {
-		for (int h = 0; h < 6; h++) {
-			for (int v = 0; v < 9; v++) {
+		for (int h = 0; h < gridH; h++) {
+			for (int v = 0; v < gridW; v++) {
 				cellGrid[v][h].removeDeadUnits();
 			}
 		}
@@ -320,8 +294,8 @@ public class WorldController {
 
 			Cell cell;
 			Unit unit;
-			for (int h = 0; h < 6; h++) {
-				for (int v = 0; v < 9; v++) {
+			for (int h = 0; h < gridH; h++) {
+				for (int v = 0; v < gridW; v++) {
 					cell = cellGrid[v][h];
 					unit = cellGrid[v][h].getUnit();
 					if (unit != null && unit.getRender().getState() != STATE.ghost && !unit.isEnemy())
