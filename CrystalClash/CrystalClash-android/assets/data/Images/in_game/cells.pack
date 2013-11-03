@@ -1,7 +1,7 @@
 
 cells.png
 format: RGBA8888
-filter: Nearest,Nearest
+filter: Linear,Linear
 repeat: none
 able_to_attack
   rotate: false
