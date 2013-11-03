@@ -12,7 +12,7 @@ public class CellRender {
 		this.cell = cell;
 	}
 
-	// BitmapFont font = ResourceHelper.getFont();
+	// BitmapFont font = ResourceHelper.getSmallFont();
 
 	public void draw(float dt, SpriteBatch batch) {
 		WorldView.cellHelper.drawCellTextures(batch, cell);

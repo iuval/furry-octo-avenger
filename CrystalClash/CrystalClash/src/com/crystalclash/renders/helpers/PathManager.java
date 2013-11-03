@@ -80,40 +80,46 @@ public class PathManager {
 		float dx = 0;
 		float dy = 0;
 		if (iniY == endY) {
-			dx = 0;
 			if (endX > iniX) {
-				dx = 36;
+				dx = 39.5f;
 			} else {
-				dx = -36;
+				dx = -39.5f;
+			}
+		} else if (iniX == endX) {
+			if (endY > iniY) {
+				dy = 35f;
+			} else {
+				dy = -35f;
 			}
 		} else {
 			if (endX > iniX) {
 				if (endY > iniY) {
-					dx = 18;
-					dy = 31;
+					dx = 20;
+					dy = 35;
 				} else {
-					dx = 18;
-					dy = -31;
+					dx = 20;
+					dy = -35;
 				}
 			} else {
 				if (endY > iniY) {
-					dx = -18;
-					dy = 31;
+					dx = -20;
+					dy = 35;
 				} else {
-					dx = -18;
-					dy = -31;
+					dx = -20;
+					dy = -35;
 				}
 			}
 		}
-		while (Math.abs(endY - iniY) > 5 || Math.abs(endX - iniX) > 5) {
+		while ((Math.abs(endY - iniY) > 5 || Math.abs(endX - iniX) > 5) && Math.abs(endY - iniY) < 5000 && Math.abs(endX - iniX) < 5000) {
 			p.add(iniX - POINT_CENTER_X, iniY - POINT_CENTER_Y);
+			System.out.println(iniX + ", " + iniY + " => " + endX + ", " + endY);
 			iniX += dx;
 			iniY += dy;
 		}
 	}
 
 	public static void addArc(Path p, float iniX, float iniY, float endX, float endY) {
-		if (iniY == endY)
+		if (iniX == endX)
 			addLine(p, iniX, iniY, endX, endY);
 		else {
 			double a = 0;

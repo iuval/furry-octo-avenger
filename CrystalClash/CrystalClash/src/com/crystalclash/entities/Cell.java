@@ -14,6 +14,7 @@ public class Cell extends GameObject {
 	public final static int ATTACK_TARGET_RADIUS = 1 << 4; // 16
 	public final static int MOVE_TARGET = 1 << 5; // 32
 	public final static int SELECTED = 1 << 6; // 64
+	public final static int NOT_ABLE_TO_ATTACK = 1 << 7; // 128
 
 	private Unit unit;
 	private UnitAction action;

@@ -55,6 +55,9 @@ public class CellHelper {
 			batch.draw(none, cell.getX(), cell.getY());
 		}
 
+		if (cell.hasState(Cell.NOT_ABLE_TO_ATTACK)) {
+			batch.draw(selected, cell.getX(), cell.getY());
+		}
 		if (cell.hasState(Cell.ATTACK_TARGET_CENTER)) {
 			batch.draw(attack_target_center, cell.getX(), cell.getY());
 		}
