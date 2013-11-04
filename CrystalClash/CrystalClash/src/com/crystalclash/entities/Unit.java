@@ -5,7 +5,6 @@ import com.crystalclash.renders.UnitRender;
 import com.crystalclash.renders.UnitRender.FACING;
 import com.crystalclash.renders.helpers.UnitHelper;
 
-
 public class Unit extends GameObject {
 
 	public static final int ELEMENT_FIRE = 0;
@@ -50,7 +49,7 @@ public class Unit extends GameObject {
 		inDefensePosition = false;
 
 		if (render == null) {
-			this.render = UnitHelper.getUnitRender(unitName);
+			this.render = UnitHelper.getUnitRender(unitName, enemy);
 			this.render.setUnit(this);
 			this.render.updateHp();
 

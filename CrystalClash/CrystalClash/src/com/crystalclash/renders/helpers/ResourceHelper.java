@@ -100,8 +100,11 @@ public class ResourceHelper {
 		}
 	}
 
-	public static SuperAnimation getUnitSuperAnimation(String unitName, String action) {
-		return getSuperAnimation(String.format("units/%s/%s/%s", GameController.getUnitElement(unitName), unitName, action));
+	public static SuperAnimation getUnitSuperAnimation(String unitName, String action, boolean isEnemy) {
+		return getSuperAnimation(String.format("units/%s/%s/%s/%s", GameController.getUnitElement(unitName),
+				unitName,
+				isEnemy ? "enemy" : "ally",
+				action));
 	}
 
 	public static TextureRegion getUnitProfile(String unitName) {

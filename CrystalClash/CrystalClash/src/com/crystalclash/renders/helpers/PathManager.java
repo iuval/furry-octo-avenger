@@ -79,33 +79,38 @@ public class PathManager {
 	public static void addLine(Path p, float iniX, float iniY, float endX, float endY) {
 		float dx = 0;
 		float dy = 0;
-		if (iniX == endX) {
-			dx = 0;
-			if (endY > iniY) {
-				dy = 36;
+		if (iniY == endY) {
+			if (endX > iniX) {
+				dx = 39.5f;
 			} else {
-				dy = -36;
+				dx = -39.5f;
+			}
+		} else if (iniX == endX) {
+			if (endY > iniY) {
+				dy = 35f;
+			} else {
+				dy = -35f;
 			}
 		} else {
 			if (endX > iniX) {
 				if (endY > iniY) {
-					dx = 31;
-					dy = 18;
+					dx = 20;
+					dy = 35;
 				} else {
-					dx = 31;
-					dy = -18;
+					dx = 20;
+					dy = -35;
 				}
 			} else {
 				if (endY > iniY) {
-					dx = -31;
-					dy = 18;
+					dx = -20;
+					dy = 35;
 				} else {
-					dx = -31;
-					dy = -18;
+					dx = -20;
+					dy = -35;
 				}
 			}
 		}
-		while (Math.abs(endY - iniY) > 5 || Math.abs(endX - iniX) > 5) {
+		while ((Math.abs(endY - iniY) > 5 || Math.abs(endX - iniX) > 5) && Math.abs(endY - iniY) < 5000 && Math.abs(endX - iniX) < 5000) {
 			p.add(iniX - POINT_CENTER_X, iniY - POINT_CENTER_Y);
 			iniX += dx;
 			iniY += dy;

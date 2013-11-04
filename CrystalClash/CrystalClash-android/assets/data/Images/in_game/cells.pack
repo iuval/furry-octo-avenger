@@ -5,35 +5,35 @@ filter: Linear,Linear
 repeat: none
 able_to_attack
   rotate: false
-  xy: 0, 0
-  size: 122, 106
-  orig: 122, 106
+  xy: 2, 2
+  size: 116, 136
+  orig: 116, 136
   offset: 0, 0
   index: -1
 able_to_move
   rotate: false
-  xy: 122, 0
-  size: 122, 106
-  orig: 122, 106
-  offset: 0, 0
-  index: -1
-attack_target_center
-  rotate: false
-  xy: 244, 0
-  size: 122, 106
-  orig: 122, 106
+  xy: 120, 2
+  size: 116, 136
+  orig: 116, 136
   offset: 0, 0
   index: -1
 none
   rotate: false
-  xy: 366, 0
-  size: 122, 106
-  orig: 122, 106
+  xy: 238, 2
+  size: 116, 136
+  orig: 116, 136
   offset: 0, 0
   index: -1
-path
+selected
   rotate: false
-  xy: 488, 0
+  xy: 356, 2
+  size: 116, 136
+  orig: 116, 136
+  offset: 0, 0
+  index: -1
+attack_objective
+  rotate: false
+  xy: 474, 32
   size: 122, 106
   orig: 122, 106
   offset: 0, 0

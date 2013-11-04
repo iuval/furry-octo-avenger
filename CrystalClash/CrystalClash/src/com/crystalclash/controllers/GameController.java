@@ -159,6 +159,7 @@ public class GameController {
 	public static void logInSuccess(String userId, String name, String email, String password) {
 		profileService.retrieveProfile().setUserEmail(email);
 		profileService.retrieveProfile().setUserPassword(password);
+		GameController.saveProfile();
 		setUser(new User(userId, email, name));
 		GameEngine.getInstance().openMenuGames();
 	}
