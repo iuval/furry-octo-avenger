@@ -72,7 +72,7 @@ public class NormalGameView extends GameView {
 
 	@Override
 	public void onAttackAction() {
-		AudioManager.playSound(selectedUnit.getName(), SOUND.chose_attack);
+		selectedUnit.getRender().playSFX(SOUND.chose_attack);
 		
 		setUnitAction(new AttackUnitAction(selectedUnit.isMelee()));
 		unitAction.origin = selectedCell;
@@ -83,7 +83,7 @@ public class NormalGameView extends GameView {
 
 	@Override
 	public void onDefendAction() {
-		AudioManager.playSound(selectedUnit.getName(), SOUND.chose_defend);
+		selectedUnit.getRender().playSFX(SOUND.chose_defend);
 		
 		setUnitAction(new DefendUnitAction());
 		unitAction.origin = selectedCell;
@@ -94,7 +94,7 @@ public class NormalGameView extends GameView {
 
 	@Override
 	public void onMoveAction() {
-		AudioManager.playSound(selectedUnit.getName(), SOUND.chose_move);
+		selectedUnit.getRender().playSFX(SOUND.chose_move);
 		
 		setUnitAction(new MoveUnitAction());
 		unitAction.origin = selectedCell;
@@ -495,7 +495,7 @@ public class NormalGameView extends GameView {
 					world.getRender().selectUnitInCell(selectedCell);
 					
 					if(!selectedUnit.isEnemy())
-						AudioManager.playSound(selectedUnit.getName(), SOUND.select);
+						selectedUnit.getRender().playSFX(SOUND.select);
 				}
 			}
 		}

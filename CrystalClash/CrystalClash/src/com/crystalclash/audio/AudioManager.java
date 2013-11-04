@@ -25,6 +25,10 @@ public class AudioManager {
 		chose_attack, chose_move, chose_defend, place, select, attack
 	}
 	
+	public enum GAME_END_SFX {
+		victory, defeat, draw
+	}
+	
 	private static Hashtable<String, Music> musicMap;
 	private static Hashtable<String, Sound> soundMap;
 	private static float volume;
@@ -49,12 +53,12 @@ public class AudioManager {
 		}
 	}
 
-	public static Sound getSound(String unitName, String file) {
+	public static Sound getUnitSFX(String unitName, String file) {
 		String path = String.format("%s/%s", unitName, file);
 		if (soundMap.contains(path)) {
 			return soundMap.get(path);
 		} else {
-			Sound s = FileUtil.getSound(unitName, file);
+			Sound s = FileUtil.getUnitSFX(unitName, file);
 			soundMap.put(path, s);
 			return s;
 		}
@@ -68,13 +72,23 @@ public class AudioManager {
 
 	}
 
-	public static void playSound(String unitName, SOUND sound) {
+	public static Sound playUnitSFX(String unitName, SOUND sound) {
 		int count = GameController.getUnitSoundCount(unitName, sound);
 		Random rand = new Random();
-		int index = rand.nextInt(count);
-		String file = String.format("%s_%s", sound.toString(), index);
-		
-		getSound(unitName, file).play(volume);
+
+		Sound ret = null;
+		if (count > 0) {
+			int index = rand.nextInt(count);
+			String file = String.format("%s_%s", sound.toString(), index);
+
+			ret = getUnitSFX(unitName, file);
+			ret.play(volume);
+		}
+		return ret;
+	}
+	
+	public static void playEndSound(GAME_END_SFX sound) {
+		FileUtil.getSound(sound.toString()).play(volume);
 	}
 
 	public static void volumeUp() {

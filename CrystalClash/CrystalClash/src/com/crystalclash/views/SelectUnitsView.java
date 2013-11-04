@@ -143,7 +143,7 @@ public class SelectUnitsView extends GameView {
 						selectedUnit.getRender().setFacing(FACING.left);
 					selectedUnit.setPosition(x, y);
 
-					AudioManager.playSound(selectedUnitName, SOUND.place);
+					selectedUnit.getRender().playSFX(SOUND.place);
 				}
 			}
 		}

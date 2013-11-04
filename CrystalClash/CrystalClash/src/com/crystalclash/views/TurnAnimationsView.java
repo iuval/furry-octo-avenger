@@ -22,6 +22,7 @@ import com.crystalclash.CrystalClash;
 import com.crystalclash.accessors.ActorAccessor;
 import com.crystalclash.accessors.UnitAccessor;
 import com.crystalclash.audio.AudioManager;
+import com.crystalclash.audio.AudioManager.GAME_END_SFX;
 import com.crystalclash.audio.AudioManager.MUSIC;
 import com.crystalclash.controllers.GameController;
 import com.crystalclash.controllers.WorldController;
@@ -600,15 +601,15 @@ public class TurnAnimationsView extends GameView {
 		if (world.allysCount == 0 && world.enemiesCount > 0) {
 			world.gameEnded = true;
 			gameEndMessage = new Image(defeatTexture);
-			//AudioManager.playSound("defeat");
+			AudioManager.playEndSound(GAME_END_SFX.defeat);
 		} else if (world.enemiesCount == 0 && world.allysCount > 0) {
 			world.gameEnded = true;
 			gameEndMessage = new Image(victoryTexture);
-			//AudioManager.playSound("victory");
+			AudioManager.playEndSound(GAME_END_SFX.victory);
 		} else if (world.allysCount == 0 && world.enemiesCount == 0) {
 			world.gameEnded = true;
 			gameEndMessage = new Image(drawTexture);
-			//AudioManager.playSound("draw");
+			AudioManager.playEndSound(GAME_END_SFX.draw);
 		}
 		if (world.gameEnded) {
 			grpPanel.remove();
