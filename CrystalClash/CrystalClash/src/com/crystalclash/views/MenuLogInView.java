@@ -46,8 +46,8 @@ public class MenuLogInView extends InputView {
 	private TextureRegion textFieldTexture;
 	private Image textFieldEmail;
 	private Image textFieldPassword;
-	private TextureRegion charactersTexture;
-	private Image characters;
+	// private TextureRegion charactersTexture;
+	// private Image characters;
 
 	private Group groupInitialScreen;
 	private Group popUp;
@@ -93,8 +93,9 @@ public class MenuLogInView extends InputView {
 	private void load() {
 		final Profile prof = GameController.profileService.retrieveProfile();
 
-		charactersTexture = ResourceHelper.getTexture("menu/menu_login_lobby_characters");
-		characters = new Image(charactersTexture);
+		// charactersTexture =
+		// ResourceHelper.getTexture("menu/menu_login_lobby_characters");
+		// characters = new Image(charactersTexture);
 
 		btnLogIn = new TextButton("Log In", ResourceHelper.getOuterButtonStyle());
 		btnLogIn.setPosition(CrystalClash.WIDTH / 4 * 3 - btnLogIn.getWidth()
@@ -119,7 +120,7 @@ public class MenuLogInView extends InputView {
 		});
 
 		groupInitialScreen = new Group();
-		groupInitialScreen.addActor(characters);
+		// groupInitialScreen.addActor(characters);
 		groupInitialScreen.addActor(btnLogIn);
 		groupInitialScreen.addActor(btnSignIn);
 		addActor(groupInitialScreen);

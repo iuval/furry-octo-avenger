@@ -12,12 +12,10 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.utils.JsonValue;
 import com.crystalclash.CrystalClash;
 import com.crystalclash.accessors.ActorAccessor;
@@ -69,7 +67,7 @@ public class GameEngine implements Screen {
 	private static TweenManager tweenManager;
 	private static SuperAnimatedActor loadingTexture;
 
-	private Image imgBackground;
+	private ParallaxBackgound background;
 
 	@Override
 	public void show() {
@@ -102,6 +100,7 @@ public class GameEngine implements Screen {
 		I18n.load();
 
 		stage.addActor(BlackOverlay.build());
+		ParallaxBackgound.getInstance().loadGamesList();
 		// stage.addActor(MessageBox.build());
 		// if (loadingTexture != null)
 		// stage.addActor(loadingTexture);
@@ -119,13 +118,7 @@ public class GameEngine implements Screen {
 	private void load() {
 		ResourceHelper.slowLoad();
 
-		TextureRegion backgroundTexture = ResourceHelper.getTexture("menu/menu_background");
-		imgBackground = new Image(backgroundTexture);
-
-		Timeline.createSequence()
-				.push(Tween.set(imgBackground, ActorAccessor.ALPHA).target(0))
-				.push(Tween.to(imgBackground, ActorAccessor.ALPHA, 2).target(1))
-				.start(tweenManager);
+		background = ParallaxBackgound.getInstance();
 
 		tweenManager.update(Float.MIN_VALUE);
 	}
@@ -164,23 +157,29 @@ public class GameEngine implements Screen {
 		inputManager.clear();
 		inputManager.addProcessor(stage);
 		switch (newState) {
+		case InSplash:
+			stage.addActor(background);
+			stage.addActor(splashRender);
+			break;
 		case InMenuLogIn:
 			inputManager.addProcessor(menuLogInRender);
-			stage.addActor(imgBackground);
+			stage.addActor(background);
 			stage.addActor(menuLogInRender);
 			break;
 		case InTranstionMenuLogInAndMenuGames:
+			stage.addActor(background);
 			stage.addActor(menuLogInRender);
 			stage.addActor(menuGamesRender);
 			break;
 		case InTranstionSplashAndMenuGames:
-			stage.addActor(imgBackground);
+			stage.addActor(background);
+			stage.addActor(background);
 			stage.addActor(splashRender);
 			stage.addActor(menuGamesRender);
 			break;
 		case InMenuGames:
 			inputManager.addProcessor(menuGamesRender);
-			stage.addActor(imgBackground);
+			stage.addActor(background);
 			stage.addActor(menuGamesRender);
 			if (worldRender != null) {
 				worldRender.dispose();
@@ -188,7 +187,7 @@ public class GameEngine implements Screen {
 			}
 			break;
 		case InTranstionSplashAndMenuLogIn:
-			stage.addActor(imgBackground);
+			stage.addActor(background);
 			stage.addActor(menuLogInRender);
 			stage.addActor(tutorialRender);
 			break;
@@ -219,8 +218,7 @@ public class GameEngine implements Screen {
 				createWorld(data);
 				menuGamesRender.closed();
 				setState(GameState.InTranstionMenuGamesAndGame);
-				Timeline.createSequence()
-						.push(Tween.to(imgBackground, ActorAccessor.ALPHA, CrystalClash.SLOW_ANIMATION_SPEED).target(0))
+				background.pushHide(Timeline.createSequence())
 						.setCallback(new TweenCallback() {
 							@Override
 							public void onEvent(int type, BaseTween<?> source) {
@@ -236,10 +234,9 @@ public class GameEngine implements Screen {
 
 	public void openSplash() {
 		splashRender = new SplashView();
-		stage.addActor(splashRender);
-
-		GameEngine.state = GameState.InSplash;
+		setState(GameState.InSplash);
 		Timeline t = Timeline.createSequence();
+		background.pushShow(t);
 		splashRender.pushEnterAnimation(t);
 		t.setCallback(new TweenCallback() {
 			@Override
@@ -255,6 +252,7 @@ public class GameEngine implements Screen {
 	public void openMenuLogIn() {
 		Timeline t = Timeline.createSequence();
 		if (state == GameState.InMenuGames) {
+			ParallaxBackgound.getInstance().pushMoveToLogin(t);
 			menuGamesRender.pushExitAnimation(t);
 		} else if (state == GameState.InSplash) {
 			splashRender.pushExitAnimation(t);
@@ -271,6 +269,7 @@ public class GameEngine implements Screen {
 					menuLogInRender = MenuLogIn.getInstance().getRender();
 				}
 				menuLogInRender.init();
+				ParallaxBackgound.getInstance().loadLogIn();
 				setState(GameState.InMenuLogIn);
 				menuLogInRender.pushEnterAnimation(Timeline.createSequence())
 						.setCallback(new TweenCallback() {
@@ -287,6 +286,7 @@ public class GameEngine implements Screen {
 	public void openMenuGames() {
 		Timeline t = Timeline.createSequence();
 		if (state == GameState.InSplash) {
+			background.pushMoveToGamesList(t);
 			splashRender.pushExitAnimation(t);
 			t.setCallback(new TweenCallback() {
 				@Override
@@ -309,6 +309,7 @@ public class GameEngine implements Screen {
 			});
 		} else if (state == GameState.InMenuLogIn) {
 			menuLogInRender.pushExitAnimation(t);
+			background.pushMoveToGamesList(t);
 			t.setCallback(new TweenCallback() {
 				@Override
 				public void onEvent(int type, BaseTween<?> source) {
@@ -318,20 +319,19 @@ public class GameEngine implements Screen {
 					}
 					menuGamesRender.init();
 					setState(GameState.InTranstionMenuLogInAndMenuGames);
-					menuGamesRender.pushEnterAnimation(Timeline.createSequence())
+					background.pushMoveToGamesList(menuGamesRender.pushEnterAnimation(Timeline.createSequence())
 							.setCallback(new TweenCallback() {
 								@Override
 								public void onEvent(int type, BaseTween<?> source) {
 									setState(GameState.InMenuGames);
 									menuGamesRender.shown();
 								}
-							}).start(tweenManager);
+							})).start(tweenManager);
 				}
 			});
 		} else if (state == GameState.InGame) {
 			worldRender.pushExitAnimation(t);
-			t.push(Tween.set(imgBackground, ActorAccessor.ALPHA).target(0));
-			t.push(Tween.to(imgBackground, ActorAccessor.ALPHA, CrystalClash.SLOW_ANIMATION_SPEED).target(1));
+			background.pushShow(t);
 			t.setCallback(new TweenCallback() {
 				@Override
 				public void onEvent(int type, BaseTween<?> source) {
@@ -340,14 +340,14 @@ public class GameEngine implements Screen {
 					}
 					menuGamesRender.init();
 					setState(GameState.InTranstionMenuGamesAndGame);
-					menuGamesRender.pushEnterAnimation(Timeline.createSequence())
+					background.pushShow(menuGamesRender.pushEnterAnimation(Timeline.createSequence())
 							.setCallback(new TweenCallback() {
 								@Override
 								public void onEvent(int type, BaseTween<?> source) {
 									setState(GameState.InMenuGames);
 									menuGamesRender.shown();
 								}
-							}).start(tweenManager);
+							})).start(tweenManager);
 				}
 			});
 		}
