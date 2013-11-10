@@ -17,8 +17,6 @@ import com.crystalclash.renders.GameEngine;
 import com.crystalclash.renders.helpers.ui.MessageBox;
 
 public class ServerDriver {
-	private static String SERVER_URL = "http://fuzzy-adventure.herokuapp.com/";
-
 	private final static String ACTION_LOG_IN = "log_in";
 	private final static String ACTION_SIGN_IN = "sign_in";
 	private final static String ACTION_LIST_GAMES = "list_games";
@@ -206,14 +204,14 @@ public class ServerDriver {
 
 	private static HttpRequest getPost(String url, Map<String, String> data) {
 		HttpRequest httpPost = new HttpRequest(HttpMethods.POST);
-		httpPost.setUrl(SERVER_URL + url);
+		httpPost.setUrl(GameController.SERVER_URL + url);
 		httpPost.setContent(HttpParametersUtils.convertHttpParameters(data));
 		return httpPost;
 	}
 
 	private static HttpRequest getGet(String url) {
 		HttpRequest httpGet = new HttpRequest(HttpMethods.GET);
-		httpGet.setUrl(SERVER_URL + url);
+		httpGet.setUrl(GameController.SERVER_URL + url);
 		return httpGet;
 	}
 

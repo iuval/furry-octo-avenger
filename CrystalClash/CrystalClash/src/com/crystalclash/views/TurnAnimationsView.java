@@ -98,7 +98,7 @@ public class TurnAnimationsView extends GameView {
 	public void load() {
 		tweenManager = new TweenManager();
 
-		GameController.loadUnitsStats();
+		GameController.loadSharedStats();
 
 		TextureRegion panelTexture = ResourceHelper.getTexture("turn_animation/games_list_background");
 		panel = new Image(panelTexture);

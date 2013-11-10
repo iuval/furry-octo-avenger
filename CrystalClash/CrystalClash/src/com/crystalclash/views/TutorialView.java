@@ -85,7 +85,7 @@ public class TutorialView extends GameView {
 
 		load();
 		readTutorialScript();
-		GameController.loadUnitsStats();
+		GameController.loadSharedStats();
 		setData();
 
 		world.getRender().setReadInput(false);

@@ -20,10 +20,11 @@ public class GameController {
 	public static ProfileService profileService = new ProfileService();
 	private static Hashtable<String, int[]> unitValues;
 
-	public static float unitMaxLife = 0;
-	public static float unitMaxAttack = 0;
-	public static float unitMaxSpeed = 0;
-	public static int unitsPerPlayer = 0;
+	public static float UNIT_MAX_HP = 0;
+	public static float UNIT_MAX_ATTACK = 0;
+	public static float UNIT_MAX_STEPS = 0;
+	public static int MAX_UNIT_PER_PLAYER = 0;
+	public static String SERVER_URL = "";
 
 	public static void setUser(User user) {
 		currentUser = user;
@@ -33,15 +34,16 @@ public class GameController {
 		return currentUser;
 	}
 
-	public static void loadUnitsStats() {
+	public static void loadSharedStats() {
 		if (!dataLoaded) {
 			unitValues = UnitStatsPrefReader.load("data/prefs/stats.pref");
 
-			int[] shared = UnitSharedDataPrefReader.load("data/prefs/shared.pref");
-			unitMaxLife = shared[0];
-			unitMaxAttack = shared[1];
-			unitMaxSpeed = shared[2];
-			unitsPerPlayer = shared[3];
+			String[] shared = UnitSharedDataPrefReader.load("data/prefs/shared.pref");
+			UNIT_MAX_HP = Float.parseFloat(shared[0]);
+			UNIT_MAX_ATTACK = Float.parseFloat(shared[1]);
+			UNIT_MAX_STEPS = Float.parseFloat(shared[2]);
+			MAX_UNIT_PER_PLAYER = Integer.parseInt(shared[3]);
+			SERVER_URL = shared[4];
 
 			dataLoaded = true;
 		}
@@ -77,7 +79,7 @@ public class GameController {
 	}
 
 	public static int getUnitLifeInScale(String unitName) {
-		return (int) ((getUnitLife(unitName) * 10) / unitMaxLife);
+		return (int) ((getUnitLife(unitName) * 10) / UNIT_MAX_HP);
 	}
 
 	public static int getUnitDamage(String unitName) {
@@ -85,7 +87,7 @@ public class GameController {
 	}
 
 	public static int getUnitAttackInScale(String unitName) {
-		return (int) ((getUnitDamage(unitName) * 10) / unitMaxAttack);
+		return (int) ((getUnitDamage(unitName) * 10) / UNIT_MAX_ATTACK);
 	}
 
 	public static int getUnitSpeed(String unitName) {
@@ -93,7 +95,7 @@ public class GameController {
 	}
 
 	public static int getUnitSpeedInScale(String unitName) {
-		return (int) ((getUnitSpeed(unitName) * 10) / unitMaxSpeed);
+		return (int) ((getUnitSpeed(unitName) * 10) / UNIT_MAX_STEPS);
 	}
 
 	public static int getUnitRange(String unitName) {

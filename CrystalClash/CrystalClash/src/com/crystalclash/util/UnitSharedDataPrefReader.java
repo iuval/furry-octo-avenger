@@ -9,14 +9,14 @@ import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 
 public class UnitSharedDataPrefReader {
-	public static int[] load(String internalPrefFile) {
+	public static String[] load(String internalPrefFile) {
 		return load(Gdx.files.internal(internalPrefFile));
 	}
 
-	private static int[] load(FileHandle prefFile) {
+	private static String[] load(FileHandle prefFile) {
 		BufferedReader reader = new BufferedReader(new InputStreamReader(
 				prefFile.read()), 64);
-		int[] values = new int[4];
+		String[] values = new String[5];
 		try {
 			while (true) {
 				String line = reader.readLine();
@@ -25,10 +25,11 @@ public class UnitSharedDataPrefReader {
 				if (line.trim().length() == 0)
 					break;
 				else {
-					values[0] = Integer.parseInt(readValue(reader));
-					values[1] = Integer.parseInt(readValue(reader));
-					values[2] = Integer.parseInt(readValue(reader));
-					values[3] = Integer.parseInt(readValue(reader));
+					values[0] = readValue(reader);
+					values[1] = readValue(reader);
+					values[2] = readValue(reader);
+					values[3] = readValue(reader);
+					values[4] = readValue(reader);
 				}
 			}
 		} catch (Exception ex) {

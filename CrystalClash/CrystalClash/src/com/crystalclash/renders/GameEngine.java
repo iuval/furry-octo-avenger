@@ -96,6 +96,8 @@ public class GameEngine implements Screen {
 	}
 
 	private void loadInSplash() {
+		GameController.loadSharedStats();
+
 		stage.addActor(BlackOverlay.build());
 		// stage.addActor(MessageBox.build());
 		// if (loadingTexture != null)

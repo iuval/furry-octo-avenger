@@ -41,7 +41,7 @@ public class SelectUnitsView extends GameView {
 	}
 
 	public void load() {
-		GameController.loadUnitsStats();
+		GameController.loadSharedStats();
 
 		unitList = new UnitThumbsList(new UnitListSelectListener() {
 			@Override
@@ -102,7 +102,7 @@ public class SelectUnitsView extends GameView {
 	}
 
 	private boolean canPlaceUnit() {
-		return unitCount < GameController.unitsPerPlayer;
+		return unitCount < GameController.MAX_UNIT_PER_PLAYER;
 	}
 
 	private void changeUnitsCountBy(int du) {
@@ -116,7 +116,7 @@ public class SelectUnitsView extends GameView {
 	}
 
 	private void updateUnitsCountLabel() {
-		unitList.setUnitCountText(unitCount + " of " + GameController.unitsPerPlayer);
+		unitList.setUnitCountText(unitCount + " of " + GameController.MAX_UNIT_PER_PLAYER);
 	}
 
 	@Override
