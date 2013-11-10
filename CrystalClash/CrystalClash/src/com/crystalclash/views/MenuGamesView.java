@@ -48,7 +48,7 @@ public class MenuGamesView extends InputView {
 	private InputListener playListener;
 	private Skin listItemSkin;
 	private TextButton btnNewRandom;
-	private TextButton btnNewInvite;
+	private TextButton btnNewSinglePlayer;
 	private TextButton btnMusic;
 
 	private TutorialInvitation tutoInv;
@@ -178,9 +178,15 @@ public class MenuGamesView extends InputView {
 		});
 		inviteButtons.addActor(btnNewRandom);
 
-		btnNewInvite = new TextButton("Invite friend", ResourceHelper.getOuterButtonStyle());
-		btnNewInvite.setBounds(inviteButtons.getWidth() / 2, 0, inviteButtons.getWidth() / 2, 160);
-		inviteButtons.addActor(btnNewInvite);
+		btnNewSinglePlayer = new TextButton("Single player", ResourceHelper.getOuterButtonStyle());
+		btnNewSinglePlayer.setBounds(inviteButtons.getWidth() / 2, 0, inviteButtons.getWidth() / 2, 160);
+		btnNewSinglePlayer.addListener(new ClickListener() {
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+				GameEngine.getInstance().openGame(null, true);
+			}
+		});
+		inviteButtons.addActor(btnNewSinglePlayer);
 
 		list.addActorAfter(menuImage, inviteButtons);
 
@@ -213,14 +219,14 @@ public class MenuGamesView extends InputView {
 					listItemSkin, surrenderListener,
 					playListener);
 			gamesList[i] = listingItem;
-			
-			if(canPlayItem == null) {
-				if(games[i][4].equals("play")) {
+
+			if (canPlayItem == null) {
+				if (games[i][4].equals("play")) {
 					canPlayItem = listingItem;
 				}
 				list.addActorAfter(gamesImage, listingItem);
 			} else {
-				if(games[i][4].equals("play")){
+				if (games[i][4].equals("play")) {
 					list.addActorAfter(gamesImage, listingItem);
 				} else {
 					list.addActorAfter(canPlayItem, listingItem);

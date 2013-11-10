@@ -1,6 +1,5 @@
 package com.crystalclash.views;
 
-
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.crystalclash.controllers.WorldController;
 
@@ -16,6 +15,8 @@ public abstract class GameView extends BaseView {
 	public abstract void onSend();
 
 	public abstract void clearAllChanges();
+
+	public abstract void prepareNextTurn();
 
 	public abstract void renderInTheBack(float dt, SpriteBatch batch);
 

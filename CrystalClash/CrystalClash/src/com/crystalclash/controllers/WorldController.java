@@ -39,24 +39,30 @@ public class WorldController {
 	public int enemiesCount;
 	public int allysCount;
 	public boolean gameEnded = false;
+	public boolean isSinglePlayer = false;
 
-	public WorldController(JsonValue data) {
+	public WorldController(JsonValue data, boolean single) {
 		render = new WorldView(this);
 		render.load();
 		init();
-
-		if (data != null) {
-			this.player = data.getInt("player");
-			this.gameId = data.getString("game_id");
-
-			if (data.get("data") != null && data.get("data").asString().equals("none")) {
-				render.initFirstTurn();
-			} else {
-				readData(data);
-				render.initTurnAnimations();
-			}
+		isSinglePlayer = single;
+		if (isSinglePlayer) {
+			player = 1;
+			render.initFirstTurn();
 		} else {
-			render.initTutorial();
+			if (data != null) {
+				this.player = data.getInt("player");
+				this.gameId = data.getString("game_id");
+
+				if (data.get("data") != null && data.get("data").asString().equals("none")) {
+					render.initFirstTurn();
+				} else {
+					readData(data);
+					render.initTurnAnimations();
+				}
+			} else {
+				render.initTutorial();
+			}
 		}
 	}
 
@@ -278,39 +284,59 @@ public class WorldController {
 	}
 
 	public void sendTurn() {
-		GameEngine.showLoading();
-		String data = null;
-		String result = null;
-		if (gameEnded) {
-			if (enemiesCount == 0 && allysCount > 0)
-				result = "victory";
-			else if (enemiesCount > 0 && allysCount == 0)
-				result = "defeat";
-			else if (enemiesCount == 0 && allysCount == 0)
-				result = "draw";
-		} else {
-			StringBuilder builder = new StringBuilder();
-			builder.append("{");
-
-			Cell cell;
-			Unit unit;
-			for (int h = 0; h < gridH; h++) {
-				for (int v = 0; v < gridW; v++) {
-					cell = cellGrid[v][h];
-					unit = cellGrid[v][h].getUnit();
-					if (unit != null && unit.getRender().getState() != STATE.ghost && !unit.isEnemy())
-						cell.addDataToJson(builder);
-				}
+		if (isSinglePlayer) {
+			if (gameTurn == 0) {
+				AI_fistTurn();
+			} else {
+				AI_normalTurn();
 			}
-			// Delete the last comma
-			builder.deleteCharAt(builder.length() - 1);
+		} else {
+			GameEngine.showLoading();
+			String data = null;
+			String result = null;
+			if (gameEnded) {
+				if (enemiesCount == 0 && allysCount > 0)
+					result = "victory";
+				else if (enemiesCount > 0 && allysCount == 0)
+					result = "defeat";
+				else if (enemiesCount == 0 && allysCount == 0)
+					result = "draw";
+			} else {
+				StringBuilder builder = new StringBuilder();
+				builder.append("{");
 
-			builder.append("}");
-			data = builder.toString();
+				Cell cell;
+				Unit unit;
+				for (int h = 0; h < gridH; h++) {
+					for (int v = 0; v < gridW; v++) {
+						cell = cellGrid[v][h];
+						unit = cellGrid[v][h].getUnit();
+						if (unit != null && unit.getRender().getState() != STATE.ghost && !unit.isEnemy())
+							cell.addDataToJson(builder);
+					}
+				}
+				// Delete the last comma
+				builder.deleteCharAt(builder.length() - 1);
+
+				builder.append("}");
+				data = builder.toString();
+			}
+
+			ServerDriver.sendGameTurn(GameController.getUser().getId(),
+					gameId, data, result);
 		}
+	}
 
-		ServerDriver.sendGameTurn(GameController.getUser().getId(),
-				gameId, data, result);
+	private void AI_fistTurn() {
+		cellGrid[5][3].setUnit(new Unit("wind_slayer", 2, true));
+		cellGrid[5][3].setAction(new PlaceUnitAction());
+		cellGrid[6][3].setUnit(new Unit("wind_slayer", 2, true));
+		cellGrid[6][3].setAction(new PlaceUnitAction());
+		enemiesCount = 2;
+	}
+
+	private void AI_normalTurn() {
+
 	}
 
 	public void surrenderCurrentGame() {

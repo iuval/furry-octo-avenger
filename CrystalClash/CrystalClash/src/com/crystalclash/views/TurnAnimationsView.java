@@ -150,11 +150,12 @@ public class TurnAnimationsView extends GameView {
 
 	private void setFirstTurnAnimation() {
 		PlaceUnitAction action = null;
-		for (int m = 0; m < player1Places.size; m++) {
-			action = player1Places.get(m);
-			action.origin.getUnit().setPosition(-100, 354 + rand.nextInt(100));
+		if (!world.isSinglePlayer) {
+			for (int m = 0; m < player1Places.size; m++) {
+				action = player1Places.get(m);
+				action.origin.getUnit().setPosition(-100, 354 + rand.nextInt(100));
+			}
 		}
-
 		for (int m = 0; m < player2Places.size; m++) {
 			action = player2Places.get(m);
 			action.origin.getUnit().setPosition(CrystalClash.WIDTH + 100, 354 + rand.nextInt(100));
@@ -194,16 +195,20 @@ public class TurnAnimationsView extends GameView {
 	private Timeline pushPlaceUnits(Timeline t) {
 		t.beginSequence();
 		if (world.gameTurn % 2 == 0) {
-			t.beginParallel();
-			createPlacingPath(player1Places, t);
-			t.end();
+			if (!world.isSinglePlayer) {
+				t.beginParallel();
+				createPlacingPath(player1Places, t);
+				t.end();
+			}
 			t.beginParallel();
 			createPlacingPath(player2Places, t);
 			t.end();
 		} else {
-			t.beginParallel();
-			createPlacingPath(player2Places, t);
-			t.end();
+			if (!world.isSinglePlayer) {
+				t.beginParallel();
+				createPlacingPath(player2Places, t);
+				t.end();
+			}
 			t.beginParallel();
 			createPlacingPath(player1Places, t);
 			t.end();
@@ -736,7 +741,11 @@ public class TurnAnimationsView extends GameView {
 							.target(CrystalClash.HEIGHT / 2 - gameEndMessage.getHeight() / 2 - btnBackToMenu.getHeight())
 							.ease(TweenEquations.easeOutBounce)));
 		} else {
-			showPanel();
+			if (!world.isSinglePlayer) {
+				world.initNormalTurn();
+			} else {
+				showPanel();
+			}
 		}
 	}
 
@@ -951,6 +960,12 @@ public class TurnAnimationsView extends GameView {
 
 	@Override
 	public void dispose() {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void prepareNextTurn() {
 		// TODO Auto-generated method stub
 
 	}

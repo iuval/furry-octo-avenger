@@ -31,8 +31,6 @@ public class NormalGameView extends GameView {
 	private UnitActionType actionType;
 	private int maxMoves;
 
-	private Array<MoveUnitAction> moveActions;
-	private Array<AttackUnitAction> attackActions;
 	private UnitAction unitAction;
 	private Array<Cell> ghostlyCells;
 	private Array<Unit> defensiveUnits;
@@ -48,12 +46,9 @@ public class NormalGameView extends GameView {
 		actionType = UnitActionType.NONE;
 		maxMoves = 0;
 
-		moveActions = new Array<MoveUnitAction>();
 		ghostlyCells = new Array<Cell>();
 
 		defensiveUnits = new Array<Unit>();
-
-		attackActions = new Array<AttackUnitAction>();
 
 		paths = new PathManager();
 
@@ -271,7 +266,6 @@ public class NormalGameView extends GameView {
 				clearAvailableCells();
 				paths.removePath(selectedUnit);
 				((AttackUnitAction) unitAction).target.removeState(Cell.ATTACK_TARGET_CENTER);
-				attackActions.removeValue((AttackUnitAction) unitAction, false);
 
 				setUnitAction(new NoneUnitAction());
 				selectedCell.setAction(unitAction);
@@ -308,12 +302,10 @@ public class NormalGameView extends GameView {
 	public void clearAllChanges() {
 		clearSelection();
 
-		moveActions.clear();
 		for (int j = 0; j < ghostlyCells.size; j++) {
 			ghostlyCells.get(j).removeUnit();
 		}
 		ghostlyCells.clear();
-		attackActions.clear();
 
 		paths.clearAll();
 
@@ -326,6 +318,27 @@ public class NormalGameView extends GameView {
 		for (int i = 0; i < world.cellGrid.length; i++) {
 			for (int j = 0; j < world.cellGrid[0].length; j++) {
 				world.cellGrid[i][j].setAction(null);
+				world.cellGrid[i][j].state = Cell.NONE;
+			}
+		}
+	}
+
+	@Override
+	public void prepareNextTurn() {
+		clearSelection();
+
+		for (int j = 0; j < ghostlyCells.size; j++) {
+			ghostlyCells.get(j).removeUnit();
+		}
+		ghostlyCells.clear();
+
+		paths.clearAll();
+
+		defensiveUnits.clear();
+
+		setUnitAction(new NoneUnitAction());
+		for (int i = 0; i < world.cellGrid.length; i++) {
+			for (int j = 0; j < world.cellGrid[0].length; j++) {
 				world.cellGrid[i][j].state = Cell.NONE;
 			}
 		}
@@ -530,9 +543,7 @@ public class NormalGameView extends GameView {
 	private void saveAttack() {
 		clearAvailableCells();
 		AttackUnitAction action = (AttackUnitAction) unitAction;
-		if (action.target != null) {
-			attackActions.add(action);
-		} else {
+		if (action.target == null) {
 			paths.removePath(selectedCell.getUnit());
 			setUnitAction(new NoneUnitAction());
 		}
@@ -549,9 +560,7 @@ public class NormalGameView extends GameView {
 	private void saveMove() {
 		clearAvailableCells();
 		MoveUnitAction action = (MoveUnitAction) unitAction;
-		if (action.moves.size > 1) {
-			moveActions.add(action);
-		} else {
+		if (action.moves.size <= 1) {
 			paths.removePath(selectedCell.getUnit());
 			setUnitAction(new NoneUnitAction());
 			selectedCell.removeState(Cell.MOVE_TARGET);

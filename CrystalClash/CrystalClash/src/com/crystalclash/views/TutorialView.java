@@ -1227,4 +1227,10 @@ public class TutorialView extends GameView {
 		// TODO Auto-generated method stub
 
 	}
+
+	@Override
+	public void prepareNextTurn() {
+		// TODO Auto-generated method stub
+		
+	}
 }

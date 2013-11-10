@@ -198,20 +198,20 @@ public class GameEngine implements Screen {
 		stage.addActor(BlackOverlay.build());
 	}
 
-	private void createWorld(JsonValue data) {
+	private void createWorld(JsonValue data, boolean single) {
 		if (worldRender == null) {
-			world = new WorldController(data);
+			world = new WorldController(data, single);
 			worldRender = world.getRender();
 		}
 	}
 
-	public void openGame(final JsonValue data) {
+	public void openGame(final JsonValue data, final boolean single) {
 		Timeline t = Timeline.createSequence();
 		menuGamesRender.pushExitAnimation(t);
 		t.setCallback(new TweenCallback() {
 			@Override
 			public void onEvent(int type, BaseTween<?> source) {
-				createWorld(data);
+				createWorld(data, single);
 				menuGamesRender.closed();
 				setState(GameState.InTranstionMenuGamesAndGame);
 				Timeline.createSequence()
@@ -220,10 +220,10 @@ public class GameEngine implements Screen {
 							@Override
 							public void onEvent(int type, BaseTween<?> source) {
 								setState(GameState.InGame);
+
+								world.getRender().pushEnterAnimation(Timeline.createParallel()).start(tweenManager);
 							};
 						}).start(tweenManager);
-
-				world.getRender().pushEnterAnimation(Timeline.createParallel()).start(tweenManager);
 			};
 		});
 		t.start(tweenManager);
@@ -350,7 +350,7 @@ public class GameEngine implements Screen {
 	}
 
 	public void openTutorial() {
-		openGame(null);
+		openGame(null, false);
 	}
 
 	public void singUpError(String message) {

@@ -41,8 +41,12 @@ public class Unit extends GameObject {
 		this.unitName = unitName;
 
 		GameController.loadUnitsStats();
-		this.hitPoints = hp;
 		this.totalHitPoints = GameController.getUnitLife(unitName);
+		if (hp == -1) {
+			this.hitPoints = this.totalHitPoints;
+		} else {
+			this.hitPoints = hp;
+		}
 		this.damage = GameController.getUnitDamage(unitName);
 		this.speed = GameController.getUnitSpeed(unitName);
 		this.range = GameController.getUnitRange(unitName);
@@ -56,6 +60,10 @@ public class Unit extends GameObject {
 			if (isPlayerNumber(2))
 				this.render.setFacing(FACING.left);
 		}
+	}
+
+	public Unit(String unitName, int num, boolean enemy) {
+		this(unitName, num, enemy, -1);
 	}
 
 	public Unit(String unitName) {

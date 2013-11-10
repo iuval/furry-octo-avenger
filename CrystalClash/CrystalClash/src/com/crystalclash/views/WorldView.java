@@ -108,6 +108,8 @@ public class WorldView extends InputView {
 		addActor(gameRender);
 		finishLoad();
 		showGameMenuButtons();
+
+		setReadInput(true);
 	}
 
 	public void initTurnAnimations() {
@@ -272,6 +274,16 @@ public class WorldView extends InputView {
 				if (type == MessageBoxCallback.YES) {
 					GameEngine.showLoading();
 					world.sendTurn();
+					if (world.isSinglePlayer) {
+						GameEngine.start(gameRender.pushExitAnimation(Timeline.createSequence())
+								.setCallback(new TweenCallback() {
+									@Override
+									public void onEvent(int type, BaseTween<?> source) {
+										gameRender.prepareNextTurn();
+										initTurnAnimations();
+									}
+								}));
+					}
 				}
 				else {
 					MessageBox.build().hide();

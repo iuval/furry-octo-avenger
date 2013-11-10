@@ -1,6 +1,5 @@
 package com.crystalclash.controllers;
 
-
 import com.badlogic.gdx.utils.JsonValue;
 import com.crystalclash.networking.ServerDriver;
 import com.crystalclash.renders.GameEngine;
@@ -78,16 +77,16 @@ public class MenuGames {
 
 	public void openTutorial() {
 		GameEngine.showLoading();
-		GameEngine.getInstance().openGame(null);
+		GameEngine.getInstance().openGame(null, false);
 	}
-	
+
 	public void getGameTurn(String gameId) {
 		GameEngine.showLoading();
 		ServerDriver.getGameTurn(GameController.getUser().getId(), gameId);
 	}
 
 	public void getGameTurnSuccess(JsonValue data) {
-		GameEngine.getInstance().openGame(data);
+		GameEngine.getInstance().openGame(data, false);
 	}
 
 	public void getGameTurnError(String string) {

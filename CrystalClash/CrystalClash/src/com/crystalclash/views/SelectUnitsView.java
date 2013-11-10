@@ -24,7 +24,6 @@ import com.crystalclash.renders.helpers.ui.UnitListSelectListener;
 import com.crystalclash.renders.helpers.ui.UnitThumbsList;
 
 public class SelectUnitsView extends GameView {
-	private int unitCount = 0;
 	private String selectedUnitName;
 	private Unit selectedUnit = null;
 	private UnitThumbsList unitList;
@@ -78,9 +77,9 @@ public class SelectUnitsView extends GameView {
 		});
 
 		if (world.player == 1) {
-			unitList.setPosition(CrystalClash.WIDTH / 2, 0);
+			unitList.setPosition(CrystalClash.WIDTH, 0);
 		} else {
-			unitList.setPosition(0, 0);
+			unitList.setPosition(-unitList.getWidth(), 0);
 		}
 		addActor(unitList);
 
@@ -102,21 +101,21 @@ public class SelectUnitsView extends GameView {
 	}
 
 	private boolean canPlaceUnit() {
-		return unitCount < GameController.unitsPerPlayer;
+		return world.allysCount < GameController.unitsPerPlayer;
 	}
 
 	private void changeUnitsCountBy(int du) {
-		unitCount += du;
+		world.allysCount += du;
 		updateUnitsCountLabel();
 	}
 
 	private void resetUnitsCount() {
-		unitCount = 0;
+		world.allysCount = 0;
 		updateUnitsCountLabel();
 	}
 
 	private void updateUnitsCountLabel() {
-		unitList.setUnitCountText(unitCount + " of " + GameController.unitsPerPlayer);
+		unitList.setUnitCountText(world.allysCount + " of " + GameController.unitsPerPlayer);
 	}
 
 	@Override
@@ -183,16 +182,26 @@ public class SelectUnitsView extends GameView {
 	@Override
 	public Timeline pushEnterAnimation(Timeline t) {
 		AudioManager.playMusic(MUSIC.select_units);
-		return t.push(Tween.set(unitList, ActorAccessor.ALPHA)
-				.target(0))
-				.push(Tween.to(unitList, ActorAccessor.ALPHA, CrystalClash.NORMAL_ANIMATION_SPEED)
-						.target(1));
+		if (world.player == 1) {
+			t.push(Tween.to(unitList, ActorAccessor.X, CrystalClash.NORMAL_ANIMATION_SPEED)
+					.target(CrystalClash.WIDTH / 2));
+		} else {
+			t.push(Tween.to(unitList, ActorAccessor.X, CrystalClash.NORMAL_ANIMATION_SPEED)
+					.target(0));
+		}
+		return t;
 	}
 
 	@Override
 	public Timeline pushExitAnimation(Timeline t) {
-		return t.push(Tween.to(unitList, ActorAccessor.ALPHA, CrystalClash.NORMAL_ANIMATION_SPEED)
-				.target(0));
+		if (world.player == 1) {
+			t.push(Tween.to(unitList, ActorAccessor.X, CrystalClash.NORMAL_ANIMATION_SPEED)
+					.target(CrystalClash.WIDTH));
+		} else {
+			t.push(Tween.to(unitList, ActorAccessor.X, CrystalClash.NORMAL_ANIMATION_SPEED)
+					.target(-unitList.getWidth()));
+		}
+		return t;
 	}
 
 	@Override
@@ -266,5 +275,14 @@ public class SelectUnitsView extends GameView {
 	public void dispose() {
 		// TODO Auto-generated method stub
 
+	}
+
+	@Override
+	public void prepareNextTurn() {
+		for (int i = 0; i < world.cellGrid.length; i++) {
+			for (int j = 0; j < world.cellGrid[0].length; j++) {
+				world.cellGrid[i][j].state = Cell.NONE;
+			}
+		}
 	}
 }
