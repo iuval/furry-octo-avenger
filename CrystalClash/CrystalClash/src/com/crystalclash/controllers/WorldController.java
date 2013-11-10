@@ -3,6 +3,8 @@ package com.crystalclash.controllers;
 import java.util.ArrayList;
 
 import com.badlogic.gdx.utils.JsonValue;
+import com.crystalclash.ai.Bot;
+import com.crystalclash.ai.EasyBot;
 import com.crystalclash.entities.Cell;
 import com.crystalclash.entities.Unit;
 import com.crystalclash.entities.helpers.AttackUnitAction;
@@ -41,12 +43,15 @@ public class WorldController {
 	public boolean gameEnded = false;
 	public boolean isSinglePlayer = false;
 
+	public Bot bot;
+
 	public WorldController(JsonValue data, boolean single) {
 		render = new WorldView(this);
 		render.load();
 		init();
 		isSinglePlayer = single;
 		if (isSinglePlayer) {
+			bot = new EasyBot(this);
 			player = 1;
 			render.initFirstTurn();
 		} else {
@@ -286,9 +291,9 @@ public class WorldController {
 	public void sendTurn() {
 		if (isSinglePlayer) {
 			if (gameTurn == 0) {
-				AI_fistTurn();
+				enemiesCount = bot.firstTurn();
 			} else {
-				AI_normalTurn();
+				bot.normalTurn();
 			}
 		} else {
 			GameEngine.showLoading();
@@ -325,18 +330,6 @@ public class WorldController {
 			ServerDriver.sendGameTurn(GameController.getUser().getId(),
 					gameId, data, result);
 		}
-	}
-
-	private void AI_fistTurn() {
-		cellGrid[5][3].setUnit(new Unit("wind_slayer", 2, true));
-		cellGrid[5][3].setAction(new PlaceUnitAction());
-		cellGrid[6][3].setUnit(new Unit("wind_slayer", 2, true));
-		cellGrid[6][3].setAction(new PlaceUnitAction());
-		enemiesCount = 2;
-	}
-
-	private void AI_normalTurn() {
-
 	}
 
 	public void surrenderCurrentGame() {
