@@ -18,6 +18,7 @@ import com.crystalclash.controllers.GameController;
 import com.crystalclash.renders.helpers.ResourceHelper;
 import com.crystalclash.renders.helpers.ui.MessageBox;
 import com.crystalclash.renders.helpers.ui.MessageBoxCallback;
+import com.crystalclash.renders.helpers.ui.MessageBox.Buttons;
 
 public class TutorialInvitation extends AnimatedGroup {
 
@@ -81,8 +82,7 @@ public class TutorialInvitation extends AnimatedGroup {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
 				MessageBox.build()
-						.setMessage("It's not safe going to the battle field without training...\nAre you sure you don't want to try?")
-						.twoButtonsLayout("Yes, i'm sure", "Lets do it!")
+						.setMessage("tutorial_invitation_skip", Buttons.Two)
 						.setCallback(confirmation)
 						.setHideOnAction(false)
 						.show();

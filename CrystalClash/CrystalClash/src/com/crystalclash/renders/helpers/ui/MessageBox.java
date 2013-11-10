@@ -17,8 +17,13 @@ import com.crystalclash.renders.AnimatedGroup;
 import com.crystalclash.renders.BlackOverlay;
 import com.crystalclash.renders.GameEngine;
 import com.crystalclash.renders.helpers.ResourceHelper;
+import com.crystalclash.util.I18n;
 
 public class MessageBox extends AnimatedGroup {
+	public enum Buttons {
+		None, One, Two
+	}
+
 	private static MessageBox instance;
 
 	private Image imgWindowBackground;
@@ -83,8 +88,29 @@ public class MessageBox extends AnimatedGroup {
 		return this;
 	}
 
-	public MessageBox setMessage(String message) {
-		lblMessage.setText(message);
+	public MessageBox setMessage(String i18n_ref, Buttons btns) {
+		lblMessage.setText(I18n.t(i18n_ref));
+		switch (btns) {
+		case One:
+			oneButtonsLayout(I18n.t(i18n_ref + "_ok"));
+			break;
+		case Two:
+			twoButtonsLayout(I18n.t(i18n_ref + "_yes"), I18n.t(i18n_ref + "_no"));
+			break;
+		case None:
+			noButtonsLayout();
+			break;
+		}
+		return this;
+	}
+
+	public MessageBox setMessage(String i18n_ref, Buttons btns, String... args) {
+		return setMessage(String.format(I18n.t(i18n_ref), args), btns);
+	}
+
+	public MessageBox setText(String text) {
+		lblMessage.setText(text);
+		oneButtonsLayout("ok");
 		return this;
 	}
 
@@ -93,7 +119,7 @@ public class MessageBox extends AnimatedGroup {
 		return this;
 	}
 
-	public MessageBox twoButtonsLayout(String yes, String no) {
+	private MessageBox twoButtonsLayout(String yes, String no) {
 		btnYes.setText(yes);
 		btnYes.setSize(360, 100);
 		btnYes.setPosition(getWidth() - btnYes.getWidth() - 30, 30);
@@ -109,7 +135,7 @@ public class MessageBox extends AnimatedGroup {
 		return this;
 	}
 
-	public MessageBox oneButtonsLayout(String yes) {
+	private MessageBox oneButtonsLayout(String yes) {
 		btnYes.setText(yes);
 		btnYes.setSize(500, 100);
 		btnYes.setPosition(getWidth() / 2 - btnYes.getWidth() / 2, 30);
@@ -122,7 +148,7 @@ public class MessageBox extends AnimatedGroup {
 		return this;
 	}
 
-	public MessageBox noButtonsLayout() {
+	private MessageBox noButtonsLayout() {
 		btnYes.remove();
 
 		btnNo.remove();
@@ -130,11 +156,6 @@ public class MessageBox extends AnimatedGroup {
 		lblMessage.setSize(getWidth() - 100, getHeight() - 100);
 		lblMessage.setPosition(50, 50);
 		return this;
-	}
-
-	public static void show(String message, Object userData) {
-		build().setMessage(message);
-		show(userData);
 	}
 
 	public static void show(Object userData) {

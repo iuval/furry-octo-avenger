@@ -43,8 +43,7 @@ public class MenuLogIn {
 
 	public void serverError(String message) {
 		MessageBox.build()
-				.setMessage(message)
-				.oneButtonsLayout("D:")
+				.setText(message)
 				.setCallback(null)
 				.show();
 	}

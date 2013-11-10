@@ -37,6 +37,7 @@ import com.crystalclash.renders.helpers.CellHelper;
 import com.crystalclash.renders.helpers.PathManager;
 import com.crystalclash.renders.helpers.ResourceHelper;
 import com.crystalclash.renders.helpers.ui.MessageBox;
+import com.crystalclash.renders.helpers.ui.MessageBox.Buttons;
 import com.crystalclash.renders.helpers.ui.MessageBoxCallback;
 import com.crystalclash.util.I18n;
 
@@ -69,7 +70,7 @@ public class TutorialView extends GameView {
 	private int movePathX;
 
 	private PathManager paths;
-	
+
 	private Image imgAttackIcon;
 	private Image imgMoveIcon;
 	private Image imgDefendIcon;
@@ -161,16 +162,15 @@ public class TutorialView extends GameView {
 		btnSkip.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
-				String text = "We have just started...";
-				if (messageIndex >= messages.size / 2)
-					text = "We are half road down...";
-				if (messageIndex >= messages.size - 8)
-					text = "We are almost finished...";
+				MessageBox msg = MessageBox.build();
+				if (messageIndex < messages.size / 2)
+					msg.setMessage("tutorial_leave_start", Buttons.Two);
+				if (messageIndex < messages.size - 8)
+					msg.setMessage("tutorial_leave_middle", Buttons.Two);
+				else
+					msg.setMessage("tutorial_leave_end", Buttons.Two);
 
-				MessageBox.build()
-						.setMessage("Are you sure you want to leave?\n" + text)
-						.twoButtonsLayout("Yes, i got it", "No, let's go on")
-						.setCallback(confirmation)
+				msg.setCallback(confirmation)
 						.setHideOnAction(false)
 						.show();
 			}
@@ -184,34 +184,33 @@ public class TutorialView extends GameView {
 		addActor(btnSkip);
 
 		PathManager.load();
-		
+
 		imgAttackIcon = new Image(skin.getRegion("action_attack_button"));
 		imgMoveIcon = new Image(skin.getRegion("action_run_button"));
 		imgDefendIcon = new Image(skin.getRegion("action_defensive_button"));
 		imgUndoIcon = new Image(skin.getRegion("action_cancel_button"));
-		
+
 		imgAttackIcon.scale(-0.5f);
 		imgMoveIcon.scale(-0.5f);
 		imgDefendIcon.scale(-0.5f);
 		imgUndoIcon.scale(-0.5f);
-		
+
 		imgAttackIcon.setPosition(760, 180);
 		imgMoveIcon.setPosition(990, 180);
 		imgDefendIcon.setPosition(760, 110);
 		imgUndoIcon.setPosition(990, 110);
-		
+
 		atlas = ResourceHelper.getTextureAtlas("in_game/unit_stats_popup/unit_stats_popup.pack");
 		imgLifeIcon = new Image(atlas.findRegion("icon_life"));
 		imgDamageIcon = new Image(atlas.findRegion("icon_attack"));
 		imgMobilityIcon = new Image(atlas.findRegion("icon_speed"));
-		
+
 		imgDamageIcon.setPosition(755, 220);
 		imgLifeIcon.setPosition(990, 220);
 		imgMobilityIcon.setPosition(805, 150);
 	}
 
 	private void readTutorialScript() {
-		I18n.load();
 		messages = new Array<String>();
 		// Scene 1
 		messages.add(I18n.t("tutorial_line_0"));
@@ -307,7 +306,7 @@ public class TutorialView extends GameView {
 			addActor(imgMoveIcon);
 			addActor(imgDefendIcon);
 			addActor(imgUndoIcon);
-			
+
 			world.getRender().setReadInput(false);
 			showNext();
 			break;
@@ -321,7 +320,7 @@ public class TutorialView extends GameView {
 			addActor(imgLifeIcon);
 			addActor(imgDamageIcon);
 			addActor(imgMobilityIcon);
-			
+
 			world.getRender().hideActionsRing();
 			actionRingVisible = false;
 			world.getRender().showStatsPopup(slayer);
@@ -330,7 +329,7 @@ public class TutorialView extends GameView {
 			removeActor(imgLifeIcon);
 			removeActor(imgDamageIcon);
 			removeActor(imgMobilityIcon);
-			
+
 			world.getRender().hideStatsPopup();
 			world.getRender().moveArrow(tank);
 			break;
