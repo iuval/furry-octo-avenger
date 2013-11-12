@@ -65,7 +65,7 @@ public class NormalGameView extends GameView {
 	}
 
 	public void load() {
-		GameController.loadUnitsStats();
+		GameController.loadSharedStats();
 		PathManager.load();
 	}
 

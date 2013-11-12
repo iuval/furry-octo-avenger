@@ -40,7 +40,6 @@ public class Unit extends GameObject {
 		this.playerNumber = num;
 		this.unitName = unitName;
 
-		GameController.loadUnitsStats();
 		this.hitPoints = hp;
 		this.totalHitPoints = GameController.getUnitLife(unitName);
 		this.damage = GameController.getUnitDamage(unitName);
