@@ -76,6 +76,11 @@ public class ParallaxBackgound extends Group {
 				.target(0));
 	}
 
+	public Timeline pushMoveToGame(Timeline t) {
+		return t.push(Tween.to(this, ActorAccessor.Y, CrystalClash.SLOW_ANIMATION_SPEED)
+				.target(854));
+	}
+
 	private void addLevel(ParallaxLevel level) {
 		addActor(level);
 		levels.add(level);

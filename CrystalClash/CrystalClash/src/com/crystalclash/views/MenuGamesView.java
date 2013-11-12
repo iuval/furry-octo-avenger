@@ -8,10 +8,12 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.crystalclash.CrystalClash;
@@ -36,7 +38,7 @@ public class MenuGamesView extends InputView {
 
 	private MenuGames controller;
 	private SuperScrollPane superScroll;
-	// private Image gamesImage;
+	private Image gamesImage;
 
 	private VerticalGroup list;
 	private GameListItem[] gamesList;
@@ -158,14 +160,12 @@ public class MenuGamesView extends InputView {
 		superScroll.scrollPane.setForceScroll(false, true);
 		superScroll.scrollPane.invalidate();
 		addActor(superScroll);
-		// gamesImage = new
-		// Image(ResourceHelper.getTexture("menu/current_games_header"));
+		gamesImage = new
+				Image(ResourceHelper.getTexture("menu/current_games_header"));
 
-		// list.addActor(gamesImage);
-
-		// Image menuImage = new
-		// Image(ResourceHelper.getTexture("menu/new_games_header"));
-		// list.addActor(menuImage);
+		list.addActor(gamesImage);
+		Image menuImage = new Image(ResourceHelper.getTexture("menu/new_games_header"));
+		list.addActor(menuImage);
 
 		Group inviteButtons = new Group();
 		inviteButtons.setBounds(0, 0, list.getWidth(), 160);
@@ -222,7 +222,6 @@ public class MenuGamesView extends InputView {
 				if (games[i][4].equals("play")) {
 					canPlayItem = listingItem;
 				}
-				// list.addActorAfter(gamesImage, listingItem);
 				list.addActor(listingItem);
 			} else {
 				if (games[i][4].equals("play")) {
@@ -266,36 +265,36 @@ public class MenuGamesView extends InputView {
 
 		listItemSkin = new Skin();
 		listItemSkin.add("font", ResourceHelper.getBigFont());
-		// listItemSkin.add("play_up",
-		// ResourceHelper.getTexture("menu/games_list_item_green"));
-		// listItemSkin.add("play_down",
-		// ResourceHelper.getTexture("menu/games_list_item_green"));
-		// listItemSkin.add("wait_up",
-		// ResourceHelper.getTexture("menu/games_list_item_red"));
-		// listItemSkin.add("wait_down",
-		// ResourceHelper.getTexture("menu/games_list_item_red"));
-		// listItemSkin.add("surrender_up",
-		// ResourceHelper.getTexture("menu/button_surrender"));
-		// listItemSkin.add("surrender_down",
-		// ResourceHelper.getTexture("menu/button_surrender_pressed"));
+		listItemSkin.add("play_up",
+				ResourceHelper.getTexture("menu/games_list_item_green"));
+		listItemSkin.add("play_down",
+				ResourceHelper.getTexture("menu/games_list_item_green"));
+		listItemSkin.add("wait_up",
+				ResourceHelper.getTexture("menu/games_list_item_red"));
+		listItemSkin.add("wait_down",
+				ResourceHelper.getTexture("menu/games_list_item_red"));
+		listItemSkin.add("surrender_up",
+				ResourceHelper.getTexture("menu/button_surrender"));
+		listItemSkin.add("surrender_down",
+				ResourceHelper.getTexture("menu/button_surrender_pressed"));
 
-		// TextButtonStyle playStyle = new TextButtonStyle();
-		// playStyle.font = listItemSkin.getFont("font");
-		// playStyle.up = listItemSkin.getDrawable("play_up");
-		// playStyle.down = listItemSkin.getDrawable("play_down");
-		// listItemSkin.add("playStyle", playStyle);
-		//
-		// TextButtonStyle waitStyle = new TextButtonStyle();
-		// waitStyle.font = listItemSkin.getFont("font");
-		// waitStyle.up = listItemSkin.getDrawable("wait_up");
-		// waitStyle.down = listItemSkin.getDrawable("wait_down");
-		// listItemSkin.add("waitStyle", waitStyle);
-		//
-		// TextButtonStyle surrenderStyle = new TextButtonStyle();
-		// surrenderStyle.font = listItemSkin.getFont("font");
-		// surrenderStyle.up = listItemSkin.getDrawable("surrender_up");
-		// surrenderStyle.down = listItemSkin.getDrawable("surrender_down");
-		// listItemSkin.add("surrenderStyle", surrenderStyle);
+		TextButtonStyle playStyle = new TextButtonStyle();
+		playStyle.font = listItemSkin.getFont("font");
+		playStyle.up = listItemSkin.getDrawable("play_up");
+		playStyle.down = listItemSkin.getDrawable("play_down");
+		listItemSkin.add("playStyle", playStyle);
+
+		TextButtonStyle waitStyle = new TextButtonStyle();
+		waitStyle.font = listItemSkin.getFont("font");
+		waitStyle.up = listItemSkin.getDrawable("wait_up");
+		waitStyle.down = listItemSkin.getDrawable("wait_down");
+		listItemSkin.add("waitStyle", waitStyle);
+
+		TextButtonStyle surrenderStyle = new TextButtonStyle();
+		surrenderStyle.font = listItemSkin.getFont("font");
+		surrenderStyle.up = listItemSkin.getDrawable("surrender_up");
+		surrenderStyle.down = listItemSkin.getDrawable("surrender_down");
+		listItemSkin.add("surrenderStyle", surrenderStyle);
 	}
 
 	public void listGamesError(String message) {
