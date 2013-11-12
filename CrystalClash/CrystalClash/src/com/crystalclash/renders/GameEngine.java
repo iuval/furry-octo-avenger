@@ -33,8 +33,10 @@ import com.crystalclash.entities.Unit;
 import com.crystalclash.enumerators.GameState;
 import com.crystalclash.renders.helpers.ResourceHelper;
 import com.crystalclash.renders.helpers.ui.MessageBox;
+import com.crystalclash.renders.helpers.ui.MessageBox.Buttons;
 import com.crystalclash.renders.helpers.ui.MessageBoxCallback;
 import com.crystalclash.renders.helpers.ui.SuperAnimatedActor;
+import com.crystalclash.util.I18n;
 import com.crystalclash.views.MenuGamesView;
 import com.crystalclash.views.MenuLogInView;
 import com.crystalclash.views.SplashView;
@@ -97,6 +99,7 @@ public class GameEngine implements Screen {
 
 	private void loadInSplash() {
 		GameController.loadSharedStats();
+		I18n.load();
 
 		stage.addActor(BlackOverlay.build());
 		// stage.addActor(MessageBox.build());
@@ -357,8 +360,7 @@ public class GameEngine implements Screen {
 
 	public void singUpError(String message) {
 		MessageBox.build()
-				.setMessage("Sign up failed, user already in use.")
-				.oneButtonsLayout("Ok...")
+				.setMessage("game_engine_sign_up_error", Buttons.One)
 				.setCallback(null)
 				.show();
 	}
@@ -366,8 +368,7 @@ public class GameEngine implements Screen {
 	public void logInError(String message) {
 		if (state == GameState.InMenuLogIn) {
 			MessageBox.build()
-					.setMessage("Log in failed...\nAre you trying to login with your ex's account to lose all their games?")
-					.oneButtonsLayout("Nop...")
+					.setMessage("game_engine_sign_in_error", Buttons.One)
 					.setCallback(null)
 					.show();
 		} else {
@@ -395,8 +396,7 @@ public class GameEngine implements Screen {
 	public void resume() {
 		if (state == GameState.InGame) {
 			MessageBox.build()
-					.setMessage("You are back!! Hurray!!")
-					.oneButtonsLayout("Let's get them")
+					.setMessage("game_engine_user_back", Buttons.One)
 					.setCallback(new MessageBoxCallback() {
 						@Override
 						public void onEvent(int type, Object data) {
@@ -424,8 +424,7 @@ public class GameEngine implements Screen {
 
 	public static void showLoading() {
 		MessageBox.build()
-				.setMessage("Loading...")
-				.noButtonsLayout()
+				.setMessage("game_engine_loading", Buttons.None)
 				.setHideOnAction(false)
 				.setCallback(null)
 				.show();

@@ -1,10 +1,10 @@
 package com.crystalclash.controllers;
 
-
 import com.badlogic.gdx.utils.JsonValue;
 import com.crystalclash.networking.ServerDriver;
 import com.crystalclash.renders.GameEngine;
 import com.crystalclash.renders.helpers.ui.MessageBox;
+import com.crystalclash.renders.helpers.ui.MessageBox.Buttons;
 import com.crystalclash.renders.helpers.ui.MessageBoxCallback;
 import com.crystalclash.views.MenuGamesView;
 
@@ -70,8 +70,7 @@ public class MenuGames {
 
 	public void logOut() {
 		MessageBox.build()
-				.setMessage("Farewell Commander, we await your return to the fields.")
-				.twoButtonsLayout("I'll be back", "I'm not leaving")
+				.setMessage("menu_games_log_out", Buttons.Two)
 				.setCallback(logoutCallback)
 				.show();
 	}
@@ -80,7 +79,7 @@ public class MenuGames {
 		GameEngine.showLoading();
 		GameEngine.getInstance().openGame(null);
 	}
-	
+
 	public void getGameTurn(String gameId) {
 		GameEngine.showLoading();
 		ServerDriver.getGameTurn(GameController.getUser().getId(), gameId);
@@ -92,8 +91,7 @@ public class MenuGames {
 
 	public void getGameTurnError(String string) {
 		MessageBox.build()
-				.setMessage(string)
-				.oneButtonsLayout("OK...")
+				.setText(string) // TODO: el sever tiene que enviar comandos, que aca convertimos a texto
 				.setCallback(null)
 				.show();
 	}
@@ -104,8 +102,7 @@ public class MenuGames {
 
 	public void sendGameTurnError(String message) {
 		MessageBox.build()
-				.setMessage(message)
-				.oneButtonsLayout("OK...")
+				.setText(message)
 				.setCallback(null)
 				.show();
 	}

@@ -8,6 +8,7 @@ import com.crystalclash.entities.User;
 import com.crystalclash.networking.ServerDriver;
 import com.crystalclash.renders.GameEngine;
 import com.crystalclash.renders.helpers.ui.MessageBox;
+import com.crystalclash.renders.helpers.ui.MessageBox.Buttons;
 import com.crystalclash.util.Profile;
 import com.crystalclash.util.ProfileService;
 import com.crystalclash.util.UnitSharedDataPrefReader;
@@ -142,8 +143,7 @@ public class GameController {
 
 	public static void logIn(String email, String password) {
 		MessageBox.build()
-				.setMessage("Authenticating...")
-				.noButtonsLayout()
+				.setMessage("game_authenticating", Buttons.None)
 				.setCallback(null)
 				.show();
 		ServerDriver.sendLogIn(email, password);
@@ -151,8 +151,7 @@ public class GameController {
 
 	public static void signIn(String email, String password) {
 		MessageBox.build()
-				.setMessage("Creating account...")
-				.noButtonsLayout()
+				.setMessage("world_creating_account", Buttons.None)
 				.setCallback(null)
 				.show();
 		ServerDriver.sendSignIn(email, password);

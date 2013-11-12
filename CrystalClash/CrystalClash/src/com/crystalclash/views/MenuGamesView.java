@@ -27,6 +27,7 @@ import com.crystalclash.renders.TutorialInvitation;
 import com.crystalclash.renders.helpers.ResourceHelper;
 import com.crystalclash.renders.helpers.ui.GameListItem;
 import com.crystalclash.renders.helpers.ui.MessageBox;
+import com.crystalclash.renders.helpers.ui.MessageBox.Buttons;
 import com.crystalclash.renders.helpers.ui.MessageBoxCallback;
 import com.crystalclash.renders.helpers.ui.SuperScrollPane;
 import com.crystalclash.renders.helpers.ui.SuperScrollPaneRefreshCallback;
@@ -213,14 +214,14 @@ public class MenuGamesView extends InputView {
 					listItemSkin, surrenderListener,
 					playListener);
 			gamesList[i] = listingItem;
-			
-			if(canPlayItem == null) {
-				if(games[i][4].equals("play")) {
+
+			if (canPlayItem == null) {
+				if (games[i][4].equals("play")) {
 					canPlayItem = listingItem;
 				}
 				list.addActorAfter(gamesImage, listingItem);
 			} else {
-				if(games[i][4].equals("play")){
+				if (games[i][4].equals("play")) {
 					list.addActorAfter(gamesImage, listingItem);
 				} else {
 					list.addActorAfter(canPlayItem, listingItem);
@@ -246,8 +247,7 @@ public class MenuGamesView extends InputView {
 			public void clicked(InputEvent event, float x, float y) {
 				MessageBox.build()
 						.setUserData(((GameListItem) event.getListenerActor().getParent()).gameId)
-						.setMessage("\"The wise warrior avoids the battle.\"\n- Sun Tzu")
-						.twoButtonsLayout("Surrender", "Not yet!")
+						.setMessage("menu_ganmes_surender", Buttons.Two)
 						.setCallback(surrenderCallback)
 						.show();
 			}
@@ -290,8 +290,7 @@ public class MenuGamesView extends InputView {
 
 	public void listGamesError(String message) {
 		MessageBox.build()
-				.setMessage(message)
-				.oneButtonsLayout("OK...")
+				.setText(message)
 				.setCallback(null)
 				.show();
 	}
@@ -309,8 +308,7 @@ public class MenuGamesView extends InputView {
 
 	public void enableRandomError(String message) {
 		MessageBox.build()
-				.setMessage(message)
-				.oneButtonsLayout("OK...")
+				.setText(message)
 				.setCallback(null)
 				.show();
 	}

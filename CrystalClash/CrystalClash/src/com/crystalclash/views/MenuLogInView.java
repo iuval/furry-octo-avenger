@@ -239,8 +239,7 @@ public class MenuLogInView extends InputView {
 
 	public void logInError(String message) {
 		MessageBox.build()
-				.setMessage(message)
-				.oneButtonsLayout("OK...")
+				.setText(message)
 				.setCallback(null)
 				.show();
 	}

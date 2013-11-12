@@ -29,8 +29,10 @@ import com.crystalclash.renders.helpers.CellHelper;
 import com.crystalclash.renders.helpers.ResourceHelper;
 import com.crystalclash.renders.helpers.UnitHelper;
 import com.crystalclash.renders.helpers.ui.MessageBox;
+import com.crystalclash.renders.helpers.ui.MessageBox.Buttons;
 import com.crystalclash.renders.helpers.ui.MessageBoxCallback;
 import com.crystalclash.renders.helpers.ui.UnitStatsPopup;
+import com.crystalclash.util.I18n;
 
 public class WorldView extends InputView {
 	public static CellHelper cellHelper;
@@ -165,7 +167,7 @@ public class WorldView extends InputView {
 		imgOptionsBackground.setPosition(0, 0);
 		grpOptions.addActor(imgOptionsBackground);
 
-		btnSurrender = new TextButton("Surrender", optionsStyle);
+		btnSurrender = new TextButton(I18n.t("world_surrender_btn"), optionsStyle);
 		btnSurrender.setPosition(75, 5);
 		final MessageBoxCallback leaveCallback = new MessageBoxCallback() {
 			@Override
@@ -186,8 +188,7 @@ public class WorldView extends InputView {
 				pause();
 				setReadInput(false);
 				MessageBox.build()
-						.setMessage("\"He who knows when he can fight and when he cannot, will be victorious.\"\n- Sun Tzu")
-						.twoButtonsLayout("Surrender", "Not yet!")
+						.setMessage("world_surrender", Buttons.Two)
 						.setHideOnAction(false)
 						.setCallback(leaveCallback)
 						.show();
@@ -208,7 +209,7 @@ public class WorldView extends InputView {
 				}
 			}
 		};
-		btnBack = new TextButton("Back to Menu", optionsStyle);
+		btnBack = new TextButton(I18n.t("world_back_to_menu_btn"), optionsStyle);
 		btnBack.setPosition(btnSurrender.getX() + btnSurrender.getWidth() + 2, 5);
 		btnBack.addListener(new ClickListener() {
 			@Override
@@ -219,7 +220,7 @@ public class WorldView extends InputView {
 		});
 		grpOptions.addActor(btnBack);
 
-		btnClear = new TextButton("Clear Moves", optionsStyle);
+		btnClear = new TextButton(I18n.t("world_clear_moves"), optionsStyle);
 		btnClear.setPosition(btnBack.getX() + btnBack.getWidth() + 2, 5);
 		btnClear.addListener(new ClickListener() {
 			@Override
@@ -286,8 +287,7 @@ public class WorldView extends InputView {
 					if (gameRender.canSend()) {
 						setReadInput(false);
 						MessageBox.build()
-								.setMessage("Comander!\nTroops are ready and waiting for battle!\nJust say the word")
-								.twoButtonsLayout("Charge!!", "Hold your horses!")
+								.setMessage("world_send_msg", Buttons.Two)
 								.setCallback(sendTurnCallback)
 								.setHideOnAction(false)
 								.show();
@@ -388,8 +388,7 @@ public class WorldView extends InputView {
 	private void back() {
 		pause();
 		MessageBox.build()
-				.setMessage("If we leave now Commander,\ntroops will lose the given formation!")
-				.twoButtonsLayout("Do it anyway", "Let me think...")
+				.setMessage("world_back_to_menu_msg", Buttons.Two)
 				.setCallback(backCallback)
 				.setHideOnAction(false)
 				.show();
