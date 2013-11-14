@@ -12,6 +12,7 @@ import aurelienribon.tweenengine.equations.Linear;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
@@ -26,6 +27,7 @@ import com.crystalclash.audio.AudioManager.MUSIC;
 import com.crystalclash.controllers.GameController;
 import com.crystalclash.controllers.WorldController;
 import com.crystalclash.entities.Cell;
+import com.crystalclash.entities.Path;
 import com.crystalclash.entities.Unit;
 import com.crystalclash.entities.helpers.AttackUnitAction;
 import com.crystalclash.entities.helpers.DefendUnitAction;
@@ -37,6 +39,7 @@ import com.crystalclash.renders.GameEngine;
 import com.crystalclash.renders.UnitRender.FACING;
 import com.crystalclash.renders.UnitRender.STATE;
 import com.crystalclash.renders.helpers.CellHelper;
+import com.crystalclash.renders.helpers.PathManager;
 import com.crystalclash.renders.helpers.ResourceHelper;
 
 public class TurnAnimationsView extends GameView {
@@ -341,9 +344,9 @@ public class TurnAnimationsView extends GameView {
 		float resultX = CellHelper.getUnitX(target);
 
 		if (attacker.getX() > resultX) {
-			resultX += 30 + rand.nextInt(25);
+			resultX += 40 + rand.nextInt(25);
 		} else {
-			resultX -= 75 + rand.nextInt(25);
+			resultX -= 40 + rand.nextInt(25);
 		}
 		return resultX;
 	}
@@ -531,100 +534,79 @@ public class TurnAnimationsView extends GameView {
 				}
 			});
 
-			// Unit unit = action.origin.getUnit();
+			 Unit unit = action.origin.getUnit();
 
-			// // If the unit is ranged
-			// if (GameController.getUnitTypeIndex(unit.getName()) ==
-			// Unit.TYPE_RANGED) {
-			// // Calculate the arrow's path
-			// Path arrowPath = new Path();
-			// PathManager.addArc(arrowPath,
-			// action.origin.getCenterX(), action.origin.getCenterY() + 30,
-			// action.target.getCenterX(), action.target.getCenterY() + 30);
-			//
-			// float speed = CrystalClash.FIGTH_ANIMATION_SPEED /
-			// arrowPath.dots.size;
-			//
-			// Image arrow = new
-			// Image(ResourceHelper.getUnitResourceTexture(unit.getName(),
-			// "arrow"));
-			// arrow.setOrigin(arrow.getWidth() / 2, arrow.getHeight() / 2);
-			// addActor(arrow);
-			//
-			// Vector2 first = arrowPath.dots.get(0).cpy();
-			// Vector2 second = arrowPath.dots.get(1).cpy();
-			// float angleOrigin = second.sub(first).cpy().angle();
-			//
-			// startAnim.push(Tween.set(arrow, ActorAccessor.ALPHA)
-			// .target(0))
-			// .push(Tween.set(arrow, ActorAccessor.X)
-			// .target(CellHelper.getCenterX(action.origin)))
-			// .push(Tween.set(arrow, ActorAccessor.Y)
-			// .target(CellHelper.getCenterY(action.origin)))
-			// .push(Tween.set(arrow, ActorAccessor.ROTATION)
-			// .target(angleOrigin));
-			//
-			// Vector2 prelast = arrowPath.dots.get(arrowPath.dots.size -
-			// 2).cpy();
-			// Vector2 last = arrowPath.dots.get(arrowPath.dots.size - 1).cpy();
-			// float angleTarget = last.sub(prelast).angle();
-			//
-			// Timeline arrowTimeline = Timeline.createParallel();
-			// arrowTimeline.delay(unit.getRender().fightAnim.getAnimationTime());
-			//
-			// // Arrow rotation
-			// if (arrowPath.dots.get(0).x <
-			// arrowPath.dots.get(arrowPath.dots.size - 1).x) {
-			// arrowTimeline.beginSequence();
-			// arrowTimeline.push(Tween.to(arrow, ActorAccessor.ROTATION,
-			// CrystalClash.FIGTH_ANIMATION_SPEED / 2)
-			// .target(0)
-			// .ease(TweenEquations.easeNone));
-			// arrowTimeline.push(Tween.set(arrow, ActorAccessor.ROTATION)
-			// .target(360));
-			// arrowTimeline.push(Tween.to(arrow, ActorAccessor.ROTATION,
-			// CrystalClash.FIGTH_ANIMATION_SPEED / 2)
-			// .target(angleTarget)
-			// .ease(TweenEquations.easeNone));
-			// arrowTimeline.end();
-			// } else {
-			// arrowTimeline.push(Tween.to(arrow, ActorAccessor.ROTATION,
-			// CrystalClash.FIGTH_ANIMATION_SPEED)
-			// .target(angleTarget)
-			// .ease(TweenEquations.easeNone));
-			// }
-			//
-			// // Arrow alpha
-			// arrowTimeline.push(Tween.to(arrow, ActorAccessor.ALPHA,
-			// CrystalClash.FAST_ANIMATION_SPEED)
-			// .target(1)
-			// .ease(TweenEquations.easeNone));
-			//
-			// // Arrow movement
-			// arrowTimeline.beginSequence();
-			// for (int i = 0; i < arrowPath.dots.size; i++) {
-			// arrowTimeline.beginParallel();
-			// Vector2 v = arrowPath.dots.get(i);
-			// arrowTimeline.push(Tween.to(arrow, ActorAccessor.X, speed)
-			// .target(v.x)
-			// .ease(TweenEquations.easeNone));
-			// arrowTimeline.push(Tween.to(arrow, ActorAccessor.Y, speed)
-			// .target(v.y)
-			// .ease(TweenEquations.easeNone));
-			// arrowTimeline.end();
-			// }
-			// arrowTimeline.end();
-			//
-			// arrowTimeline.setUserData(new Object[] { arrow });
-			// arrowTimeline.setCallback(new TweenCallback() {
-			// @Override
-			// public void onEvent(int type, BaseTween<?> source) {
-			// Image arrow = (Image) ((Object[]) source.getUserData())[0];
-			// arrow.remove();
-			// }
-			// });
-			// startAnim.push(arrowTimeline);
-			// }
+			// Calculate the arrow's path
+			Path arrowPath = new Path();
+			PathManager.addArc(arrowPath,
+					action.origin.getCenterX(), action.origin.getCenterY() + 30,
+					action.target.getCenterX(), action.target.getCenterY() + 30);
+			
+			float speed = CrystalClash.FIGTH_ANIMATION_SPEED / arrowPath.dots.size;
+			
+			Image arrow = new Image(ResourceHelper.getUnitResourceTexture(unit.getName(), "arrow"));
+			arrow.setOrigin(arrow.getWidth() / 2, arrow.getHeight() / 2);
+			addActor(arrow);
+
+			Vector2 first = arrowPath.dots.get(0).cpy();
+			Vector2 second = arrowPath.dots.get(1).cpy();
+			float angleOrigin = second.sub(first).cpy().angle();
+
+			startAnim.push(Tween.set(arrow, ActorAccessor.ALPHA).target(0))
+					.push(Tween.set(arrow, ActorAccessor.X).target(CellHelper.getCenterX(action.origin)))
+					.push(Tween.set(arrow, ActorAccessor.Y).target(CellHelper.getCenterY(action.origin)))
+					.push(Tween.set(arrow, ActorAccessor.ROTATION).target(angleOrigin));
+			
+			 Vector2 prelast = arrowPath.dots.get(arrowPath.dots.size - 2).cpy();
+			 Vector2 last = arrowPath.dots.get(arrowPath.dots.size - 1).cpy();
+			 float angleTarget = last.sub(prelast).angle();
+			
+			 Timeline arrowTimeline = Timeline.createParallel();
+			 arrowTimeline.delay(unit.getRender().fightAnim.getAnimationTime());
+			
+			 // Arrow rotation
+			if (arrowPath.dots.get(0).x < arrowPath.dots.get(arrowPath.dots.size - 1).x) {
+				arrowTimeline.beginSequence();
+				arrowTimeline.push(Tween.to(arrow, ActorAccessor.ROTATION, CrystalClash.FIGTH_ANIMATION_SPEED / 2)
+						.target(0).ease(TweenEquations.easeNone));
+				arrowTimeline.push(Tween.set(arrow, ActorAccessor.ROTATION)
+						.target(360));
+				arrowTimeline.push(Tween.to(arrow, ActorAccessor.ROTATION, CrystalClash.FIGTH_ANIMATION_SPEED / 2)
+						.target(angleTarget)
+						.ease(TweenEquations.easeNone));
+				arrowTimeline.end();
+			} else {
+				arrowTimeline.push(Tween.to(arrow, ActorAccessor.ROTATION, CrystalClash.FIGTH_ANIMATION_SPEED)
+						.target(angleTarget)
+						.ease(TweenEquations.easeNone));
+			}
+
+			// Arrow alpha
+			arrowTimeline.push(Tween.to(arrow, ActorAccessor.ALPHA, CrystalClash.FAST_ANIMATION_SPEED)
+					.target(1).ease(TweenEquations.easeNone));
+			
+			// Arrow movement
+			arrowTimeline.beginSequence();
+			for (int i = 0; i < arrowPath.dots.size; i++) {
+				arrowTimeline.beginParallel();
+				Vector2 v = arrowPath.dots.get(i);
+				arrowTimeline.push(Tween.to(arrow, ActorAccessor.X, speed)
+						.target(v.x).ease(TweenEquations.easeNone));
+				arrowTimeline.push(Tween.to(arrow, ActorAccessor.Y, speed)
+						.target(v.y).ease(TweenEquations.easeNone));
+				arrowTimeline.end();
+			}
+			arrowTimeline.end();
+
+			arrowTimeline.setUserData(new Object[] { arrow });
+			arrowTimeline.setCallback(new TweenCallback() {
+				@Override
+				public void onEvent(int type, BaseTween<?> source) {
+					Image arrow = (Image) ((Object[]) source.getUserData())[0];
+					arrow.remove();
+				}
+			});
+			startAnim.push(arrowTimeline);
 
 			Timeline stopAnim = Timeline.createSequence();
 			stopAnim.delay(CrystalClash.FIGTH_ANIMATION_SPEED);
