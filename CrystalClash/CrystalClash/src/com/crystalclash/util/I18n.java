@@ -1,23 +1,26 @@
 package com.crystalclash.util;
 
-import java.util.Locale;
+import java.io.IOException;
+import java.util.PropertyResourceBundle;
 import java.util.ResourceBundle;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.files.FileHandle;
+
 public class I18n {
-	private static Locale currentLocale;
 	private static ResourceBundle messages;
 
 	public static void load() {
-		load(new String("en"), new String("US"));
+		load("en", "US");
 	}
 
 	public static void load(String country, String language) {
-		currentLocale = new Locale(language, country);
-		loadResource();
-	}
-
-	private static void loadResource() {
-		messages = ResourceBundle.getBundle("data/locales/locale", currentLocale);
+		FileHandle rootFileHandle = Gdx.files.internal(String.format("data/locales/locale_%s_%s", country, language));
+		try {
+			messages = new PropertyResourceBundle(rootFileHandle.read());
+		} catch (IOException e) {
+			load();
+		}
 	}
 
 	public static String t(String key) {
