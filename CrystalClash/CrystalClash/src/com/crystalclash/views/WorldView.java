@@ -388,7 +388,7 @@ public class WorldView extends InputView {
 	private void back() {
 		pause();
 		MessageBox.build()
-				.setMessage("world_back_to_menu_msg", Buttons.Two)
+				.setMessage("world_back_to_menu", Buttons.Two)
 				.setCallback(backCallback)
 				.setHideOnAction(false)
 				.show();
