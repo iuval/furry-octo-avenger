@@ -498,7 +498,9 @@ public class TutorialView extends GameView {
 									world.cellAtByGrid(4, 3).getCenterX(),
 									world.cellAtByGrid(4, 3).getCenterY(),
 									cell.getCenterX(),
-									cell.getCenterY());
+									cell.getCenterY(),
+									PathRender.DOT_CENTER_X,
+									PathRender.DOT_CENTER_Y);
 
 							world.getRender().moveHand(0, 125);
 							world.getRender().setBlockButtons(false);
@@ -515,14 +517,18 @@ public class TutorialView extends GameView {
 										world.cellAtByGrid(4, 3).getCenterX(),
 										world.cellAtByGrid(4, 3).getCenterY(),
 										cell.getCenterX(),
-										cell.getCenterY());
+										cell.getCenterY(),
+										PathRender.DOT_CENTER_X,
+										PathRender.DOT_CENTER_Y);
 							} else if (selectedUnit.equals(slayer) && !slayerAttacked) {
 								PathRender slayerA = paths.createOrResetPath(slayer, PathRender.TYPE.ATTACK);
 								PathManager.addLine(slayerA,
 										world.cellAtByGrid(5, 4).getCenterX(),
 										world.cellAtByGrid(5, 4).getCenterY(),
 										cell.getCenterX(),
-										cell.getCenterY());
+										cell.getCenterY(),
+										PathRender.DOT_CENTER_X,
+										PathRender.DOT_CENTER_Y);
 							}
 
 							world.getRender().moveHand(0, 125);
@@ -544,13 +550,17 @@ public class TutorialView extends GameView {
 									world.cellAtByGrid(1, 4).getCenterX(),
 									world.cellAtByGrid(1, 4).getCenterY(),
 									cell.getCenterX(),
-									cell.getCenterY());
+									cell.getCenterY(),
+									PathRender.DOT_CENTER_X,
+									PathRender.DOT_CENTER_Y);
 						} else {
 							PathManager.addLine(p,
 									moves.get(moves.size - 1).getCenterX(),
 									moves.get(moves.size - 1).getCenterY(),
 									cell.getCenterX(),
-									cell.getCenterY());
+									cell.getCenterY(),
+									PathRender.DOT_CENTER_X,
+									PathRender.DOT_CENTER_Y);
 						}
 
 						slayerMove.moves.add(world.cellAtByGrid(movePathX, 4));

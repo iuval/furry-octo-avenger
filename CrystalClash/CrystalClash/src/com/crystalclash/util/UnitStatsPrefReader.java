@@ -39,8 +39,7 @@ public class UnitStatsPrefReader {
 				}
 			}
 		} catch (Exception ex) {
-			throw new GdxRuntimeException("Error reading pref file: "
-					+ prefFile, ex);
+			throw new GdxRuntimeException("Error reading pref file: " + prefFile, ex);
 		} finally {
 			try {
 				reader.close();

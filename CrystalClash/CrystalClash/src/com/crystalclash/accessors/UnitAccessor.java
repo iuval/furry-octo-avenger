@@ -7,7 +7,7 @@ import com.crystalclash.renders.UnitRender.FACING;
 
 public class UnitAccessor implements TweenAccessor<Unit> {
 
-	public static final int X = 0, Y = 1, HP = 7;
+	public static final int X = 0, Y = 1, HP = 2;
 
 	@Override
 	public int getValues(Unit target, int tweenType, float[] returnValues) {

@@ -82,6 +82,12 @@ public class ResourceHelper {
 		return getTexture(String.format("units/%s/%s/%s", GameController.getUnitElement(unitName), unitName, resource));
 	}
 
+	public static SuperAnimation getUnitResourceSuperAnimation(String unitName, String name) {
+		return getSuperAnimation(String.format("units/%s/%s/%s", GameController.getUnitElement(unitName),
+				unitName,
+				name));
+	}
+
 	public static TextureAtlas getTextureAtlas(String path) {
 		if (textureAtlasMap.containsKey(path)) {
 			return textureAtlasMap.get(path);

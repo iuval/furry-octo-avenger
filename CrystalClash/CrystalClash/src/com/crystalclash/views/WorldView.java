@@ -287,7 +287,7 @@ public class WorldView extends InputView {
 					if (gameRender.canSend()) {
 						setReadInput(false);
 						MessageBox.build()
-								.setMessage("world_send_msg", Buttons.Two)
+								.setMessage("world_send", Buttons.Two)
 								.setCallback(sendTurnCallback)
 								.setHideOnAction(false)
 								.show();

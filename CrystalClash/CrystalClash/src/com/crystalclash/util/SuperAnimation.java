@@ -1,5 +1,6 @@
 package com.crystalclash.util;
 
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
@@ -69,11 +70,11 @@ public class SuperAnimation {
 		this.looping = loop;
 	}
 
-	public void update(float stateTime) {
-		update(stateTime, FACING.right);
+	public Texture update(float stateTime) {
+		return update(stateTime, FACING.right);
 	}
 
-	public void update(float stateTime, FACING at) {
+	public Texture update(float stateTime, FACING at) {
 		totalTime += stateTime;
 		current = getKeyFrame();
 
@@ -82,6 +83,7 @@ public class SuperAnimation {
 		} else if (at == FACING.right && current.isFlipX()) {
 			current.flip(true, false);
 		}
+		return current.getTexture();
 	}
 
 	/**
