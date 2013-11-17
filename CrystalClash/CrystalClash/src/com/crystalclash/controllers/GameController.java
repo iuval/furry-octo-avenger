@@ -22,19 +22,12 @@ public class GameController {
 	public static ProfileService profileService = new ProfileService();
 	private static Hashtable<String, int[]> unitValues;
 
-<<<<<<< HEAD
 	public static float UNIT_MAX_HP = 0;
 	public static float UNIT_MAX_ATTACK = 0;
 	public static float UNIT_MAX_STEPS = 0;
 	public static int MAX_UNIT_PER_PLAYER = 0;
 	public static String SERVER_URL = "";
-=======
-	public static float unitMaxLife = 0;
-	public static float unitMaxAttack = 0;
-	public static float unitMaxSpeed = 0;
-	public static int unitsPerPlayer = 0;
 	public static int emblemCount = 0;
->>>>>>> 9e4b547... Agrega emblemas(con algunos de ejemplo) y Profile view donde se puede cambiar el emblema, y despues se podra cambiar el nombre y la pass ahi
 
 	public static void setUser(User user) {
 		currentUser = user;
@@ -48,21 +41,13 @@ public class GameController {
 		if (!dataLoaded) {
 			unitValues = UnitStatsPrefReader.load("data/prefs/stats.pref");
 
-<<<<<<< HEAD
-			String[] shared = UnitSharedDataPrefReader.load("data/prefs/shared.pref");
+			String[] shared = SharedDataPrefReader.load("data/prefs/shared.pref");
 			UNIT_MAX_HP = Float.parseFloat(shared[0]);
 			UNIT_MAX_ATTACK = Float.parseFloat(shared[1]);
 			UNIT_MAX_STEPS = Float.parseFloat(shared[2]);
 			MAX_UNIT_PER_PLAYER = Integer.parseInt(shared[3]);
 			SERVER_URL = shared[4];
-=======
-			int[] shared = SharedDataPrefReader.load("data/prefs/shared.pref");
-			unitMaxLife = shared[0];
-			unitMaxAttack = shared[1];
-			unitMaxSpeed = shared[2];
-			unitsPerPlayer = shared[3];
-			emblemCount = shared[4];
->>>>>>> 9e4b547... Agrega emblemas(con algunos de ejemplo) y Profile view donde se puede cambiar el emblema, y despues se podra cambiar el nombre y la pass ahi
+			emblemCount = Integer.parseInt(shared[5]);
 
 			dataLoaded = true;
 		}

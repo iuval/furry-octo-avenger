@@ -8,24 +8,15 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 
-<<<<<<< HEAD:CrystalClash/CrystalClash/src/com/crystalclash/util/UnitSharedDataPrefReader.java
-public class UnitSharedDataPrefReader {
-	public static String[] load(String internalPrefFile) {
-=======
 public class SharedDataPrefReader {
-	public static int[] load(String internalPrefFile) {
->>>>>>> 9e4b547... Agrega emblemas(con algunos de ejemplo) y Profile view donde se puede cambiar el emblema, y despues se podra cambiar el nombre y la pass ahi:CrystalClash/CrystalClash/src/com/crystalclash/util/SharedDataPrefReader.java
+	public static String[] load(String internalPrefFile) {
 		return load(Gdx.files.internal(internalPrefFile));
 	}
 
 	private static String[] load(FileHandle prefFile) {
 		BufferedReader reader = new BufferedReader(new InputStreamReader(
 				prefFile.read()), 64);
-<<<<<<< HEAD:CrystalClash/CrystalClash/src/com/crystalclash/util/UnitSharedDataPrefReader.java
-		String[] values = new String[5];
-=======
-		int[] values = new int[5];
->>>>>>> 9e4b547... Agrega emblemas(con algunos de ejemplo) y Profile view donde se puede cambiar el emblema, y despues se podra cambiar el nombre y la pass ahi:CrystalClash/CrystalClash/src/com/crystalclash/util/SharedDataPrefReader.java
+		String[] values = new String[6];
 		try {
 			while (true) {
 				String line = reader.readLine();
@@ -34,19 +25,12 @@ public class SharedDataPrefReader {
 				if (line.trim().length() == 0)
 					break;
 				else {
-<<<<<<< HEAD:CrystalClash/CrystalClash/src/com/crystalclash/util/UnitSharedDataPrefReader.java
 					values[0] = readValue(reader);
 					values[1] = readValue(reader);
 					values[2] = readValue(reader);
 					values[3] = readValue(reader);
 					values[4] = readValue(reader);
-=======
-					values[0] = Integer.parseInt(readValue(reader));
-					values[1] = Integer.parseInt(readValue(reader));
-					values[2] = Integer.parseInt(readValue(reader));
-					values[3] = Integer.parseInt(readValue(reader));
-					values[4] = Integer.parseInt(readValue(reader));
->>>>>>> 9e4b547... Agrega emblemas(con algunos de ejemplo) y Profile view donde se puede cambiar el emblema, y despues se podra cambiar el nombre y la pass ahi:CrystalClash/CrystalClash/src/com/crystalclash/util/SharedDataPrefReader.java
+					values[5] = readValue(reader);
 				}
 			}
 		} catch (Exception ex) {
