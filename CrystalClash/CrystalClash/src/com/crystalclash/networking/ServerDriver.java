@@ -24,6 +24,7 @@ public class ServerDriver {
 	private final static String ACTION_LIST_GAMES = "list_games";
 	private final static String ACTION_ENABLE_RANDOM = "enable_random";
 	private final static String ACTION_GAME_TURN = "game_turn";
+	private final static String UPDATE_USER = "update_user";
 
 	public static void sendSignIn(final String email, final String password) {
 		Map<String, String> data = new HashMap<String, String>();
@@ -85,7 +86,7 @@ public class ServerDriver {
 								.ProcessResponce(httpResponse);
 						if (values.getString("value").equals("ok")) {
 							JsonValue data = values.get("data");
-							String[][] games = new String[data.size][5];
+							String[][] games = new String[data.size][6];
 							JsonValue child;
 							for (int i = 0; i < games.length; i++) {
 								child = data.get(i);
@@ -94,6 +95,10 @@ public class ServerDriver {
 								games[i][2] = child.getString("victories");
 								games[i][3] = child.getString("turn");
 								games[i][4] = child.getString("state");
+								if (child.hasChild("emblem"))
+									games[i][5] = child.getString("emblem");
+								else
+									games[i][5] = "0";
 							}
 							MenuGames.getInstance().getGamesListSuccess(games);
 						} else {
@@ -156,6 +161,33 @@ public class ServerDriver {
 
 		System.out.println("Sending-> " + data);
 		Gdx.net.sendHttpRequest(getPost(ACTION_GAME_TURN, data),
+				new HttpResponseListener() {
+					@Override
+					public void handleHttpResponse(HttpResponse httpResponse) {
+						JsonValue values = ServerDriver
+								.ProcessResponce(httpResponse);
+						if (values.getString("value").equals("ok")) {
+							MenuGames.getInstance().sendGameTurnSuccess(values.getString("data"));
+						} else {
+							MenuGames.getInstance().sendGameTurnError(values.getString("message"));
+						}
+					}
+
+					@Override
+					public void failed(Throwable t) {
+						exceptionMessage();
+					}
+				});
+	}
+
+	public static void sendUpdateUser(String name, String email, int emplem) {
+		Map<String, String> data = new HashMap<String, String>();
+		data.put("name", name);
+		data.put("email", email);
+		data.put("emplem", emplem + "");
+
+		System.out.println("Sending-> " + data);
+		Gdx.net.sendHttpRequest(getPost(UPDATE_USER, data),
 				new HttpResponseListener() {
 					@Override
 					public void handleHttpResponse(HttpResponse httpResponse) {

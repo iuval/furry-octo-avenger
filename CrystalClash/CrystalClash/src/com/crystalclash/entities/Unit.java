@@ -40,6 +40,10 @@ public class Unit extends GameObject {
 		this.playerNumber = num;
 		this.unitName = unitName;
 
+<<<<<<< HEAD
+=======
+		GameController.loadSharedStats();
+>>>>>>> 9e4b547... Agrega emblemas(con algunos de ejemplo) y Profile view donde se puede cambiar el emblema, y despues se podra cambiar el nombre y la pass ahi
 		this.hitPoints = hp;
 		this.totalHitPoints = GameController.getUnitLife(unitName);
 		this.damage = GameController.getUnitDamage(unitName);

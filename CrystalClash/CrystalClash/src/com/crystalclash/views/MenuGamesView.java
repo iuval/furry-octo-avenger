@@ -180,8 +180,8 @@ public class MenuGamesView extends InputView {
 		GameListItem listingItem;
 		GameListItem canPlayItem = null;
 		for (int i = 0, len = games.length; i < len; i++) {
-			listingItem = new GameListItem(games[i][0], games[i][1], games[i][2], games[i][3], games[i][4],
-					skin, surrenderListener,
+			listingItem = new GameListItem(games[i][0], games[i][1], games[i][2], games[i][3], Integer.parseInt(games[i][5]), games[i][4],
+					listItemSkin, surrenderListener,
 					playListener);
 			gamesList[i] = listingItem;
 
@@ -364,8 +364,8 @@ public class MenuGamesView extends InputView {
 
 	public void enableRandomSuccess(String[] game) {
 		if (game != null) {
-			GameListItem listingItem = new GameListItem(game[0], game[1], game[2], game[3], game[4],
-					skin, surrenderListener,
+			GameListItem listingItem = new GameListItem(game[0], game[1], game[2], game[3], Integer.parseInt(game[5]), game[4],
+					listItemSkin, surrenderListener,
 					playListener);
 			// list.addActorAfter(gamesImage, listingItem);
 			list.addActor(listingItem);

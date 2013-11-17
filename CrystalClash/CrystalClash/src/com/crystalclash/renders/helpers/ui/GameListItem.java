@@ -11,12 +11,13 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
 import com.badlogic.gdx.scenes.scene2d.utils.Align;
+import com.crystalclash.renders.helpers.EmblemHelper;
 
 public class GameListItem extends Group {
 	public final String gameId;
 	public int turn;
 
-	public GameListItem(String gameId, String playerName, String victories, String turn,
+	public GameListItem(String gameId, String playerName, String victories, String turn, int emblem,
 			String state, Skin skin, EventListener surrenderListener,
 			EventListener playListener) {
 
@@ -50,8 +51,19 @@ public class GameListItem extends Group {
 		labelV.setAlignment(Align.center);
 		addActor(labelV);
 
-		Label labelTurn = new Label(turn, skin, "font", Color.LIGHT_GRAY);
-		labelTurn.setPosition(690, 110);
+		labelvictories.setSize(550, 70);
+		labelvictories.setPosition(220, 10);
+		labelvictories.setAlignment(Align.center);
+		btnPlay.addActor(labelvictories);
+
+		Image imgEmblem = new Image(EmblemHelper.getEmblem(emblem));
+		imgEmblem.setPosition(15, 15);
+		imgEmblem.setSize(160, 160);
+		btnPlay.addActor(imgEmblem);
+
+		Label labelTurn = new Label(turn, skin, "font", Color.WHITE);
+		labelTurn.setPosition(140, 64);
+		labelTurn.setSize(160, 160);
 		labelTurn.setAlignment(Align.center);
 		addActor(labelTurn);
 

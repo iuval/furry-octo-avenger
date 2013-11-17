@@ -38,6 +38,7 @@ import com.crystalclash.renders.helpers.ui.SuperAnimatedActor;
 import com.crystalclash.util.I18n;
 import com.crystalclash.views.MenuGamesView;
 import com.crystalclash.views.MenuLogInView;
+import com.crystalclash.views.ProfileView;
 import com.crystalclash.views.SplashView;
 import com.crystalclash.views.TutorialView;
 import com.crystalclash.views.WorldView;
@@ -61,6 +62,7 @@ public class GameEngine implements Screen {
 	private SplashView splashRender;
 	private MenuLogInView menuLogInRender;
 	private MenuGamesView menuGamesRender;
+	private ProfileView profileRender;
 	private TutorialView tutorialRender;
 	private WorldController world;
 	private WorldView worldRender;
@@ -161,6 +163,11 @@ public class GameEngine implements Screen {
 			background.addActor(menuLogInRender);
 			background.addActor(menuGamesRender);
 			break;
+		case InTranstionProfileAndMenuGames:
+			stage.addActor(imgBackground);
+			stage.addActor(profileRender);
+			stage.addActor(menuGamesRender);
+			break;
 		case InTranstionSplashAndMenuGames:
 			background.addActor(splashRender);
 			background.addActor(menuGamesRender);
@@ -176,6 +183,10 @@ public class GameEngine implements Screen {
 		case InTranstionMenuGamesAndGame:
 			stage.addActor(worldRender);
 			background.addActor(menuGamesRender);
+			break;
+		case InProfile:
+			stage.addActor(imgBackground);
+			stage.addActor(profileRender);
 			break;
 		case InGame:
 			inputManager.addProcessor(worldRender);
@@ -327,6 +338,27 @@ public class GameEngine implements Screen {
 					});
 				}
 			});
+		} else if (state == GameState.InProfile) {
+			profileRender.pushExitAnimation(t);
+			t.setCallback(new TweenCallback() {
+				@Override
+				public void onEvent(int type, BaseTween<?> source) {
+					profileRender.closed();
+					if (menuGamesRender == null) {
+						menuGamesRender = MenuGames.getInstance().getRender();
+					}
+					menuGamesRender.init();
+					setState(GameState.InTranstionProfileAndMenuGames);
+					menuGamesRender.pushEnterAnimation(Timeline.createSequence())
+							.setCallback(new TweenCallback() {
+								@Override
+								public void onEvent(int type, BaseTween<?> source) {
+									setState(GameState.InMenuGames);
+									menuGamesRender.shown();
+								}
+							}).start(tweenManager);
+				}
+			});
 		} else if (state == GameState.InGame) {
 			background.loadGamesList();
 			background.pushMoveToGamesList(background.pushShow(worldRender.pushExitAnimation(t)))
@@ -357,6 +389,32 @@ public class GameEngine implements Screen {
 						}
 					});
 		}
+		t.start(tweenManager);
+	}
+
+	public void openProfile() {
+		Timeline t = Timeline.createSequence();
+		menuGamesRender.pushExitAnimation(t);
+		t.setCallback(new TweenCallback() {
+			@Override
+			public void onEvent(int type, BaseTween<?> source) {
+				menuGamesRender.closed();
+				if (profileRender == null) {
+					profileRender = ProfileView.getInstance();
+				}
+				profileRender.init();
+				setState(GameState.InTranstionProfileAndMenuGames);
+				profileRender.pushEnterAnimation(Timeline.createSequence())
+						.setCallback(new TweenCallback() {
+							@Override
+							public void onEvent(int type, BaseTween<?> source) {
+								setState(GameState.InProfile);
+								profileRender.shown();
+							}
+						}).start(tweenManager);
+			}
+		});
+
 		t.start(tweenManager);
 	}
 
