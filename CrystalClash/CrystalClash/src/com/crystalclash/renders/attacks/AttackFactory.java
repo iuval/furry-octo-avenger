@@ -213,18 +213,18 @@ public class AttackFactory {
 	private void pushDarkessMageAttack(Timeline t, AttackUnitAction action, Group entities) {
 		Unit unit = action.origin.getUnit();
 
-		Image arrow = new Image(ResourceHelper.getUnitResourceTexture(unit.getName(), "projectile"));
-		arrow.setOrigin(arrow.getWidth() / 2, arrow.getHeight() / 2);
-		entities.addActor(arrow);
+		Image fireBall = new Image(ResourceHelper.getUnitResourceTexture(unit.getName(), "projectile"));
+		fireBall.setOrigin(fireBall.getWidth() / 2, fireBall.getHeight() / 2);
+		entities.addActor(fireBall);
 
-		// Calculate the arrow's path
+		// Calculate the fireBall's path
 		Path arrowPath = new Path();
 
 		PathManager.addArc(arrowPath,
 				action.origin.getCenterX(), action.origin.getCenterY() + 30,
 				action.target.getCenterX(), action.target.getCenterY() + 30,
-				arrow.getWidth() / 2,
-				arrow.getHeight() / 2);
+				fireBall.getWidth() / 2,
+				fireBall.getHeight() / 2);
 
 		float speed = CrystalClash.FIGTH_ANIMATION_SPEED / arrowPath.dots.size;
 
@@ -232,10 +232,10 @@ public class AttackFactory {
 		Vector2 second = arrowPath.dots.get(1).cpy();
 		float angleOrigin = second.sub(first).cpy().angle();
 
-		t.push(Tween.set(arrow, ActorAccessor.ALPHA).target(0))
-				.push(Tween.set(arrow, ActorAccessor.X).target(first.x))
-				.push(Tween.set(arrow, ActorAccessor.Y).target(first.y))
-				.push(Tween.set(arrow, ActorAccessor.ROTATION).target(angleOrigin));
+		t.push(Tween.set(fireBall, ActorAccessor.ALPHA).target(0))
+				.push(Tween.set(fireBall, ActorAccessor.X).target(first.x))
+				.push(Tween.set(fireBall, ActorAccessor.Y).target(first.y))
+				.push(Tween.set(fireBall, ActorAccessor.ROTATION).target(angleOrigin));
 
 		Vector2 prelast = arrowPath.dots.get(arrowPath.dots.size - 2).cpy();
 		Vector2 last = arrowPath.dots.get(arrowPath.dots.size - 1).cpy();
@@ -244,47 +244,47 @@ public class AttackFactory {
 		Timeline arrowTimeline = Timeline.createParallel();
 		arrowTimeline.delay(unit.getRender().fightAnim.getAnimationTime());
 
-		// Arrow rotation
+		// fireBall rotation
 		if (arrowPath.dots.get(0).x < arrowPath.dots.get(arrowPath.dots.size - 1).x) {
 			arrowTimeline.beginSequence();
-			arrowTimeline.push(Tween.to(arrow, ActorAccessor.ROTATION, CrystalClash.FIGTH_ANIMATION_SPEED / 2)
+			arrowTimeline.push(Tween.to(fireBall, ActorAccessor.ROTATION, CrystalClash.FIGTH_ANIMATION_SPEED / 2)
 					.target(0).ease(TweenEquations.easeNone));
-			arrowTimeline.push(Tween.set(arrow, ActorAccessor.ROTATION)
+			arrowTimeline.push(Tween.set(fireBall, ActorAccessor.ROTATION)
 					.target(360));
-			arrowTimeline.push(Tween.to(arrow, ActorAccessor.ROTATION, CrystalClash.FIGTH_ANIMATION_SPEED / 2)
+			arrowTimeline.push(Tween.to(fireBall, ActorAccessor.ROTATION, CrystalClash.FIGTH_ANIMATION_SPEED / 2)
 					.target(angleTarget)
 					.ease(TweenEquations.easeNone));
 			arrowTimeline.end();
 		} else {
-			arrowTimeline.push(Tween.to(arrow, ActorAccessor.ROTATION, CrystalClash.FIGTH_ANIMATION_SPEED)
+			arrowTimeline.push(Tween.to(fireBall, ActorAccessor.ROTATION, CrystalClash.FIGTH_ANIMATION_SPEED)
 					.target(angleTarget)
 					.ease(TweenEquations.easeNone));
 		}
 
-		// Arrow alpha
-		arrowTimeline.push(Tween.to(arrow, ActorAccessor.ALPHA, CrystalClash.FAST_ANIMATION_SPEED)
+		// fireBall alpha
+		arrowTimeline.push(Tween.to(fireBall, ActorAccessor.ALPHA, CrystalClash.FAST_ANIMATION_SPEED)
 				.target(1).ease(TweenEquations.easeNone));
 
-		// Arrow movement
+		// fireBall movement
 		arrowTimeline.beginSequence();
 		for (int i = 1; i < arrowPath.dots.size; i++) {
 			arrowTimeline.beginParallel();
 			Vector2 v = arrowPath.dots.get(i);
-			arrowTimeline.push(Tween.to(arrow, ActorAccessor.X, speed)
+			arrowTimeline.push(Tween.to(fireBall, ActorAccessor.X, speed)
 					.target(v.x).ease(TweenEquations.easeNone));
-			arrowTimeline.push(Tween.to(arrow, ActorAccessor.Y, speed)
+			arrowTimeline.push(Tween.to(fireBall, ActorAccessor.Y, speed)
 					.target(v.y).ease(TweenEquations.easeNone));
 			arrowTimeline.end();
 		}
 
 		arrowTimeline.end();
 
-		arrowTimeline.setUserData(new Object[] { arrow });
+		arrowTimeline.setUserData(new Object[] { fireBall });
 		arrowTimeline.setCallback(new TweenCallback() {
 			@Override
 			public void onEvent(int type, BaseTween<?> source) {
-				Image arrow = (Image) ((Object[]) source.getUserData())[0];
-				arrow.remove();
+				Image fireBall = (Image) ((Object[]) source.getUserData())[0];
+				fireBall.remove();
 			}
 		});
 
