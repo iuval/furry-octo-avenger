@@ -10,6 +10,7 @@ import aurelienribon.tweenengine.TweenManager;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
@@ -27,12 +28,14 @@ import com.crystalclash.controllers.GameController;
 import com.crystalclash.controllers.WorldController;
 import com.crystalclash.entities.Cell;
 import com.crystalclash.entities.Unit;
+import com.crystalclash.entities.helpers.AttackUnitAction;
 import com.crystalclash.entities.helpers.MoveUnitAction;
 import com.crystalclash.entities.helpers.NoneUnitAction;
 import com.crystalclash.renders.GameEngine;
 import com.crystalclash.renders.PathRender;
 import com.crystalclash.renders.UnitRender.FACING;
 import com.crystalclash.renders.UnitRender.STATE;
+import com.crystalclash.renders.attacks.AttackFactory;
 import com.crystalclash.renders.helpers.CellHelper;
 import com.crystalclash.renders.helpers.PathManager;
 import com.crystalclash.renders.helpers.ResourceHelper;
@@ -44,6 +47,8 @@ import com.crystalclash.util.I18n;
 public class TutorialView extends GameView {
 
 	private static TweenManager tweenManager;
+	private AttackFactory attacks;
+	private Group entities;
 
 	private Image fireArcher;
 	private Image balloon;
@@ -83,6 +88,7 @@ public class TutorialView extends GameView {
 		super(world);
 		messageIndex = 0;
 		movePathIndex = 0;
+		attacks = new AttackFactory(world);
 
 		load();
 		readTutorialScript();
@@ -207,6 +213,9 @@ public class TutorialView extends GameView {
 		imgDamageIcon.setPosition(740, 230);
 		imgLifeIcon.setPosition(900, 230);
 		imgMobilityIcon.setPosition(770, 175);
+		
+		entities = new Group();
+		addActor(entities);
 	}
 
 	private void readTutorialScript() {
@@ -939,20 +948,28 @@ public class TutorialView extends GameView {
 		tankAtt.push(tankMoveBack);
 
 		Timeline archerAttStart = Timeline.createSequence();
+		archerAttStart.setCallbackTriggers(TweenCallback.BEGIN);
 		archerAttStart.setCallback(new TweenCallback() {
 			@Override
 			public void onEvent(int type, BaseTween<?> source) {
 				archer.getRender().setState(STATE.fighting);
-				tank.damage(200);
+				world.cellAtByGrid(5, 3).state = Cell.ATTACK_TARGET_CENTER;
 			}
 		});
 
+		AttackUnitAction action = new AttackUnitAction(false);
+		action.origin = world.cellAtByGrid(3, 3);
+		action.target = world.cellAtByGrid(5, 3);
+		attacks.pushAttack(archerAttStart, action, entities);
+		
 		Timeline archerAttStop = Timeline.createSequence();
 		archerAttStop.delay(CrystalClash.FIGTH_ANIMATION_SPEED);
 		archerAttStop.setCallback(new TweenCallback() {
 			@Override
 			public void onEvent(int type, BaseTween<?> source) {
+				tank.damage(200);
 				archer.getRender().setState(STATE.idle);
+				world.cellAtByGrid(5, 3).state = Cell.NONE;
 			}
 		});
 
@@ -1015,13 +1032,11 @@ public class TutorialView extends GameView {
 		});
 		slayerAtt.push(slayerMoveBack);
 
-		Timeline tankM = Timeline.createSequence()
-				.beginParallel()
+		Timeline tankM = Timeline.createParallel()
 				.push(Tween.to(tank, UnitAccessor.X, CrystalClash.WALK_ANIMATION_SPEED)
 						.target(CellHelper.getUnitX(world.cellAtByGrid(4, 3))).ease(TweenEquations.easeNone))
 				.push(Tween.to(tank, UnitAccessor.Y, CrystalClash.WALK_ANIMATION_SPEED)
 						.target(CellHelper.getUnitY(world.cellAtByGrid(4, 3))).ease(TweenEquations.easeNone))
-				.end()
 				.setCallbackTriggers(TweenCallback.BEGIN | TweenCallback.COMPLETE)
 				.setCallback(new TweenCallback() {
 					@Override
@@ -1037,20 +1052,27 @@ public class TutorialView extends GameView {
 				});
 
 		Timeline archerAttStart = Timeline.createSequence();
+		archerAttStart.setCallbackTriggers(TweenCallback.BEGIN);
 		archerAttStart.setCallback(new TweenCallback() {
 			@Override
 			public void onEvent(int type, BaseTween<?> source) {
 				archer.getRender().setState(STATE.fighting);
-				tank.damage(200);
+				world.cellAtByGrid(5, 3).state = Cell.ATTACK_TARGET_CENTER;
 			}
 		});
-
+		
+		AttackUnitAction action = new AttackUnitAction(false);
+		action.origin = world.cellAtByGrid(3, 3);
+		action.target = world.cellAtByGrid(5, 3);
+		attacks.pushAttack(archerAttStart, action, entities);
+		
 		Timeline archerAttStop = Timeline.createSequence();
 		archerAttStop.delay(CrystalClash.FIGTH_ANIMATION_SPEED);
 		archerAttStop.setCallback(new TweenCallback() {
 			@Override
 			public void onEvent(int type, BaseTween<?> source) {
 				archer.getRender().setState(STATE.idle);
+				world.cellAtByGrid(5, 3).state = Cell.NONE;
 			}
 		});
 
@@ -1115,20 +1137,28 @@ public class TutorialView extends GameView {
 		slayerAtt.push(slayerMoveBack);
 
 		Timeline archerAttStart = Timeline.createSequence();
+		archerAttStart.setCallbackTriggers(TweenCallback.BEGIN);
 		archerAttStart.setCallback(new TweenCallback() {
 			@Override
 			public void onEvent(int type, BaseTween<?> source) {
 				archer.getRender().setState(STATE.fighting);
-				tank.damage(200);
+				world.cellAtByGrid(4, 3).state = Cell.ATTACK_TARGET_CENTER;
 			}
 		});
 
+		AttackUnitAction action = new AttackUnitAction(false);
+		action.origin = world.cellAtByGrid(3, 3);
+		action.target = world.cellAtByGrid(4, 3);
+		attacks.pushAttack(archerAttStart, action, entities);
+		
 		Timeline archerAttStop = Timeline.createSequence();
 		archerAttStop.delay(CrystalClash.FIGTH_ANIMATION_SPEED);
 		archerAttStop.setCallback(new TweenCallback() {
 			@Override
 			public void onEvent(int type, BaseTween<?> source) {
+				tank.damage(200);
 				archer.getRender().setState(STATE.idle);
+				world.cellAtByGrid(4, 3).state = Cell.NONE;
 			}
 		});
 

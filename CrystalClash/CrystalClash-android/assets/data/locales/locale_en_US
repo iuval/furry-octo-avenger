@@ -65,8 +65,8 @@ game_engine_user_back_ok = Let's get them
 game_engine_loading = Loading...
 
 tutorial_invitation_skip = It's not safe going to the battle field without training...\nAre you sure you don't want to try?
-tutorial_invitation_skip_yes = Play tutorial
-tutorial_invitation_skip_no = Skip tutorial
+tutorial_invitation_skip_yes = Skip tutorial
+tutorial_invitation_skip_no = Play tutorial
 
 menu_ganmes_surender = \"The wise warrior avoids the battle.\"\n- Sun Tzu
 menu_ganmes_surender_yes = Surrender
