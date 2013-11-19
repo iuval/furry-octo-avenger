@@ -12,6 +12,9 @@ public class PathRender extends Path {
 		MOVE, ATTACK
 	}
 
+	public static final float DOT_CENTER_X = 19f;
+	public static final float DOT_CENTER_Y = 19f;
+
 	public float time;
 	public int bigDotIndex;
 	private TextureRegion smallBall;

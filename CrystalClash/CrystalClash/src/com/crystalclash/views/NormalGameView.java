@@ -362,13 +362,17 @@ public class NormalGameView extends GameView {
 							selectedCell.getCenterX(),
 							selectedCell.getCenterY(),
 							cell.getCenterX(),
-							cell.getCenterY());
+							cell.getCenterY(),
+							PathRender.DOT_CENTER_X,
+							PathRender.DOT_CENTER_Y);
 				} else {
 					PathManager.addArc(p,
 							selectedCell.getCenterX(),
 							selectedCell.getCenterY(),
 							cell.getCenterX(),
-							cell.getCenterY());
+							cell.getCenterY(),
+							PathRender.DOT_CENTER_X,
+							PathRender.DOT_CENTER_Y);
 				}
 			} else {
 				saveAttack();
@@ -395,13 +399,17 @@ public class NormalGameView extends GameView {
 									selectedCell.getCenterX(),
 									selectedCell.getCenterY(),
 									cell.getCenterX(),
-									cell.getCenterY());
+									cell.getCenterY(),
+									PathRender.DOT_CENTER_X,
+									PathRender.DOT_CENTER_Y);
 						} else {
 							PathManager.addLine(p,
 									moves.peek().getCenterX(),
 									moves.peek().getCenterY(),
 									cell.getCenterX(),
-									cell.getCenterY());
+									cell.getCenterY(),
+									PathRender.DOT_CENTER_X,
+									PathRender.DOT_CENTER_Y);
 						}
 						moves.add(cell);
 						cell.addState(Cell.MOVE_TARGET);
@@ -438,7 +446,9 @@ public class NormalGameView extends GameView {
 									moves.get(i - 1).getCenterX(),
 									moves.get(i - 1).getCenterY(),
 									moves.get(i).getCenterX(),
-									moves.get(i).getCenterY());
+									moves.get(i).getCenterY(),
+									PathRender.DOT_CENTER_X,
+									PathRender.DOT_CENTER_Y);
 						}
 					} else {
 						if (moves.size > 1) {

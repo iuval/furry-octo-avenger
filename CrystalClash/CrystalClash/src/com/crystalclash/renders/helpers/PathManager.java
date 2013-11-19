@@ -14,9 +14,6 @@ public class PathManager {
 
 	private Hashtable<Unit, PathRender> paths;
 
-	public static final float POINT_CENTER_X = 19f;
-	public static final float POINT_CENTER_Y = 19f;
-
 	public static int STEP_COUNT_PER_SEGMENT;
 	public static float BIG_DOT_TIME;
 	public static TextureRegion SMALL_DOT_MOVE_TEXTURE;
@@ -76,7 +73,7 @@ public class PathManager {
 		paths.remove(u);
 	}
 
-	public static void addLine(Path p, float iniX, float iniY, float endX, float endY) {
+	public static void addLine(Path p, float iniX, float iniY, float endX, float endY, float xoffset, float yoffset) {
 		float dx = 0;
 		float dy = 0;
 		if (iniY == endY) {
@@ -111,15 +108,15 @@ public class PathManager {
 			}
 		}
 		while ((Math.abs(endY - iniY) > 5 || Math.abs(endX - iniX) > 5) && Math.abs(endY - iniY) < 5000 && Math.abs(endX - iniX) < 5000) {
-			p.add(iniX - POINT_CENTER_X, iniY - POINT_CENTER_Y);
+			addToPath(p, iniX, iniY, xoffset, yoffset);
 			iniX += dx;
 			iniY += dy;
 		}
 	}
 
-	public static void addArc(Path p, float iniX, float iniY, float endX, float endY) {
+	public static void addArc(Path p, float iniX, float iniY, float endX, float endY, float xoffset, float yoffset) {
 		if (iniX == endX)
-			addLine(p, iniX, iniY, endX, endY);
+			addLine(p, iniX, iniY, endX, endY, xoffset, yoffset);
 		else {
 			double a = 0;
 			double b = 0;
@@ -136,16 +133,20 @@ public class PathManager {
 			if (iniX < endX) {
 				for (float x = iniX; x < endX; x += dx) {
 					y = (float) (a * Math.pow(x, 2) + b * x + c);
-					p.add(x, y);
+					addToPath(p, x, y, xoffset, yoffset);
 				}
 			} else {
 				for (float x = iniX; x > endX; x -= dx) {
 					y = (float) (a * Math.pow(x, 2) + b * x + c);
-					p.add(x, y);
+					addToPath(p, x, y, xoffset, yoffset);
 				}
 			}
-			p.add(endX, endY);
+			addToPath(p, endX, endY, xoffset, yoffset);
 		}
+	}
+
+	private static void addToPath(Path p, float x, float y, float xoffset, float yoffset) {
+		p.add(x - xoffset, y - yoffset);
 	}
 
 	public static TextureRegion getSmallBallTexture(PathRender.TYPE type) {

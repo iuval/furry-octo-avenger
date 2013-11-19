@@ -1,6 +1,6 @@
 package com.crystalclash.renders.helpers.ui;
 
-
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -29,6 +29,9 @@ public class SuperAnimatedActor extends Actor {
 
 	@Override
 	public void draw(SpriteBatch batch, float parentAlpha) {
+		Color color = getColor();
+		batch.setColor(color.r, color.g, color.b, color.a * parentAlpha);
+
 		anim.draw(batch, getX(), getY());
 	}
 }
