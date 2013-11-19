@@ -28,6 +28,7 @@ public class MusicWrapper {
 	
 	public void stop(){
 		music.stop();
+		music.dispose();
 	}
 	
 	public boolean isPlaying(){

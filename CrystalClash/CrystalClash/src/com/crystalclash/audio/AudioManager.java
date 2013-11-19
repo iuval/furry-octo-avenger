@@ -29,7 +29,6 @@ public class AudioManager {
 		victory, defeat, draw
 	}
 	
-	private static Hashtable<String, Music> musicMap;
 	private static Hashtable<String, Sound> soundMap;
 	private static float volume;
 
@@ -39,28 +38,22 @@ public class AudioManager {
 		volume = 0.5f;
 		playing = null;
 
-		musicMap = new Hashtable<String, Music>();
 		soundMap = new Hashtable<String, Sound>();
 	}
 
 	public static Music getMusic(String path) {
-		if (musicMap.contains(path)) {
-			return musicMap.get(path);
-		} else {
-			Music m = FileUtil.getMusic(path);
-			musicMap.put(path, m);
-			return m;
-		}
+		Music m = FileUtil.getMusic(path);
+		return m;
 	}
 
 	public static Sound getUnitSFX(String unitName, String file) {
 		String path = String.format("%s/%s", unitName, file);
-		if (soundMap.contains(path)) {
+		if (soundMap.containsKey(path)) {
 			return soundMap.get(path);
 		} else {
 			Sound s = FileUtil.getUnitSFX(unitName, file);
 			soundMap.put(path, s);
-			return s;
+			return getUnitSFX(unitName, file);
 		}
 	}
 
