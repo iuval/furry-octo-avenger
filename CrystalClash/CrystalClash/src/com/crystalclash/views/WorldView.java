@@ -448,7 +448,6 @@ public class WorldView extends InputView {
 	}
 
 	public void deselectUnitInCell(Cell cell) {
-		statsPopup.hide();
 		if (cell != null)
 			cell.removeState(Cell.SELECTED);
 		hideActionsRing();
