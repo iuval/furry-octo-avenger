@@ -1,10 +1,12 @@
 package com.crystalclash.renders;
 
 
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.crystalclash.audio.AudioManager;
+import com.crystalclash.audio.AudioManager.SOUND;
 import com.crystalclash.entities.Unit;
 import com.crystalclash.renders.helpers.UnitHelper;
 import com.crystalclash.util.SuperAnimation;
@@ -30,6 +32,8 @@ public class UnitRender {
 	private Texture hpBar;
 	private float hpWidth;
 	private FACING facing = FACING.right;
+	
+	private Sound playing;
 
 	public UnitRender() {
 	}
@@ -65,7 +69,7 @@ public class UnitRender {
 			break;
 		case fighting: {
 			currnetAnim = fightAnim;
-			AudioManager.playSound(unit.getName() + "_attack");
+			AudioManager.playUnitSFX(unit.getName(), SOUND.attack);
 		}
 			break;
 		case walking: {
@@ -143,5 +147,13 @@ public class UnitRender {
 		ren.dieAnim = dieAnim.clone();
 		ren.setState(STATE.idle);
 		return ren;
+	}
+	
+	public void playSFX(SOUND sound){
+		if(playing != null){
+			playing.stop();
+		}
+		
+		playing = AudioManager.playUnitSFX(unit.getName(), sound);
 	}
 }

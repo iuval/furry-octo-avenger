@@ -1,6 +1,7 @@
 package com.crystalclash.audio;
 
 import java.util.Hashtable;
+import java.util.Random;
 
 import aurelienribon.tweenengine.BaseTween;
 import aurelienribon.tweenengine.Timeline;
@@ -10,6 +11,7 @@ import aurelienribon.tweenengine.TweenCallback;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import com.crystalclash.accessors.MusicAccessor;
+import com.crystalclash.controllers.GameController;
 import com.crystalclash.renders.GameEngine;
 import com.crystalclash.util.FileUtil;
 
@@ -19,7 +21,14 @@ public class AudioManager {
 		menu, tutorial, in_game, select_units, animations
 	}
 	
-	private static Hashtable<String, Music> musicMap;
+	public enum SOUND {
+		chose_attack, chose_move, chose_defend, place, select, attack
+	}
+	
+	public enum GAME_END_SFX {
+		victory, defeat, draw
+	}
+	
 	private static Hashtable<String, Sound> soundMap;
 	private static float volume;
 
@@ -29,27 +38,22 @@ public class AudioManager {
 		volume = 0.5f;
 		playing = null;
 
-		musicMap = new Hashtable<String, Music>();
 		soundMap = new Hashtable<String, Sound>();
 	}
 
 	public static Music getMusic(String path) {
-		if (musicMap.contains(path)) {
-			return musicMap.get(path);
-		} else {
-			Music m = FileUtil.getMusic(path);
-			musicMap.put(path, m);
-			return m;
-		}
+		Music m = FileUtil.getMusic(path);
+		return m;
 	}
 
-	public static Sound getSound(String path) {
-		if (soundMap.contains(path)) {
+	public static Sound getUnitSFX(String unitName, String file) {
+		String path = String.format("%s/%s", unitName, file);
+		if (soundMap.containsKey(path)) {
 			return soundMap.get(path);
 		} else {
-			Sound s = FileUtil.getSound(path);
+			Sound s = FileUtil.getUnitSFX(unitName, file);
 			soundMap.put(path, s);
-			return s;
+			return getUnitSFX(unitName, file);
 		}
 	}
 
@@ -61,10 +65,23 @@ public class AudioManager {
 
 	}
 
-	public static void playSound(String name) {
-		playing.setVolume(volume / 2);
-		getSound(String.format("data/audio/sfx/%s.mp3", name)).play(volume);
-		playing.setVolume(volume);
+	public static Sound playUnitSFX(String unitName, SOUND sound) {
+		int count = GameController.getUnitSoundCount(unitName, sound);
+		Random rand = new Random();
+
+		Sound ret = null;
+		if (count > 0) {
+			int index = rand.nextInt(count);
+			String file = String.format("%s_%s", sound.toString(), index);
+
+			ret = getUnitSFX(unitName, file);
+			ret.play(volume);
+		}
+		return ret;
+	}
+	
+	public static void playEndSound(GAME_END_SFX sound) {
+		FileUtil.getSound(sound.toString()).play(volume);
 	}
 
 	public static void volumeUp() {
@@ -118,6 +135,6 @@ public class AudioManager {
 		playing.play();
 
 		GameEngine.start(Timeline.createSequence()
-				.push(Tween.to(playing, MusicAccessor.VOLUME, 1f).target(volume)));
+				.push(Tween.to(playing, MusicAccessor.VOLUME, 1f).target(volume / 3)));
 	}
 }

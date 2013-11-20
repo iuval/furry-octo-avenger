@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.Array;
 import com.crystalclash.audio.AudioManager;
 import com.crystalclash.audio.AudioManager.MUSIC;
+import com.crystalclash.audio.AudioManager.SOUND;
 import com.crystalclash.controllers.GameController;
 import com.crystalclash.controllers.WorldController;
 import com.crystalclash.entities.Cell;
@@ -71,6 +72,8 @@ public class NormalGameView extends GameView {
 
 	@Override
 	public void onAttackAction() {
+		selectedUnit.getRender().playSFX(SOUND.chose_attack);
+		
 		setUnitAction(new AttackUnitAction(selectedUnit.isMelee()));
 		unitAction.origin = selectedCell;
 
@@ -80,6 +83,8 @@ public class NormalGameView extends GameView {
 
 	@Override
 	public void onDefendAction() {
+		selectedUnit.getRender().playSFX(SOUND.chose_defend);
+		
 		setUnitAction(new DefendUnitAction());
 		unitAction.origin = selectedCell;
 		defensiveUnits.add(selectedUnit);
@@ -89,6 +94,8 @@ public class NormalGameView extends GameView {
 
 	@Override
 	public void onMoveAction() {
+		selectedUnit.getRender().playSFX(SOUND.chose_move);
+		
 		setUnitAction(new MoveUnitAction());
 		unitAction.origin = selectedCell;
 		((MoveUnitAction) unitAction).moves.add(selectedCell);
@@ -486,6 +493,9 @@ public class NormalGameView extends GameView {
 
 					maxMoves = GameController.getUnitSpeed(selectedUnit.getName());
 					world.getRender().selectUnitInCell(selectedCell);
+					
+					if(!selectedUnit.isEnemy())
+						selectedUnit.getRender().playSFX(SOUND.select);
 				}
 			}
 		}

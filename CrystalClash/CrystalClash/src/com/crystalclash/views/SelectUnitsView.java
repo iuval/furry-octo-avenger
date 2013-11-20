@@ -12,6 +12,7 @@ import com.crystalclash.CrystalClash;
 import com.crystalclash.accessors.ActorAccessor;
 import com.crystalclash.audio.AudioManager;
 import com.crystalclash.audio.AudioManager.MUSIC;
+import com.crystalclash.audio.AudioManager.SOUND;
 import com.crystalclash.controllers.GameController;
 import com.crystalclash.controllers.WorldController;
 import com.crystalclash.entities.Cell;
@@ -141,6 +142,8 @@ public class SelectUnitsView extends GameView {
 					if (world.player == 2)
 						selectedUnit.getRender().setFacing(FACING.left);
 					selectedUnit.setPosition(x, y);
+
+					selectedUnit.getRender().playSFX(SOUND.place);
 				}
 			}
 		}

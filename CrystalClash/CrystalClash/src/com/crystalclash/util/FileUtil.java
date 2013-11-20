@@ -6,6 +6,7 @@ import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.crystalclash.controllers.GameController;
 import com.crystalclash.util.UnitAnimPrefReader.UnitPrefReaderData;
 
 public class FileUtil {
@@ -47,7 +48,11 @@ public class FileUtil {
 		return Gdx.audio.newMusic(Gdx.files.internal(path));
 	}
 
-	public static Sound getSound(String path) {
-		return Gdx.audio.newSound(Gdx.files.internal(path));
+	public static Sound getUnitSFX(String unitName, String file) {
+		return Gdx.audio.newSound(Gdx.files.internal(String.format("data/audio/units/%s/%s/%s.mp3", GameController.getUnitElement(unitName), unitName, file)));
+	}
+	
+	public static Sound getSound(String file) {
+		return Gdx.audio.newSound(Gdx.files.internal(String.format("data/audio/sfx/%s.mp3", file)));
 	}
 }
