@@ -72,8 +72,6 @@ public class NormalGameView extends GameView {
 
 	@Override
 	public void onAttackAction() {
-		selectedUnit.getRender().playSFX(SOUND.chose_attack);
-		
 		setUnitAction(new AttackUnitAction(selectedUnit.isMelee()));
 		unitAction.origin = selectedCell;
 
@@ -94,8 +92,6 @@ public class NormalGameView extends GameView {
 
 	@Override
 	public void onMoveAction() {
-		selectedUnit.getRender().playSFX(SOUND.chose_move);
-		
 		setUnitAction(new MoveUnitAction());
 		unitAction.origin = selectedCell;
 		((MoveUnitAction) unitAction).moves.add(selectedCell);
@@ -548,6 +544,7 @@ public class NormalGameView extends GameView {
 	}
 
 	private void saveAttack() {
+		selectedUnit.getRender().playSFX(SOUND.chose_attack);
 		clearAvailableCells();
 		AttackUnitAction action = (AttackUnitAction) unitAction;
 		if (action.target != null) {
@@ -567,6 +564,7 @@ public class NormalGameView extends GameView {
 	}
 
 	private void saveMove() {
+		selectedUnit.getRender().playSFX(SOUND.chose_move);
 		clearAvailableCells();
 		MoveUnitAction action = (MoveUnitAction) unitAction;
 		if (action.moves.size > 1) {
