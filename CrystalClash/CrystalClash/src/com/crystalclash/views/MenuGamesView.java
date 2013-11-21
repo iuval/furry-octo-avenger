@@ -112,7 +112,7 @@ public class MenuGamesView extends InputView {
 		initSkin();
 
 		lblHeading = new Label(String.format("Welcome %s", GameController.getUser().getName()),
-				new LabelStyle(ResourceHelper.getBigFont(), Color.WHITE));
+				new LabelStyle(ResourceHelper.getNormalFont(), Color.WHITE));
 		lblHeading.setPosition(-CrystalClash.WIDTH, CrystalClash.HEIGHT - 50);
 		addActor(lblHeading);
 
