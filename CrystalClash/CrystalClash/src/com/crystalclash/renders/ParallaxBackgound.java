@@ -47,20 +47,12 @@ public class ParallaxBackgound extends Group {
 
 	public void loadGamesList() {
 		if (!gmesListLoaded) {
-			addLevel(new MovingContinuousParallaxLevel(ResourceHelper.getTexture("menu/level1_clouds"), 0, 0, 0.03f, -0.1f));
-			addLevel(new StaticParallaxLevel(ResourceHelper.getTexture("menu/level1_columns"), 0, 0, 0.03f));
+			addLevel(new MovingContinuousParallaxLevel(ResourceHelper.getTexture("menu/level1"), -427, 0, 0.03f, -0.1f));
+			addLevel(new MovingContinuousParallaxLevel(ResourceHelper.getTexture("menu/level2"), -427, 0, 0.04f, -0.3f));
+			addLevel(new MovingContinuousParallaxLevel(ResourceHelper.getTexture("menu/level3"), -427, 0, 0.06f, -0.5f));
 
-			addLevel(new MovingContinuousParallaxLevel(ResourceHelper.getTexture("menu/level2_clouds"), -427, 0, 0.05f, -0.5f));
-			addLevel(new StaticParallaxLevel(ResourceHelper.getTexture("menu/level2_shadows"), -427, 0, 0.05f));
-			addLevel(new StaticParallaxLevel(ResourceHelper.getTexture("menu/level2_columns"), -427, 0, 0.05f));
-
-			addLevel(new MovingContinuousParallaxLevel(ResourceHelper.getTexture("menu/level3_clouds"), -427, 0, 0.1f, -1));
-			addLevel(new StaticParallaxLevel(ResourceHelper.getTexture("menu/level3_shadows"), -427, 0, 0.1f));
-			addLevel(new StaticParallaxLevel(ResourceHelper.getTexture("menu/level3_columns"), -427, 0, 0.1f));
-
-			addLevel(new MovingParallaxLevel(ResourceHelper.getTexture("menu/nimbus4"), 700, -(CrystalClash.WIDTH + rand.nextInt(500)), 0.1f, -0.4f));
-			addLevel(new MovingParallaxLevel(ResourceHelper.getTexture("menu/nimbus5"), 600, -(CrystalClash.WIDTH + rand.nextInt(500)), 0.05f, -0.6f));
-			addLevel(new MovingParallaxLevel(ResourceHelper.getTexture("menu/nimbus6"), 400, -(CrystalClash.WIDTH + rand.nextInt(500)), 0.08f, -1f));
+			addLevel(new MovingParallaxLevel(ResourceHelper.getTexture("menu/nimbus5"), 300, -rand.nextInt(2000), 0.05f, -0.6f));
+			addLevel(new MovingParallaxLevel(ResourceHelper.getTexture("menu/nimbus4"), 600, -rand.nextInt(2000), 0.07f, -0.4f));
 
 			gmesListLoaded = true;
 		}
