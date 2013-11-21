@@ -8,7 +8,6 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
-import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
@@ -38,7 +37,6 @@ public class MenuGamesView extends InputView {
 
 	private MenuGames controller;
 	private SuperScrollPane superScroll;
-	private Image gamesImage;
 
 	private VerticalGroup list;
 	private GameListItem[] gamesList;
@@ -160,12 +158,6 @@ public class MenuGamesView extends InputView {
 		superScroll.scrollPane.setForceScroll(false, true);
 		superScroll.scrollPane.invalidate();
 		addActor(superScroll);
-		gamesImage = new
-				Image(ResourceHelper.getTexture("menu/current_games_header"));
-
-		list.addActor(gamesImage);
-		Image menuImage = new Image(ResourceHelper.getTexture("menu/new_games_header"));
-		list.addActor(menuImage);
 
 		Group inviteButtons = new Group();
 		inviteButtons.setBounds(0, 0, list.getWidth(), 160);
@@ -185,7 +177,6 @@ public class MenuGamesView extends InputView {
 		btnNewInvite.setBounds(inviteButtons.getWidth() / 2, 0, inviteButtons.getWidth() / 2, 160);
 		inviteButtons.addActor(btnNewInvite);
 
-		// list.addActorAfter(menuImage, inviteButtons);
 		list.addActor(inviteButtons);
 
 		superScroll.load();
@@ -265,18 +256,13 @@ public class MenuGamesView extends InputView {
 
 		listItemSkin = new Skin();
 		listItemSkin.add("font", ResourceHelper.getBigFont());
-		listItemSkin.add("play_up",
-				ResourceHelper.getTexture("menu/games_list_item_green"));
-		listItemSkin.add("play_down",
-				ResourceHelper.getTexture("menu/games_list_item_green"));
-		listItemSkin.add("wait_up",
-				ResourceHelper.getTexture("menu/games_list_item_red"));
-		listItemSkin.add("wait_down",
-				ResourceHelper.getTexture("menu/games_list_item_red"));
-		listItemSkin.add("surrender_up",
-				ResourceHelper.getTexture("menu/button_surrender"));
-		listItemSkin.add("surrender_down",
-				ResourceHelper.getTexture("menu/button_surrender_pressed"));
+		listItemSkin.add("play_up", ResourceHelper.getTexture("menu/games_list/flag_green"));
+		listItemSkin.add("play_down", ResourceHelper.getTexture("menu/games_list/flag_green"));
+		listItemSkin.add("wait_up", ResourceHelper.getTexture("menu/games_list/flag_red"));
+		listItemSkin.add("wait_down", ResourceHelper.getTexture("menu/games_list/flag_red"));
+		listItemSkin.add("surrender_up", ResourceHelper.getTexture("menu/games_list/surrender"));
+		listItemSkin.add("surrender_down", ResourceHelper.getTexture("menu/games_list/surrender"));
+		listItemSkin.add("background", ResourceHelper.getTexture("menu/games_list/item"));
 
 		TextButtonStyle playStyle = new TextButtonStyle();
 		playStyle.font = listItemSkin.getFont("font");

@@ -267,8 +267,10 @@ public class GameEngine implements Screen {
 							@Override
 							public void onEvent(int type, BaseTween<?> source) {
 								menuLogInRender.shown();
-								menuGamesRender.remove();
-								splashRender.remove();
+								if (menuGamesRender != null)
+									menuGamesRender.remove();
+								if (splashRender != null)
+									splashRender.remove();
 							};
 						}).start(tweenManager);
 			}
