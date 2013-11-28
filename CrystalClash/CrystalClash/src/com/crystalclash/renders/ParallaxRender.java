@@ -5,15 +5,14 @@ import java.util.Random;
 import aurelienribon.tweenengine.Timeline;
 import aurelienribon.tweenengine.Tween;
 
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.utils.Array;
 import com.crystalclash.CrystalClash;
 import com.crystalclash.accessors.ActorAccessor;
 import com.crystalclash.renders.helpers.ResourceHelper;
 
-public class ParallaxBackgound extends Group {
-	private static ParallaxBackgound instance;
+public class ParallaxRender extends Group {
+	private static ParallaxRender instance;
 	private Array<ParallaxLevel> levels;
 	private Random rand;
 
@@ -21,38 +20,40 @@ public class ParallaxBackgound extends Group {
 	private boolean gmesListLoaded = false;
 	private float bg_y;
 
-	public static ParallaxBackgound getInstance() {
+	public static ParallaxRender getInstance() {
 		if (instance == null)
-			instance = new ParallaxBackgound();
+			instance = new ParallaxRender();
 		return instance;
 	}
 
-	private ParallaxBackgound() {
+	private ParallaxRender() {
 		rand = new Random();
 		levels = new Array<ParallaxLevel>();
-		TextureRegion t = ResourceHelper.getTexture("menu/background");
 		setBounds(0, -854, 1280, 1708);
-		addLevel(new StaticParallaxLevel(t, 0, 0, 0.01f));
+		addLevel(new BackgroundParallaxLevel(ResourceHelper.getTexture("menu/background"), -427, 0.01f));
+		addLevel(new BackgroundParallaxLevel(ResourceHelper.getTexture("menu/column1"), 854, 970));
 		setColor(getColor().r, getColor().g, getColor().b, 0);
 	}
 
 	public void loadLogIn() {
 		if (!logInLoaded) {
-			addLevel(new MovingParallaxLevel(ResourceHelper.getTexture("menu/nimbus1"), 1400, -(CrystalClash.WIDTH + rand.nextInt(500)), 0.1f, -0.6f));
-			addLevel(new MovingParallaxLevel(ResourceHelper.getTexture("menu/nimbus2"), 1200, -(CrystalClash.WIDTH + rand.nextInt(500)), 0.05f, -1f));
-			addLevel(new MovingParallaxLevel(ResourceHelper.getTexture("menu/nimbus3"), 1000, -(CrystalClash.WIDTH + rand.nextInt(500)), 0.08f, -2f));
+			addLevel(new NimbusParallaxLevel(ResourceHelper.getTexture("menu/nimbus1"), 1400, -(CrystalClash.WIDTH + rand.nextInt(500)), -0.6f));
+			addLevel(new NimbusParallaxLevel(ResourceHelper.getTexture("menu/nimbus2"), 1200, -(CrystalClash.WIDTH + rand.nextInt(500)), -1f));
+			addLevel(new NimbusParallaxLevel(ResourceHelper.getTexture("menu/nimbus3"), 1000, -(CrystalClash.WIDTH + rand.nextInt(500)), -2f));
 			logInLoaded = true;
 		}
 	}
 
 	public void loadGamesList() {
 		if (!gmesListLoaded) {
-			addLevel(new MovingContinuousParallaxLevel(ResourceHelper.getTexture("menu/level1"), -427, 0, 0.03f, -0.1f));
-			addLevel(new MovingContinuousParallaxLevel(ResourceHelper.getTexture("menu/level2"), -427, 0, 0.04f, -0.3f));
-			addLevel(new MovingContinuousParallaxLevel(ResourceHelper.getTexture("menu/level3"), -427, 0, 0.06f, -0.5f));
+			addLevel(new CloudParallaxLevel(ResourceHelper.getTexture("menu/level1"), -427, 0, -0.1f));
+			addLevel(new CloudParallaxLevel(ResourceHelper.getTexture("menu/level2"), -427, 0, -0.3f));
+			addLevel(new CloudParallaxLevel(ResourceHelper.getTexture("menu/level3"), -427, 0, -0.5f));
 
-			addLevel(new MovingParallaxLevel(ResourceHelper.getTexture("menu/nimbus5"), 300, -rand.nextInt(2000), 0.05f, -0.6f));
-			addLevel(new MovingParallaxLevel(ResourceHelper.getTexture("menu/nimbus4"), 600, -rand.nextInt(2000), 0.07f, -0.4f));
+			addLevel(new NimbusParallaxLevel(ResourceHelper.getTexture("menu/nimbus5"), 300, -rand.nextInt(2000), -0.6f));
+			addLevel(new NimbusParallaxLevel(ResourceHelper.getTexture("menu/nimbus4"), 600, -rand.nextInt(2000), -0.4f));
+
+			addLevel(new ColumnParallaxLevel(ResourceHelper.getTexture("menu/column2"), 0, 970));
 
 			gmesListLoaded = true;
 		}

@@ -4,13 +4,13 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.crystalclash.CrystalClash;
 
-public class MovingContinuousParallaxLevel extends ParallaxLevel {
+public class CloudParallaxLevel extends ParallaxLevel {
 	private Image image_1;
 	private Image image_2;
 	private float side_speed;
 
-	public MovingContinuousParallaxLevel(TextureRegion t, float y, float x, float s, float sideSpeed) {
-		super(y, x, s);
+	public CloudParallaxLevel(TextureRegion t, float y, float x, float sideSpeed) {
+		super(y, x);
 		image_1 = new Image(t);
 		addActor(image_1);
 		image_1.setX(0);
@@ -30,6 +30,5 @@ public class MovingContinuousParallaxLevel extends ParallaxLevel {
 		if (image_2.getX() <= -CrystalClash.WIDTH) {
 			image_2.setX(CrystalClash.WIDTH);
 		}
-		super.update(dy);
 	}
 }

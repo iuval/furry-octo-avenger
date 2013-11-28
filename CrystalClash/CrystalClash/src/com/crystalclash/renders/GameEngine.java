@@ -67,7 +67,7 @@ public class GameEngine implements Screen {
 	private static TweenManager tweenManager;
 	private static SuperAnimatedActor loadingTexture;
 
-	private ParallaxBackgound background;
+	private ParallaxRender background;
 
 	@Override
 	public void show() {
@@ -100,7 +100,7 @@ public class GameEngine implements Screen {
 		I18n.load();
 
 		stage.addActor(BlackOverlay.build());
-		ParallaxBackgound.getInstance().loadGamesList();
+		ParallaxRender.getInstance().loadGamesList();
 		// stage.addActor(MessageBox.build());
 		// if (loadingTexture != null)
 		// stage.addActor(loadingTexture);
@@ -118,7 +118,7 @@ public class GameEngine implements Screen {
 	private void load() {
 		ResourceHelper.slowLoad();
 
-		background = ParallaxBackgound.getInstance();
+		background = ParallaxRender.getInstance();
 		stage.addActor(background);
 
 		tweenManager.update(Float.MIN_VALUE);
@@ -243,7 +243,7 @@ public class GameEngine implements Screen {
 	public void openMenuLogIn() {
 		Timeline t = Timeline.createSequence();
 		if (state == GameState.InMenuGames) {
-			ParallaxBackgound.getInstance().pushMoveToLogin(t);
+			ParallaxRender.getInstance().pushMoveToLogin(t);
 			menuGamesRender.pushExitAnimation(t);
 		} else if (state == GameState.InSplash) {
 			splashRender.pushExitAnimation(t);
@@ -260,7 +260,7 @@ public class GameEngine implements Screen {
 					menuLogInRender = MenuLogIn.getInstance().getRender();
 				}
 				menuLogInRender.init();
-				ParallaxBackgound.getInstance().loadLogIn();
+				ParallaxRender.getInstance().loadLogIn();
 				setState(GameState.InMenuLogIn);
 				menuLogInRender.pushEnterAnimation(Timeline.createSequence())
 						.setCallback(new TweenCallback() {

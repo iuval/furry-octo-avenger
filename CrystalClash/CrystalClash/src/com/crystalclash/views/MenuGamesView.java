@@ -4,12 +4,8 @@ import aurelienribon.tweenengine.Timeline;
 import aurelienribon.tweenengine.Tween;
 
 import com.badlogic.gdx.Input.Keys;
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
@@ -22,7 +18,7 @@ import com.crystalclash.audio.AudioManager.MUSIC;
 import com.crystalclash.controllers.GameController;
 import com.crystalclash.controllers.MenuGames;
 import com.crystalclash.renders.GameEngine;
-import com.crystalclash.renders.ParallaxBackgound;
+import com.crystalclash.renders.ParallaxRender;
 import com.crystalclash.renders.TutorialInvitation;
 import com.crystalclash.renders.helpers.ResourceHelper;
 import com.crystalclash.renders.helpers.ui.GameListItem;
@@ -41,14 +37,15 @@ public class MenuGamesView extends InputView {
 	private VerticalGroup list;
 	private GameListItem[] gamesList;
 
-	private Label lblHeading;
+	private TextButton btnProfile;
 	private TextButton btnLogOut;
 
 	private InputListener surrenderListener;
 	private InputListener playListener;
-	private Skin listItemSkin;
+	private Skin skin;
+
 	private TextButton btnNewRandom;
-	private TextButton btnNewInvite;
+	// private TextButton btnNewInvite;
 	private TextButton btnMusic;
 
 	private TutorialInvitation tutoInv;
@@ -69,12 +66,7 @@ public class MenuGamesView extends InputView {
 	@Override
 	public void init() {
 		// GameController.setTutorialNotDone();
-		ParallaxBackgound.getInstance().setY(0);
-		if (!GameController.isTutorialDone()) {
-			loadTutorial();
-		} else {
-			loadGameList();
-		}
+		ParallaxRender.getInstance().setY(0);
 	}
 
 	@Override
@@ -82,40 +74,26 @@ public class MenuGamesView extends InputView {
 		AudioManager.playMusic(MUSIC.menu);
 		Timeline aux = Timeline.createParallel();
 
-		lblHeading.setText("Welcome " + GameController.getUser().getName());
-		aux.push(Tween.to(lblHeading, ActorAccessor.X, CrystalClash.SLOW_ANIMATION_SPEED)
-				.target(50))
-				.push(Tween.to(btnLogOut, ActorAccessor.Y, CrystalClash.SLOW_ANIMATION_SPEED)
-						.target(CrystalClash.HEIGHT - btnLogOut.getHeight() - 10))
+		btnProfile.setText("Welcome " + GameController.getUser().getName());
+		aux.push(Tween.to(btnLogOut, ActorAccessor.Y, CrystalClash.SLOW_ANIMATION_SPEED)
+				.target(CrystalClash.HEIGHT - btnLogOut.getHeight() - 10))
 				.push(Tween.to(btnMusic, ActorAccessor.Y, CrystalClash.SLOW_ANIMATION_SPEED)
-						.target(CrystalClash.HEIGHT - btnMusic.getHeight() - 10))
-				.push(Tween.to(superScroll, ActorAccessor.X, CrystalClash.SLOW_ANIMATION_SPEED)
-						.target(0));
+						.target(CrystalClash.HEIGHT - btnMusic.getHeight() - 10));
 		return t.push(aux);
 	}
 
 	@Override
 	public Timeline pushExitAnimation(Timeline t) {
+		superScroll.scrollPane.setScrollY(0);
 		t.beginParallel()
-				.push(Tween.to(lblHeading, ActorAccessor.X, CrystalClash.SLOW_ANIMATION_SPEED)
-						.target(-CrystalClash.WIDTH))
 				.push(Tween.to(btnLogOut, ActorAccessor.Y, CrystalClash.SLOW_ANIMATION_SPEED)
 						.target(CrystalClash.HEIGHT))
 				.push(Tween.to(btnMusic, ActorAccessor.Y, CrystalClash.SLOW_ANIMATION_SPEED)
-						.target(CrystalClash.HEIGHT))
-				.push(Tween.to(superScroll, ActorAccessor.X, CrystalClash.SLOW_ANIMATION_SPEED)
-						.target(CrystalClash.WIDTH));
+						.target(CrystalClash.HEIGHT));
 		return t.end();
 	}
 
 	private void load() {
-		initSkin();
-
-		lblHeading = new Label(String.format("Welcome %s", GameController.getUser().getName()),
-				new LabelStyle(ResourceHelper.getNormalFont(), Color.WHITE));
-		lblHeading.setPosition(-CrystalClash.WIDTH, CrystalClash.HEIGHT - 50);
-		addActor(lblHeading);
-
 		btnLogOut = new TextButton("Log Out", ResourceHelper.getButtonStyle());
 		btnLogOut.setPosition(CrystalClash.WIDTH - btnLogOut.getWidth() - 50,
 				CrystalClash.HEIGHT);
@@ -150,7 +128,7 @@ public class MenuGamesView extends InputView {
 				loadGameList();
 			}
 		});
-		superScroll.setBounds(CrystalClash.WIDTH, 0, CrystalClash.WIDTH, CrystalClash.HEIGHT - 80);
+		superScroll.setBounds(-120, 0, CrystalClash.WIDTH, CrystalClash.HEIGHT);
 		superScroll.scrollPane.setScrollingDisabled(true, false);
 		superScroll.scrollPane.setOverscroll(false, true);
 		superScroll.scrollPane.setSmoothScrolling(true);
@@ -159,27 +137,14 @@ public class MenuGamesView extends InputView {
 		superScroll.scrollPane.invalidate();
 		addActor(superScroll);
 
-		Group inviteButtons = new Group();
-		inviteButtons.setBounds(0, 0, list.getWidth(), 160);
-
-		btnNewRandom = new TextButton("New random game", ResourceHelper.getOuterButtonStyle());
-		btnNewRandom.setBounds(0, 0, inviteButtons.getWidth() / 2, 160);
-		btnNewRandom.addListener(new ClickListener() {
-			@Override
-			public void clicked(InputEvent event, float x, float y) {
-				((TextButton) event.getListenerActor()).setText("Loading...");
-				controller.enableRandom();
-			}
-		});
-		inviteButtons.addActor(btnNewRandom);
-
-		btnNewInvite = new TextButton("Invite friend", ResourceHelper.getOuterButtonStyle());
-		btnNewInvite.setBounds(inviteButtons.getWidth() / 2, 0, inviteButtons.getWidth() / 2, 160);
-		inviteButtons.addActor(btnNewInvite);
-
-		list.addActor(inviteButtons);
-
+		initSkin();
 		superScroll.load();
+
+		if (!GameController.isTutorialDone()) {
+			loadTutorial();
+		} else {
+			loadGameList();
+		}
 	}
 
 	private void loadTutorial() {
@@ -199,13 +164,15 @@ public class MenuGamesView extends InputView {
 				gamesList[i].remove();
 			}
 		}
+		list.addActor(btnProfile);
+
 		gamesList = new GameListItem[games.length];
 
 		GameListItem listingItem;
 		GameListItem canPlayItem = null;
 		for (int i = 0, len = games.length; i < len; i++) {
 			listingItem = new GameListItem(games[i][0], games[i][1], games[i][2], games[i][3], games[i][4],
-					listItemSkin, surrenderListener,
+					skin, surrenderListener,
 					playListener);
 			gamesList[i] = listingItem;
 
@@ -222,6 +189,7 @@ public class MenuGamesView extends InputView {
 				}
 			}
 		}
+		list.addActor(btnNewRandom);
 		GameEngine.hideLoading();
 	}
 
@@ -254,33 +222,58 @@ public class MenuGamesView extends InputView {
 			}
 		};
 
-		listItemSkin = new Skin();
-		listItemSkin.add("font", ResourceHelper.getBigFont());
-		listItemSkin.add("play_up", ResourceHelper.getTexture("menu/games_list/flag_green"));
-		listItemSkin.add("play_down", ResourceHelper.getTexture("menu/games_list/flag_green"));
-		listItemSkin.add("wait_up", ResourceHelper.getTexture("menu/games_list/flag_red"));
-		listItemSkin.add("wait_down", ResourceHelper.getTexture("menu/games_list/flag_red"));
-		listItemSkin.add("surrender_up", ResourceHelper.getTexture("menu/games_list/surrender"));
-		listItemSkin.add("surrender_down", ResourceHelper.getTexture("menu/games_list/surrender"));
-		listItemSkin.add("background", ResourceHelper.getTexture("menu/games_list/item"));
+		skin = new Skin();
+		skin.add("font", ResourceHelper.getBigFont());
+		skin.add("play_up", ResourceHelper.getTexture("menu/games_list/flag_green"));
+		skin.add("play_down", ResourceHelper.getTexture("menu/games_list/flag_green"));
+		skin.add("wait_up", ResourceHelper.getTexture("menu/games_list/flag_red"));
+		skin.add("wait_down", ResourceHelper.getTexture("menu/games_list/flag_red"));
+		skin.add("surrender_up", ResourceHelper.getTexture("menu/games_list/surrender"));
+		skin.add("surrender_down", ResourceHelper.getTexture("menu/games_list/surrender"));
+		skin.add("new_battle_up", ResourceHelper.getTexture("menu/games_list/new_battle"));
+		skin.add("new_battle_down", ResourceHelper.getTexture("menu/games_list/new_battle"));
+		skin.add("profile_up", ResourceHelper.getTexture("menu/games_list/player_info"));
+		skin.add("profile_down", ResourceHelper.getTexture("menu/games_list/player_info"));
+		skin.add("background", ResourceHelper.getTexture("menu/games_list/item"));
 
 		TextButtonStyle playStyle = new TextButtonStyle();
-		playStyle.font = listItemSkin.getFont("font");
-		playStyle.up = listItemSkin.getDrawable("play_up");
-		playStyle.down = listItemSkin.getDrawable("play_down");
-		listItemSkin.add("playStyle", playStyle);
+		playStyle.font = skin.getFont("font");
+		playStyle.up = skin.getDrawable("play_up");
+		playStyle.down = skin.getDrawable("play_down");
+		skin.add("playStyle", playStyle);
 
 		TextButtonStyle waitStyle = new TextButtonStyle();
-		waitStyle.font = listItemSkin.getFont("font");
-		waitStyle.up = listItemSkin.getDrawable("wait_up");
-		waitStyle.down = listItemSkin.getDrawable("wait_down");
-		listItemSkin.add("waitStyle", waitStyle);
+		waitStyle.font = skin.getFont("font");
+		waitStyle.up = skin.getDrawable("wait_up");
+		waitStyle.down = skin.getDrawable("wait_down");
+		skin.add("waitStyle", waitStyle);
 
 		TextButtonStyle surrenderStyle = new TextButtonStyle();
-		surrenderStyle.font = listItemSkin.getFont("font");
-		surrenderStyle.up = listItemSkin.getDrawable("surrender_up");
-		surrenderStyle.down = listItemSkin.getDrawable("surrender_down");
-		listItemSkin.add("surrenderStyle", surrenderStyle);
+		surrenderStyle.font = skin.getFont("font");
+		surrenderStyle.up = skin.getDrawable("surrender_up");
+		surrenderStyle.down = skin.getDrawable("surrender_down");
+		skin.add("surrenderStyle", surrenderStyle);
+
+		TextButtonStyle newRandomStyle = new TextButtonStyle();
+		newRandomStyle.font = skin.getFont("font");
+		newRandomStyle.up = skin.getDrawable("new_battle_up");
+		newRandomStyle.down = skin.getDrawable("new_battle_down");
+
+		btnNewRandom = new TextButton("New random game", newRandomStyle);
+		btnNewRandom.addListener(new ClickListener() {
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+				((TextButton) event.getListenerActor()).setText("Loading...");
+				controller.enableRandom();
+			}
+		});
+
+		TextButtonStyle profileStyle = new TextButtonStyle();
+		profileStyle.font = skin.getFont("font");
+		profileStyle.up = skin.getDrawable("profile_up");
+		profileStyle.down = skin.getDrawable("profile_down");
+
+		btnProfile = new TextButton("New random game", profileStyle);
 	}
 
 	public void listGamesError(String message) {
@@ -293,7 +286,7 @@ public class MenuGamesView extends InputView {
 	public void enableRandomSuccess(String[] game) {
 		if (game != null) {
 			GameListItem listingItem = new GameListItem(game[0], game[1], game[2], game[3], game[4],
-					listItemSkin, surrenderListener,
+					skin, surrenderListener,
 					playListener);
 			// list.addActorAfter(gamesImage, listingItem);
 			list.addActor(listingItem);
@@ -341,7 +334,7 @@ public class MenuGamesView extends InputView {
 	@Override
 	public void act(float delta) {
 
-		ParallaxBackgound.getInstance().updateY(superScroll.scrollPane.getScrollY());
+		ParallaxRender.getInstance().updateY(superScroll.scrollPane.getScrollY());
 
 		super.act(delta);
 	}
