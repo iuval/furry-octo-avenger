@@ -1,22 +1,27 @@
 package com.crystalclash.views;
 
 import aurelienribon.tweenengine.Timeline;
-import aurelienribon.tweenengine.Tween;
 
 import com.badlogic.gdx.Input.Keys;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
+import com.badlogic.gdx.scenes.scene2d.ui.Button;
+import com.badlogic.gdx.scenes.scene2d.ui.Button.ButtonStyle;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.crystalclash.CrystalClash;
-import com.crystalclash.accessors.ActorAccessor;
 import com.crystalclash.audio.AudioManager;
 import com.crystalclash.audio.AudioManager.MUSIC;
 import com.crystalclash.controllers.GameController;
 import com.crystalclash.controllers.MenuGames;
+import com.crystalclash.entities.User;
 import com.crystalclash.renders.GameEngine;
 import com.crystalclash.renders.ParallaxRender;
 import com.crystalclash.renders.TutorialInvitation;
@@ -37,16 +42,13 @@ public class MenuGamesView extends InputView {
 	private VerticalGroup list;
 	private GameListItem[] gamesList;
 
-	private TextButton btnProfile;
-	private TextButton btnLogOut;
+	private Group grpProfile;
 
 	private InputListener surrenderListener;
 	private InputListener playListener;
 	private Skin skin;
 
 	private TextButton btnNewRandom;
-	// private TextButton btnNewInvite;
-	private TextButton btnMusic;
 
 	private TutorialInvitation tutoInv;
 
@@ -72,52 +74,16 @@ public class MenuGamesView extends InputView {
 	@Override
 	public Timeline pushEnterAnimation(Timeline t) {
 		AudioManager.playMusic(MUSIC.menu);
-		Timeline aux = Timeline.createParallel();
-
-		btnProfile.setText("Welcome " + GameController.getUser().getName());
-		aux.push(Tween.to(btnLogOut, ActorAccessor.Y, CrystalClash.SLOW_ANIMATION_SPEED)
-				.target(CrystalClash.HEIGHT - btnLogOut.getHeight() - 10))
-				.push(Tween.to(btnMusic, ActorAccessor.Y, CrystalClash.SLOW_ANIMATION_SPEED)
-						.target(CrystalClash.HEIGHT - btnMusic.getHeight() - 10));
-		return t.push(aux);
+		return t;
 	}
 
 	@Override
 	public Timeline pushExitAnimation(Timeline t) {
 		superScroll.scrollPane.setScrollY(0);
-		t.beginParallel()
-				.push(Tween.to(btnLogOut, ActorAccessor.Y, CrystalClash.SLOW_ANIMATION_SPEED)
-						.target(CrystalClash.HEIGHT))
-				.push(Tween.to(btnMusic, ActorAccessor.Y, CrystalClash.SLOW_ANIMATION_SPEED)
-						.target(CrystalClash.HEIGHT));
-		return t.end();
+		return t;
 	}
 
 	private void load() {
-		btnLogOut = new TextButton("Log Out", ResourceHelper.getButtonStyle());
-		btnLogOut.setPosition(CrystalClash.WIDTH - btnLogOut.getWidth() - 50,
-				CrystalClash.HEIGHT);
-		btnLogOut.addListener(new ClickListener() {
-			@Override
-			public void clicked(InputEvent event, float x, float y) {
-				System.out.println("LogOut");
-				controller.logOut();
-			}
-		});
-		addActor(btnLogOut);
-
-		btnMusic = new TextButton(String.format("Music %s", AudioManager.getVolume() == 0 ? "OFF" : "ON"),
-				ResourceHelper.getButtonStyle());
-		btnMusic.setPosition(CrystalClash.WIDTH - btnLogOut.getWidth() - 100 - btnMusic.getWidth(),
-				CrystalClash.HEIGHT);
-		btnMusic.addListener(new ClickListener() {
-			@Override
-			public void clicked(InputEvent event, float x, float y) {
-				btnMusic.setText(String.format("Music %s", (AudioManager.toogleVolume() == 0 ? "OFF" : "ON")));
-			}
-		});
-		addActor(btnMusic);
-
 		list = new VerticalGroup();
 		list.setWidth(CrystalClash.WIDTH);
 
@@ -164,7 +130,7 @@ public class MenuGamesView extends InputView {
 				gamesList[i].remove();
 			}
 		}
-		list.addActor(btnProfile);
+		list.addActor(grpProfile);
 
 		gamesList = new GameListItem[games.length];
 
@@ -232,8 +198,11 @@ public class MenuGamesView extends InputView {
 		skin.add("surrender_down", ResourceHelper.getTexture("menu/games_list/surrender"));
 		skin.add("new_battle_up", ResourceHelper.getTexture("menu/games_list/new_battle"));
 		skin.add("new_battle_down", ResourceHelper.getTexture("menu/games_list/new_battle"));
-		skin.add("profile_up", ResourceHelper.getTexture("menu/games_list/player_info"));
-		skin.add("profile_down", ResourceHelper.getTexture("menu/games_list/player_info"));
+		skin.add("sound_off_up", ResourceHelper.getTexture("menu/games_list/sound_off"));
+		skin.add("sound_off_down", ResourceHelper.getTexture("menu/games_list/sound_off_pressed"));
+		skin.add("sound_on_up", ResourceHelper.getTexture("menu/games_list/sound_on"));
+		skin.add("logout_up", ResourceHelper.getTexture("menu/games_list/logout"));
+		skin.add("logout_down", ResourceHelper.getTexture("menu/games_list/logout_pressed"));
 		skin.add("background", ResourceHelper.getTexture("menu/games_list/item"));
 
 		TextButtonStyle playStyle = new TextButtonStyle();
@@ -268,12 +237,59 @@ public class MenuGamesView extends InputView {
 			}
 		});
 
-		TextButtonStyle profileStyle = new TextButtonStyle();
-		profileStyle.font = skin.getFont("font");
-		profileStyle.up = skin.getDrawable("profile_up");
-		profileStyle.down = skin.getDrawable("profile_down");
+		grpProfile = new Group();
+		Image imbProfile = new Image(ResourceHelper.getTexture("menu/games_list/player_info"));
+		grpProfile.addActor(imbProfile);
+		grpProfile.setSize(imbProfile.getWidth(), imbProfile.getHeight());
 
-		btnProfile = new TextButton("New random game", profileStyle);
+		ButtonStyle soundStyle = new ButtonStyle();
+		soundStyle.up = skin.getDrawable("sound_off_up");
+		soundStyle.down = skin.getDrawable("sound_off_down");
+		soundStyle.checked = skin.getDrawable("sound_on_up");
+		final Button btnSound = new Button(soundStyle);
+		btnSound.setPosition(840, 170);
+		btnSound.setChecked(AudioManager.getVolume() == 0);
+		btnSound.addListener(new ClickListener() {
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+				AudioManager.toogleVolume();
+				btnSound.setChecked(AudioManager.getVolume() == 0);
+			}
+		});
+		grpProfile.addActor(btnSound);
+
+		ButtonStyle logoutStyle = new ButtonStyle();
+		logoutStyle.up = skin.getDrawable("logout_up");
+		logoutStyle.down = skin.getDrawable("logout_down");
+		final Button btnLogout = new Button(logoutStyle);
+		btnLogout.setPosition(840, 70);
+		btnLogout.addListener(new ClickListener() {
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+				System.out.println("LogOut");
+				controller.logOut();
+			}
+		});
+		grpProfile.addActor(btnLogout);
+
+		User u = GameController.getUser();
+
+		Label lblUserName = new Label(u.getName(), skin, "font", Color.WHITE);
+		lblUserName.setPosition(250, 200);
+		grpProfile.addActor(lblUserName);
+
+		Label lblUserD = new Label("40", skin, "font", Color.WHITE);
+		lblUserD.setPosition(360, 90);
+		grpProfile.addActor(lblUserD);
+
+		Label lblUserV = new Label("150", skin, "font", Color.WHITE);
+		lblUserV.setPosition(520, 100);
+		grpProfile.addActor(lblUserV);
+
+		Label lblUserL = new Label("20", skin, "font", Color.WHITE);
+		lblUserL.setPosition(630, 90);
+		grpProfile.addActor(lblUserL);
+
 	}
 
 	public void listGamesError(String message) {

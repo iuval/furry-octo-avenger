@@ -40,21 +40,20 @@ public class GameListItem extends Group {
 		addActor(btnPlay);
 
 		Label lblName = new Label(playerName, skin, "font", Color.WHITE);
-		lblName.setSize(550, 70);
-		lblName.setPosition(270, 159);
+		lblName.setSize(550, 100);
+		lblName.setPosition(200, 200);
 		lblName.setAlignment(Align.center);
 		addActor(lblName);
 
-		Label labelvictories = new Label(victories + " victories", skin, "font", Color.GREEN);
+		Label labelV = new Label(victories, skin, "font", Color.WHITE);
+		labelV.setSize(420, 100);
+		labelV.setPosition(240, 90);
+		labelV.setAlignment(Align.center);
+		addActor(labelV);
 
-		labelvictories.setSize(550, 70);
-		labelvictories.setPosition(270, 120);
-		labelvictories.setAlignment(Align.center);
-		addActor(labelvictories);
-
-		Label labelTurn = new Label("Turn " + turn, skin, "font", Color.LIGHT_GRAY);
-		labelTurn.setSize(550, 70);
-		labelTurn.setPosition(270, 59);
+		Label labelTurn = new Label(turn, skin, "font", Color.LIGHT_GRAY);
+		labelTurn.setSize(560, 60);
+		labelTurn.setPosition(700, 130);
 		addActor(labelTurn);
 
 		// surrender icon
