@@ -15,6 +15,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
+import com.badlogic.gdx.scenes.scene2d.utils.Align;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.crystalclash.CrystalClash;
 import com.crystalclash.audio.AudioManager;
@@ -42,6 +43,7 @@ public class MenuGamesView extends InputView {
 	private VerticalGroup list;
 	private GameListItem[] gamesList;
 
+	private Group grpNewRandom;
 	private Group grpProfile;
 
 	private InputListener surrenderListener;
@@ -155,7 +157,7 @@ public class MenuGamesView extends InputView {
 				}
 			}
 		}
-		list.addActor(btnNewRandom);
+		list.addActor(grpNewRandom);
 		GameEngine.hideLoading();
 	}
 
@@ -196,8 +198,6 @@ public class MenuGamesView extends InputView {
 		skin.add("wait_down", ResourceHelper.getTexture("menu/games_list/flag_red"));
 		skin.add("surrender_up", ResourceHelper.getTexture("menu/games_list/surrender"));
 		skin.add("surrender_down", ResourceHelper.getTexture("menu/games_list/surrender"));
-		skin.add("new_battle_up", ResourceHelper.getTexture("menu/games_list/new_battle"));
-		skin.add("new_battle_down", ResourceHelper.getTexture("menu/games_list/new_battle"));
 		skin.add("sound_off_up", ResourceHelper.getTexture("menu/games_list/sound_off"));
 		skin.add("sound_off_down", ResourceHelper.getTexture("menu/games_list/sound_off_pressed"));
 		skin.add("sound_on_up", ResourceHelper.getTexture("menu/games_list/sound_on"));
@@ -223,12 +223,16 @@ public class MenuGamesView extends InputView {
 		surrenderStyle.down = skin.getDrawable("surrender_down");
 		skin.add("surrenderStyle", surrenderStyle);
 
+		grpNewRandom = new Group();
+		Image imgNewRandom = new Image(ResourceHelper.getTexture("menu/games_list/new_battle"));
+		grpNewRandom.addActor(imgNewRandom);
+		grpNewRandom.setSize(imgNewRandom.getWidth(), imgNewRandom.getHeight());
+		
 		TextButtonStyle newRandomStyle = new TextButtonStyle();
 		newRandomStyle.font = skin.getFont("font");
-		newRandomStyle.up = skin.getDrawable("new_battle_up");
-		newRandomStyle.down = skin.getDrawable("new_battle_down");
 
 		btnNewRandom = new TextButton("New random game", newRandomStyle);
+		btnNewRandom.setPosition(400, 180);
 		btnNewRandom.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
@@ -236,11 +240,12 @@ public class MenuGamesView extends InputView {
 				controller.enableRandom();
 			}
 		});
+		grpNewRandom.addActor(btnNewRandom);
 
 		grpProfile = new Group();
-		Image imbProfile = new Image(ResourceHelper.getTexture("menu/games_list/player_info"));
-		grpProfile.addActor(imbProfile);
-		grpProfile.setSize(imbProfile.getWidth(), imbProfile.getHeight());
+		Image imgProfile = new Image(ResourceHelper.getTexture("menu/games_list/player_info"));
+		grpProfile.addActor(imgProfile);
+		grpProfile.setSize(imgProfile.getWidth(), imgProfile.getHeight());
 
 		ButtonStyle soundStyle = new ButtonStyle();
 		soundStyle.up = skin.getDrawable("sound_off_up");
@@ -275,15 +280,16 @@ public class MenuGamesView extends InputView {
 		User u = GameController.getUser();
 
 		Label lblUserName = new Label(u.getName(), skin, "font", Color.WHITE);
-		lblUserName.setPosition(250, 200);
+		lblUserName.setPosition(290, 200);
+		lblUserName.setAlignment(Align.center);
 		grpProfile.addActor(lblUserName);
 
 		Label lblUserD = new Label("40", skin, "font", Color.WHITE);
-		lblUserD.setPosition(360, 90);
+		lblUserD.setPosition(370, 90);
 		grpProfile.addActor(lblUserD);
 
 		Label lblUserV = new Label("150", skin, "font", Color.WHITE);
-		lblUserV.setPosition(520, 100);
+		lblUserV.setPosition(500, 110);
 		grpProfile.addActor(lblUserV);
 
 		Label lblUserL = new Label("20", skin, "font", Color.WHITE);
