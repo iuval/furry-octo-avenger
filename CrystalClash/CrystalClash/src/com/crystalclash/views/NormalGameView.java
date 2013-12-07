@@ -544,11 +544,11 @@ public class NormalGameView extends GameView {
 	}
 
 	private void saveAttack() {
-		selectedUnit.getRender().playSFX(SOUND.chose_attack);
 		clearAvailableCells();
 		AttackUnitAction action = (AttackUnitAction) unitAction;
 		if (action.target != null) {
 			attackActions.add(action);
+			selectedUnit.getRender().playSFX(SOUND.chose_attack);
 		} else {
 			paths.removePath(selectedCell.getUnit());
 			setUnitAction(new NoneUnitAction());
@@ -564,11 +564,11 @@ public class NormalGameView extends GameView {
 	}
 
 	private void saveMove() {
-		selectedUnit.getRender().playSFX(SOUND.chose_move);
 		clearAvailableCells();
 		MoveUnitAction action = (MoveUnitAction) unitAction;
 		if (action.moves.size > 1) {
 			moveActions.add(action);
+			selectedUnit.getRender().playSFX(SOUND.chose_move);
 		} else {
 			paths.removePath(selectedCell.getUnit());
 			setUnitAction(new NoneUnitAction());

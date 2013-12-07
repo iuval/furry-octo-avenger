@@ -14,6 +14,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.Align;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.crystalclash.controllers.GameController;
 import com.crystalclash.renders.helpers.ResourceHelper;
+import com.crystalclash.util.I18n;
 
 public class UnitThumbsList extends Group {
 	private Table table;
@@ -25,7 +26,7 @@ public class UnitThumbsList extends Group {
 
 	public UnitThumbsList(final UnitListSelectListener unitThumbListener, final UnitItemSplashListener unitSplashListener) {
 		lblUnitsCount = new Label("", new LabelStyle(ResourceHelper.getBigFont(), Color.WHITE));
-		lblMessage = new Label("Units placed", new LabelStyle(ResourceHelper.getBigFont(), Color.WHITE));
+		lblMessage = new Label(I18n.t("unit_list"), new LabelStyle(ResourceHelper.getBigFont(), Color.WHITE));
 
 		imgTableBg = new Image(ResourceHelper.getTexture("in_game/first_turn/list_background"));
 		addActor(imgTableBg);

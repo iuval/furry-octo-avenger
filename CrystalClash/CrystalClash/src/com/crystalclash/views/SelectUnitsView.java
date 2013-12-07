@@ -23,6 +23,7 @@ import com.crystalclash.renders.helpers.ResourceHelper;
 import com.crystalclash.renders.helpers.ui.UnitItemSplashListener;
 import com.crystalclash.renders.helpers.ui.UnitListSelectListener;
 import com.crystalclash.renders.helpers.ui.UnitThumbsList;
+import com.crystalclash.util.I18n;
 
 public class SelectUnitsView extends GameView {
 	private int unitCount = 0;
@@ -120,7 +121,7 @@ public class SelectUnitsView extends GameView {
 	}
 
 	private void updateUnitsCountLabel() {
-		unitList.setUnitCountText(unitCount + " of " + GameController.MAX_UNIT_PER_PLAYER);
+		unitList.setUnitCountText(unitCount + " " + I18n.t("unit_list_count") + " "+ GameController.MAX_UNIT_PER_PLAYER);
 	}
 
 	@Override

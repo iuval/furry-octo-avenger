@@ -81,3 +81,6 @@ tutorial_leave_middle_no = Stay
 tutorial_leave_end = Are you sure you want to leave?\nWe are almost finished...
 tutorial_leave_end_yes = Leave
 tutorial_leave_end_no = Stay
+
+unit_list = Units placed
+unit_list_count = of
