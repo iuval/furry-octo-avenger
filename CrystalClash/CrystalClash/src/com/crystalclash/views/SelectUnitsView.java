@@ -43,6 +43,7 @@ public class SelectUnitsView extends GameView {
 
 	public void load() {
 		GameController.loadSharedStats();
+		AudioManager.loadFirstTurnSFX();
 
 		unitList = new UnitThumbsList(new UnitListSelectListener() {
 			@Override

@@ -112,6 +112,6 @@ public class Profile implements Serializable {
 		else
 			tutorialDone = Boolean.valueOf(s);
 
-		AudioManager.setVolume(json.readValue("volume", Float.class, 0.5f, jsonData));
+		AudioManager.setVolume(json.readValue("volume", Float.class, 1f, jsonData));
 	}
 }
