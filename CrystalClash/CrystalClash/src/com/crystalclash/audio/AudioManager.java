@@ -109,7 +109,7 @@ public class AudioManager {
 		volume = vol;
 
 		if (playing != null)
-			playing.setVolume(volume);
+			playing.setVolume(volume / 2);
 	}
 
 	public static float getVolume() {
@@ -141,7 +141,7 @@ public class AudioManager {
 		playing.play();
 
 		GameEngine.start(Timeline.createSequence()
-				.push(Tween.to(playing, MusicAccessor.VOLUME, 0.5f).target(volume)));
+				.push(Tween.to(playing, MusicAccessor.VOLUME, 0.5f).target(volume / 2)));
 	}
 
 	public static void loadFirstTurnSFX() {
