@@ -50,6 +50,7 @@ public class SelectUnitsView extends GameView {
 			public void select(String unitName, boolean selected, float x, float y) {
 				if (selected) {
 					selectedUnitName = unitName;
+					GameEngine.start(world.getRender().pushHideGameMenuButtons(Timeline.createParallel()));
 					world.getRender().showStatsPopupFirstTurn(selectedUnitName);
 				} else {
 					desSelectUnit();
@@ -90,17 +91,18 @@ public class SelectUnitsView extends GameView {
 	}
 
 	private void enterSplash() {
-		GameEngine.start(Timeline.createSequence()
+		GameEngine.start(world.getRender().pushHideGameMenuButtons(Timeline.createSequence())
 				.push(Tween.to(unitSplash, ActorAccessor.Y, CrystalClash.SLOW_ANIMATION_SPEED)
 						.target(0)
-						.ease(TweenEquations.easeOutBounce)));
+						.ease(TweenEquations.easeOutQuint)));
 	}
 
 	private void exitSplash() {
 		GameEngine.start(Timeline.createSequence()
 				.push(Tween.to(unitSplash, ActorAccessor.Y, CrystalClash.SLOW_ANIMATION_SPEED)
 						.target(CrystalClash.HEIGHT)
-						.ease(TweenEquations.easeInOutBack)));
+						.ease(TweenEquations.easeInQuint))
+				.push(world.getRender().pushShowGameMenuButtons(Timeline.createSequence())));
 	}
 
 	private boolean canPlaceUnit() {
@@ -176,6 +178,7 @@ public class SelectUnitsView extends GameView {
 		unitList.desSelect();
 		selectedUnitName = null;
 		selectedUnit = null;
+		GameEngine.start(world.getRender().pushShowGameMenuButtons(Timeline.createParallel()));
 	}
 
 	@Override

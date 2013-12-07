@@ -460,7 +460,7 @@ public class WorldView extends InputView {
 	}
 
 	public void showStatsPopupFirstTurn(String unitName) {
-		statsPopup.show(unitName, UnitStatsPopup.FIXED_BOT);
+		statsPopup.show(unitName, UnitStatsPopup.FIXED_TOP);
 	}
 
 	public void hideStatsPopup() {
