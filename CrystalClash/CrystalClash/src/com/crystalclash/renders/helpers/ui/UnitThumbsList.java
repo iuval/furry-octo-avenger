@@ -20,10 +20,12 @@ public class UnitThumbsList extends Group {
 	private Image imgTableBg;
 	private ScrollPane scrollPane;
 	private Label lblUnitsCount;
+	private Label lblMessage;
 	private UnitThumb selectedThumb;
 
 	public UnitThumbsList(final UnitListSelectListener unitThumbListener, final UnitItemSplashListener unitSplashListener) {
 		lblUnitsCount = new Label("", new LabelStyle(ResourceHelper.getBigFont(), Color.WHITE));
+		lblMessage = new Label("Units placed", new LabelStyle(ResourceHelper.getBigFont(), Color.WHITE));
 
 		imgTableBg = new Image(ResourceHelper.getTexture("in_game/first_turn/list_background"));
 		addActor(imgTableBg);
@@ -31,7 +33,8 @@ public class UnitThumbsList extends Group {
 		table = new Table();
 		scrollPane = new ScrollPane(table);
 		scrollPane.setPosition(10, 155);
-		lblUnitsCount.setPosition(250, 50);
+		lblMessage.setPosition(230, 85);
+		lblUnitsCount.setPosition(275, 50);
 		scrollPane.setScrollingDisabled(true, false);
 		scrollPane.setOverscroll(false, true);
 		scrollPane.setSmoothScrolling(true);
@@ -84,6 +87,7 @@ public class UnitThumbsList extends Group {
 		}
 
 		addActor(lblUnitsCount);
+		addActor(lblMessage);
 	}
 
 	public void setUnitCountText(String str) {
