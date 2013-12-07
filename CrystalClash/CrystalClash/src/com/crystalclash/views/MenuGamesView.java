@@ -4,6 +4,7 @@ import aurelienribon.tweenengine.Timeline;
 
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
@@ -40,8 +41,12 @@ public class MenuGamesView extends InputView {
 	private MenuGames controller;
 	private SuperScrollPane superScroll;
 
+	private Group grpScroll;
+	private Group grpColumns;
 	private VerticalGroup list;
 	private GameListItem[] gamesList;
+
+	private final TextureRegion txtColumn;
 
 	private Group grpNewRandom;
 	private Group grpProfile;
@@ -57,6 +62,7 @@ public class MenuGamesView extends InputView {
 	public MenuGamesView(MenuGames menu) {
 		this.controller = menu;
 
+		txtColumn = ResourceHelper.getTexture("menu/column2");
 		load();
 	}
 
@@ -70,7 +76,6 @@ public class MenuGamesView extends InputView {
 	@Override
 	public void init() {
 		// GameController.setTutorialNotDone();
-		ParallaxRender.getInstance().setY(0);
 	}
 
 	@Override
@@ -86,17 +91,27 @@ public class MenuGamesView extends InputView {
 	}
 
 	private void load() {
+		grpScroll = new Group();
+		grpScroll.setBounds(0, 0, CrystalClash.WIDTH, CrystalClash.HEIGHT);
+
+		grpColumns = new Group();
+		grpColumns.setPosition(970, CrystalClash.HEIGHT);
+		grpColumns.addActor(new Image(ResourceHelper.getTexture("menu/column1")));
+		grpScroll.addActor(grpColumns);
+
 		list = new VerticalGroup();
-		list.setWidth(CrystalClash.WIDTH);
+		list.setWidth(1047);
+		list.setPosition(0, CrystalClash.HEIGHT);
+		grpScroll.addActor(list);
 
 		// put the table inside a scrollpane
-		superScroll = new SuperScrollPane(list, new SuperScrollPaneRefreshCallback() {
+		superScroll = new SuperScrollPane(grpScroll, new SuperScrollPaneRefreshCallback() {
 			@Override
 			public void refresh() {
 				loadGameList();
 			}
 		});
-		superScroll.setBounds(-120, 0, CrystalClash.WIDTH, CrystalClash.HEIGHT);
+		superScroll.setBounds(0, 0, CrystalClash.WIDTH, CrystalClash.HEIGHT);
 		superScroll.scrollPane.setScrollingDisabled(true, false);
 		superScroll.scrollPane.setOverscroll(false, true);
 		superScroll.scrollPane.setSmoothScrolling(true);
@@ -158,6 +173,19 @@ public class MenuGamesView extends InputView {
 			}
 		}
 		list.addActor(grpNewRandom);
+
+		float colH = -CrystalClash.HEIGHT;
+		Image col;
+		while (colH > -superScroll.scrollPane.getHeight()) {
+			col = new Image(txtColumn);
+			col.setY(colH);
+			grpColumns.addActor(col);
+			colH -= CrystalClash.HEIGHT;
+		}
+		col = new Image(txtColumn);
+		col.setY(colH);
+		grpColumns.addActor(col);
+
 		GameEngine.hideLoading();
 	}
 
@@ -227,7 +255,7 @@ public class MenuGamesView extends InputView {
 		Image imgNewRandom = new Image(ResourceHelper.getTexture("menu/games_list/new_battle"));
 		grpNewRandom.addActor(imgNewRandom);
 		grpNewRandom.setSize(imgNewRandom.getWidth(), imgNewRandom.getHeight());
-		
+
 		TextButtonStyle newRandomStyle = new TextButtonStyle();
 		newRandomStyle.font = skin.getFont("font");
 
@@ -327,7 +355,7 @@ public class MenuGamesView extends InputView {
 	// INPUT PROCESSOR--------------------------------------------
 	@Override
 	public boolean keyDown(int keycode) {
-
+		System.out.println("" + superScroll.getY());
 		if (keycode == Keys.BACK) {
 			controller.logOut();
 		}

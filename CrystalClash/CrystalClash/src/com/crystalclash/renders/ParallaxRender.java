@@ -31,7 +31,6 @@ public class ParallaxRender extends Group {
 		levels = new Array<ParallaxLevel>();
 		setBounds(0, -854, 1280, 1708);
 		addLevel(new BackgroundParallaxLevel(ResourceHelper.getTexture("menu/background"), -427, 0.01f));
-		addLevel(new BackgroundParallaxLevel(ResourceHelper.getTexture("menu/column1"), 854, 970));
 		setColor(getColor().r, getColor().g, getColor().b, 0);
 	}
 
@@ -51,9 +50,6 @@ public class ParallaxRender extends Group {
 			addLevel(new CloudParallaxLevel(ResourceHelper.getTexture("menu/level3"), -427, 0, -0.5f));
 
 			addLevel(new NimbusParallaxLevel(ResourceHelper.getTexture("menu/nimbus5"), 300, -rand.nextInt(2000), -0.6f));
-			addLevel(new NimbusParallaxLevel(ResourceHelper.getTexture("menu/nimbus4"), 600, -rand.nextInt(2000), -0.4f));
-
-			addLevel(new ColumnParallaxLevel(ResourceHelper.getTexture("menu/column2"), 0, 970));
 
 			gmesListLoaded = true;
 		}
