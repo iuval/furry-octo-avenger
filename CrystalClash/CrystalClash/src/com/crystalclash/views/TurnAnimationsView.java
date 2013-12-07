@@ -1,6 +1,7 @@
 package com.crystalclash.views;
 
 import java.util.Random;
+import java.util.concurrent.ThreadPoolExecutor;
 
 import aurelienribon.tweenengine.BaseTween;
 import aurelienribon.tweenengine.Timeline;
@@ -40,6 +41,7 @@ import com.crystalclash.renders.UnitRender.STATE;
 import com.crystalclash.renders.attacks.AttackFactory;
 import com.crystalclash.renders.helpers.CellHelper;
 import com.crystalclash.renders.helpers.ResourceHelper;
+import com.sun.corba.se.spi.orbutil.threadpool.ThreadPool;
 
 public class TurnAnimationsView extends GameView {
 
@@ -73,6 +75,8 @@ public class TurnAnimationsView extends GameView {
 
 	private Random rand;
 	Timeline mainTimeline = Timeline.createSequence();
+	
+	private Thread thread;
 
 	public TurnAnimationsView(WorldController world) {
 		super(world);
@@ -106,6 +110,14 @@ public class TurnAnimationsView extends GameView {
 		tweenManager = new TweenManager();
 
 		GameController.loadSharedStats();
+		AudioManager.loadTurnAnimationSFX();
+		thread = new Thread(new Runnable() {
+			   @Override
+			   public void run() {
+					AudioManager.loadNormalGameSFX();
+			   };
+		});
+		thread.start();
 
 		TextureRegion panelTexture = ResourceHelper.getTexture("turn_animation/games_list_background");
 		panel = new Image(panelTexture);
@@ -847,6 +859,10 @@ public class TurnAnimationsView extends GameView {
 	@Override
 	public void dispose() {
 		// TODO Auto-generated method stub
-
+		try {
+			thread.join();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 	}
 }

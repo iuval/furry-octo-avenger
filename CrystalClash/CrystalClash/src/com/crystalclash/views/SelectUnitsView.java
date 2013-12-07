@@ -23,6 +23,7 @@ import com.crystalclash.renders.helpers.ResourceHelper;
 import com.crystalclash.renders.helpers.ui.UnitItemSplashListener;
 import com.crystalclash.renders.helpers.ui.UnitListSelectListener;
 import com.crystalclash.renders.helpers.ui.UnitThumbsList;
+import com.crystalclash.util.I18n;
 
 public class SelectUnitsView extends GameView {
 	private int unitCount = 0;
@@ -43,12 +44,14 @@ public class SelectUnitsView extends GameView {
 
 	public void load() {
 		GameController.loadSharedStats();
+		AudioManager.loadFirstTurnSFX();
 
 		unitList = new UnitThumbsList(new UnitListSelectListener() {
 			@Override
 			public void select(String unitName, boolean selected, float x, float y) {
 				if (selected) {
 					selectedUnitName = unitName;
+					GameEngine.start(world.getRender().pushHideGameMenuButtons(Timeline.createParallel()));
 					world.getRender().showStatsPopupFirstTurn(selectedUnitName);
 				} else {
 					desSelectUnit();
@@ -89,17 +92,18 @@ public class SelectUnitsView extends GameView {
 	}
 
 	private void enterSplash() {
-		GameEngine.start(Timeline.createSequence()
+		GameEngine.start(world.getRender().pushHideGameMenuButtons(Timeline.createSequence())
 				.push(Tween.to(unitSplash, ActorAccessor.Y, CrystalClash.SLOW_ANIMATION_SPEED)
 						.target(0)
-						.ease(TweenEquations.easeOutBounce)));
+						.ease(TweenEquations.easeOutQuint)));
 	}
 
 	private void exitSplash() {
 		GameEngine.start(Timeline.createSequence()
 				.push(Tween.to(unitSplash, ActorAccessor.Y, CrystalClash.SLOW_ANIMATION_SPEED)
 						.target(CrystalClash.HEIGHT)
-						.ease(TweenEquations.easeInOutBack)));
+						.ease(TweenEquations.easeInQuint))
+				.push(world.getRender().pushShowGameMenuButtons(Timeline.createSequence())));
 	}
 
 	private boolean canPlaceUnit() {
@@ -117,7 +121,7 @@ public class SelectUnitsView extends GameView {
 	}
 
 	private void updateUnitsCountLabel() {
-		unitList.setUnitCountText(unitCount + " of " + GameController.MAX_UNIT_PER_PLAYER);
+		unitList.setUnitCountText(unitCount + " " + I18n.t("unit_list_count") + " "+ GameController.MAX_UNIT_PER_PLAYER);
 	}
 
 	@Override
@@ -175,6 +179,7 @@ public class SelectUnitsView extends GameView {
 		unitList.desSelect();
 		selectedUnitName = null;
 		selectedUnit = null;
+		GameEngine.start(world.getRender().pushShowGameMenuButtons(Timeline.createParallel()));
 	}
 
 	@Override

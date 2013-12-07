@@ -14,16 +14,19 @@ import com.badlogic.gdx.scenes.scene2d.utils.Align;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.crystalclash.controllers.GameController;
 import com.crystalclash.renders.helpers.ResourceHelper;
+import com.crystalclash.util.I18n;
 
 public class UnitThumbsList extends Group {
 	private Table table;
 	private Image imgTableBg;
 	private ScrollPane scrollPane;
 	private Label lblUnitsCount;
+	private Label lblMessage;
 	private UnitThumb selectedThumb;
 
 	public UnitThumbsList(final UnitListSelectListener unitThumbListener, final UnitItemSplashListener unitSplashListener) {
 		lblUnitsCount = new Label("", new LabelStyle(ResourceHelper.getBigFont(), Color.WHITE));
+		lblMessage = new Label(I18n.t("unit_list"), new LabelStyle(ResourceHelper.getBigFont(), Color.WHITE));
 
 		imgTableBg = new Image(ResourceHelper.getTexture("in_game/first_turn/list_background"));
 		addActor(imgTableBg);
@@ -31,7 +34,8 @@ public class UnitThumbsList extends Group {
 		table = new Table();
 		scrollPane = new ScrollPane(table);
 		scrollPane.setPosition(10, 155);
-		lblUnitsCount.setPosition(250, 50);
+		lblMessage.setPosition(230, 85);
+		lblUnitsCount.setPosition(275, 50);
 		scrollPane.setScrollingDisabled(true, false);
 		scrollPane.setOverscroll(false, true);
 		scrollPane.setSmoothScrolling(true);
@@ -84,6 +88,7 @@ public class UnitThumbsList extends Group {
 		}
 
 		addActor(lblUnitsCount);
+		addActor(lblMessage);
 	}
 
 	public void setUnitCountText(String str) {

@@ -25,7 +25,7 @@ public class UnitThumb extends Group {
 		addActor(sprProfile);
 
 		sprSelectedBorder = new Image(ResourceHelper.getTexture("in_game/first_turn/item_selected"));
-		sprSelectedBorder.setPosition(0, 0);
+		sprSelectedBorder.setPosition(-4, -3);
 		sprBackground = new Image(ResourceHelper.getTexture("in_game/first_turn/item_border"));
 		sprBackground.setPosition(0, 0);
 		addActor(sprBackground);
@@ -37,7 +37,7 @@ public class UnitThumb extends Group {
 		btnSplash = new ImageButton(new TextureRegionDrawable(ResourceHelper.getTexture("in_game/first_turn/inspect_button")),
 				new TextureRegionDrawable(ResourceHelper.getTexture("in_game/first_turn/inspect_button_pressed")));
 		btnSplash.setSize(189, 64);
-		btnSplash.setPosition(4, 6);
+		btnSplash.setPosition(5, 7);
 		addActor(btnSplash);
 
 		sprSelectedBorder.setTouchable(Touchable.disabled);

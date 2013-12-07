@@ -2,6 +2,7 @@ package com.crystalclash;
 
 
 import com.badlogic.gdx.Game;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.FPSLogger;
 import com.badlogic.gdx.graphics.Texture;
 import com.crystalclash.renders.GameEngine;
@@ -28,6 +29,7 @@ public class CrystalClash extends Game {
 	@Override
 	public void create() {
 		Texture.setEnforcePotImages(false);
+		Gdx.input.setOnscreenKeyboardVisible(false);
 		fpsLogger = new FPSLogger();
 		setScreen(GameEngine.getInstance());
 	}
