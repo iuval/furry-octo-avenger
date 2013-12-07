@@ -399,7 +399,9 @@ public class WorldView extends InputView {
 				.push(Tween.to(grpBtnOptions, ActorAccessor.X, CrystalClash.NORMAL_ANIMATION_SPEED)
 						.target(-grpBtnOptions.getWidth()))
 				.push(Tween.to(grpOptions, ActorAccessor.X, CrystalClash.NORMAL_ANIMATION_SPEED)
-						.target(75).ease(TweenEquations.easeOutCirc)));
+						.target(105))
+				.push(Tween.to(grpOptions, ActorAccessor.X, CrystalClash.FAST_ANIMATION_SPEED)
+						.target(75)));
 	}
 
 	private void hideOptions() {
@@ -408,7 +410,7 @@ public class WorldView extends InputView {
 				.push(Tween.to(grpOptions, ActorAccessor.X, CrystalClash.NORMAL_ANIMATION_SPEED)
 						.target(-grpOptions.getWidth()))
 				.push(Tween.to(grpBtnOptions, ActorAccessor.X, CrystalClash.NORMAL_ANIMATION_SPEED)
-						.target(grpBtnSend.getWidth() - 35).ease(TweenEquations.easeOutCirc)));
+						.target(grpBtnSend.getWidth() - 35)));
 		hideMoreOptions = false;
 	}
 
