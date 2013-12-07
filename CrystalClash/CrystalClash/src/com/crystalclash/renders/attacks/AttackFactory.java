@@ -111,6 +111,7 @@ public class AttackFactory {
 		Unit unit = action.origin.getUnit();
 
 		Image arrow = new Image(ResourceHelper.getUnitResourceTexture(unit.getName(), "projectile"));
+		arrow.setPosition(0 - arrow.getWidth() * 2, 0 - arrow.getHeight() * 2);
 		arrow.setOrigin(arrow.getWidth() / 2, arrow.getHeight() / 2);
 		entities.addActor(arrow);
 
@@ -185,8 +186,6 @@ public class AttackFactory {
 		t.push(arrowTimeline);
 	}
 
-	// FireArcher
-
 	// DarkessMage
 	private void doDarkessMageSoftDamage(AttackUnitAction action) {
 		Unit enemy = action.target.getUnit();
@@ -214,22 +213,23 @@ public class AttackFactory {
 		Unit unit = action.origin.getUnit();
 
 		Image fireBall = new Image(ResourceHelper.getUnitResourceTexture(unit.getName(), "projectile"));
+		fireBall.setPosition(0 - fireBall.getWidth() * 2, 0 - fireBall.getHeight() * 2);
 		fireBall.setOrigin(fireBall.getWidth() / 2, fireBall.getHeight() / 2);
 		entities.addActor(fireBall);
 
 		// Calculate the fireBall's path
-		Path arrowPath = new Path();
+		Path fireBallPath = new Path();
 
-		PathManager.addArc(arrowPath,
+		PathManager.addArc(fireBallPath,
 				action.origin.getCenterX(), action.origin.getCenterY() + 30,
 				action.target.getCenterX(), action.target.getCenterY() + 30,
 				fireBall.getWidth() / 2,
 				fireBall.getHeight() / 2);
 
-		float speed = CrystalClash.FIGTH_ANIMATION_SPEED / arrowPath.dots.size;
+		float speed = CrystalClash.FIGTH_ANIMATION_SPEED / fireBallPath.dots.size;
 
-		Vector2 first = arrowPath.dots.get(0).cpy();
-		Vector2 second = arrowPath.dots.get(1).cpy();
+		Vector2 first = fireBallPath.dots.get(0).cpy();
+		Vector2 second = fireBallPath.dots.get(1).cpy();
 		float angleOrigin = second.sub(first).cpy().angle();
 
 		t.push(Tween.set(fireBall, ActorAccessor.ALPHA).target(0))
@@ -237,50 +237,50 @@ public class AttackFactory {
 				.push(Tween.set(fireBall, ActorAccessor.Y).target(first.y))
 				.push(Tween.set(fireBall, ActorAccessor.ROTATION).target(angleOrigin));
 
-		Vector2 prelast = arrowPath.dots.get(arrowPath.dots.size - 2).cpy();
-		Vector2 last = arrowPath.dots.get(arrowPath.dots.size - 1).cpy();
+		Vector2 prelast = fireBallPath.dots.get(fireBallPath.dots.size - 2).cpy();
+		Vector2 last = fireBallPath.dots.get(fireBallPath.dots.size - 1).cpy();
 		float angleTarget = last.sub(prelast).angle();
 
-		Timeline arrowTimeline = Timeline.createParallel();
-		arrowTimeline.delay(unit.getRender().fightAnim.getAnimationTime());
+		Timeline fireBallTimeline = Timeline.createParallel();
+		fireBallTimeline.delay(unit.getRender().fightAnim.getAnimationTime());
 
 		// fireBall rotation
-		if (arrowPath.dots.get(0).x < arrowPath.dots.get(arrowPath.dots.size - 1).x) {
-			arrowTimeline.beginSequence();
-			arrowTimeline.push(Tween.to(fireBall, ActorAccessor.ROTATION, CrystalClash.FIGTH_ANIMATION_SPEED / 2)
+		if (fireBallPath.dots.get(0).x < fireBallPath.dots.get(fireBallPath.dots.size - 1).x) {
+			fireBallTimeline.beginSequence();
+			fireBallTimeline.push(Tween.to(fireBall, ActorAccessor.ROTATION, CrystalClash.FIGTH_ANIMATION_SPEED / 2)
 					.target(0).ease(TweenEquations.easeNone));
-			arrowTimeline.push(Tween.set(fireBall, ActorAccessor.ROTATION)
+			fireBallTimeline.push(Tween.set(fireBall, ActorAccessor.ROTATION)
 					.target(360));
-			arrowTimeline.push(Tween.to(fireBall, ActorAccessor.ROTATION, CrystalClash.FIGTH_ANIMATION_SPEED / 2)
+			fireBallTimeline.push(Tween.to(fireBall, ActorAccessor.ROTATION, CrystalClash.FIGTH_ANIMATION_SPEED / 2)
 					.target(angleTarget)
 					.ease(TweenEquations.easeNone));
-			arrowTimeline.end();
+			fireBallTimeline.end();
 		} else {
-			arrowTimeline.push(Tween.to(fireBall, ActorAccessor.ROTATION, CrystalClash.FIGTH_ANIMATION_SPEED)
+			fireBallTimeline.push(Tween.to(fireBall, ActorAccessor.ROTATION, CrystalClash.FIGTH_ANIMATION_SPEED)
 					.target(angleTarget)
 					.ease(TweenEquations.easeNone));
 		}
 
 		// fireBall alpha
-		arrowTimeline.push(Tween.to(fireBall, ActorAccessor.ALPHA, CrystalClash.FAST_ANIMATION_SPEED)
+		fireBallTimeline.push(Tween.to(fireBall, ActorAccessor.ALPHA, CrystalClash.FAST_ANIMATION_SPEED)
 				.target(1).ease(TweenEquations.easeNone));
 
 		// fireBall movement
-		arrowTimeline.beginSequence();
-		for (int i = 1; i < arrowPath.dots.size; i++) {
-			arrowTimeline.beginParallel();
-			Vector2 v = arrowPath.dots.get(i);
-			arrowTimeline.push(Tween.to(fireBall, ActorAccessor.X, speed)
+		fireBallTimeline.beginSequence();
+		for (int i = 1; i < fireBallPath.dots.size; i++) {
+			fireBallTimeline.beginParallel();
+			Vector2 v = fireBallPath.dots.get(i);
+			fireBallTimeline.push(Tween.to(fireBall, ActorAccessor.X, speed)
 					.target(v.x).ease(TweenEquations.easeNone));
-			arrowTimeline.push(Tween.to(fireBall, ActorAccessor.Y, speed)
+			fireBallTimeline.push(Tween.to(fireBall, ActorAccessor.Y, speed)
 					.target(v.y).ease(TweenEquations.easeNone));
-			arrowTimeline.end();
+			fireBallTimeline.end();
 		}
 
-		arrowTimeline.end();
+		fireBallTimeline.end();
 
-		arrowTimeline.setUserData(new Object[] { fireBall });
-		arrowTimeline.setCallback(new TweenCallback() {
+		fireBallTimeline.setUserData(new Object[] { fireBall });
+		fireBallTimeline.setCallback(new TweenCallback() {
 			@Override
 			public void onEvent(int type, BaseTween<?> source) {
 				Image fireBall = (Image) ((Object[]) source.getUserData())[0];
@@ -292,6 +292,7 @@ public class AttackFactory {
 		for (int i = 0; i < action.target.neigbours.length; i++) {
 			SuperAnimatedActor effect = new SuperAnimatedActor(ResourceHelper.getUnitResourceSuperAnimation(unit.getName(), "effect"),
 					true, FACING.right);
+			effect.setPosition(0 - effect.getWidth() * 2, 0 - effect.getHeight() * 2);
 			effect.setOrigin(effect.getWidth() / 2, effect.getHeight() / 2);
 			entities.addActor(effect);
 			Cell neig = world.cellGrid[action.target.neigbours[i][0]][action.target.neigbours[i][1]];
@@ -317,9 +318,8 @@ public class AttackFactory {
 		}
 
 		t.beginSequence();
-		t.push(arrowTimeline);
+		t.push(fireBallTimeline);
 		t.push(effectsTimeline);
 		t.end();
 	}
-	// DarkessMage
 }
