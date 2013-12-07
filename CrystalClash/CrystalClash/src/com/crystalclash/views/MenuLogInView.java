@@ -244,8 +244,7 @@ public class MenuLogInView extends InputView {
 				.show();
 	}
 
-	// Solo para el btnBack (Mueve el panel hacia arriba y hace un fade-in de
-	// los otros botones
+	// Solo para el btnBack (Mueve el panel hacia arriba y hace un fade-in de los otros botones
 	private void moveUp(MenuLogInState state) {
 		float speed = CrystalClash.SLOW_ANIMATION_SPEED;
 		GameEngine.start(Timeline.createParallel()
