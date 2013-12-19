@@ -180,7 +180,7 @@ public class GameEngine implements Screen {
 			stage.addActor(menuLogInRender);
 			stage.addActor(tutorialRender);
 			break;
-		case InTranstionMenuGamesAndGame:
+		case InTranstionMenuGamesAndGame: 
 			stage.addActor(worldRender);
 			stage.addActor(menuGamesRender);
 			break;
@@ -337,7 +337,7 @@ public class GameEngine implements Screen {
 					}
 					menuGamesRender.init();
 					setState(GameState.InTranstionMenuGamesAndGame);
-					background.pushShow(menuGamesRender.pushEnterAnimation(Timeline.createSequence())
+					menuGamesRender.pushEnterAnimation(Timeline.createSequence()
 							.setCallback(new TweenCallback() {
 								@Override
 								public void onEvent(int type, BaseTween<?> source) {

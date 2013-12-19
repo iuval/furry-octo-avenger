@@ -1,6 +1,7 @@
 package com.crystalclash.views;
 
 import aurelienribon.tweenengine.Timeline;
+import aurelienribon.tweenengine.Tween;
 
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.Color;
@@ -19,6 +20,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
 import com.badlogic.gdx.scenes.scene2d.utils.Align;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.crystalclash.CrystalClash;
+import com.crystalclash.accessors.ActorAccessor;
 import com.crystalclash.audio.AudioManager;
 import com.crystalclash.audio.AudioManager.MUSIC;
 import com.crystalclash.controllers.GameController;
@@ -41,12 +43,8 @@ public class MenuGamesView extends InputView {
 	private MenuGames controller;
 	private SuperScrollPane superScroll;
 
-	private Group grpScroll;
-	private Group grpColumns;
 	private VerticalGroup list;
 	private GameListItem[] gamesList;
-
-	private final TextureRegion txtColumn;
 
 	private Group grpNewRandom;
 	private Group grpProfile;
@@ -58,11 +56,11 @@ public class MenuGamesView extends InputView {
 	private TextButton btnNewRandom;
 
 	private TutorialInvitation tutoInv;
+	private TextureRegion txtCcolumn;
 
 	public MenuGamesView(MenuGames menu) {
 		this.controller = menu;
 
-		txtColumn = ResourceHelper.getTexture("menu/column2");
 		load();
 	}
 
@@ -81,31 +79,20 @@ public class MenuGamesView extends InputView {
 	@Override
 	public Timeline pushEnterAnimation(Timeline t) {
 		AudioManager.playMusic(MUSIC.menu);
-		return t;
+		return t.push(Tween.to(this, ActorAccessor.ALPHA, CrystalClash.NORMAL_ANIMATION_SPEED).target(1));
 	}
 
 	@Override
 	public Timeline pushExitAnimation(Timeline t) {
 		superScroll.scrollPane.setScrollY(0);
-		return t;
+		return t.push(Tween.to(this, ActorAccessor.ALPHA, CrystalClash.NORMAL_ANIMATION_SPEED).target(0));
 	}
 
 	private void load() {
-		grpScroll = new Group();
-		grpScroll.setBounds(0, 0, CrystalClash.WIDTH, CrystalClash.HEIGHT);
-
-		grpColumns = new Group();
-		grpColumns.setPosition(970, CrystalClash.HEIGHT);
-		grpColumns.addActor(new Image(ResourceHelper.getTexture("menu/column1")));
-		grpScroll.addActor(grpColumns);
-
 		list = new VerticalGroup();
-		list.setWidth(1047);
-		list.setPosition(0, CrystalClash.HEIGHT);
-		grpScroll.addActor(list);
 
 		// put the table inside a scrollpane
-		superScroll = new SuperScrollPane(grpScroll, new SuperScrollPaneRefreshCallback() {
+		superScroll = new SuperScrollPane(list, new SuperScrollPaneRefreshCallback() {
 			@Override
 			public void refresh() {
 				loadGameList();
@@ -173,23 +160,14 @@ public class MenuGamesView extends InputView {
 			}
 		}
 		list.addActor(grpNewRandom);
-
-		float colH = -CrystalClash.HEIGHT;
-		Image col;
-		while (colH > -superScroll.scrollPane.getHeight()) {
-			col = new Image(txtColumn);
-			col.setY(colH);
-			grpColumns.addActor(col);
-			colH -= CrystalClash.HEIGHT;
-		}
-		col = new Image(txtColumn);
-		col.setY(colH);
-		grpColumns.addActor(col);
+		list.addActor(new Image(txtCcolumn));
 
 		GameEngine.hideLoading();
 	}
 
 	private void initSkin() {
+		txtCcolumn = ResourceHelper.getTexture("menu/games_list/column_stack");
+		
 		final MessageBoxCallback surrenderCallback = new MessageBoxCallback() {
 			@Override
 			public void onEvent(int type, Object data) {
@@ -231,7 +209,7 @@ public class MenuGamesView extends InputView {
 		skin.add("sound_on_up", ResourceHelper.getTexture("menu/games_list/sound_on"));
 		skin.add("logout_up", ResourceHelper.getTexture("menu/games_list/logout"));
 		skin.add("logout_down", ResourceHelper.getTexture("menu/games_list/logout_pressed"));
-		skin.add("background", ResourceHelper.getTexture("menu/games_list/item"));
+		skin.add("background", ResourceHelper.getTexture("menu/games_list/item_stack"));
 
 		TextButtonStyle playStyle = new TextButtonStyle();
 		playStyle.font = skin.getFont("font");
@@ -252,7 +230,7 @@ public class MenuGamesView extends InputView {
 		skin.add("surrenderStyle", surrenderStyle);
 
 		grpNewRandom = new Group();
-		Image imgNewRandom = new Image(ResourceHelper.getTexture("menu/games_list/new_battle"));
+		Image imgNewRandom = new Image(ResourceHelper.getTexture("menu/games_list/new_battle_stack"));
 		grpNewRandom.addActor(imgNewRandom);
 		grpNewRandom.setSize(imgNewRandom.getWidth(), imgNewRandom.getHeight());
 
@@ -271,7 +249,7 @@ public class MenuGamesView extends InputView {
 		grpNewRandom.addActor(btnNewRandom);
 
 		grpProfile = new Group();
-		Image imgProfile = new Image(ResourceHelper.getTexture("menu/games_list/player_info"));
+		Image imgProfile = new Image(ResourceHelper.getTexture("menu/games_list/user_stats_stack"));
 		grpProfile.addActor(imgProfile);
 		grpProfile.setSize(imgProfile.getWidth(), imgProfile.getHeight());
 

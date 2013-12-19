@@ -23,13 +23,13 @@ public class GameListItem extends Group {
 		this.gameId = gameId;
 		this.turn = Integer.parseInt(turn);
 
-		float w = 1047;
-		float h = 340;
-		setSize(w, h);
-
 		Image bg = new Image(skin.get("background", TextureRegion.class));
 		bg.setPosition(0, 0);
 		addActor(bg);
+
+		float w = bg.getWidth();
+		float h = bg.getHeight();
+		setSize(w, h);
 
 		Button btnPlay = new Button(state.equals("play") ?
 				skin.get("playStyle", TextButtonStyle.class) :
