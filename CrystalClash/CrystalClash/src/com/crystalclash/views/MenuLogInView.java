@@ -51,6 +51,7 @@ public class MenuLogInView extends InputView {
 	public MenuLogInView(MenuLogIn menu) {
 		this.controller = menu;
 		stringWriting = StringWriting.None;
+		setPosition(0, 853);
 		load();
 	}
 
@@ -67,14 +68,12 @@ public class MenuLogInView extends InputView {
 
 	@Override
 	public Timeline pushEnterAnimation(Timeline t) {
-		return t.push(Tween.to(grpPopUp, ActorAccessor.Y, CrystalClash.SLOW_ANIMATION_SPEED).target(
-				grpPopUp.getY()));
+		return t.push(Tween.to(grpPopUp, ActorAccessor.Y, CrystalClash.SLOW_ANIMATION_SPEED).target(213));
 	}
 
 	@Override
 	public Timeline pushExitAnimation(Timeline t) {
-		return t.push(Tween.to(grpPopUp, ActorAccessor.Y, CrystalClash.SLOW_ANIMATION_SPEED).target(
-				grpPopUp.getY() + CrystalClash.HEIGHT));
+		return t;
 	}
 
 	private void load() {
@@ -181,7 +180,7 @@ public class MenuLogInView extends InputView {
 
 		grpPopUp.setSize(imgPopupPanel.getWidth(), imgPopupPanel.getHeight());
 		grpPopUp.setPosition(CrystalClash.WIDTH / 2 - grpPopUp.getWidth() / 2,
-				(CrystalClash.HEIGHT / 2 - grpPopUp.getHeight() / 2));
+				(CrystalClash.HEIGHT + grpPopUp.getHeight()));
 		addActor(grpPopUp);
 	}
 
@@ -195,9 +194,11 @@ public class MenuLogInView extends InputView {
 	private void adjustToKeyboard(boolean up) {
 		Gdx.input.setOnscreenKeyboardVisible(up);
 		// true mueve hacia arriba, false mueve hacia abajo
-		float jump = CrystalClash.HEIGHT / 2 - grpPopUp.getHeight() / 2;
+		float jump = 0;
 		if (up)
-			jump = CrystalClash.HEIGHT / 2 - 30;
+			jump = 413;
+		else
+			jump = 213;
 
 		float speed = CrystalClash.SLOW_ANIMATION_SPEED;
 		GameEngine.start(Timeline.createParallel()

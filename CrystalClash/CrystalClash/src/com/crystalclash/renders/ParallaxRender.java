@@ -49,7 +49,7 @@ public class ParallaxRender extends Group {
 			addLevel(new CloudParallaxLevel(ResourceHelper.getTexture("menu/level2"), -427, 0, -0.3f));
 			addLevel(new CloudParallaxLevel(ResourceHelper.getTexture("menu/level3"), -427, 0, -0.5f));
 
-			addLevel(new NimbusParallaxLevel(ResourceHelper.getTexture("menu/nimbus5"), 300, -rand.nextInt(2000), -0.6f));
+			addLevel(new NimbusParallaxLevel(ResourceHelper.getTexture("menu/nimbus5"), 300, -rand.nextInt((int) (CrystalClash.WIDTH + 500)), -0.6f));
 
 			gmesListLoaded = true;
 		}

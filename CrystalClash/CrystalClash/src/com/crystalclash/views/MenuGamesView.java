@@ -1,7 +1,6 @@
 package com.crystalclash.views;
 
 import aurelienribon.tweenengine.Timeline;
-import aurelienribon.tweenengine.Tween;
 
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.Color;
@@ -20,7 +19,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
 import com.badlogic.gdx.scenes.scene2d.utils.Align;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.crystalclash.CrystalClash;
-import com.crystalclash.accessors.ActorAccessor;
 import com.crystalclash.audio.AudioManager;
 import com.crystalclash.audio.AudioManager.MUSIC;
 import com.crystalclash.controllers.GameController;
@@ -31,11 +29,14 @@ import com.crystalclash.renders.ParallaxRender;
 import com.crystalclash.renders.TutorialInvitation;
 import com.crystalclash.renders.helpers.ResourceHelper;
 import com.crystalclash.renders.helpers.ui.GameListItem;
+import com.crystalclash.renders.helpers.ui.GamesLoadCallback;
 import com.crystalclash.renders.helpers.ui.MessageBox;
 import com.crystalclash.renders.helpers.ui.MessageBox.Buttons;
 import com.crystalclash.renders.helpers.ui.MessageBoxCallback;
 
 public class MenuGamesView extends InputView {
+	private GamesLoadCallback loadCallback;
+
 	private static MenuGamesView instance;
 
 	private MenuGames controller;
@@ -76,8 +77,10 @@ public class MenuGamesView extends InputView {
 	private void moveList(int touch_y) {
 		y_move_speed += (last_touch_down_y - touch_y) * 10;
 		last_touch_down_y = touch_y;
-		if(y_move_speed > 2000) y_move_speed = 2000;
-		if(y_move_speed < -2000) y_move_speed = -2000;
+		if (y_move_speed > 2000)
+			y_move_speed = 2000;
+		if (y_move_speed < -2000)
+			y_move_speed = -2000;
 	}
 
 	private boolean yOutOfLimit(float y) {
@@ -99,18 +102,27 @@ public class MenuGamesView extends InputView {
 
 	@Override
 	public void init() {
-		// GameController.setTutorialNotDone();
+
+	}
+
+	public void loadList(GamesLoadCallback callback) {
+		loadGameList();
+		loadCallback = callback;
 	}
 
 	@Override
 	public Timeline pushEnterAnimation(Timeline t) {
 		AudioManager.playMusic(MUSIC.menu);
-		return t.push(Tween.to(this, ActorAccessor.ALPHA, CrystalClash.NORMAL_ANIMATION_SPEED).target(1));
+		return t;
+		// .push(Tween.to(this, ActorAccessor.ALPHA,
+		// CrystalClash.NORMAL_ANIMATION_SPEED).target(1));
 	}
 
 	@Override
 	public Timeline pushExitAnimation(Timeline t) {
-		return t.push(Tween.to(this, ActorAccessor.ALPHA, CrystalClash.NORMAL_ANIMATION_SPEED).target(0));
+		return t;
+		// .push(Tween.to(this, ActorAccessor.ALPHA,
+		// CrystalClash.NORMAL_ANIMATION_SPEED).target(0));
 	}
 
 	private void load() {
@@ -122,8 +134,6 @@ public class MenuGamesView extends InputView {
 
 		if (!GameController.isTutorialDone()) {
 			loadTutorial();
-		} else {
-			loadGameList();
 		}
 	}
 
@@ -138,6 +148,7 @@ public class MenuGamesView extends InputView {
 
 	// SERVER DRIVER CALLBACKS --------------------------------------------
 	public void listGamesSuccess(String[][] games) {
+		list.clear();
 		if (gamesList != null) {
 			for (int i = 0; i < gamesList.length; i++) {
 				gamesList[i].dispose();
@@ -174,6 +185,7 @@ public class MenuGamesView extends InputView {
 		list.addActor(new Image(txtCcolumn));
 
 		GameEngine.hideLoading();
+		loadCallback.onFinish();
 	}
 
 	private void initSkin() {
