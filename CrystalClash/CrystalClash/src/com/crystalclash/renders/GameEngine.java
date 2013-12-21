@@ -174,7 +174,7 @@ public class GameEngine implements Screen {
 			background.addActor(splashRender);
 			break;
 		case InTranstionMenuGamesAndGame:
-			background.addActor(worldRender);
+			stage.addActor(worldRender);
 			background.addActor(menuGamesRender);
 			break;
 		case InGame:
@@ -193,26 +193,23 @@ public class GameEngine implements Screen {
 	}
 
 	public void openGame(final JsonValue data) {
-		Timeline t = Timeline.createSequence();
-		menuGamesRender.pushExitAnimation(t);
-		t.setCallback(new TweenCallback() {
-			@Override
-			public void onEvent(int type, BaseTween<?> source) {
-				createWorld(data);
-				menuGamesRender.closed();
-				setState(GameState.InTranstionMenuGamesAndGame);
-				Timeline t = background.pushHide(background.pushMoveToGame(Timeline.createSequence()));
-				worldRender.pushEnterAnimation(t);
-				t.setCallback(new TweenCallback() {
+		menuGamesRender.pushExitAnimation(Timeline.createSequence())
+				.setCallback(new TweenCallback() {
 					@Override
 					public void onEvent(int type, BaseTween<?> source) {
-						setState(GameState.InGame);
-						menuGamesRender.remove();
+						createWorld(data);
+						menuGamesRender.closed();
+						setState(GameState.InTranstionMenuGamesAndGame);
+						background.pushHide(worldRender.pushEnterAnimation(Timeline.createSequence()))
+								.setCallback(new TweenCallback() {
+									@Override
+									public void onEvent(int type, BaseTween<?> source) {
+										setState(GameState.InGame);
+										menuGamesRender.remove();
+									};
+								}).start(tweenManager);
 					};
 				}).start(tweenManager);
-			};
-		});
-		t.start(tweenManager);
 	}
 
 	public void openSplash() {
@@ -332,9 +329,7 @@ public class GameEngine implements Screen {
 			});
 		} else if (state == GameState.InGame) {
 			background.loadGamesList();
-			background.pushShow(t);
-			background.pushMoveToGamesList(t);
-			worldRender.pushExitAnimation(t)
+			background.pushMoveToGamesList(background.pushShow(worldRender.pushExitAnimation(t)))
 					.setCallback(new TweenCallback() {
 						@Override
 						public void onEvent(int type, BaseTween<?> source) {

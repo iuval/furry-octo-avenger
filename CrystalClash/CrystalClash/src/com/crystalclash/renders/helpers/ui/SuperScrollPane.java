@@ -12,10 +12,10 @@ public class SuperScrollPane extends Group {
 	private boolean isTryingToRefresh = false;
 	private boolean showPullDown = false;
 	private boolean showRelease = false;
-	public ScrollPane scrollPane;
-	private SuperScrollPaneRefreshCallback onRefresh;
 	private float pullDistance = 0;
 	private float releaseDistance = 0;
+	public ScrollPane scrollPane;
+	private SuperScrollPaneRefreshCallback onRefresh;
 
 	public SuperScrollPane(Actor widget, SuperScrollPaneRefreshCallback onRefresh) {
 		scrollPane = new ScrollPane(widget);

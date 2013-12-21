@@ -61,12 +61,29 @@ public class MenuGamesView extends InputView {
 	float y_move_accel = 0.95f;
 	float max_list_y = 0f;
 	float min_list_y = 0f;
+	float min_list_over_y = -400f;
+	boolean isPressing = false;
+	boolean isOverflowing = false;
+
+	private Image refreshMessagePull;
+	private Image refreshMessageRelease;
+	private boolean isTryingToRefresh = false;
+	private boolean showPullDown = false;
+	private boolean showRelease = false;
+	private float pullDistance = 0;
+	private float releaseDistance = 0;
 
 	@Override
 	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-		// TODO Auto-generated method stub
+		isPressing = true;
 		last_touch_down_y = screenY;
 		return super.touchDown(screenX, screenY, pointer, button);
+	}
+
+	@Override
+	public boolean touchUp(int screenX, int screenY, int pointer, int button) {
+		isPressing = false;
+		return super.touchUp(screenX, screenY, pointer, button);
 	}
 
 	public boolean touchDragged(int x, int y, int pointer) {
@@ -84,7 +101,7 @@ public class MenuGamesView extends InputView {
 	}
 
 	private boolean yOutOfLimit(float y) {
-		return (y < min_list_y || y > max_list_y);
+		return (y < min_list_over_y || y > max_list_y);
 	}
 
 	public MenuGamesView(MenuGames menu) {
@@ -149,6 +166,7 @@ public class MenuGamesView extends InputView {
 	// SERVER DRIVER CALLBACKS --------------------------------------------
 	public void listGamesSuccess(String[][] games) {
 		list.clear();
+		max_list_y = 0;
 		if (gamesList != null) {
 			for (int i = 0; i < gamesList.length; i++) {
 				gamesList[i].dispose();
@@ -325,6 +343,16 @@ public class MenuGamesView extends InputView {
 		lblUserL.setPosition(630, 90);
 		grpProfile.addActor(lblUserL);
 
+		refreshMessagePull = new Image(ResourceHelper.getTexture("menu/refresh_list/refresh_message_pull"));
+		refreshMessagePull.setVisible(false);
+		addActor(refreshMessagePull);
+
+		pullDistance = 100;
+		releaseDistance = pullDistance * 2;
+
+		refreshMessageRelease = new Image(ResourceHelper.getTexture("menu/refresh_list/refresh_message_release"));
+		refreshMessageRelease.setVisible(false);
+		addActor(refreshMessageRelease);
 	}
 
 	public void listGamesError(String message) {
@@ -385,12 +413,62 @@ public class MenuGamesView extends InputView {
 	public void act(float delta) {
 		updateList(delta);
 
+		updateRefresh();
+
 		ParallaxRender.getInstance().updateY(list.getY());
 
 		super.act(delta);
 	}
 
+	private void updateRefresh() {
+		if (isPressing) {
+			if (!isTryingToRefresh && list.getY() < -pullDistance) {
+				showPullDown = true;
+				showRelease = false;
+				isTryingToRefresh = true;
+			} else if (isTryingToRefresh && list.getY() < -releaseDistance) {
+				showPullDown = false;
+				showRelease = true;
+			} else if (isTryingToRefresh && list.getY() > -releaseDistance) {
+				if (isTryingToRefresh && list.getY() > -pullDistance) {
+					isTryingToRefresh = false;
+				} else {
+					showPullDown = true;
+					showRelease = false;
+				}
+			}
+		} else {
+			if (isTryingToRefresh) {
+				if (showRelease) {
+					loadGameList();
+				}
+				isTryingToRefresh = false;
+			}
+		}
+
+		if (isTryingToRefresh) {
+			if (showRelease) {
+				refreshMessageRelease.setY(list.getTop());
+				refreshMessageRelease.setVisible(true);
+				refreshMessagePull.setVisible(false);
+			} else if (showPullDown) {
+				refreshMessagePull.setY(list.getTop());
+				refreshMessagePull.setVisible(true);
+				refreshMessageRelease.setVisible(false);
+			}
+		} else {
+			refreshMessagePull.setVisible(false);
+			refreshMessageRelease.setVisible(false);
+		}
+	}
+
 	private void updateList(float delta) {
+		if (list.getY() < min_list_y) {
+			if (!isPressing) {
+				y_move_speed = (min_list_y - list.getY()) * 10;
+			}
+		}
+
 		if (Math.abs(y_move_speed) > 0.5f) {
 			float new_y = list.getY() + y_move_speed * delta;
 			updateListSpeed();
