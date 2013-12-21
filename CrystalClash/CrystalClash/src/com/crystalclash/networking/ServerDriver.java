@@ -14,8 +14,8 @@ import com.badlogic.gdx.utils.JsonValue;
 import com.crystalclash.controllers.GameController;
 import com.crystalclash.controllers.MenuGames;
 import com.crystalclash.renders.GameEngine;
+import com.crystalclash.renders.helpers.ui.BaseBox.BoxButtons;
 import com.crystalclash.renders.helpers.ui.MessageBox;
-import com.crystalclash.renders.helpers.ui.MessageBox.Buttons;
 import com.crystalclash.util.I18n;
 
 public class ServerDriver {
@@ -230,7 +230,7 @@ public class ServerDriver {
 
 	private static void exceptionMessage() {
 		MessageBox.build()
-				.setMessage(I18n.t("server_error"), Buttons.One)
+				.setMessage(I18n.t("server_error"), BoxButtons.One)
 				.setCallback(null)
 				.show();
 	}

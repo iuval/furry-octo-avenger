@@ -39,9 +39,9 @@ import com.crystalclash.renders.attacks.AttackFactory;
 import com.crystalclash.renders.helpers.CellHelper;
 import com.crystalclash.renders.helpers.PathManager;
 import com.crystalclash.renders.helpers.ResourceHelper;
+import com.crystalclash.renders.helpers.ui.BaseBox.BoxButtons;
+import com.crystalclash.renders.helpers.ui.BoxCallback;
 import com.crystalclash.renders.helpers.ui.MessageBox;
-import com.crystalclash.renders.helpers.ui.MessageBox.Buttons;
-import com.crystalclash.renders.helpers.ui.MessageBoxCallback;
 import com.crystalclash.util.I18n;
 
 public class TutorialView extends GameView {
@@ -145,10 +145,10 @@ public class TutorialView extends GameView {
 					next();
 			}
 		});
-		final MessageBoxCallback confirmation = new MessageBoxCallback() {
+		final BoxCallback confirmation = new BoxCallback() {
 			@Override
 			public void onEvent(int type, Object data) {
-				if (type == MessageBoxCallback.YES) {
+				if (type == BoxCallback.YES) {
 					GameEngine.showLoading();
 					GameEngine.getInstance().openMenuGames();
 					GameController.setTutorialDone();
@@ -170,11 +170,11 @@ public class TutorialView extends GameView {
 			public void clicked(InputEvent event, float x, float y) {
 				MessageBox msg = MessageBox.build();
 				if (messageIndex < messages.size / 2)
-					msg.setMessage("tutorial_leave_start", Buttons.Two);
+					msg.setMessage("tutorial_leave_start", BoxButtons.Two);
 				if (messageIndex < messages.size - 8)
-					msg.setMessage("tutorial_leave_middle", Buttons.Two);
+					msg.setMessage("tutorial_leave_middle", BoxButtons.Two);
 				else
-					msg.setMessage("tutorial_leave_end", Buttons.Two);
+					msg.setMessage("tutorial_leave_end", BoxButtons.Two);
 
 				msg.setCallback(confirmation)
 						.setHideOnAction(false)
@@ -204,16 +204,16 @@ public class TutorialView extends GameView {
 		imgMoveIcon.setPosition(900, 205);
 		imgDefendIcon.setPosition(740, 135);
 		imgUndoIcon.setPosition(900, 135);
-		
+
 		atlas = ResourceHelper.getTextureAtlas("in_game/unit_stats_popup/unit_stats_popup.pack");
 		imgLifeIcon = new Image(atlas.findRegion("icon_life"));
 		imgDamageIcon = new Image(atlas.findRegion("icon_attack"));
 		imgMobilityIcon = new Image(atlas.findRegion("icon_speed"));
-		
+
 		imgDamageIcon.setPosition(740, 230);
 		imgLifeIcon.setPosition(900, 230);
 		imgMobilityIcon.setPosition(770, 175);
-		
+
 		entities = new Group();
 		addActor(entities);
 	}
@@ -560,8 +560,8 @@ public class TutorialView extends GameView {
 						if (!cell.hasState(Cell.MOVE_TARGET)) {
 							cell.addState(Cell.MOVE_TARGET);
 							PathRender p = paths.getOrCreatePath(slayer, PathRender.TYPE.MOVE);
-							
-							for(int i = movePathIndex; i < cell.getGridPosition().getX(); i++){
+
+							for (int i = movePathIndex; i < cell.getGridPosition().getX(); i++) {
 								PathManager.addLine(p,
 										slayerMove.moves.get(i).getCenterX(),
 										slayerMove.moves.get(i).getCenterY(),
@@ -571,8 +571,8 @@ public class TutorialView extends GameView {
 										PathRender.DOT_CENTER_Y);
 							}
 							movePathIndex = cell.getGridPosition().getX() - 1;
-							
-							if(movePathIndex == 3){
+
+							if (movePathIndex == 3) {
 								world.getRender().hideArrow();
 								next();
 							}
@@ -961,7 +961,7 @@ public class TutorialView extends GameView {
 		action.origin = world.cellAtByGrid(3, 3);
 		action.target = world.cellAtByGrid(5, 3);
 		attacks.pushAttack(archerAttStart, action, entities);
-		
+
 		Timeline archerAttStop = Timeline.createSequence();
 		archerAttStop.delay(CrystalClash.FIGTH_ANIMATION_SPEED);
 		archerAttStop.setCallback(new TweenCallback() {
@@ -1060,12 +1060,12 @@ public class TutorialView extends GameView {
 				world.cellAtByGrid(5, 3).state = Cell.ATTACK_TARGET_CENTER;
 			}
 		});
-		
+
 		AttackUnitAction action = new AttackUnitAction(false);
 		action.origin = world.cellAtByGrid(3, 3);
 		action.target = world.cellAtByGrid(5, 3);
 		attacks.pushAttack(archerAttStart, action, entities);
-		
+
 		Timeline archerAttStop = Timeline.createSequence();
 		archerAttStop.delay(CrystalClash.FIGTH_ANIMATION_SPEED);
 		archerAttStop.setCallback(new TweenCallback() {
@@ -1150,7 +1150,7 @@ public class TutorialView extends GameView {
 		action.origin = world.cellAtByGrid(3, 3);
 		action.target = world.cellAtByGrid(4, 3);
 		attacks.pushAttack(archerAttStart, action, entities);
-		
+
 		Timeline archerAttStop = Timeline.createSequence();
 		archerAttStop.delay(CrystalClash.FIGTH_ANIMATION_SPEED);
 		archerAttStop.setCallback(new TweenCallback() {

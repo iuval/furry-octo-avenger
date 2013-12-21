@@ -30,10 +30,10 @@ import com.crystalclash.controllers.WorldController;
 import com.crystalclash.entities.Unit;
 import com.crystalclash.enumerators.GameState;
 import com.crystalclash.renders.helpers.ResourceHelper;
+import com.crystalclash.renders.helpers.ui.BaseBox.BoxButtons;
+import com.crystalclash.renders.helpers.ui.BoxCallback;
 import com.crystalclash.renders.helpers.ui.GamesLoadCallback;
 import com.crystalclash.renders.helpers.ui.MessageBox;
-import com.crystalclash.renders.helpers.ui.MessageBox.Buttons;
-import com.crystalclash.renders.helpers.ui.MessageBoxCallback;
 import com.crystalclash.renders.helpers.ui.SuperAnimatedActor;
 import com.crystalclash.util.I18n;
 import com.crystalclash.views.MenuGamesView;
@@ -422,7 +422,7 @@ public class GameEngine implements Screen {
 
 	public void singUpError(String message) {
 		MessageBox.build()
-				.setMessage("game_engine_sign_up_error", Buttons.One)
+				.setMessage("game_engine_sign_up_error", BoxButtons.One)
 				.setCallback(null)
 				.show();
 	}
@@ -430,7 +430,7 @@ public class GameEngine implements Screen {
 	public void logInError(String message) {
 		if (state == GameState.InMenuLogIn) {
 			MessageBox.build()
-					.setMessage("game_engine_sign_in_error", Buttons.One)
+					.setMessage("game_engine_sign_in_error", BoxButtons.One)
 					.setCallback(null)
 					.show();
 		} else {
@@ -458,8 +458,8 @@ public class GameEngine implements Screen {
 	public void resume() {
 		if (state == GameState.InGame) {
 			MessageBox.build()
-					.setMessage("game_engine_user_back", Buttons.One)
-					.setCallback(new MessageBoxCallback() {
+					.setMessage("game_engine_user_back", BoxButtons.One)
+					.setCallback(new BoxCallback() {
 						@Override
 						public void onEvent(int type, Object data) {
 							worldRender.resume();
@@ -486,7 +486,7 @@ public class GameEngine implements Screen {
 
 	public static void showLoading() {
 		MessageBox.build()
-				.setMessage("game_engine_loading", Buttons.None)
+				.setMessage("game_engine_loading", BoxButtons.None)
 				.setHideOnAction(false)
 				.setCallback(null)
 				.show();

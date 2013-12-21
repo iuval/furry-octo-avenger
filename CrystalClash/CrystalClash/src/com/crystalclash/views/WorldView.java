@@ -28,9 +28,9 @@ import com.crystalclash.renders.GameEngine;
 import com.crystalclash.renders.helpers.CellHelper;
 import com.crystalclash.renders.helpers.ResourceHelper;
 import com.crystalclash.renders.helpers.UnitHelper;
+import com.crystalclash.renders.helpers.ui.BaseBox.BoxButtons;
+import com.crystalclash.renders.helpers.ui.BoxCallback;
 import com.crystalclash.renders.helpers.ui.MessageBox;
-import com.crystalclash.renders.helpers.ui.MessageBox.Buttons;
-import com.crystalclash.renders.helpers.ui.MessageBoxCallback;
 import com.crystalclash.renders.helpers.ui.UnitStatsPopup;
 import com.crystalclash.util.I18n;
 
@@ -76,7 +76,7 @@ public class WorldView extends InputView {
 
 	private boolean readInput = true;
 
-	private MessageBoxCallback backCallback;
+	private BoxCallback backCallback;
 
 	public WorldView(WorldController world) {
 		this.world = world;
@@ -169,10 +169,10 @@ public class WorldView extends InputView {
 
 		btnSurrender = new TextButton(I18n.t("world_surrender_btn"), optionsStyle);
 		btnSurrender.setPosition(75, 5);
-		final MessageBoxCallback leaveCallback = new MessageBoxCallback() {
+		final BoxCallback leaveCallback = new BoxCallback() {
 			@Override
 			public void onEvent(int type, Object data) {
-				if (type == MessageBoxCallback.YES) {
+				if (type == BoxCallback.YES) {
 					GameEngine.showLoading();
 					world.surrenderCurrentGame();
 				} else {
@@ -188,7 +188,7 @@ public class WorldView extends InputView {
 				pause();
 				setReadInput(false);
 				MessageBox.build()
-						.setMessage("world_surrender", Buttons.Two)
+						.setMessage("world_surrender", BoxButtons.Two)
 						.setHideOnAction(false)
 						.setCallback(leaveCallback)
 						.show();
@@ -196,10 +196,10 @@ public class WorldView extends InputView {
 		});
 		grpOptions.addActor(btnSurrender);
 
-		backCallback = new MessageBoxCallback() {
+		backCallback = new BoxCallback() {
 			@Override
 			public void onEvent(int type, Object data) {
-				if (type == MessageBoxCallback.YES) {
+				if (type == BoxCallback.YES) {
 					GameEngine.showLoading();
 					world.leaveGame();
 				} else {
@@ -267,10 +267,10 @@ public class WorldView extends InputView {
 				skin.getDrawable("option_send_button_pressed"), null, ResourceHelper.getNormalFont());
 		btnSend = new TextButton("", sendStyle);
 		btnSend.setPosition(0, 0);
-		final MessageBoxCallback sendTurnCallback = new MessageBoxCallback() {
+		final BoxCallback sendTurnCallback = new BoxCallback() {
 			@Override
 			public void onEvent(int type, Object data) {
-				if (type == MessageBoxCallback.YES) {
+				if (type == BoxCallback.YES) {
 					GameEngine.showLoading();
 					world.sendTurn();
 				}
@@ -287,7 +287,7 @@ public class WorldView extends InputView {
 					if (gameRender.canSend()) {
 						setReadInput(false);
 						MessageBox.build()
-								.setMessage("world_send", Buttons.Two)
+								.setMessage("world_send", BoxButtons.Two)
 								.setCallback(sendTurnCallback)
 								.setHideOnAction(false)
 								.show();
@@ -388,7 +388,7 @@ public class WorldView extends InputView {
 	private void back() {
 		pause();
 		MessageBox.build()
-				.setMessage("world_back_to_menu", Buttons.Two)
+				.setMessage("world_back_to_menu", BoxButtons.Two)
 				.setCallback(backCallback)
 				.setHideOnAction(false)
 				.show();

@@ -16,9 +16,9 @@ import com.crystalclash.CrystalClash;
 import com.crystalclash.accessors.ActorAccessor;
 import com.crystalclash.controllers.GameController;
 import com.crystalclash.renders.helpers.ResourceHelper;
+import com.crystalclash.renders.helpers.ui.BaseBox.BoxButtons;
+import com.crystalclash.renders.helpers.ui.BoxCallback;
 import com.crystalclash.renders.helpers.ui.MessageBox;
-import com.crystalclash.renders.helpers.ui.MessageBoxCallback;
-import com.crystalclash.renders.helpers.ui.MessageBox.Buttons;
 
 public class TutorialInvitation extends AnimatedGroup {
 
@@ -62,10 +62,10 @@ public class TutorialInvitation extends AnimatedGroup {
 		});
 		addActor(btnPlayTutorial);
 
-		final MessageBoxCallback confirmation = new MessageBoxCallback() {
+		final BoxCallback confirmation = new BoxCallback() {
 			@Override
 			public void onEvent(int type, Object data) {
-				if (type == MessageBoxCallback.YES) {
+				if (type == BoxCallback.YES) {
 					GameController.setTutorialDone();
 					GameEngine.start(BlackOverlay.build().hide(Timeline.createParallel()));
 					MessageBox.build().hide();
@@ -82,7 +82,7 @@ public class TutorialInvitation extends AnimatedGroup {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
 				MessageBox.build()
-						.setMessage("tutorial_invitation_skip", Buttons.Two)
+						.setMessage("tutorial_invitation_skip", BoxButtons.Two)
 						.setCallback(confirmation)
 						.setHideOnAction(false)
 						.show();

@@ -27,12 +27,14 @@ import com.crystalclash.entities.User;
 import com.crystalclash.renders.GameEngine;
 import com.crystalclash.renders.ParallaxRender;
 import com.crystalclash.renders.TutorialInvitation;
+import com.crystalclash.renders.helpers.EmblemHelper;
 import com.crystalclash.renders.helpers.ResourceHelper;
+import com.crystalclash.renders.helpers.ui.BaseBox.BoxButtons;
+import com.crystalclash.renders.helpers.ui.BoxCallback;
+import com.crystalclash.renders.helpers.ui.EmblemList;
 import com.crystalclash.renders.helpers.ui.GameListItem;
 import com.crystalclash.renders.helpers.ui.GamesLoadCallback;
 import com.crystalclash.renders.helpers.ui.MessageBox;
-import com.crystalclash.renders.helpers.ui.MessageBox.Buttons;
-import com.crystalclash.renders.helpers.ui.MessageBoxCallback;
 
 public class MenuGamesView extends InputView {
 	private GamesLoadCallback loadCallback;
@@ -72,6 +74,8 @@ public class MenuGamesView extends InputView {
 	private boolean showRelease = false;
 	private float pullDistance = 0;
 	private float releaseDistance = 0;
+
+	private EmblemList emblemList;
 
 	@Override
 	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
@@ -208,10 +212,10 @@ public class MenuGamesView extends InputView {
 	private void initSkin() {
 		txtCcolumn = ResourceHelper.getTexture("menu/games_list/column_stack");
 
-		final MessageBoxCallback surrenderCallback = new MessageBoxCallback() {
+		final BoxCallback surrenderCallback = new BoxCallback() {
 			@Override
 			public void onEvent(int type, Object data) {
-				if (type == MessageBoxCallback.YES) {
+				if (type == BoxCallback.YES) {
 					controller.surrenderGame(data.toString());
 					loadGameList();
 				}
@@ -223,7 +227,7 @@ public class MenuGamesView extends InputView {
 			public void clicked(InputEvent event, float x, float y) {
 				MessageBox.build()
 						.setUserData(((GameListItem) event.getListenerActor().getParent()).gameId)
-						.setMessage("menu_ganmes_surender", Buttons.Two)
+						.setMessage("menu_ganmes_surender", BoxButtons.Two)
 						.setCallback(surrenderCallback)
 						.show();
 			}
@@ -330,15 +334,30 @@ public class MenuGamesView extends InputView {
 		lblUserName.setAlignment(Align.center);
 		grpProfile.addActor(lblUserName);
 
-		Label lblUserD = new Label("40", skin, "font", Color.WHITE);
+		Image imgEmblem = new Image(EmblemHelper.getEmblem(u.getEmblem()));
+		imgEmblem.setPosition(55, 60);
+		imgEmblem.setSize(160, 160);
+		grpProfile.addActor(imgEmblem);
+		imgEmblem.addListener(new ClickListener() {
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+				if (emblemList == null) {
+					emblemList = new EmblemList();
+					emblemList.setPosition(-640, 0);
+					addActor(list);
+				}
+			}
+		});
+
+		Label lblUserD = new Label(u.getDrawCount() + "", skin, "font", Color.WHITE);
 		lblUserD.setPosition(370, 90);
 		grpProfile.addActor(lblUserD);
 
-		Label lblUserV = new Label("150", skin, "font", Color.WHITE);
+		Label lblUserV = new Label(u.getVictoryCount() + "", skin, "font", Color.WHITE);
 		lblUserV.setPosition(500, 110);
 		grpProfile.addActor(lblUserV);
 
-		Label lblUserL = new Label("20", skin, "font", Color.WHITE);
+		Label lblUserL = new Label(u.getLostCount() + "", skin, "font", Color.WHITE);
 		lblUserL.setPosition(630, 90);
 		grpProfile.addActor(lblUserL);
 
@@ -352,6 +371,10 @@ public class MenuGamesView extends InputView {
 		refreshMessageRelease = new Image(ResourceHelper.getTexture("menu/refresh_list/refresh_message_release"));
 		refreshMessageRelease.setVisible(false);
 		addActor(refreshMessageRelease);
+	}
+
+	private void openEmblemList() {
+
 	}
 
 	public void listGamesError(String message) {
