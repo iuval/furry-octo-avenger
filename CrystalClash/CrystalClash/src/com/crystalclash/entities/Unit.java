@@ -143,6 +143,10 @@ public class Unit extends GameObject {
 		this.playerNumber = num;
 	}
 
+	public int getPlayerNumber() {
+		return this.playerNumber;
+	}
+	
 	public boolean isPlayerNumber(int num) {
 		return this.playerNumber == num;
 	}
