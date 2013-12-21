@@ -29,8 +29,8 @@ public class SplashView extends BaseView {
 		name = new Image(nameTexture);
 		addActor(name);
 		crystal.setPosition(CrystalClash.WIDTH / 2 - crystal.getWidth() / 2, CrystalClash.HEIGHT +
-				CrystalClash.HEIGHT / 2 - crystal.getHeight() / 2);
-		name.setPosition(CrystalClash.WIDTH / 2 - name.getWidth() / 2, -name.getHeight());
+				CrystalClash.HEIGHT / 2 - crystal.getHeight() / 3);
+		name.setPosition(CrystalClash.WIDTH / 2 - name.getWidth() / 2, crystal.getY() - name.getHeight());
 	}
 
 	@Override
