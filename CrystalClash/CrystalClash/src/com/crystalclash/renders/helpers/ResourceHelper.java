@@ -21,6 +21,7 @@ public class ResourceHelper {
 	private static TextureAtlas atlas;
 	private static Skin skin;
 	private static BitmapFont bigFont;
+	private static BitmapFont normalFont;
 	private static BitmapFont smallFont;
 
 	private static TextButtonStyle buttonStyle;
@@ -39,25 +40,28 @@ public class ResourceHelper {
 		skin = new Skin(atlas);
 		bigFont = new BitmapFont(Gdx.files.internal("data/fonts/action_man.fnt"), false);
 		bigFont.getRegion().getTexture().setFilter(TextureFilter.Linear, TextureFilter.Linear);
-		bigFont.setScale(0.9f);
+		bigFont.setScale(1.2f);
+		normalFont = new BitmapFont(Gdx.files.internal("data/fonts/action_man.fnt"), false);
+		normalFont.getRegion().getTexture().setFilter(TextureFilter.Linear, TextureFilter.Linear);
+		normalFont.setScale(0.9f);
 		smallFont = new BitmapFont(Gdx.files.internal("data/fonts/action_man.fnt"), false);
 		smallFont.getRegion().getTexture().setFilter(TextureFilter.Linear, TextureFilter.Linear);
 		smallFont.setScale(0.7f);
 		buttonStyle = new TextButtonStyle(
 				skin.getDrawable("button_orange"),
-				skin.getDrawable("button_orange_pressed"), null, bigFont);
+				skin.getDrawable("button_orange_pressed"), null, normalFont);
 
 		outerButtonStyle = new TextButtonStyle(
 				skin.getDrawable("outer_button_orange"),
-				skin.getDrawable("outer_button_orange_pressed"), null, bigFont);
+				skin.getDrawable("outer_button_orange_pressed"), null, normalFont);
 
 		outerSmallButtonStyle = new TextButtonStyle(
 				skin.getDrawable("outer_button_small"),
-				skin.getDrawable("outer_button_small_pressed"), null, bigFont);
+				skin.getDrawable("outer_button_small_pressed"), null, normalFont);
 
 		nextButtonStyle = new TextButtonStyle(
 				skin.getDrawable("next_button"),
-				skin.getDrawable("next_button_pressed"), null, bigFont);
+				skin.getDrawable("next_button_pressed"), null, normalFont);
 	}
 
 	public static TextureRegion getTexture(String path) {
@@ -145,6 +149,10 @@ public class ResourceHelper {
 
 	public static BitmapFont getBigFont() {
 		return bigFont;
+	}
+
+	public static BitmapFont getNormalFont() {
+		return normalFont;
 	}
 
 	public static BitmapFont getSmallFont() {

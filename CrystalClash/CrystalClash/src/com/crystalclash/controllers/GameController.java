@@ -103,7 +103,7 @@ public class GameController {
 	public static int getUnitRange(String unitName) {
 		return unitValues.get(unitName)[5];
 	}
-	
+
 	public static int getUnitSoundCount(String unitName, SOUND type) {
 		switch (type) {
 		case chose_attack:
@@ -127,13 +127,14 @@ public class GameController {
 		return unitValues.keys();
 	}
 
-	public static boolean willTryToLogin() {
+	public static void tryLogin() {
 		Profile p = profileService.retrieveProfile();
-		if (p.hasUserAndPassword()) {
-			logIn(p.getUserEmail(), p.getUserPassword());
-			return true;
-		}
-		return false;
+		logIn(p.getUserEmail(), p.getUserPassword());
+	}
+
+	public static boolean canLogin() {
+		Profile p = profileService.retrieveProfile();
+		return p.hasUserAndPassword();
 	}
 
 	public static boolean isTutorialDone() {

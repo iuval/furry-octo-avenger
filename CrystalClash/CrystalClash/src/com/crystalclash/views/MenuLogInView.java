@@ -21,7 +21,6 @@ import com.crystalclash.CrystalClash;
 import com.crystalclash.accessors.ActorAccessor;
 import com.crystalclash.controllers.GameController;
 import com.crystalclash.controllers.MenuLogIn;
-import com.crystalclash.enumerators.MenuLogInState;
 import com.crystalclash.enumerators.StringWriting;
 import com.crystalclash.renders.GameEngine;
 import com.crystalclash.renders.helpers.ResourceHelper;
@@ -37,28 +36,22 @@ public class MenuLogInView extends InputView {
 	private Label lblHeading;
 	private TextField txtEmail;
 	private TextField txtPassword;
-	private TextButton btnLogIn;
 	private TextButton btnSignIn;
-	private TextButton btnConfirm;
-	private TextButton btnBack;
-	private TextureRegion popupPanelTexture;
-	private Image popupPanel;
+	private TextButton btnSignUp;
+	private TextureRegion txtPopup;
+	private Image imgPopupPanel;
 	private TextureRegion textFieldTexture;
 	private Image textFieldEmail;
 	private Image textFieldPassword;
-	private TextureRegion charactersTexture;
-	private Image characters;
-
 	private Group groupInitialScreen;
-	private Group popUp;
+	private Group grpPopUp;
 
 	private StringWriting stringWriting;
-	public MenuLogInState state;
 
 	public MenuLogInView(MenuLogIn menu) {
 		this.controller = menu;
 		stringWriting = StringWriting.None;
-		state = MenuLogInState.Idle;
+		setPosition(0, 853);
 		load();
 	}
 
@@ -75,80 +68,45 @@ public class MenuLogInView extends InputView {
 
 	@Override
 	public Timeline pushEnterAnimation(Timeline t) {
-		state = MenuLogInState.Idle;
-		return t.push(Tween.set(groupInitialScreen, ActorAccessor.ALPHA)
-				.target(0))
-				.push(Tween.to(groupInitialScreen, ActorAccessor.ALPHA, CrystalClash.SLOW_ANIMATION_SPEED)
-						.target(1));
+		return t.push(Tween.to(grpPopUp, ActorAccessor.Y, CrystalClash.SLOW_ANIMATION_SPEED).target(213));
 	}
 
 	@Override
 	public Timeline pushExitAnimation(Timeline t) {
-		txtPassword.setText("");
-		txtPassword.setMessageText("");
-
-		return t.push(Tween.to(popUp, ActorAccessor.Y, CrystalClash.SLOW_ANIMATION_SPEED).target(CrystalClash.HEIGHT));
+		return t;
 	}
 
 	private void load() {
 		final Profile prof = GameController.profileService.retrieveProfile();
 
-		charactersTexture = ResourceHelper.getTexture("menu/menu_login_lobby_characters");
-		characters = new Image(charactersTexture);
-
-		btnLogIn = new TextButton("Log In", ResourceHelper.getOuterButtonStyle());
-		btnLogIn.setPosition(CrystalClash.WIDTH / 4 * 3 - btnLogIn.getWidth()
-				/ 2, CrystalClash.HEIGHT / 2 + 50);
-		btnLogIn.addListener(new ClickListener() {
-			@Override
-			public void clicked(InputEvent event, float x, float y) {
-				if (state == MenuLogInState.Idle)
-					moveDown(MenuLogInState.LogIn);
-			}
-		});
-
-		btnSignIn = new TextButton("Sign In", ResourceHelper.getOuterButtonStyle());
-		btnSignIn.setPosition(CrystalClash.WIDTH / 4 * 3 - btnSignIn.getWidth()
-				/ 2, CrystalClash.HEIGHT / 2 - 50 - btnSignIn.getHeight());
-		btnSignIn.addListener(new ClickListener() {
-			@Override
-			public void clicked(InputEvent event, float x, float y) {
-				if (state == MenuLogInState.Idle)
-					moveDown(MenuLogInState.SignIn);
-			}
-		});
-
 		groupInitialScreen = new Group();
-		groupInitialScreen.addActor(characters);
-		groupInitialScreen.addActor(btnLogIn);
-		groupInitialScreen.addActor(btnSignIn);
 		addActor(groupInitialScreen);
 
-		popupPanelTexture = ResourceHelper.getTexture("menu/menu_login_popup");
-		popupPanel = new Image(popupPanelTexture);
-		popupPanel.setSize(800, 500);
-		popupPanel.setPosition(0, 0);
+		txtPopup = ResourceHelper.getTexture("menu/menu_login_popup");
+		imgPopupPanel = new Image(txtPopup);
+		imgPopupPanel.setSize(800, 500);
+		imgPopupPanel.setPosition(0, 0);
 
-		lblHeading = new Label("Welcome to Crystal Clash", new LabelStyle(ResourceHelper.getBigFont(),
+		lblHeading = new Label("Welcome to Crystal Clash", new LabelStyle(ResourceHelper.getNormalFont(),
 				Color.WHITE));
 		lblHeading.setPosition(
-				popupPanel.getWidth() / 2 - lblHeading.getWidth() / 2,
-				popupPanel.getTop() - 100);
+				imgPopupPanel.getWidth() / 2 - lblHeading.getWidth() / 2,
+				imgPopupPanel.getTop() - 100);
 
 		textFieldTexture = ResourceHelper.getTexture("text_field_background");
 		textFieldEmail = new Image(textFieldTexture);
-		textFieldEmail.setPosition(50, popupPanel.getTop() - 200);
+		textFieldEmail.setPosition(50, imgPopupPanel.getTop() - 200);
 		textFieldEmail.setSize(700, 50);
 
 		textFieldPassword = new Image(textFieldTexture);
-		textFieldPassword.setPosition(50, popupPanel.getTop() - 300);
+		textFieldPassword.setPosition(50, imgPopupPanel.getTop() - 300);
 		textFieldPassword.setSize(700, 50);
 
 		Skin textFieldSkin = new Skin();
 		textFieldSkin.add("textFieldCursor", ResourceHelper.getTexture("menu/cursor_1"));
 
 		TextFieldStyle textFieldStyle = new TextFieldStyle();
-		textFieldStyle.font = ResourceHelper.getBigFont();
+		textFieldStyle.font = ResourceHelper.getNormalFont();
 		textFieldStyle.fontColor = Color.WHITE;
 		textFieldStyle.cursor = textFieldSkin.getDrawable("textFieldCursor");
 		txtEmail = new TextField(prof.getUserEmail(), textFieldStyle);
@@ -179,62 +137,51 @@ public class MenuLogInView extends InputView {
 			}
 		});
 
-		btnBack = new TextButton("Back", ResourceHelper.getButtonStyle());
-		btnBack.setPosition(50, 50);
-		btnBack.addListener(new ClickListener() {
-			@Override
-			public void clicked(InputEvent event, float x, float y) {
-				Gdx.input.setOnscreenKeyboardVisible(false);
-				moveUp(MenuLogInState.Idle);
-				txtEmail.setText("");
-				txtPassword.setText("");
-			}
-		});
-
-		btnConfirm = new TextButton("Confirm", ResourceHelper.getButtonStyle());
-		btnConfirm.setPosition(popupPanel.getWidth() - btnBack.getWidth() - 50,
-				50);
-		btnConfirm.addListener(new ClickListener() {
+		btnSignUp = new TextButton("Sign Up", ResourceHelper.getButtonStyle());
+		btnSignUp.setPosition(50, 50);
+		btnSignUp.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
 				String email = txtEmail.getText().trim();
 				String password = txtPassword.getText().trim();
-				switch (state) {
-				case Idle:
-					break;
-				case LogIn:
-					if (!email.isEmpty() && !password.isEmpty()) {
-						Gdx.input.setOnscreenKeyboardVisible(false);
-						controller.sendLogIn(email, password);
-					}
-					break;
-				case SignIn:
-					if (!email.isEmpty() && !password.isEmpty()) {
-						Gdx.input.setOnscreenKeyboardVisible(false);
-						controller.sendSignIn(email, password);
-					}
-					break;
-				default:
-					break;
+				Gdx.input.setOnscreenKeyboardVisible(false);
+				if (!email.isEmpty() && !password.isEmpty()) {
+					Gdx.input.setOnscreenKeyboardVisible(false);
+					controller.sendSignIn(email, password);
 				}
 			}
 		});
 
-		popUp = new Group();
-		popUp.addActor(popupPanel);
-		popUp.addActor(lblHeading);
-		popUp.addActor(textFieldEmail);
-		popUp.addActor(textFieldPassword);
-		popUp.addActor(txtEmail);
-		popUp.addActor(txtPassword);
-		popUp.addActor(btnConfirm);
-		popUp.addActor(btnBack);
+		btnSignIn = new TextButton("Sign In", ResourceHelper.getButtonStyle());
+		btnSignIn.setPosition(imgPopupPanel.getWidth() - btnSignUp.getWidth() - 50,
+				50);
+		btnSignIn.addListener(new ClickListener() {
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+				String email = txtEmail.getText().trim();
+				String password = txtPassword.getText().trim();
+				Gdx.input.setOnscreenKeyboardVisible(false);
+				if (!email.isEmpty() && !password.isEmpty()) {
+					Gdx.input.setOnscreenKeyboardVisible(false);
+					controller.sendLogIn(email, password);
+				}
+			}
+		});
 
-		popUp.setSize(popupPanel.getWidth(), popupPanel.getHeight());
-		popUp.setPosition(CrystalClash.WIDTH / 2 - popUp.getWidth() / 2,
-				(CrystalClash.HEIGHT / 2 - popUp.getHeight() / 2)
-						+ CrystalClash.HEIGHT);
-		addActor(popUp);
+		grpPopUp = new Group();
+		grpPopUp.addActor(imgPopupPanel);
+		grpPopUp.addActor(lblHeading);
+		grpPopUp.addActor(textFieldEmail);
+		grpPopUp.addActor(textFieldPassword);
+		grpPopUp.addActor(txtEmail);
+		grpPopUp.addActor(txtPassword);
+		grpPopUp.addActor(btnSignIn);
+		grpPopUp.addActor(btnSignUp);
+
+		grpPopUp.setSize(imgPopupPanel.getWidth(), imgPopupPanel.getHeight());
+		grpPopUp.setPosition(CrystalClash.WIDTH / 2 - grpPopUp.getWidth() / 2,
+				(CrystalClash.HEIGHT + grpPopUp.getHeight()));
+		addActor(grpPopUp);
 	}
 
 	public void logInError(String message) {
@@ -244,41 +191,18 @@ public class MenuLogInView extends InputView {
 				.show();
 	}
 
-	// Solo para el btnBack (Mueve el panel hacia arriba y hace un fade-in de los otros botones
-	private void moveUp(MenuLogInState state) {
-		float speed = CrystalClash.SLOW_ANIMATION_SPEED;
-		GameEngine.start(Timeline.createParallel()
-				.push(Tween.to(popUp, ActorAccessor.ALPHA, speed).target(0))
-				.push(Tween.to(groupInitialScreen, ActorAccessor.ALPHA,
-						speed).target(1))
-				.push(Tween.to(popUp, ActorAccessor.Y, speed).target(
-						popUp.getY() + CrystalClash.HEIGHT)));
-
-		this.state = state;
-	}
-
-	private void moveDown(MenuLogInState state) {
-		float speed = CrystalClash.SLOW_ANIMATION_SPEED;
-		GameEngine.start(Timeline.createParallel()
-				.push(Tween.to(popUp, ActorAccessor.Y, speed).target(
-						CrystalClash.HEIGHT / 2 - popUp.getHeight() / 2))
-				.push(Tween.to(popUp, ActorAccessor.ALPHA, speed).target(1))
-				.push(Tween.to(groupInitialScreen, ActorAccessor.ALPHA,
-						speed).target(0)));
-
-		this.state = state;
-	}
-
 	private void adjustToKeyboard(boolean up) {
 		Gdx.input.setOnscreenKeyboardVisible(up);
 		// true mueve hacia arriba, false mueve hacia abajo
-		float jump = CrystalClash.HEIGHT / 2 - popUp.getHeight() / 2;
+		float jump = 0;
 		if (up)
-			jump = CrystalClash.HEIGHT / 2 - 30;
+			jump = 413;
+		else
+			jump = 213;
 
 		float speed = CrystalClash.SLOW_ANIMATION_SPEED;
 		GameEngine.start(Timeline.createParallel()
-				.push(Tween.to(popUp, ActorAccessor.Y, speed).target(jump)));
+				.push(Tween.to(grpPopUp, ActorAccessor.Y, speed).target(jump)));
 	}
 
 	@Override

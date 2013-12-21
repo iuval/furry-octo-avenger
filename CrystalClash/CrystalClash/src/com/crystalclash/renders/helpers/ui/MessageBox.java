@@ -40,12 +40,12 @@ public class MessageBox extends AnimatedGroup {
 		setSize(800, CrystalClash.HEIGHT / 2);
 		setPosition(CrystalClash.WIDTH / 2 - 400, CrystalClash.HEIGHT + getHeight());
 
-		imgWindowBackground = new Image(ResourceHelper.getTexture("menu/games_list_background"));
+		imgWindowBackground = new Image(ResourceHelper.getTexture("menu/message_box_background"));
 		imgWindowBackground.setSize(getWidth(), getHeight());
 		imgWindowBackground.setPosition(0, 0);
 		addActor(imgWindowBackground);
 
-		lblMessage = new Label("", new LabelStyle(ResourceHelper.getBigFont(), Color.WHITE));
+		lblMessage = new Label("", new LabelStyle(ResourceHelper.getNormalFont(), Color.WHITE));
 		lblMessage.setAlignment(Align.center);
 		lblMessage.setWrap(true);
 		addActor(lblMessage);

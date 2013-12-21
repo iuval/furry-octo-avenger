@@ -14,13 +14,11 @@ import com.crystalclash.renders.helpers.ResourceHelper;
 public class BlackOverlay extends Group {
 	private static BlackOverlay instance;
 	private Image txrBlackScreen;
-	private int callsCount = 0;
 	private AnimatedGroup onTop;
 
 	public BlackOverlay() {
 		txrBlackScreen = new Image(ResourceHelper.getTexture("menu/loading/background"));
 		txrBlackScreen.setColor(txrBlackScreen.getColor().r, txrBlackScreen.getColor().g, txrBlackScreen.getColor().b, 0);
-		addActor(txrBlackScreen);
 		setVisible(false);
 	}
 

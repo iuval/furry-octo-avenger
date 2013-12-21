@@ -1,6 +1,5 @@
 package com.crystalclash.renders.helpers.ui;
 
-
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
@@ -13,13 +12,14 @@ public class SuperScrollPane extends Group {
 	private boolean isTryingToRefresh = false;
 	private boolean showPullDown = false;
 	private boolean showRelease = false;
-	public ScrollPane scrollPane;
-	private SuperScrollPaneRefreshCallback onRefresh;
 	private float pullDistance = 0;
 	private float releaseDistance = 0;
+	public ScrollPane scrollPane;
+	private SuperScrollPaneRefreshCallback onRefresh;
 
 	public SuperScrollPane(Actor widget, SuperScrollPaneRefreshCallback onRefresh) {
 		scrollPane = new ScrollPane(widget);
+		scrollPane.setFillParent(true);
 		addActor(scrollPane);
 		this.onRefresh = onRefresh;
 	}
@@ -85,7 +85,7 @@ public class SuperScrollPane extends Group {
 
 	@Override
 	public void setBounds(float x, float y, float width, float height) {
-		scrollPane.setSize(width, height);
+		scrollPane.setBounds(x, y, width, height);
 		super.setBounds(x, y, width, height);
 	}
 }
