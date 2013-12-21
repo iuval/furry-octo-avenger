@@ -18,6 +18,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
 import com.badlogic.gdx.scenes.scene2d.utils.Align;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.crystalclash.CrystalClash;
 import com.crystalclash.audio.AudioManager;
 import com.crystalclash.audio.AudioManager.MUSIC;
@@ -29,6 +30,7 @@ import com.crystalclash.renders.ParallaxRender;
 import com.crystalclash.renders.TutorialInvitation;
 import com.crystalclash.renders.helpers.EmblemHelper;
 import com.crystalclash.renders.helpers.ResourceHelper;
+import com.crystalclash.renders.helpers.ui.BaseBox;
 import com.crystalclash.renders.helpers.ui.BaseBox.BoxButtons;
 import com.crystalclash.renders.helpers.ui.BoxCallback;
 import com.crystalclash.renders.helpers.ui.EmblemList;
@@ -74,8 +76,6 @@ public class MenuGamesView extends InputView {
 	private boolean showRelease = false;
 	private float pullDistance = 0;
 	private float releaseDistance = 0;
-
-	private EmblemList emblemList;
 
 	@Override
 	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
@@ -334,18 +334,27 @@ public class MenuGamesView extends InputView {
 		lblUserName.setAlignment(Align.center);
 		grpProfile.addActor(lblUserName);
 
-		Image imgEmblem = new Image(EmblemHelper.getEmblem(u.getEmblem()));
-		imgEmblem.setPosition(55, 60);
+		final Image imgEmblem = new Image(EmblemHelper.getEmblem(u.getEmblem()));
+		imgEmblem.setPosition(55, 90);
 		imgEmblem.setSize(160, 160);
 		grpProfile.addActor(imgEmblem);
 		imgEmblem.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
-				if (emblemList == null) {
-					emblemList = new EmblemList();
-					emblemList.setPosition(-640, 0);
-					addActor(list);
-				}
+				final EmblemList emblemList = new EmblemList();
+				BaseBox box = new BaseBox(emblemList);
+				box.twoButtonsLayout("Save", "Back");
+				box.setCallback(new BoxCallback() {
+					@Override
+					public void onEvent(int type, Object data) {
+						if (type == YES) {
+							GameController.getUser().setEmblem(emblemList.getSelectedEmblem());
+							GameController.getUser().update();
+							imgEmblem.setDrawable(new TextureRegionDrawable(EmblemHelper.getEmblem(emblemList.getSelectedEmblem())));
+						}
+					}
+				});
+				box.show();
 			}
 		});
 

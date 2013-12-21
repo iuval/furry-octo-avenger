@@ -14,6 +14,7 @@ public class EmblemListItem extends Group {
 	public EmblemListItem(int number, ClickListener clickListener) {
 		imgEmblem = new Image(EmblemHelper.getEmblem(number));
 		imgEmblem.setPosition(0, 0);
+		imgEmblem.setSize(100, 100);
 		addActor(imgEmblem);
 
 		imgSelectedBorder = new Image(EmblemHelper.getSelectedBorder());

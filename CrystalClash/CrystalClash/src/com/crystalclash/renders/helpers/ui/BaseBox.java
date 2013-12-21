@@ -31,7 +31,7 @@ public class BaseBox extends AnimatedGroup {
 
 	private BoxCallback callback;
 
-	protected BaseBox(Actor widget) {
+	public BaseBox(Actor widget) {
 		this.widget = widget;
 		setSize(800, CrystalClash.HEIGHT / 2);
 		setPosition(CrystalClash.WIDTH / 2 - 400, CrystalClash.HEIGHT + getHeight());
@@ -60,6 +60,7 @@ public class BaseBox extends AnimatedGroup {
 					hide();
 			}
 		});
+		addActor(widget);
 	}
 
 	public BaseBox setCallback(BoxCallback callback) {
@@ -77,7 +78,7 @@ public class BaseBox extends AnimatedGroup {
 		return this;
 	}
 
-	protected BaseBox twoButtonsLayout(String yes, String no) {
+	public BaseBox twoButtonsLayout(String yes, String no) {
 		btnYes.setText(yes);
 		btnYes.setSize(360, 100);
 		btnYes.setPosition(getWidth() - btnYes.getWidth() - 30, 30);
@@ -88,12 +89,12 @@ public class BaseBox extends AnimatedGroup {
 		btnNo.setPosition(30, 30);
 		addActor(btnNo);
 
-		widget.setSize(getWidth() - 100, getHeight() - 150);
-		widget.setPosition(50, 100);
+		widget.setSize(getWidth() - 70, getHeight() - 200);
+		widget.setPosition(35, 150);
 		return this;
 	}
 
-	protected BaseBox oneButtonsLayout(String yes) {
+	public BaseBox oneButtonsLayout(String yes) {
 		btnYes.setText(yes);
 		btnYes.setSize(500, 100);
 		btnYes.setPosition(getWidth() / 2 - btnYes.getWidth() / 2, 30);
@@ -106,7 +107,7 @@ public class BaseBox extends AnimatedGroup {
 		return this;
 	}
 
-	protected BaseBox noButtonsLayout() {
+	public BaseBox noButtonsLayout() {
 		btnYes.remove();
 
 		btnNo.remove();

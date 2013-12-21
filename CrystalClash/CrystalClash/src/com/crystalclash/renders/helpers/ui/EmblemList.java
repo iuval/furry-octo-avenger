@@ -20,7 +20,7 @@ public class EmblemList extends Group {
 		scrollPane.setOverscroll(false, true);
 		scrollPane.setSmoothScrolling(true);
 		scrollPane.setForceScroll(false, true);
-		scrollPane.setSize(640, 685);
+		scrollPane.setFillParent(true);
 		scrollPane.invalidate();
 		addActor(scrollPane);
 
@@ -41,9 +41,9 @@ public class EmblemList extends Group {
 				}
 			}
 		};
-
+		
 		for (int i = 0; i < GameController.emblemCount; i++) {
-			if (i % 6 == 0) {
+			if (i % 7 == 0) {
 				table.row();
 			}
 			EmblemListItem item = new EmblemListItem(i, unitItemClickListener);
