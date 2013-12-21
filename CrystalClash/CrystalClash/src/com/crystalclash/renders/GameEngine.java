@@ -327,8 +327,9 @@ public class GameEngine implements Screen {
 				}
 			});
 		} else if (state == GameState.InGame) {
-			worldRender.pushExitAnimation(t);
+			background.loadGamesList();
 			background.pushShow(t);
+			worldRender.pushExitAnimation(t);
 			t.setCallback(new TweenCallback() {
 				@Override
 				public void onEvent(int type, BaseTween<?> source) {

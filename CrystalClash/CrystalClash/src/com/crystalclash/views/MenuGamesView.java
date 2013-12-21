@@ -34,14 +34,11 @@ import com.crystalclash.renders.helpers.ui.GameListItem;
 import com.crystalclash.renders.helpers.ui.MessageBox;
 import com.crystalclash.renders.helpers.ui.MessageBox.Buttons;
 import com.crystalclash.renders.helpers.ui.MessageBoxCallback;
-import com.crystalclash.renders.helpers.ui.SuperScrollPane;
-import com.crystalclash.renders.helpers.ui.SuperScrollPaneRefreshCallback;
 
 public class MenuGamesView extends InputView {
 	private static MenuGamesView instance;
 
 	private MenuGames controller;
-	private SuperScrollPane superScroll;
 
 	private VerticalGroup list;
 	private GameListItem[] gamesList;
@@ -57,6 +54,35 @@ public class MenuGamesView extends InputView {
 
 	private TutorialInvitation tutoInv;
 	private TextureRegion txtCcolumn;
+
+	float last_touch_down_y = 0f;
+	float y_move_speed = 0f;
+	float y_move_accel = 0.95f;
+	float max_list_y = 0f;
+	float min_list_y = 0f;
+
+	@Override
+	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+		// TODO Auto-generated method stub
+		last_touch_down_y = screenY;
+		return super.touchDown(screenX, screenY, pointer, button);
+	}
+
+	public boolean touchDragged(int x, int y, int pointer) {
+		moveList(y);
+		return false;
+	}
+
+	private void moveList(int touch_y) {
+		y_move_speed += (last_touch_down_y - touch_y) * 10;
+		last_touch_down_y = touch_y;
+		if(y_move_speed > 2000) y_move_speed = 2000;
+		if(y_move_speed < -2000) y_move_speed = -2000;
+	}
+
+	private boolean yOutOfLimit(float y) {
+		return (y < min_list_y || y > max_list_y);
+	}
 
 	public MenuGamesView(MenuGames menu) {
 		this.controller = menu;
@@ -84,31 +110,15 @@ public class MenuGamesView extends InputView {
 
 	@Override
 	public Timeline pushExitAnimation(Timeline t) {
-		superScroll.scrollPane.setScrollY(0);
 		return t.push(Tween.to(this, ActorAccessor.ALPHA, CrystalClash.NORMAL_ANIMATION_SPEED).target(0));
 	}
 
 	private void load() {
 		list = new VerticalGroup();
-
-		// put the table inside a scrollpane
-		superScroll = new SuperScrollPane(list, new SuperScrollPaneRefreshCallback() {
-			@Override
-			public void refresh() {
-				loadGameList();
-			}
-		});
-		superScroll.setBounds(0, 0, CrystalClash.WIDTH, CrystalClash.HEIGHT);
-		superScroll.scrollPane.setScrollingDisabled(true, false);
-		superScroll.scrollPane.setOverscroll(false, true);
-		superScroll.scrollPane.setSmoothScrolling(true);
-		superScroll.scrollPane.setupOverscroll(CrystalClash.HEIGHT, 4000, 5000);
-		superScroll.scrollPane.setForceScroll(false, true);
-		superScroll.scrollPane.invalidate();
-		addActor(superScroll);
+		list.setBounds(0, 0, CrystalClash.WIDTH, CrystalClash.HEIGHT);
+		addActor(list);
 
 		initSkin();
-		superScroll.load();
 
 		if (!GameController.isTutorialDone()) {
 			loadTutorial();
@@ -158,6 +168,7 @@ public class MenuGamesView extends InputView {
 					list.addActorAfter(canPlayItem, listingItem);
 				}
 			}
+			max_list_y += listingItem.getHeight();
 		}
 		list.addActor(grpNewRandom);
 		list.addActor(new Image(txtCcolumn));
@@ -167,7 +178,7 @@ public class MenuGamesView extends InputView {
 
 	private void initSkin() {
 		txtCcolumn = ResourceHelper.getTexture("menu/games_list/column_stack");
-		
+
 		final MessageBoxCallback surrenderCallback = new MessageBoxCallback() {
 			@Override
 			public void onEvent(int type, Object data) {
@@ -333,7 +344,6 @@ public class MenuGamesView extends InputView {
 	// INPUT PROCESSOR--------------------------------------------
 	@Override
 	public boolean keyDown(int keycode) {
-		System.out.println("" + superScroll.getY());
 		if (keycode == Keys.BACK) {
 			controller.logOut();
 		}
@@ -361,9 +371,25 @@ public class MenuGamesView extends InputView {
 
 	@Override
 	public void act(float delta) {
+		updateList(delta);
 
-		ParallaxRender.getInstance().updateY(superScroll.scrollPane.getScrollY());
+		ParallaxRender.getInstance().updateY(list.getY());
 
 		super.act(delta);
+	}
+
+	private void updateList(float delta) {
+		if (Math.abs(y_move_speed) > 0.5f) {
+			float new_y = list.getY() + y_move_speed * delta;
+			updateListSpeed();
+			if (!yOutOfLimit(new_y))
+				list.setY(new_y);
+		}
+	}
+
+	private void updateListSpeed() {
+		y_move_speed *= y_move_accel;
+		if (Math.abs(y_move_speed) <= 0.5)
+			y_move_speed = 0;
 	}
 }
