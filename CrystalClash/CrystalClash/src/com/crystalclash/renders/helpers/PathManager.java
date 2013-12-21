@@ -112,6 +112,8 @@ public class PathManager {
 			iniX += dx;
 			iniY += dy;
 		}
+		
+		addToPath(p, endX, endY, xoffset, yoffset);
 	}
 
 	public static void addArc(Path p, float iniX, float iniY, float endX, float endY, float xoffset, float yoffset) {

@@ -134,7 +134,7 @@ public class TurnAnimationsView extends GameView {
 			}
 		});
 
-		btnPlay = new TextButton("PLAY", ResourceHelper.getOuterButtonStyle());
+		btnPlay = new TextButton("See what happened", ResourceHelper.getOuterButtonStyle());
 		btnPlay.setPosition(panel.getWidth() / 2 - btnPlay.getWidth() / 2, panel.getHeight() / 2);
 		btnPlay.addListener(new ClickListener() {
 			@Override
@@ -143,7 +143,7 @@ public class TurnAnimationsView extends GameView {
 			}
 		});
 
-		btnSkip = new TextButton("SKIP", ResourceHelper.getOuterButtonStyle());
+		btnSkip = new TextButton("Continue", ResourceHelper.getOuterButtonStyle());
 		btnSkip.setPosition(panel.getWidth() / 2 - btnSkip.getWidth() / 2, panel.getHeight() / 2);
 		btnSkip.addListener(new ClickListener() {
 			@Override
