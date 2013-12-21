@@ -9,8 +9,8 @@ public class CloudParallaxLevel extends ParallaxLevel {
 	private Image image_2;
 	private float side_speed;
 
-	public CloudParallaxLevel(TextureRegion t, float y, float x, float sideSpeed) {
-		super(y, x);
+	public CloudParallaxLevel(TextureRegion t, float y, float x, float sideSpeed, float vspeed) {
+		super(y, x, vspeed);
 		image_1 = new Image(t);
 		addActor(image_1);
 		image_1.setX(0);
@@ -30,5 +30,6 @@ public class CloudParallaxLevel extends ParallaxLevel {
 		if (image_2.getX() <= -CrystalClash.WIDTH) {
 			image_2.setX(CrystalClash.WIDTH);
 		}
+		setY(base_y + dy * vspeed);
 	}
 }

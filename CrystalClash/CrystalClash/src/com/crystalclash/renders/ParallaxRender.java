@@ -30,26 +30,26 @@ public class ParallaxRender extends Group {
 		rand = new Random();
 		levels = new Array<ParallaxLevel>();
 		setBounds(0, -854, 1280, 1708);
-		addLevel(new BackgroundParallaxLevel(ResourceHelper.getTexture("menu/background"), -427, 0.01f));
+		addLevel(new BackgroundParallaxLevel(ResourceHelper.getTexture("menu/background"), -427, 0.01f, 0.01f));
 		setColor(getColor().r, getColor().g, getColor().b, 0);
 	}
 
 	public void loadLogIn() {
 		if (!logInLoaded) {
-			addLevel(new NimbusParallaxLevel(ResourceHelper.getTexture("menu/nimbus1"), 1400, -(CrystalClash.WIDTH + rand.nextInt(500)), -0.6f));
-			addLevel(new NimbusParallaxLevel(ResourceHelper.getTexture("menu/nimbus2"), 1200, -(CrystalClash.WIDTH + rand.nextInt(500)), -1f));
-			addLevel(new NimbusParallaxLevel(ResourceHelper.getTexture("menu/nimbus3"), 1000, -(CrystalClash.WIDTH + rand.nextInt(500)), -2f));
+			addLevel(new NimbusParallaxLevel(ResourceHelper.getTexture("menu/nimbus1"), 1400, -(CrystalClash.WIDTH + rand.nextInt(500)), -0.6f, 0.1f));
+			addLevel(new NimbusParallaxLevel(ResourceHelper.getTexture("menu/nimbus2"), 1200, -(CrystalClash.WIDTH + rand.nextInt(500)), -1f, 0.2f));
+			addLevel(new NimbusParallaxLevel(ResourceHelper.getTexture("menu/nimbus3"), 1000, -(CrystalClash.WIDTH + rand.nextInt(500)), -2f, 0.15f));
 			logInLoaded = true;
 		}
 	}
 
 	public void loadGamesList() {
 		if (!gmesListLoaded) {
-			addLevel(new CloudParallaxLevel(ResourceHelper.getTexture("menu/level1"), -427, 0, -0.1f));
-			addLevel(new CloudParallaxLevel(ResourceHelper.getTexture("menu/level2"), -427, 0, -0.3f));
-			addLevel(new CloudParallaxLevel(ResourceHelper.getTexture("menu/level3"), -427, 0, -0.5f));
+			addLevel(new CloudParallaxLevel(ResourceHelper.getTexture("menu/level1"), -427, 0, -0.1f, -0.01f));
+			addLevel(new CloudParallaxLevel(ResourceHelper.getTexture("menu/level2"), -427, 0, -0.3f, -0.03f));
+			addLevel(new CloudParallaxLevel(ResourceHelper.getTexture("menu/level3"), -427, 0, -0.5f, -0.05f));
 
-			addLevel(new NimbusParallaxLevel(ResourceHelper.getTexture("menu/nimbus5"), 300, -rand.nextInt((int) (CrystalClash.WIDTH + 500)), -0.6f));
+			addLevel(new NimbusParallaxLevel(ResourceHelper.getTexture("menu/nimbus5"), 300, -rand.nextInt((int) (CrystalClash.WIDTH + 500)), -0.6f, 0.03f));
 
 			gmesListLoaded = true;
 		}
@@ -90,7 +90,7 @@ public class ParallaxRender extends Group {
 	@Override
 	public void act(float delta) {
 		for (int i = 0; i < levels.size; i++) {
-			levels.get(i).update(bg_y);
+			levels.get(i).update(bg_y * 0.1f);
 		}
 		super.act(delta);
 	}

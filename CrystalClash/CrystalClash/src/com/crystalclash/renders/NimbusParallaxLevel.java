@@ -8,8 +8,8 @@ public class NimbusParallaxLevel extends ParallaxLevel {
 	private Image image;
 	private float side_speed;
 
-	public NimbusParallaxLevel(TextureRegion t, float y, float x, float sideSpeed) {
-		super(y, x);
+	public NimbusParallaxLevel(TextureRegion t, float y, float x, float sideSpeed, float vspeed) {
+		super(y, x, vspeed);
 		image = new Image(t);
 		addActor(image);
 		side_speed = sideSpeed;
@@ -21,5 +21,6 @@ public class NimbusParallaxLevel extends ParallaxLevel {
 		if (getX() <= -CrystalClash.WIDTH) {
 			setX(CrystalClash.WIDTH);
 		}
+		setY(base_y + d);
 	}
 }

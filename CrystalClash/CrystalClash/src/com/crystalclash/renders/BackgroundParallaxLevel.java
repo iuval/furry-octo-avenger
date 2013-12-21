@@ -4,8 +4,8 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 
 public class BackgroundParallaxLevel extends ParallaxLevel {
-	public BackgroundParallaxLevel(TextureRegion t, float y, float x) {
-		super(y, x);
+	public BackgroundParallaxLevel(TextureRegion t, float y, float x, float vspeed) {
+		super(y, x, vspeed);
 		addActor(new Image(t));
 	}
 
