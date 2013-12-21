@@ -82,13 +82,11 @@ public class Unit extends GameObject {
 	}
 
 	public void setHP(int hp) {
-		totalHitPoints = hp;
 		hitPoints = hp;
 		getRender().updateHp();
 	}
 
 	public void setHPsoft(int hp) {
-		totalHitPoints = hp;
 		hitPoints = hp;
 	}
 
