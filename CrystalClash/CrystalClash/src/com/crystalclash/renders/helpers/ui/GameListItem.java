@@ -16,6 +16,8 @@ import com.crystalclash.renders.helpers.EmblemHelper;
 public class GameListItem extends Group {
 	public final String gameId;
 	public int turn;
+	public int emblem;
+	Button btnPlay;
 
 	public GameListItem(String gameId, String playerName, String victories, String turn, int emblem,
 			String state, Skin skin, EventListener surrenderListener,
@@ -32,7 +34,7 @@ public class GameListItem extends Group {
 		float h = bg.getHeight();
 		setSize(w, h);
 
-		Button btnPlay = new Button(state.equals("play") ?
+		btnPlay = new Button(state.equals("play") ?
 				skin.get("playStyle", TextButtonStyle.class) :
 				skin.get("waitStyle", TextButtonStyle.class));
 		if (state.equals("play"))
@@ -51,19 +53,10 @@ public class GameListItem extends Group {
 		labelV.setAlignment(Align.center);
 		addActor(labelV);
 
-		labelvictories.setSize(550, 70);
-		labelvictories.setPosition(220, 10);
-		labelvictories.setAlignment(Align.center);
-		btnPlay.addActor(labelvictories);
+		this.emblem = emblem;
 
-		Image imgEmblem = new Image(EmblemHelper.getEmblem(emblem));
-		imgEmblem.setPosition(15, 15);
-		imgEmblem.setSize(160, 160);
-		btnPlay.addActor(imgEmblem);
-
-		Label labelTurn = new Label(turn, skin, "font", Color.WHITE);
-		labelTurn.setPosition(140, 64);
-		labelTurn.setSize(160, 160);
+		Label labelTurn = new Label(turn, skin, "font", Color.LIGHT_GRAY);
+		labelTurn.setPosition(690, 110);
 		labelTurn.setAlignment(Align.center);
 		addActor(labelTurn);
 
@@ -73,6 +66,13 @@ public class GameListItem extends Group {
 		addActor(buttonSurrender);
 
 		buttonSurrender.addListener(surrenderListener);
+	}
+
+	public void loadEmblem() {
+		Image imgEmblem = new Image(EmblemHelper.getEmblem(emblem));
+		imgEmblem.setPosition(55, 60);
+		imgEmblem.setSize(160, 160);
+		addActor(imgEmblem);
 	}
 
 	public void dispose() {

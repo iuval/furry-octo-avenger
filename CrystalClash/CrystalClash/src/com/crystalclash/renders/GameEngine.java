@@ -164,7 +164,6 @@ public class GameEngine implements Screen {
 			background.addActor(menuGamesRender);
 			break;
 		case InTranstionProfileAndMenuGames:
-			stage.addActor(imgBackground);
 			stage.addActor(profileRender);
 			stage.addActor(menuGamesRender);
 			break;
@@ -185,7 +184,6 @@ public class GameEngine implements Screen {
 			background.addActor(menuGamesRender);
 			break;
 		case InProfile:
-			stage.addActor(imgBackground);
 			stage.addActor(profileRender);
 			break;
 		case InGame:
