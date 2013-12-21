@@ -24,6 +24,9 @@ import com.badlogic.gdx.utils.Array;
 import com.crystalclash.CrystalClash;
 import com.crystalclash.accessors.ActorAccessor;
 import com.crystalclash.accessors.UnitAccessor;
+import com.crystalclash.audio.AudioManager;
+import com.crystalclash.audio.AudioManager.GAME_END_SFX;
+import com.crystalclash.audio.AudioManager.SOUND;
 import com.crystalclash.controllers.GameController;
 import com.crystalclash.controllers.WorldController;
 import com.crystalclash.entities.Cell;
@@ -113,6 +116,7 @@ public class TutorialView extends GameView {
 	}
 
 	public void load() {
+		AudioManager.loadTutorialSFX();
 		TextureAtlas atlas = ResourceHelper.getTextureAtlas("in_game/options_bar.pack");
 		Skin skin = new Skin(atlas);
 
@@ -335,6 +339,7 @@ public class TutorialView extends GameView {
 			addActor(imgMobilityIcon);
 
 			world.getRender().hideActionsRing();
+			world.cellAt(300, 500).removeState(Cell.SELECTED);
 			actionRingVisible = false;
 			world.getRender().showStatsPopup(slayer);
 			break;
@@ -463,8 +468,7 @@ public class TutorialView extends GameView {
 					case 3:
 						if (!actionRingVisible) {
 							actionRingVisible = true;
-							world.getRender().moveActionsRing(cell);
-							GameEngine.start(world.getRender().pushHideGameMenuButtons(Timeline.createParallel()));
+							world.getRender().selectUnitInCell(cell);
 							world.getRender().hideHand();
 							next();
 						}
@@ -585,21 +589,25 @@ public class TutorialView extends GameView {
 			switch (messageIndex) {
 			case 11:
 				next();
+				slayer.getRender().playSFX(SOUND.chose_move);
 				world.getRender().deselectUnitInCell(world.cellAtByGrid(1, 3));
 				world.getRender().setBlockButtons(true);
 				break;
 			case 22:
 				showNext();
 				next();
+				archer.getRender().playSFX(SOUND.chose_attack);
 				world.getRender().deselectUnitInCell(world.cellAtByGrid(3, 3));
 				world.getRender().setBlockButtons(true);
 				break;
 			case 26:
 				if (selectedUnit.equals(archer)) {
 					archerAttacked = true;
+					archer.getRender().playSFX(SOUND.chose_attack);
 					world.getRender().deselectUnitInCell(world.cellAtByGrid(3, 3));
 				} else if (selectedUnit.equals(slayer)) {
 					slayerAttacked = true;
+					slayer.getRender().playSFX(SOUND.chose_attack);
 					world.getRender().deselectUnitInCell(world.cellAtByGrid(4, 4));
 				}
 
@@ -611,9 +619,11 @@ public class TutorialView extends GameView {
 			case 32:
 				if (selectedUnit.equals(archer)) {
 					archerAttacked = true;
+					archer.getRender().playSFX(SOUND.chose_attack);
 					world.getRender().deselectUnitInCell(world.cellAtByGrid(3, 3));
 				} else if (selectedUnit.equals(slayer)) {
 					slayerAttacked = true;
+					slayer.getRender().playSFX(SOUND.chose_attack);
 					world.getRender().deselectUnitInCell(world.cellAtByGrid(4, 4));
 				}
 
@@ -787,6 +797,7 @@ public class TutorialView extends GameView {
 	public void onDefendAction() {
 		switch (messageIndex) {
 		case 18:
+			slayer.getRender().playSFX(SOUND.chose_defend);
 			slayer.setDefendingPosition(true);
 			world.getRender().deselectUnitInCell(world.cellAtByGrid(4, 4));
 			world.getRender().hideHand();
@@ -1185,6 +1196,7 @@ public class TutorialView extends GameView {
 					@Override
 					public void onEvent(int type, BaseTween<?> source) {
 						if (type == COMPLETE) {
+							AudioManager.playEndSound(GAME_END_SFX.victory);
 							Image endGameMessage = new Image(ResourceHelper.getTexture("turn_animation/messages/banner_victory"));
 							TextButton btnBackToMenu = new TextButton("Back to menu", ResourceHelper.getButtonStyle());
 							btnBackToMenu.addListener(new ClickListener() {

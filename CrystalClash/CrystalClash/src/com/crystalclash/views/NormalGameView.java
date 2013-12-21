@@ -489,9 +489,6 @@ public class NormalGameView extends GameView {
 
 					maxMoves = GameController.getUnitSpeed(selectedUnit.getName());
 					world.getRender().selectUnitInCell(selectedCell);
-					
-					if(!selectedUnit.isEnemy())
-						selectedUnit.getRender().playSFX(SOUND.select);
 				}
 			}
 		}
