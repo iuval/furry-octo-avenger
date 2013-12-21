@@ -23,6 +23,7 @@ import com.crystalclash.renders.helpers.ui.SuperAnimatedActor;
 
 public class AttackFactory {
 	private WorldController world;
+	private static float ARROW_MOVEMENT_SPEED = 0.150f;
 
 	public AttackFactory(WorldController controller) {
 		world = controller;
@@ -123,8 +124,9 @@ public class AttackFactory {
 				arrow.getWidth() / 2,
 				arrow.getHeight() / 2);
 
-		float speed = CrystalClash.FIGTH_ANIMATION_SPEED / arrowPath.dots.size;
-
+		//float speed = CrystalClash.FIGTH_ANIMATION_SPEED / arrowPath.dots.size;
+		float speed = ARROW_MOVEMENT_SPEED;
+		
 		Vector2 first = arrowPath.dots.get(0).cpy();
 		Vector2 second = arrowPath.dots.get(1).cpy();
 		float angleOrigin = second.sub(first).cpy().angle();
