@@ -109,10 +109,7 @@ public class ServerDriver {
 								games[i][2] = child.getString("victories");
 								games[i][3] = child.getString("turn");
 								games[i][4] = child.getString("state");
-								if (child.hasChild("emblem"))
-									games[i][5] = child.getString("emblem");
-								else
-									games[i][5] = "0";
+								games[i][5] = child.getString("emblem");
 							}
 							MenuGames.getInstance().getGamesListSuccess(games);
 						} else {
