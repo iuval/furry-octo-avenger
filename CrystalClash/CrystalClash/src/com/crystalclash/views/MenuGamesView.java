@@ -18,6 +18,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
 import com.badlogic.gdx.scenes.scene2d.utils.Align;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.crystalclash.CrystalClash;
 import com.crystalclash.audio.AudioManager;
 import com.crystalclash.audio.AudioManager.MUSIC;
@@ -332,10 +333,11 @@ public class MenuGamesView extends InputView {
 
 		Label lblUserName = new Label(u.getName(), skin, "font", Color.WHITE);
 		lblUserName.setPosition(290, 200);
+		lblUserName.setSize(460, 60);
 		lblUserName.setAlignment(Align.center);
 		grpProfile.addActor(lblUserName);
 
-		Image imgEmblem = new Image(EmblemHelper.getEmblem(u.getEmblem()));
+		final Image imgEmblem = new Image(EmblemHelper.getEmblem(u.getEmblem()));
 		imgEmblem.setPosition(55, 90);
 		imgEmblem.setSize(160, 160);
 		grpProfile.addActor(imgEmblem);
@@ -351,6 +353,7 @@ public class MenuGamesView extends InputView {
 						if (type == YES) {
 							GameController.getUser().setEmblem(emblemList.getSelectedEmblem());
 							GameController.getUser().update();
+							imgEmblem.setDrawable(new TextureRegionDrawable(EmblemHelper.getEmblem(emblemList.getSelectedEmblem())));
 						}
 					}
 				});
