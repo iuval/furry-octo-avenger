@@ -425,10 +425,7 @@ public class MenuGamesView extends InputView {
 
 	@Override
 	public void shown() {
-		for (int i = 0; i < gamesList.length; i++) {
-			gamesList[i].loadEmblem();
-		}
-
+		updateEmblems();
 		if (!GameController.isTutorialDone()) {
 			tutoInv.show();
 		}
@@ -437,6 +434,13 @@ public class MenuGamesView extends InputView {
 	@Override
 	public void closed() {
 		// TODO Auto-generated method stub
+
+	}
+
+	private void updateEmblems() {
+		for (int i = 0; i < gamesList.length; i++) {
+			gamesList[i].loadEmblem();
+		}
 
 	}
 
@@ -471,7 +475,13 @@ public class MenuGamesView extends InputView {
 		} else {
 			if (isTryingToRefresh) {
 				if (showRelease) {
-					loadList(null);
+					loadList(new GamesLoadCallback() {
+
+						@Override
+						public void onFinish() {
+							updateEmblems();
+						}
+					});
 				}
 				isTryingToRefresh = false;
 			}

@@ -19,7 +19,7 @@ public class GameListItem extends Group {
 	public int emblem;
 	Button btnPlay;
 
-	public GameListItem(String gameId, String playerName, String victories, String turn, int emblem,
+	public GameListItem(String gameId, String playerName, String victories, String turn, int emblemNum,
 			String state, Skin skin, EventListener surrenderListener,
 			EventListener playListener) {
 
@@ -53,7 +53,7 @@ public class GameListItem extends Group {
 		labelV.setAlignment(Align.center);
 		addActor(labelV);
 
-		this.emblem = emblem;
+		this.emblem = emblemNum;
 
 		Label labelTurn = new Label(turn, skin, "font", Color.LIGHT_GRAY);
 		labelTurn.setPosition(690, 110);
