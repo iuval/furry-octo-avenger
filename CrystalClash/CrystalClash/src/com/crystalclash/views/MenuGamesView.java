@@ -123,6 +123,86 @@ public class MenuGamesView extends InputView {
 
 	@Override
 	public void init() {
+		list.clear();
+
+		grpProfile = new Group();
+		Image imgProfile = new Image(ResourceHelper.getTexture("menu/games_list/user_stats_stack"));
+		grpProfile.addActor(imgProfile);
+		grpProfile.setSize(imgProfile.getWidth(), imgProfile.getHeight());
+
+		ButtonStyle soundStyle = new ButtonStyle();
+		soundStyle.up = skin.getDrawable("sound_off_up");
+		soundStyle.down = skin.getDrawable("sound_off_down");
+		soundStyle.checked = skin.getDrawable("sound_on_up");
+		final Button btnSound = new Button(soundStyle);
+		btnSound.setPosition(840, 170);
+		btnSound.setChecked(AudioManager.getVolume() == 0);
+		btnSound.addListener(new ClickListener() {
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+				AudioManager.toogleVolume();
+				btnSound.setChecked(AudioManager.getVolume() == 0);
+			}
+		});
+		grpProfile.addActor(btnSound);
+
+		ButtonStyle logoutStyle = new ButtonStyle();
+		logoutStyle.up = skin.getDrawable("logout_up");
+		logoutStyle.down = skin.getDrawable("logout_down");
+		final Button btnLogout = new Button(logoutStyle);
+		btnLogout.setPosition(840, 70);
+		btnLogout.addListener(new ClickListener() {
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+				System.out.println("LogOut");
+				controller.logOut();
+			}
+		});
+		grpProfile.addActor(btnLogout);
+
+		User u = GameController.getUser();
+
+		Label lblUserName = new Label(u.getName(), skin, "font", Color.WHITE);
+		lblUserName.setPosition(290, 200);
+		lblUserName.setSize(460, 60);
+		lblUserName.setAlignment(Align.center);
+		grpProfile.addActor(lblUserName);
+
+		final Image imgEmblem = new Image(EmblemHelper.getEmblem(u.getEmblem()));
+		imgEmblem.setPosition(55, 90);
+		imgEmblem.setSize(160, 160);
+		grpProfile.addActor(imgEmblem);
+		imgEmblem.addListener(new ClickListener() {
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+				final EmblemList emblemList = new EmblemList();
+				BaseBox box = new BaseBox(emblemList);
+				box.twoButtonsLayout("Save", "Back");
+				box.setCallback(new BoxCallback() {
+					@Override
+					public void onEvent(int type, Object data) {
+						if (type == YES) {
+							GameController.getUser().setEmblem(emblemList.getSelectedEmblem());
+							GameController.getUser().update();
+							imgEmblem.setDrawable(new TextureRegionDrawable(EmblemHelper.getEmblem(emblemList.getSelectedEmblem())));
+						}
+					}
+				});
+				box.show();
+			}
+		});
+
+		Label lblUserD = new Label(u.getDrawCount() + "", skin, "font", Color.WHITE);
+		lblUserD.setPosition(370, 90);
+		grpProfile.addActor(lblUserD);
+
+		Label lblUserV = new Label(u.getVictoryCount() + "", skin, "font", Color.WHITE);
+		lblUserV.setPosition(500, 110);
+		grpProfile.addActor(lblUserV);
+
+		Label lblUserL = new Label(u.getLostCount() + "", skin, "font", Color.WHITE);
+		lblUserL.setPosition(630, 90);
+		grpProfile.addActor(lblUserL);
 	}
 
 	public void loadList(GamesLoadCallback callback) {
@@ -291,85 +371,6 @@ public class MenuGamesView extends InputView {
 			}
 		});
 		grpNewRandom.addActor(btnNewRandom);
-
-		grpProfile = new Group();
-		Image imgProfile = new Image(ResourceHelper.getTexture("menu/games_list/user_stats_stack"));
-		grpProfile.addActor(imgProfile);
-		grpProfile.setSize(imgProfile.getWidth(), imgProfile.getHeight());
-
-		ButtonStyle soundStyle = new ButtonStyle();
-		soundStyle.up = skin.getDrawable("sound_off_up");
-		soundStyle.down = skin.getDrawable("sound_off_down");
-		soundStyle.checked = skin.getDrawable("sound_on_up");
-		final Button btnSound = new Button(soundStyle);
-		btnSound.setPosition(840, 170);
-		btnSound.setChecked(AudioManager.getVolume() == 0);
-		btnSound.addListener(new ClickListener() {
-			@Override
-			public void clicked(InputEvent event, float x, float y) {
-				AudioManager.toogleVolume();
-				btnSound.setChecked(AudioManager.getVolume() == 0);
-			}
-		});
-		grpProfile.addActor(btnSound);
-
-		ButtonStyle logoutStyle = new ButtonStyle();
-		logoutStyle.up = skin.getDrawable("logout_up");
-		logoutStyle.down = skin.getDrawable("logout_down");
-		final Button btnLogout = new Button(logoutStyle);
-		btnLogout.setPosition(840, 70);
-		btnLogout.addListener(new ClickListener() {
-			@Override
-			public void clicked(InputEvent event, float x, float y) {
-				System.out.println("LogOut");
-				controller.logOut();
-			}
-		});
-		grpProfile.addActor(btnLogout);
-
-		User u = GameController.getUser();
-
-		Label lblUserName = new Label(u.getName(), skin, "font", Color.WHITE);
-		lblUserName.setPosition(290, 200);
-		lblUserName.setSize(460, 60);
-		lblUserName.setAlignment(Align.center);
-		grpProfile.addActor(lblUserName);
-
-		final Image imgEmblem = new Image(EmblemHelper.getEmblem(u.getEmblem()));
-		imgEmblem.setPosition(55, 90);
-		imgEmblem.setSize(160, 160);
-		grpProfile.addActor(imgEmblem);
-		imgEmblem.addListener(new ClickListener() {
-			@Override
-			public void clicked(InputEvent event, float x, float y) {
-				final EmblemList emblemList = new EmblemList();
-				BaseBox box = new BaseBox(emblemList);
-				box.twoButtonsLayout("Save", "Back");
-				box.setCallback(new BoxCallback() {
-					@Override
-					public void onEvent(int type, Object data) {
-						if (type == YES) {
-							GameController.getUser().setEmblem(emblemList.getSelectedEmblem());
-							GameController.getUser().update();
-							imgEmblem.setDrawable(new TextureRegionDrawable(EmblemHelper.getEmblem(emblemList.getSelectedEmblem())));
-						}
-					}
-				});
-				box.show();
-			}
-		});
-
-		Label lblUserD = new Label(u.getDrawCount() + "", skin, "font", Color.WHITE);
-		lblUserD.setPosition(370, 90);
-		grpProfile.addActor(lblUserD);
-
-		Label lblUserV = new Label(u.getVictoryCount() + "", skin, "font", Color.WHITE);
-		lblUserV.setPosition(500, 110);
-		grpProfile.addActor(lblUserV);
-
-		Label lblUserL = new Label(u.getLostCount() + "", skin, "font", Color.WHITE);
-		lblUserL.setPosition(630, 90);
-		grpProfile.addActor(lblUserL);
 
 		refreshMessagePull = new Image(ResourceHelper.getTexture("menu/refresh_list/refresh_message_pull"));
 		refreshMessagePull.setVisible(false);
