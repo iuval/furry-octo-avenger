@@ -45,11 +45,12 @@ public class ParallaxRender extends Group {
 
 	public void loadGamesList() {
 		if (!gmesListLoaded) {
-			addLevel(new CloudParallaxLevel(ResourceHelper.getTexture("menu/level1"), -427, 0, -0.1f, -0.01f));
-			addLevel(new CloudParallaxLevel(ResourceHelper.getTexture("menu/level2"), -427, 0, -0.3f, -0.03f));
-			addLevel(new CloudParallaxLevel(ResourceHelper.getTexture("menu/level3"), -427, 0, -0.5f, -0.05f));
+			addLevel(new CloudParallaxLevel(ResourceHelper.getTexture("menu/level1"), -427, 0, -0.1f, 0.05f));
+			addLevel(new CloudParallaxLevel(ResourceHelper.getTexture("menu/level2"), -427, 0, -0.3f, 0.09f));
+			addLevel(new CloudParallaxLevel(ResourceHelper.getTexture("menu/level3"), -427, 0, -0.5f, 0.12f));
 
-			addLevel(new NimbusParallaxLevel(ResourceHelper.getTexture("menu/nimbus5"), 300, -rand.nextInt((int) (CrystalClash.WIDTH + 500)), -0.6f, 0.03f));
+			addLevel(new NimbusParallaxLevel(ResourceHelper.getTexture("menu/nimbus5"), 600, -rand.nextInt((int) (CrystalClash.WIDTH + 500)), -0.4f, 0.08f));
+			addLevel(new NimbusParallaxLevel(ResourceHelper.getTexture("menu/nimbus5"), 300, -rand.nextInt((int) (CrystalClash.WIDTH + 500)), -0.6f, 0.05f));
 
 			gmesListLoaded = true;
 		}
