@@ -7,11 +7,13 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.crystalclash.renders.helpers.EmblemHelper;
 
 public class EmblemListItem extends Group {
-	private int ImageButton;
+	private int emblemNumber;
 	private Image imgEmblem;
 	private Image imgSelectedBorder;
 
 	public EmblemListItem(int number, ClickListener clickListener) {
+		emblemNumber = number;
+
 		imgEmblem = new Image(EmblemHelper.getEmblem(number));
 		imgEmblem.setPosition(0, 0);
 		imgEmblem.setSize(100, 100);
@@ -33,6 +35,6 @@ public class EmblemListItem extends Group {
 	}
 
 	public int getEmblemNumber() {
-		return ImageButton;
+		return emblemNumber;
 	}
 }

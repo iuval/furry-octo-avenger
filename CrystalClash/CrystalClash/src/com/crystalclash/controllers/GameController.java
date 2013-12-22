@@ -180,17 +180,18 @@ public class GameController {
 		ServerDriver.sendSignIn(email, password);
 	}
 
-	public static void logInSuccess(String userId, String name, String email, String password) {
-		profileService.retrieveProfile().setUserEmail(email);
-		profileService.retrieveProfile().setUserPassword(password);
+	public static void logInSuccess(String userId, String name, String email, String password, int emblem, int v, int d, int l) {
+		Profile p = profileService.retrieveProfile();
+		p.setUserEmail(email);
+		p.setUserPassword(password);
 		GameController.saveProfile();
-		setUser(new User(userId, email, name, 0, 0, 0, 0));
+		setUser(new User(userId, email, name, emblem, v, d, l));
 		GameEngine.getInstance().openMenuGames();
 	}
 
-	public static void signInSuccess(String userId, String name, String email, String password) {
+	public static void signInSuccess(String userId, String name, String email, String password, int emblem, int v, int d, int l) {
 		profileService.retrieveProfile().reset();
-		logInSuccess(userId, name, email, password);
+		logInSuccess(userId, name, email, password, emblem, v, d, l);
 	}
 
 	public static void logOut() {

@@ -24,7 +24,7 @@ public class ServerDriver {
 	private final static String ACTION_LIST_GAMES = "list_games";
 	private final static String ACTION_ENABLE_RANDOM = "enable_random";
 	private final static String ACTION_GAME_TURN = "game_turn";
-	private final static String UPDATE_USER = "update_user";
+	private final static String UPDATE_PLAYER = "update_player";
 
 	public static void sendSignIn(final String email, final String password) {
 		Map<String, String> data = new HashMap<String, String>();
@@ -39,7 +39,14 @@ public class ServerDriver {
 								.ProcessResponce(httpResponse);
 						if (values.getString("value").equals("ok")) {
 							JsonValue data = values.get("data");
-							GameController.signInSuccess(data.getString("id"), data.getString("name"), email, password);
+							GameController.signInSuccess(data.getString("id"),
+									data.getString("name"),
+									email,
+									password,
+									data.getInt("emblem"),
+									data.getInt("victory_total"),
+									data.getInt("defeat_total"),
+									data.getInt("draw_total"));
 						} else {
 							GameEngine.getInstance().singUpError(values.getString("message"));
 						}
@@ -64,7 +71,14 @@ public class ServerDriver {
 						JsonValue values = ServerDriver.ProcessResponce(httpResponse);
 						if (values.getString("value").equals("ok")) {
 							JsonValue data = values.get("data");
-							GameController.logInSuccess(data.getString("id"), data.getString("name"), email, password);
+							GameController.logInSuccess(data.getString("id"),
+									data.getString("name"),
+									email,
+									password,
+									data.getInt("emblem"),
+									data.getInt("victory_total"),
+									data.getInt("defeat_total"),
+									data.getInt("draw_total"));
 						} else {
 							GameEngine.getInstance().logInError(values.getString("message"));
 						}
@@ -180,14 +194,15 @@ public class ServerDriver {
 				});
 	}
 
-	public static void sendUpdateUser(String name, String email, int emplem) {
+	public static void sendUpdateUser(String id, String name, String email, int emplem) {
 		Map<String, String> data = new HashMap<String, String>();
+		data.put("id", id);
 		data.put("name", name);
 		data.put("email", email);
-		data.put("emplem", emplem + "");
+		data.put("emblem", emplem + "");
 
 		System.out.println("Sending-> " + data);
-		Gdx.net.sendHttpRequest(getPost(UPDATE_USER, data),
+		Gdx.net.sendHttpRequest(getPost(UPDATE_PLAYER, data),
 				new HttpResponseListener() {
 					@Override
 					public void handleHttpResponse(HttpResponse httpResponse) {

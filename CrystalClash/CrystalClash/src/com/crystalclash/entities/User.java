@@ -55,7 +55,7 @@ public class User {
 	}
 
 	public void update() {
-		ServerDriver.sendUpdateUser(name, email, emblem);
+		ServerDriver.sendUpdateUser(id, name, email, emblem);
 	}
 
 }

@@ -18,7 +18,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
 import com.badlogic.gdx.scenes.scene2d.utils.Align;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.crystalclash.CrystalClash;
 import com.crystalclash.audio.AudioManager;
 import com.crystalclash.audio.AudioManager.MUSIC;
@@ -76,6 +75,8 @@ public class MenuGamesView extends InputView {
 	private boolean showRelease = false;
 	private float pullDistance = 0;
 	private float releaseDistance = 0;
+
+	private Image imgEmblem;
 
 	@Override
 	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
@@ -334,7 +335,7 @@ public class MenuGamesView extends InputView {
 		lblUserName.setAlignment(Align.center);
 		grpProfile.addActor(lblUserName);
 
-		final Image imgEmblem = new Image(EmblemHelper.getEmblem(u.getEmblem()));
+		Image imgEmblem = new Image(EmblemHelper.getEmblem(u.getEmblem()));
 		imgEmblem.setPosition(55, 90);
 		imgEmblem.setSize(160, 160);
 		grpProfile.addActor(imgEmblem);
@@ -350,7 +351,6 @@ public class MenuGamesView extends InputView {
 						if (type == YES) {
 							GameController.getUser().setEmblem(emblemList.getSelectedEmblem());
 							GameController.getUser().update();
-							imgEmblem.setDrawable(new TextureRegionDrawable(EmblemHelper.getEmblem(emblemList.getSelectedEmblem())));
 						}
 					}
 				});
@@ -380,10 +380,6 @@ public class MenuGamesView extends InputView {
 		refreshMessageRelease = new Image(ResourceHelper.getTexture("menu/refresh_list/refresh_message_release"));
 		refreshMessageRelease.setVisible(false);
 		addActor(refreshMessageRelease);
-	}
-
-	private void openEmblemList() {
-
 	}
 
 	public void listGamesError(String message) {
