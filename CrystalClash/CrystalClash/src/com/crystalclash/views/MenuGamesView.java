@@ -203,14 +203,14 @@ public class MenuGamesView extends InputView {
 			}
 		});
 
-		Label lblUserV = new Label(u.getVictoryCount() + "", skin, "big_font", Color.BLACK);
+		lblUserV = new Label(u.getVictoryCount() + "", skin, "big_font", Color.BLACK);
 		lblUserV.setPosition(365, 115);
 		Label lblUserVTittle = new Label("Victories", skin, "small_font", Color.BLACK);
 		lblUserVTittle.setPosition(330, 162);
 		grpProfile.addActor(lblUserV);
 		grpProfile.addActor(lblUserVTittle);
 
-		Label lblUserL = new Label(u.getLostCount() + "", skin, "big_font", Color.BLACK);
+		lblUserL = new Label(u.getLostCount() + "", skin, "big_font", Color.BLACK);
 		lblUserL.setPosition(540, 110);
 		Label lblUserLTittle = new Label("Defeats", skin, "small_font", Color.BLACK);
 		lblUserLTittle.setPosition(505, 158);
@@ -268,7 +268,6 @@ public class MenuGamesView extends InputView {
 		max_list_y = 0;
 		if (gamesList != null) {
 			for (int i = 0; i < gamesList.length; i++) {
-				gamesList[i].dispose();
 				gamesList[i].remove();
 			}
 		}
@@ -280,7 +279,7 @@ public class MenuGamesView extends InputView {
 		GameListItem canPlayItem = null;
 		for (int i = 0, len = games.length; i < len; i++) {
 			listingItem = new GameListItem(games[i][0], games[i][1], games[i][2], games[i][3], Integer.parseInt(games[i][5]), games[i][4],
-					games[i][6] == "true", skin, surrenderListener, ackSurrenderListener,
+					games[i][6].equals("true"), skin, surrenderListener, ackSurrenderListener,
 					playListener);
 			gamesList[i] = listingItem;
 
@@ -469,11 +468,16 @@ public class MenuGamesView extends InputView {
 	public void updateListGameSurrender(String id, int v, int l) {
 		lblUserV.setText(String.valueOf(v));
 		lblUserL.setText(String.valueOf(l));
+		int itemIndex = -1;
 		for (int i = 0; i < gamesList.length; i++) {
 			if (gamesList[i].gameId.equals(id)) {
-				gamesList[i].remove();
-				gamesList[i].dispose();
+				itemIndex = i;
+				break;
 			}
+		}
+		if (itemIndex != -1) {
+			gamesList[itemIndex].remove();
+			gamesList[itemIndex].dispose();
 		}
 	}
 

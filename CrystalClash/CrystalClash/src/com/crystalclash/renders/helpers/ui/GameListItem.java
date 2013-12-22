@@ -9,7 +9,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.Button.ButtonStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
 import com.badlogic.gdx.scenes.scene2d.utils.Align;
 import com.crystalclash.renders.helpers.EmblemHelper;
 
@@ -35,10 +34,10 @@ public class GameListItem extends Group {
 		float h = bg.getHeight();
 		setSize(w, h);
 
-		btnPlay = new Button(state.equals("play") ?
+		btnPlay = new Button((!surrender && state.equals("play")) ?
 				skin.get("playStyle", ButtonStyle.class) :
 				skin.get("waitStyle", ButtonStyle.class));
-		if (state.equals("play"))
+		if (!surrender && state.equals("play"))
 			btnPlay.addListener(playListener);
 		btnPlay.setPosition(850, 0);
 		addActor(btnPlay);
