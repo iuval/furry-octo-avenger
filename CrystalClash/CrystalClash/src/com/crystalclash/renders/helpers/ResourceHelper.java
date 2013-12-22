@@ -20,6 +20,9 @@ public class ResourceHelper {
 
 	private static TextureAtlas atlas;
 	private static Skin skin;
+	private static BitmapFont bigBorderFont;
+	private static BitmapFont normalBorderFont;
+	private static BitmapFont smallBorderFont;
 	private static BitmapFont bigFont;
 	private static BitmapFont normalFont;
 	private static BitmapFont smallFont;
@@ -38,30 +41,41 @@ public class ResourceHelper {
 	public static void slowLoad() {
 		atlas = getTextureAtlas("buttons/buttons.pack", false);
 		skin = new Skin(atlas);
-		bigFont = new BitmapFont(Gdx.files.internal("data/fonts/action_man.fnt"), false);
+		bigBorderFont = new BitmapFont(Gdx.files.internal("data/fonts/crystal_clash_border.fnt"), false);
+		bigBorderFont.getRegion().getTexture().setFilter(TextureFilter.Linear, TextureFilter.Linear);
+		bigBorderFont.setScale(1.7f);
+		normalBorderFont = new BitmapFont(Gdx.files.internal("data/fonts/crystal_clash_border.fnt"), false);
+		normalBorderFont.getRegion().getTexture().setFilter(TextureFilter.Linear, TextureFilter.Linear);
+		normalBorderFont.setScale(1.4f);
+		smallBorderFont = new BitmapFont(Gdx.files.internal("data/fonts/crystal_clash_border.fnt"), false);
+		smallBorderFont.getRegion().getTexture().setFilter(TextureFilter.Linear, TextureFilter.Linear);
+		smallBorderFont.setScale(1.1f);
+		
+		bigFont = new BitmapFont(Gdx.files.internal("data/fonts/crystal_clash.fnt"), false);
 		bigFont.getRegion().getTexture().setFilter(TextureFilter.Linear, TextureFilter.Linear);
-		bigFont.setScale(1.2f);
-		normalFont = new BitmapFont(Gdx.files.internal("data/fonts/action_man.fnt"), false);
+		bigFont.setScale(1.7f);
+		normalFont = new BitmapFont(Gdx.files.internal("data/fonts/crystal_clash.fnt"), false);
 		normalFont.getRegion().getTexture().setFilter(TextureFilter.Linear, TextureFilter.Linear);
-		normalFont.setScale(0.9f);
-		smallFont = new BitmapFont(Gdx.files.internal("data/fonts/action_man.fnt"), false);
+		normalFont.setScale(1.4f);
+		smallFont = new BitmapFont(Gdx.files.internal("data/fonts/crystal_clash.fnt"), false);
 		smallFont.getRegion().getTexture().setFilter(TextureFilter.Linear, TextureFilter.Linear);
-		smallFont.setScale(0.7f);
+		smallFont.setScale(1.1f);
+		
 		buttonStyle = new TextButtonStyle(
 				skin.getDrawable("button_orange"),
-				skin.getDrawable("button_orange_pressed"), null, normalFont);
+				skin.getDrawable("button_orange_pressed"), null, normalBorderFont);
 
 		outerButtonStyle = new TextButtonStyle(
 				skin.getDrawable("outer_button_orange"),
-				skin.getDrawable("outer_button_orange_pressed"), null, normalFont);
+				skin.getDrawable("outer_button_orange_pressed"), null, normalBorderFont);
 
 		outerSmallButtonStyle = new TextButtonStyle(
 				skin.getDrawable("outer_button_small"),
-				skin.getDrawable("outer_button_small_pressed"), null, normalFont);
+				skin.getDrawable("outer_button_small_pressed"), null, normalBorderFont);
 
 		nextButtonStyle = new TextButtonStyle(
 				skin.getDrawable("next_button"),
-				skin.getDrawable("next_button_pressed"), null, normalFont);
+				skin.getDrawable("next_button_pressed"), null, normalBorderFont);
 	}
 
 	public static TextureRegion getTexture(String path) {
@@ -147,6 +161,18 @@ public class ResourceHelper {
 		return skin;
 	}
 
+	public static BitmapFont getBigBorderFont() {
+		return bigBorderFont;
+	}
+
+	public static BitmapFont getNormalBorderFont() {
+		return normalBorderFont;
+	}
+
+	public static BitmapFont getSmallBorderFont() {
+		return smallBorderFont;
+	}
+	
 	public static BitmapFont getBigFont() {
 		return bigFont;
 	}

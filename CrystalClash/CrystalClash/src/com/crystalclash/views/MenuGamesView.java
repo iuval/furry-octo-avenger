@@ -12,6 +12,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Button.ButtonStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
@@ -56,6 +57,8 @@ public class MenuGamesView extends InputView {
 	private TextButton btnNewRandom;
 	private TextButton btnPlayTutorial;
 	private TextButton btnViewStory;
+
+	private Label lblNewRandomText;
 	
 	private InputListener surrenderListener;
 	private InputListener playListener;
@@ -167,14 +170,14 @@ public class MenuGamesView extends InputView {
 
 		User u = GameController.getUser();
 
-		Label lblUserName = new Label(u.getName(), skin, "font", Color.WHITE);
-		lblUserName.setPosition(290, 200);
+		Label lblUserName = new Label(u.getName(), skin, "big_font", Color.BLACK);
+		lblUserName.setPosition(290, 215);
 		lblUserName.setSize(460, 60);
 		lblUserName.setAlignment(Align.center);
 		grpProfile.addActor(lblUserName);
 
 		final Image imgEmblem = new Image(EmblemHelper.getEmblem(u.getEmblem()));
-		imgEmblem.setPosition(55, 90);
+		imgEmblem.setPosition(50, 95);
 		imgEmblem.setSize(160, 160);
 		grpProfile.addActor(imgEmblem);
 		imgEmblem.addListener(new ClickListener() {
@@ -197,17 +200,26 @@ public class MenuGamesView extends InputView {
 			}
 		});
 
-		Label lblUserD = new Label(u.getDrawCount() + "", skin, "font", Color.WHITE);
-		lblUserD.setPosition(370, 90);
-		grpProfile.addActor(lblUserD);
-
-		Label lblUserV = new Label(u.getVictoryCount() + "", skin, "font", Color.WHITE);
-		lblUserV.setPosition(500, 110);
+		Label lblUserV = new Label(u.getVictoryCount() + "", skin, "big_font", Color.BLACK);
+		lblUserV.setPosition(365, 115);
+		Label lblUserVTittle = new Label("Victories", skin, "small_font", Color.BLACK);
+		lblUserVTittle.setPosition(330, 162);
 		grpProfile.addActor(lblUserV);
+		grpProfile.addActor(lblUserVTittle);
 
-		Label lblUserL = new Label(u.getLostCount() + "", skin, "font", Color.WHITE);
-		lblUserL.setPosition(630, 90);
+		Label lblUserL = new Label(u.getLostCount() + "", skin, "big_font", Color.BLACK);
+		lblUserL.setPosition(540, 110);
+		Label lblUserLTittle = new Label("Defeats", skin, "small_font", Color.BLACK);
+		lblUserLTittle.setPosition(505, 158);
 		grpProfile.addActor(lblUserL);
+		grpProfile.addActor(lblUserLTittle);
+		
+		Label lblUserD = new Label(u.getDrawCount() + "", skin, "big_font", Color.BLACK);
+		lblUserD.setPosition(675, 110);
+		Label lblUserDTittle = new Label("Draws", skin, "small_font", Color.BLACK);
+		lblUserDTittle.setPosition(655, 158);
+		grpProfile.addActor(lblUserD);
+		grpProfile.addActor(lblUserDTittle);
 		
 		if (!GameController.isTutorialDone()) {
 			loadTutorial();
@@ -333,7 +345,8 @@ public class MenuGamesView extends InputView {
 		};
 
 		skin = new Skin();
-		skin.add("font", ResourceHelper.getBigFont());
+		skin.add("small_font", ResourceHelper.getSmallFont());
+		skin.add("big_font", ResourceHelper.getBigFont());
 		skin.add("play_up", ResourceHelper.getTexture("menu/games_list/flag_green"));
 		skin.add("play_down", ResourceHelper.getTexture("menu/games_list/flag_green"));
 		skin.add("wait_up", ResourceHelper.getTexture("menu/games_list/flag_red"));
@@ -347,106 +360,28 @@ public class MenuGamesView extends InputView {
 		skin.add("logout_down", ResourceHelper.getTexture("menu/games_list/logout_pressed"));
 		skin.add("background", ResourceHelper.getTexture("menu/games_list/item_stack"));
 
-		TextButtonStyle playStyle = new TextButtonStyle();
-		playStyle.font = skin.getFont("font");
+		LabelStyle style = new LabelStyle();
+		style.font = skin.getFont("big_font");
+		style.fontColor = Color.BLACK;
+		skin.add("lblStyle", style);
+		
+		ButtonStyle playStyle = new ButtonStyle();
 		playStyle.up = skin.getDrawable("play_up");
 		playStyle.down = skin.getDrawable("play_down");
 		skin.add("playStyle", playStyle);
 
-		TextButtonStyle waitStyle = new TextButtonStyle();
-		waitStyle.font = skin.getFont("font");
+		ButtonStyle waitStyle = new ButtonStyle();
 		waitStyle.up = skin.getDrawable("wait_up");
 		waitStyle.down = skin.getDrawable("wait_down");
 		skin.add("waitStyle", waitStyle);
 
-		TextButtonStyle surrenderStyle = new TextButtonStyle();
-		surrenderStyle.font = skin.getFont("font");
+		ButtonStyle surrenderStyle = new ButtonStyle();
 		surrenderStyle.up = skin.getDrawable("surrender_up");
 		surrenderStyle.down = skin.getDrawable("surrender_down");
 		skin.add("surrenderStyle", surrenderStyle);
-
-		grpProfile = new Group();
-		Image imgProfile = new Image(ResourceHelper.getTexture("menu/games_list/user_stats_stack"));
-		grpProfile.addActor(imgProfile);
-		grpProfile.setSize(imgProfile.getWidth(), imgProfile.getHeight());
-
-		ButtonStyle soundStyle = new ButtonStyle();
-		soundStyle.up = skin.getDrawable("sound_off_up");
-		soundStyle.down = skin.getDrawable("sound_off_down");
-		soundStyle.checked = skin.getDrawable("sound_on_up");
-		final Button btnSound = new Button(soundStyle);
-		btnSound.setPosition(840, 170);
-		btnSound.setChecked(AudioManager.getVolume() == 0);
-		btnSound.addListener(new ClickListener() {
-			@Override
-			public void clicked(InputEvent event, float x, float y) {
-				AudioManager.toogleVolume();
-				btnSound.setChecked(AudioManager.getVolume() == 0);
-			}
-		});
-		grpProfile.addActor(btnSound);
-
-		ButtonStyle logoutStyle = new ButtonStyle();
-		logoutStyle.up = skin.getDrawable("logout_up");
-		logoutStyle.down = skin.getDrawable("logout_down");
-		final Button btnLogout = new Button(logoutStyle);
-		btnLogout.setPosition(840, 70);
-		btnLogout.addListener(new ClickListener() {
-			@Override
-			public void clicked(InputEvent event, float x, float y) {
-				System.out.println("LogOut");
-				controller.logOut();
-			}
-		});
-		grpProfile.addActor(btnLogout);
-
-		User u = GameController.getUser();
-
-		Label lblUserName = new Label(u.getName(), skin, "font", Color.WHITE);
-		lblUserName.setPosition(290, 200);
-		lblUserName.setSize(460, 60);
-		lblUserName.setAlignment(Align.center);
-		grpProfile.addActor(lblUserName);
-
-		final Image imgEmblem = new Image(EmblemHelper.getEmblem(u.getEmblem()));
-		imgEmblem.setPosition(55, 90);
-		imgEmblem.setSize(160, 160);
-		grpProfile.addActor(imgEmblem);
-		imgEmblem.addListener(new ClickListener() {
-			@Override
-			public void clicked(InputEvent event, float x, float y) {
-				final EmblemList emblemList = new EmblemList();
-				BaseBox box = new BaseBox(emblemList);
-				box.twoButtonsLayout("Save", "Back");
-				box.setCallback(new BoxCallback() {
-					@Override
-					public void onEvent(int type, Object data) {
-						if (type == YES) {
-							GameController.getUser().setEmblem(emblemList.getSelectedEmblem());
-							GameController.getUser().update();
-							imgEmblem.setDrawable(new TextureRegionDrawable(EmblemHelper.getEmblem(emblemList.getSelectedEmblem())));
-						}
-					}
-				});
-				box.show();
-			}
-		});
-
-		Label lblUserD = new Label(u.getDrawCount() + "", skin, "font", Color.WHITE);
-		lblUserD.setPosition(370, 90);
-		grpProfile.addActor(lblUserD);
-
-		Label lblUserV = new Label(u.getVictoryCount() + "", skin, "font", Color.WHITE);
-		lblUserV.setPosition(500, 110);
-		grpProfile.addActor(lblUserV);
-
-		Label lblUserL = new Label(u.getLostCount() + "", skin, "font", Color.WHITE);
-		lblUserL.setPosition(630, 90);
-		grpProfile.addActor(lblUserL);
-
 		
-		TextButtonStyle style = new TextButtonStyle();
-		style.font = skin.getFont("font");
+		TextButtonStyle btnStyle = new TextButtonStyle();
+		btnStyle.font = skin.getFont("big_font");
 		
 		//New Random Group
 		grpNewRandom = new Group();
@@ -454,12 +389,17 @@ public class MenuGamesView extends InputView {
 		grpNewRandom.addActor(imgNewRandom);
 		grpNewRandom.setSize(imgNewRandom.getWidth(), imgNewRandom.getHeight());
 
-		btnNewRandom = new TextButton("New random game", style);
-		btnNewRandom.setPosition(400, 180);
+		lblNewRandomText = new Label("New Game", skin, "lblStyle");
+		lblNewRandomText.setPosition(510, 210);
+		grpNewRandom.addActor(lblNewRandomText);
+		
+		btnNewRandom = new TextButton("", btnStyle);
+		btnNewRandom.setPosition(253, 28);
+		btnNewRandom.setSize(588, 302);
 		btnNewRandom.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
-				((TextButton) event.getListenerActor()).setText("Loading...");
+				lblNewRandomText.setText("   Loading...");
 				controller.enableRandom();
 			}
 		});
@@ -467,12 +407,17 @@ public class MenuGamesView extends InputView {
 		
 		//Play Tutorial Group
 		grpTutorial = new Group();
-		Image imgTutorial = new Image(ResourceHelper.getTexture("menu/games_list/new_battle_stack"));
+		Image imgTutorial = new Image(ResourceHelper.getTexture("menu/games_list/tutorial_stack"));
 		grpTutorial.addActor(imgTutorial);
 		grpTutorial.setSize(imgTutorial.getWidth(), imgTutorial.getHeight());
 
-		btnPlayTutorial = new TextButton("Play Tutorial", style);
-		btnPlayTutorial.setPosition(400, 180);
+		Label tutorialText = new Label("Play\nTutorial", skin, "lblStyle");
+		tutorialText.setPosition(360, 140);
+		grpTutorial.addActor(tutorialText);
+		
+		btnPlayTutorial = new TextButton("", btnStyle);
+		btnPlayTutorial.setPosition(253, 28);
+		btnPlayTutorial.setSize(588, 302);
 		btnPlayTutorial.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
@@ -483,12 +428,17 @@ public class MenuGamesView extends InputView {
 		
 		//View Story Group
 		grpStory = new Group();
-		Image imgStory = new Image(ResourceHelper.getTexture("menu/games_list/new_battle_stack"));
+		Image imgStory = new Image(ResourceHelper.getTexture("menu/games_list/story_stack"));
 		grpStory.addActor(imgStory);
 		grpStory.setSize(imgStory.getWidth(), imgStory.getHeight());
 
-		btnViewStory = new TextButton("View Story", style);
-		btnViewStory.setPosition(400, 180);
+		Label storyText = new Label("Learn\nthe Story", skin, "lblStyle");
+		storyText.setPosition(360, 140);
+		grpStory.addActor(storyText);
+		
+		btnViewStory = new TextButton("", btnStyle);
+		btnViewStory.setPosition(253, 28);
+		btnViewStory.setSize(588, 302);
 		btnViewStory.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
@@ -523,7 +473,7 @@ public class MenuGamesView extends InputView {
 					playListener);
 			list.addActor(listingItem);
 		}
-		btnNewRandom.setText("New random game");
+		lblNewRandomText.setText("New game");
 		GameEngine.hideLoading();
 	}
 
