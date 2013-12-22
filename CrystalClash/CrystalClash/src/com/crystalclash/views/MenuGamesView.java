@@ -202,8 +202,8 @@ public class MenuGamesView extends InputView {
 
 		Label lblUserV = new Label(u.getVictoryCount() + "", skin, "big_font", Color.BLACK);
 		lblUserV.setPosition(365, 115);
-		Label lblUserVTittle = new Label("Wins", skin, "small_font", Color.BLACK);
-		lblUserVTittle.setPosition(350, 162);
+		Label lblUserVTittle = new Label("Victories", skin, "small_font", Color.BLACK);
+		lblUserVTittle.setPosition(330, 162);
 		grpProfile.addActor(lblUserV);
 		grpProfile.addActor(lblUserVTittle);
 

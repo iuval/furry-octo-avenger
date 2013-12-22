@@ -50,8 +50,8 @@ public class GameListItem extends Group {
 
 		Label labelV = new Label(victories, skin, "big_font", Color.BLACK);
 		labelV.setPosition(425, 100);
-		Label labelVTittle = new Label("Wins", skin, "small_font", Color.BLACK);
-		labelVTittle.setPosition(405, 148);
+		Label labelVTittle = new Label("Victories", skin, "small_font", Color.BLACK);
+		labelVTittle.setPosition(390, 148);
 		addActor(labelV);
 		addActor(labelVTittle);
 
