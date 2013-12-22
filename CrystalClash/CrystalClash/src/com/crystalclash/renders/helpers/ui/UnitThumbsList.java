@@ -25,8 +25,8 @@ public class UnitThumbsList extends Group {
 	private UnitThumb selectedThumb;
 
 	public UnitThumbsList(final UnitListSelectListener unitThumbListener, final UnitItemSplashListener unitSplashListener) {
-		lblUnitsCount = new Label("", new LabelStyle(ResourceHelper.getNormalFont(), Color.WHITE));
-		lblMessage = new Label(I18n.t("unit_list"), new LabelStyle(ResourceHelper.getNormalFont(), Color.WHITE));
+		lblUnitsCount = new Label("", new LabelStyle(ResourceHelper.getNormalBorderFont(), Color.WHITE));
+		lblMessage = new Label(I18n.t("unit_list"), new LabelStyle(ResourceHelper.getNormalBorderFont(), Color.WHITE));
 
 		imgTableBg = new Image(ResourceHelper.getTexture("in_game/first_turn/list_background"));
 		addActor(imgTableBg);

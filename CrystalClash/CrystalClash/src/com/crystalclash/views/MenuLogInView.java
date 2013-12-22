@@ -87,7 +87,7 @@ public class MenuLogInView extends InputView {
 		imgPopupPanel.setSize(800, 500);
 		imgPopupPanel.setPosition(0, 0);
 
-		lblHeading = new Label("Welcome to Crystal Clash", new LabelStyle(ResourceHelper.getNormalFont(),
+		lblHeading = new Label("Welcome to Crystal Clash", new LabelStyle(ResourceHelper.getNormalBorderFont(),
 				Color.WHITE));
 		lblHeading.setPosition(
 				imgPopupPanel.getWidth() / 2 - lblHeading.getWidth() / 2,
@@ -106,7 +106,7 @@ public class MenuLogInView extends InputView {
 		textFieldSkin.add("textFieldCursor", ResourceHelper.getTexture("menu/cursor_1"));
 
 		TextFieldStyle textFieldStyle = new TextFieldStyle();
-		textFieldStyle.font = ResourceHelper.getNormalFont();
+		textFieldStyle.font = ResourceHelper.getNormalBorderFont();
 		textFieldStyle.fontColor = Color.WHITE;
 		textFieldStyle.cursor = textFieldSkin.getDrawable("textFieldCursor");
 		txtEmail = new TextField(prof.getUserEmail(), textFieldStyle);

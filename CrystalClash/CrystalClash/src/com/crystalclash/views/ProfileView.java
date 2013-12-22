@@ -76,7 +76,7 @@ public class ProfileView extends InputView {
 		addActor(btnSave);
 
 		User user = GameController.getUser();
-		lblName = new Label("asdasd" + user.getName(), new LabelStyle(ResourceHelper.getBigFont(), Color.WHITE));
+		lblName = new Label("asdasd" + user.getName(), new LabelStyle(ResourceHelper.getBigBorderFont(), Color.WHITE));
 		lblName.setWrap(true);
 		lblName.setSize(CrystalClash.WIDTH - 60, 200);
 		lblName.setPosition(30, CrystalClash.HEIGHT - 30);

@@ -161,7 +161,7 @@ public class WorldView extends InputView {
 		// Options bar
 		TextButtonStyle optionsStyle = new TextButtonStyle(
 				skin.getDrawable("option_button"),
-				skin.getDrawable("option_button_pressed"), null, ResourceHelper.getNormalFont());
+				skin.getDrawable("option_button_pressed"), null, ResourceHelper.getNormalBorderFont());
 
 		grpOptions = new Group();
 		imgOptionsBackground = new Image(skin.getRegion("options_bar"));
@@ -241,7 +241,7 @@ public class WorldView extends InputView {
 
 		TextButtonStyle moreStyle = new TextButtonStyle(
 				skin.getDrawable("option_more_button"),
-				skin.getDrawable("option_more_button_pressed"), null, ResourceHelper.getNormalFont());
+				skin.getDrawable("option_more_button_pressed"), null, ResourceHelper.getNormalBorderFont());
 		btnOptions = new TextButton("", moreStyle);
 		btnOptions.setPosition(imgBtnOptionsBackground.getWidth() - btnOptions.getWidth(), 0);
 		btnOptions.addListener(new ClickListener() {
@@ -265,7 +265,7 @@ public class WorldView extends InputView {
 
 		TextButtonStyle sendStyle = new TextButtonStyle(
 				skin.getDrawable("option_send_button"),
-				skin.getDrawable("option_send_button_pressed"), null, ResourceHelper.getNormalFont());
+				skin.getDrawable("option_send_button_pressed"), null, ResourceHelper.getNormalBorderFont());
 		btnSend = new TextButton("", sendStyle);
 		btnSend.setPosition(0, 0);
 		final BoxCallback sendTurnCallback = new BoxCallback() {
@@ -313,7 +313,7 @@ public class WorldView extends InputView {
 
 		TextButtonStyle attackStyle = new TextButtonStyle(
 				skin.getDrawable("action_attack_button"),
-				skin.getDrawable("action_attack_button_pressed"), null, ResourceHelper.getNormalFont());
+				skin.getDrawable("action_attack_button_pressed"), null, ResourceHelper.getNormalBorderFont());
 		btnAttack = new TextButton("", attackStyle);
 		btnAttack.setPosition(actionsBar.getX(), actionsBar.getY() + 155);
 		btnAttack.addListener(new ClickListener() {
@@ -325,7 +325,7 @@ public class WorldView extends InputView {
 
 		TextButtonStyle defenseStyle = new TextButtonStyle(
 				skin.getDrawable("action_defensive_button"),
-				skin.getDrawable("action_defensive_button_pressed"), null, ResourceHelper.getNormalFont());
+				skin.getDrawable("action_defensive_button_pressed"), null, ResourceHelper.getNormalBorderFont());
 		btnDefense = new TextButton("", defenseStyle);
 		btnDefense.setPosition(actionsBar.getX() + 5, actionsBar.getY() + 13);
 		btnDefense.addListener(new ClickListener() {
@@ -337,7 +337,7 @@ public class WorldView extends InputView {
 
 		TextButtonStyle moveStyle = new TextButtonStyle(
 				skin.getDrawable("action_run_button"),
-				skin.getDrawable("action_run_button_pressed"), null, ResourceHelper.getNormalFont());
+				skin.getDrawable("action_run_button_pressed"), null, ResourceHelper.getNormalBorderFont());
 		btnMove = new TextButton("", moveStyle);
 		btnMove.setPosition(actionsBar.getX() + 233, actionsBar.getY() + 155);
 		btnMove.addListener(new ClickListener() {
@@ -349,7 +349,7 @@ public class WorldView extends InputView {
 
 		TextButtonStyle undoStyle = new TextButtonStyle(
 				skin.getDrawable("action_cancel_button"),
-				skin.getDrawable("action_cancel_button_pressed"), null, ResourceHelper.getNormalFont());
+				skin.getDrawable("action_cancel_button_pressed"), null, ResourceHelper.getNormalBorderFont());
 		btnUndo = new TextButton("", undoStyle);
 		btnUndo.setPosition(actionsBar.getX() + 231, actionsBar.getY() + 9);
 		btnUndo.addListener(new ClickListener() {

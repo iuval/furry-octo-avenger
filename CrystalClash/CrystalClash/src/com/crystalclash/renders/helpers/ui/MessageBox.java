@@ -14,7 +14,7 @@ public class MessageBox extends BaseBox {
 	private Label lblMessage;
 
 	private MessageBox() {
-		super(new Label("", new LabelStyle(ResourceHelper.getNormalFont(), Color.WHITE)));
+		super(new Label("", new LabelStyle(ResourceHelper.getNormalBorderFont(), Color.WHITE)));
 		setSize(800, CrystalClash.HEIGHT / 2);
 		setPosition(CrystalClash.WIDTH / 2 - 400, CrystalClash.HEIGHT + getHeight());
 

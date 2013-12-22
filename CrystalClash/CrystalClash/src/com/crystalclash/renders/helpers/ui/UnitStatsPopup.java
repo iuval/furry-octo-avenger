@@ -60,7 +60,7 @@ public class UnitStatsPopup extends Group {
 		imgBackground.setPosition(40, 1);
 		addActor(imgBackground);
 
-		LabelStyle style = new LabelStyle(ResourceHelper.getSmallFont(), Color.WHITE);
+		LabelStyle style = new LabelStyle(ResourceHelper.getSmallBorderFont(), Color.WHITE);
 
 		// Element
 		txtFireIcon = new TextureRegionDrawable(ResourceHelper.getElementIcon("fire"));
