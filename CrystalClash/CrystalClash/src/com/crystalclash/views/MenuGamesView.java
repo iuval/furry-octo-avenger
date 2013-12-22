@@ -59,11 +59,10 @@ public class MenuGamesView extends InputView {
 	private TextButton btnViewStory;
 
 	private Label lblNewRandomText;
-	
+
 	private InputListener surrenderListener;
 	private InputListener playListener;
 	private Skin skin;
-
 
 	private TutorialInvitation tutoInv;
 	private TextureRegion txtCcolumn;
@@ -213,21 +212,21 @@ public class MenuGamesView extends InputView {
 		lblUserLTittle.setPosition(505, 158);
 		grpProfile.addActor(lblUserL);
 		grpProfile.addActor(lblUserLTittle);
-		
+
 		Label lblUserD = new Label(u.getDrawCount() + "", skin, "big_font", Color.BLACK);
 		lblUserD.setPosition(675, 110);
 		Label lblUserDTittle = new Label("Draws", skin, "small_font", Color.BLACK);
 		lblUserDTittle.setPosition(655, 158);
 		grpProfile.addActor(lblUserD);
 		grpProfile.addActor(lblUserDTittle);
-		
+
 		if (!GameController.isTutorialDone()) {
 			loadTutorial();
 		}
 	}
 
-	public void loadList(GamesLoadCallback callback) {
-		loadGameList();
+	public void loadGameList(GamesLoadCallback callback) {
+		controller.getGamesList();
 		loadCallback = callback;
 	}
 
@@ -257,10 +256,6 @@ public class MenuGamesView extends InputView {
 	private void loadTutorial() {
 		tutoInv = new TutorialInvitation();
 		addActor(tutoInv);
-	}
-
-	private void loadGameList() {
-		controller.getGamesList();
 	}
 
 	// SERVER DRIVER CALLBACKS --------------------------------------------
@@ -302,11 +297,11 @@ public class MenuGamesView extends InputView {
 		list.addActor(grpNewRandom);
 		list.addActor(grpTutorial);
 		list.addActor(grpStory);
-		
+
 		max_list_y += grpNewRandom.getHeight();
 		max_list_y += grpTutorial.getHeight();
 		max_list_y += grpStory.getHeight();
-		
+
 		list.addActor(new Image(txtCcolumn));
 
 		GameEngine.hideLoading();
@@ -321,7 +316,7 @@ public class MenuGamesView extends InputView {
 			public void onEvent(int type, Object data) {
 				if (type == BoxCallback.YES) {
 					controller.surrenderGame(data.toString());
-					loadGameList();
+					loadGameList(null);
 				}
 			}
 		};
@@ -364,7 +359,7 @@ public class MenuGamesView extends InputView {
 		style.font = skin.getFont("big_font");
 		style.fontColor = Color.BLACK;
 		skin.add("lblStyle", style);
-		
+
 		ButtonStyle playStyle = new ButtonStyle();
 		playStyle.up = skin.getDrawable("play_up");
 		playStyle.down = skin.getDrawable("play_down");
@@ -379,11 +374,11 @@ public class MenuGamesView extends InputView {
 		surrenderStyle.up = skin.getDrawable("surrender_up");
 		surrenderStyle.down = skin.getDrawable("surrender_down");
 		skin.add("surrenderStyle", surrenderStyle);
-		
+
 		TextButtonStyle btnStyle = new TextButtonStyle();
 		btnStyle.font = skin.getFont("big_font");
-		
-		//New Random Group
+
+		// New Random Group
 		grpNewRandom = new Group();
 		Image imgNewRandom = new Image(ResourceHelper.getTexture("menu/games_list/new_battle_stack"));
 		grpNewRandom.addActor(imgNewRandom);
@@ -392,7 +387,7 @@ public class MenuGamesView extends InputView {
 		lblNewRandomText = new Label("New Game", skin, "lblStyle");
 		lblNewRandomText.setPosition(510, 210);
 		grpNewRandom.addActor(lblNewRandomText);
-		
+
 		btnNewRandom = new TextButton("", btnStyle);
 		btnNewRandom.setPosition(253, 28);
 		btnNewRandom.setSize(588, 302);
@@ -404,8 +399,8 @@ public class MenuGamesView extends InputView {
 			}
 		});
 		grpNewRandom.addActor(btnNewRandom);
-		
-		//Play Tutorial Group
+
+		// Play Tutorial Group
 		grpTutorial = new Group();
 		Image imgTutorial = new Image(ResourceHelper.getTexture("menu/games_list/tutorial_stack"));
 		grpTutorial.addActor(imgTutorial);
@@ -414,7 +409,7 @@ public class MenuGamesView extends InputView {
 		Label tutorialText = new Label("Play\nTutorial", skin, "lblStyle");
 		tutorialText.setPosition(360, 140);
 		grpTutorial.addActor(tutorialText);
-		
+
 		btnPlayTutorial = new TextButton("", btnStyle);
 		btnPlayTutorial.setPosition(253, 28);
 		btnPlayTutorial.setSize(588, 302);
@@ -425,8 +420,8 @@ public class MenuGamesView extends InputView {
 			}
 		});
 		grpTutorial.addActor(btnPlayTutorial);
-		
-		//View Story Group
+
+		// View Story Group
 		grpStory = new Group();
 		Image imgStory = new Image(ResourceHelper.getTexture("menu/games_list/story_stack"));
 		grpStory.addActor(imgStory);
@@ -435,18 +430,18 @@ public class MenuGamesView extends InputView {
 		Label storyText = new Label("Learn\nthe Story", skin, "lblStyle");
 		storyText.setPosition(360, 140);
 		grpStory.addActor(storyText);
-		
+
 		btnViewStory = new TextButton("", btnStyle);
 		btnViewStory.setPosition(253, 28);
 		btnViewStory.setSize(588, 302);
 		btnViewStory.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
-				
+
 			}
 		});
 		grpStory.addActor(btnViewStory);
-		
+
 		refreshMessagePull = new Image(ResourceHelper.getTexture("menu/refresh_list/refresh_message_pull"));
 		refreshMessagePull.setVisible(false);
 		addActor(refreshMessagePull);
@@ -457,6 +452,15 @@ public class MenuGamesView extends InputView {
 		refreshMessageRelease = new Image(ResourceHelper.getTexture("menu/refresh_list/refresh_message_release"));
 		refreshMessageRelease.setVisible(false);
 		addActor(refreshMessageRelease);
+	}
+
+	public void removeGameWithId(String id) {
+		for (int i = 0; i < gamesList.length; i++) {
+			if (gamesList[i].gameId == id) {
+				gamesList[i].remove();
+				gamesList[i].dispose();
+			}
+		}
 	}
 
 	public void listGamesError(String message) {
@@ -517,7 +521,6 @@ public class MenuGamesView extends InputView {
 		for (int i = 0; i < gamesList.length; i++) {
 			gamesList[i].loadEmblem();
 		}
-
 	}
 
 	@Override
@@ -551,7 +554,7 @@ public class MenuGamesView extends InputView {
 		} else {
 			if (isTryingToRefresh) {
 				if (showRelease) {
-					loadList(new GamesLoadCallback() {
+					loadGameList(new GamesLoadCallback() {
 
 						@Override
 						public void onFinish() {

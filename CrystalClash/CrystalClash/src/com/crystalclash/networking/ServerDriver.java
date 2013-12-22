@@ -24,7 +24,9 @@ public class ServerDriver {
 	private final static String ACTION_LIST_GAMES = "list_games";
 	private final static String ACTION_ENABLE_RANDOM = "enable_random";
 	private final static String ACTION_GAME_TURN = "game_turn";
-	private final static String UPDATE_PLAYER = "update_player";
+	private final static String ACTION_UPDATE_PLAYER = "update_player";
+	private final static String ACTION_SURRENDER = "surrender";
+	private final static String ACTION_ACK_SURRENDER = "ack_surrender";
 
 	public static void sendSignUp(final String email, final String password) {
 		Map<String, String> data = new HashMap<String, String>();
@@ -191,6 +193,58 @@ public class ServerDriver {
 				});
 	}
 
+	public static void sendSurrender(String playerId, final String gameId) {
+		Map<String, String> data = new HashMap<String, String>();
+		data.put("player_id", playerId);
+		data.put("game_id", gameId);
+
+		System.out.println("Sending-> " + data);
+		Gdx.net.sendHttpRequest(getPost(ACTION_SURRENDER, data),
+				new HttpResponseListener() {
+					@Override
+					public void handleHttpResponse(HttpResponse httpResponse) {
+						JsonValue values = ServerDriver
+								.ProcessResponce(httpResponse);
+						if (values.getString("value").equals("ok")) {
+							MenuGames.getInstance().sendSurrenderSuccess(gameId);
+						} else {
+							MenuGames.getInstance().sendSurrenderError();
+						}
+					}
+
+					@Override
+					public void failed(Throwable t) {
+						exceptionMessage();
+					}
+				});
+	}
+
+	public static void sendAckSurrender(String playerId, final String gameId) {
+		Map<String, String> data = new HashMap<String, String>();
+		data.put("player_id", playerId);
+		data.put("game_id", gameId);
+
+		System.out.println("Sending-> " + data);
+		Gdx.net.sendHttpRequest(getPost(ACTION_ACK_SURRENDER, data),
+				new HttpResponseListener() {
+					@Override
+					public void handleHttpResponse(HttpResponse httpResponse) {
+						JsonValue values = ServerDriver
+								.ProcessResponce(httpResponse);
+						if (values.getString("value").equals("ok")) {
+							MenuGames.getInstance().sendSurrenderSuccess(gameId);
+						} else {
+							MenuGames.getInstance().sendSurrenderError();
+						}
+					}
+
+					@Override
+					public void failed(Throwable t) {
+						exceptionMessage();
+					}
+				});
+	}
+
 	public static void sendUpdateUser(String id, String name, String email, int emplem) {
 		Map<String, String> data = new HashMap<String, String>();
 		data.put("id", id);
@@ -199,7 +253,7 @@ public class ServerDriver {
 		data.put("emblem", emplem + "");
 
 		System.out.println("Sending-> " + data);
-		Gdx.net.sendHttpRequest(getPost(UPDATE_PLAYER, data),
+		Gdx.net.sendHttpRequest(getPost(ACTION_UPDATE_PLAYER, data),
 				new HttpResponseListener() {
 					@Override
 					public void handleHttpResponse(HttpResponse httpResponse) {

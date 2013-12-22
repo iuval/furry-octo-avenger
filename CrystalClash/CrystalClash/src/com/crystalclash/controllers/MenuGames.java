@@ -101,6 +101,17 @@ public class MenuGames {
 		GameEngine.getInstance().openMenuGames();
 	}
 
+	public void sendSurrenderSuccess(String gameId) {
+		getRender().removeGameWithId(gameId);
+	}
+
+	public void sendSurrenderError() {
+		MessageBox.build()
+				.setText("Something went wrong, try later :(")
+				.setCallback(null)
+				.show();
+	}
+
 	public void sendGameTurnError(String message) {
 		MessageBox.build()
 				.setText(message)
