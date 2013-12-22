@@ -14,8 +14,8 @@ import com.badlogic.gdx.utils.JsonValue;
 import com.crystalclash.controllers.GameController;
 import com.crystalclash.controllers.MenuGames;
 import com.crystalclash.renders.GameEngine;
+import com.crystalclash.renders.helpers.ui.BaseBox.BoxButtons;
 import com.crystalclash.renders.helpers.ui.MessageBox;
-import com.crystalclash.renders.helpers.ui.MessageBox.Buttons;
 import com.crystalclash.util.I18n;
 
 public class ServerDriver {
@@ -24,6 +24,7 @@ public class ServerDriver {
 	private final static String ACTION_LIST_GAMES = "list_games";
 	private final static String ACTION_ENABLE_RANDOM = "enable_random";
 	private final static String ACTION_GAME_TURN = "game_turn";
+	private final static String UPDATE_PLAYER = "update_player";
 
 	public static void sendSignIn(final String email, final String password) {
 		Map<String, String> data = new HashMap<String, String>();
@@ -38,7 +39,14 @@ public class ServerDriver {
 								.ProcessResponce(httpResponse);
 						if (values.getString("value").equals("ok")) {
 							JsonValue data = values.get("data");
-							GameController.signInSuccess(data.getString("id"), data.getString("name"), email, password);
+							GameController.signInSuccess(data.getString("id"),
+									data.getString("name"),
+									email,
+									password,
+									data.getInt("emblem"),
+									data.getInt("victory_total"),
+									data.getInt("defeat_total"),
+									data.getInt("draw_total"));
 						} else {
 							GameEngine.getInstance().singUpError(values.getString("message"));
 						}
@@ -63,7 +71,14 @@ public class ServerDriver {
 						JsonValue values = ServerDriver.ProcessResponce(httpResponse);
 						if (values.getString("value").equals("ok")) {
 							JsonValue data = values.get("data");
-							GameController.logInSuccess(data.getString("id"), data.getString("name"), email, password);
+							GameController.logInSuccess(data.getString("id"),
+									data.getString("name"),
+									email,
+									password,
+									data.getInt("emblem"),
+									data.getInt("victory_total"),
+									data.getInt("defeat_total"),
+									data.getInt("draw_total"));
 						} else {
 							GameEngine.getInstance().logInError(values.getString("message"));
 						}
@@ -85,7 +100,7 @@ public class ServerDriver {
 								.ProcessResponce(httpResponse);
 						if (values.getString("value").equals("ok")) {
 							JsonValue data = values.get("data");
-							String[][] games = new String[data.size][5];
+							String[][] games = new String[data.size][6];
 							JsonValue child;
 							for (int i = 0; i < games.length; i++) {
 								child = data.get(i);
@@ -94,6 +109,10 @@ public class ServerDriver {
 								games[i][2] = child.getString("victories");
 								games[i][3] = child.getString("turn");
 								games[i][4] = child.getString("state");
+								if (child.hasChild("emblem"))
+									games[i][5] = child.getString("emblem");
+								else
+									games[i][5] = "0";
 							}
 							MenuGames.getInstance().getGamesListSuccess(games);
 						} else {
@@ -175,6 +194,34 @@ public class ServerDriver {
 				});
 	}
 
+	public static void sendUpdateUser(String id, String name, String email, int emplem) {
+		Map<String, String> data = new HashMap<String, String>();
+		data.put("id", id);
+		data.put("name", name);
+		data.put("email", email);
+		data.put("emblem", emplem + "");
+
+		System.out.println("Sending-> " + data);
+		Gdx.net.sendHttpRequest(getPost(UPDATE_PLAYER, data),
+				new HttpResponseListener() {
+					@Override
+					public void handleHttpResponse(HttpResponse httpResponse) {
+						JsonValue values = ServerDriver
+								.ProcessResponce(httpResponse);
+						if (values.getString("value").equals("ok")) {
+							MenuGames.getInstance().sendGameTurnSuccess(values.getString("data"));
+						} else {
+							MenuGames.getInstance().sendGameTurnError(values.getString("message"));
+						}
+					}
+
+					@Override
+					public void failed(Throwable t) {
+						exceptionMessage();
+					}
+				});
+	}
+
 	public static void getGameTurn(String playerId, String gameId) {
 		Gdx.net.sendHttpRequest(getGet(ACTION_GAME_TURN + "/p/" + playerId
 				+ "/g/" + gameId), new HttpResponseListener() {
@@ -198,7 +245,7 @@ public class ServerDriver {
 
 	private static void exceptionMessage() {
 		MessageBox.build()
-				.setMessage(I18n.t("server_error"), Buttons.One)
+				.setMessage(I18n.t("server_error"), BoxButtons.One)
 				.setCallback(null)
 				.show();
 	}

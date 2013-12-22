@@ -8,11 +8,11 @@ import com.crystalclash.entities.Unit;
 import com.crystalclash.entities.User;
 import com.crystalclash.networking.ServerDriver;
 import com.crystalclash.renders.GameEngine;
+import com.crystalclash.renders.helpers.ui.BaseBox.BoxButtons;
 import com.crystalclash.renders.helpers.ui.MessageBox;
-import com.crystalclash.renders.helpers.ui.MessageBox.Buttons;
 import com.crystalclash.util.Profile;
 import com.crystalclash.util.ProfileService;
-import com.crystalclash.util.UnitSharedDataPrefReader;
+import com.crystalclash.util.SharedDataPrefReader;
 import com.crystalclash.util.UnitStatsPrefReader;
 
 public class GameController {
@@ -27,6 +27,7 @@ public class GameController {
 	public static float UNIT_MAX_STEPS = 0;
 	public static int MAX_UNIT_PER_PLAYER = 0;
 	public static String SERVER_URL = "";
+	public static int EMBLEM_COUNT = 0;
 
 	public static void setUser(User user) {
 		currentUser = user;
@@ -40,12 +41,13 @@ public class GameController {
 		if (!dataLoaded) {
 			unitValues = UnitStatsPrefReader.load("data/prefs/stats.pref");
 
-			String[] shared = UnitSharedDataPrefReader.load("data/prefs/shared.pref");
+			String[] shared = SharedDataPrefReader.load("data/prefs/shared.pref");
 			UNIT_MAX_HP = Float.parseFloat(shared[0]);
 			UNIT_MAX_ATTACK = Float.parseFloat(shared[1]);
 			UNIT_MAX_STEPS = Float.parseFloat(shared[2]);
 			MAX_UNIT_PER_PLAYER = Integer.parseInt(shared[3]);
 			SERVER_URL = shared[4];
+			EMBLEM_COUNT = Integer.parseInt(shared[5]);
 
 			dataLoaded = true;
 		}
@@ -164,7 +166,7 @@ public class GameController {
 
 	public static void logIn(String email, String password) {
 		MessageBox.build()
-				.setMessage("game_authenticating", Buttons.None)
+				.setMessage("game_authenticating", BoxButtons.None)
 				.setCallback(null)
 				.show();
 		ServerDriver.sendLogIn(email, password);
@@ -172,23 +174,24 @@ public class GameController {
 
 	public static void signIn(String email, String password) {
 		MessageBox.build()
-				.setMessage("world_creating_account", Buttons.None)
+				.setMessage("world_creating_account", BoxButtons.None)
 				.setCallback(null)
 				.show();
 		ServerDriver.sendSignIn(email, password);
 	}
 
-	public static void logInSuccess(String userId, String name, String email, String password) {
-		profileService.retrieveProfile().setUserEmail(email);
-		profileService.retrieveProfile().setUserPassword(password);
+	public static void logInSuccess(String userId, String name, String email, String password, int emblem, int v, int d, int l) {
+		Profile p = profileService.retrieveProfile();
+		p.setUserEmail(email);
+		p.setUserPassword(password);
 		GameController.saveProfile();
-		setUser(new User(userId, email, name));
+		setUser(new User(userId, email, name, emblem, v, d, l));
 		GameEngine.getInstance().openMenuGames();
 	}
 
-	public static void signInSuccess(String userId, String name, String email, String password) {
+	public static void signInSuccess(String userId, String name, String email, String password, int emblem, int v, int d, int l) {
 		profileService.retrieveProfile().reset();
-		logInSuccess(userId, name, email, password);
+		logInSuccess(userId, name, email, password, emblem, v, d, l);
 	}
 
 	public static void logOut() {

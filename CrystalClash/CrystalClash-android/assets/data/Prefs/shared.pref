@@ -4,3 +4,4 @@ data
   max_speed: 4
   max_units_per_player: 5
   server_url: http://fuzzy-adventure.herokuapp.com/
+  emblem_count: 36

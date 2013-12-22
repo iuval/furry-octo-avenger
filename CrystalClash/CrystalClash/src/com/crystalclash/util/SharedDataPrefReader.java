@@ -8,7 +8,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 
-public class UnitSharedDataPrefReader {
+public class SharedDataPrefReader {
 	public static String[] load(String internalPrefFile) {
 		return load(Gdx.files.internal(internalPrefFile));
 	}
@@ -16,7 +16,7 @@ public class UnitSharedDataPrefReader {
 	private static String[] load(FileHandle prefFile) {
 		BufferedReader reader = new BufferedReader(new InputStreamReader(
 				prefFile.read()), 64);
-		String[] values = new String[5];
+		String[] values = new String[6];
 		try {
 			while (true) {
 				String line = reader.readLine();
@@ -30,6 +30,7 @@ public class UnitSharedDataPrefReader {
 					values[2] = readValue(reader);
 					values[3] = readValue(reader);
 					values[4] = readValue(reader);
+					values[5] = readValue(reader);
 				}
 			}
 		} catch (Exception ex) {

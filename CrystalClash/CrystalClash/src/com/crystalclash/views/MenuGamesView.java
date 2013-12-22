@@ -18,6 +18,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
 import com.badlogic.gdx.scenes.scene2d.utils.Align;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.crystalclash.CrystalClash;
 import com.crystalclash.audio.AudioManager;
 import com.crystalclash.audio.AudioManager.MUSIC;
@@ -27,12 +28,15 @@ import com.crystalclash.entities.User;
 import com.crystalclash.renders.GameEngine;
 import com.crystalclash.renders.ParallaxRender;
 import com.crystalclash.renders.TutorialInvitation;
+import com.crystalclash.renders.helpers.EmblemHelper;
 import com.crystalclash.renders.helpers.ResourceHelper;
+import com.crystalclash.renders.helpers.ui.BaseBox;
+import com.crystalclash.renders.helpers.ui.BaseBox.BoxButtons;
+import com.crystalclash.renders.helpers.ui.BoxCallback;
+import com.crystalclash.renders.helpers.ui.EmblemList;
 import com.crystalclash.renders.helpers.ui.GameListItem;
 import com.crystalclash.renders.helpers.ui.GamesLoadCallback;
 import com.crystalclash.renders.helpers.ui.MessageBox;
-import com.crystalclash.renders.helpers.ui.MessageBox.Buttons;
-import com.crystalclash.renders.helpers.ui.MessageBoxCallback;
 
 public class MenuGamesView extends InputView {
 	private GamesLoadCallback loadCallback;
@@ -119,7 +123,6 @@ public class MenuGamesView extends InputView {
 
 	@Override
 	public void init() {
-
 	}
 
 	public void loadList(GamesLoadCallback callback) {
@@ -180,7 +183,7 @@ public class MenuGamesView extends InputView {
 		GameListItem listingItem;
 		GameListItem canPlayItem = null;
 		for (int i = 0, len = games.length; i < len; i++) {
-			listingItem = new GameListItem(games[i][0], games[i][1], games[i][2], games[i][3], games[i][4],
+			listingItem = new GameListItem(games[i][0], games[i][1], games[i][2], games[i][3], Integer.parseInt(games[i][5]), games[i][4],
 					skin, surrenderListener,
 					playListener);
 			gamesList[i] = listingItem;
@@ -209,10 +212,10 @@ public class MenuGamesView extends InputView {
 	private void initSkin() {
 		txtCcolumn = ResourceHelper.getTexture("menu/games_list/column_stack");
 
-		final MessageBoxCallback surrenderCallback = new MessageBoxCallback() {
+		final BoxCallback surrenderCallback = new BoxCallback() {
 			@Override
 			public void onEvent(int type, Object data) {
-				if (type == MessageBoxCallback.YES) {
+				if (type == BoxCallback.YES) {
 					controller.surrenderGame(data.toString());
 					loadGameList();
 				}
@@ -224,7 +227,7 @@ public class MenuGamesView extends InputView {
 			public void clicked(InputEvent event, float x, float y) {
 				MessageBox.build()
 						.setUserData(((GameListItem) event.getListenerActor().getParent()).gameId)
-						.setMessage("menu_ganmes_surender", Buttons.Two)
+						.setMessage("menu_ganmes_surender", BoxButtons.Two)
 						.setCallback(surrenderCallback)
 						.show();
 			}
@@ -328,18 +331,43 @@ public class MenuGamesView extends InputView {
 
 		Label lblUserName = new Label(u.getName(), skin, "font", Color.WHITE);
 		lblUserName.setPosition(290, 200);
+		lblUserName.setSize(460, 60);
 		lblUserName.setAlignment(Align.center);
 		grpProfile.addActor(lblUserName);
 
-		Label lblUserD = new Label("40", skin, "font", Color.WHITE);
+		final Image imgEmblem = new Image(EmblemHelper.getEmblem(u.getEmblem()));
+		imgEmblem.setPosition(55, 90);
+		imgEmblem.setSize(160, 160);
+		grpProfile.addActor(imgEmblem);
+		imgEmblem.addListener(new ClickListener() {
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+				final EmblemList emblemList = new EmblemList();
+				BaseBox box = new BaseBox(emblemList);
+				box.twoButtonsLayout("Save", "Back");
+				box.setCallback(new BoxCallback() {
+					@Override
+					public void onEvent(int type, Object data) {
+						if (type == YES) {
+							GameController.getUser().setEmblem(emblemList.getSelectedEmblem());
+							GameController.getUser().update();
+							imgEmblem.setDrawable(new TextureRegionDrawable(EmblemHelper.getEmblem(emblemList.getSelectedEmblem())));
+						}
+					}
+				});
+				box.show();
+			}
+		});
+
+		Label lblUserD = new Label(u.getDrawCount() + "", skin, "font", Color.WHITE);
 		lblUserD.setPosition(370, 90);
 		grpProfile.addActor(lblUserD);
 
-		Label lblUserV = new Label("150", skin, "font", Color.WHITE);
+		Label lblUserV = new Label(u.getVictoryCount() + "", skin, "font", Color.WHITE);
 		lblUserV.setPosition(500, 110);
 		grpProfile.addActor(lblUserV);
 
-		Label lblUserL = new Label("20", skin, "font", Color.WHITE);
+		Label lblUserL = new Label(u.getLostCount() + "", skin, "font", Color.WHITE);
 		lblUserL.setPosition(630, 90);
 		grpProfile.addActor(lblUserL);
 
@@ -364,10 +392,9 @@ public class MenuGamesView extends InputView {
 
 	public void enableRandomSuccess(String[] game) {
 		if (game != null) {
-			GameListItem listingItem = new GameListItem(game[0], game[1], game[2], game[3], game[4],
+			GameListItem listingItem = new GameListItem(game[0], game[1], game[2], game[3], Integer.parseInt(game[5]), game[4],
 					skin, surrenderListener,
 					playListener);
-			// list.addActorAfter(gamesImage, listingItem);
 			list.addActor(listingItem);
 		}
 		btnNewRandom.setText("New random game");
@@ -398,6 +425,10 @@ public class MenuGamesView extends InputView {
 
 	@Override
 	public void shown() {
+		for (int i = 0; i < gamesList.length; i++) {
+			gamesList[i].loadEmblem();
+		}
+
 		if (!GameController.isTutorialDone()) {
 			tutoInv.show();
 		}
@@ -440,7 +471,7 @@ public class MenuGamesView extends InputView {
 		} else {
 			if (isTryingToRefresh) {
 				if (showRelease) {
-					loadGameList();
+					loadList(null);
 				}
 				isTryingToRefresh = false;
 			}

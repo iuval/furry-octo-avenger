@@ -3,9 +3,9 @@ package com.crystalclash.controllers;
 import com.badlogic.gdx.utils.JsonValue;
 import com.crystalclash.networking.ServerDriver;
 import com.crystalclash.renders.GameEngine;
+import com.crystalclash.renders.helpers.ui.BaseBox.BoxButtons;
+import com.crystalclash.renders.helpers.ui.BoxCallback;
 import com.crystalclash.renders.helpers.ui.MessageBox;
-import com.crystalclash.renders.helpers.ui.MessageBox.Buttons;
-import com.crystalclash.renders.helpers.ui.MessageBoxCallback;
 import com.crystalclash.views.MenuGamesView;
 
 public class MenuGames {
@@ -59,7 +59,7 @@ public class MenuGames {
 				gameId, "ended", "defeat");
 	}
 
-	private MessageBoxCallback logoutCallback = new MessageBoxCallback() {
+	private BoxCallback logoutCallback = new BoxCallback() {
 
 		@Override
 		public void onEvent(int type, Object data) {
@@ -70,7 +70,7 @@ public class MenuGames {
 
 	public void logOut() {
 		MessageBox.build()
-				.setMessage("menu_games_log_out", Buttons.Two)
+				.setMessage("menu_games_log_out", BoxButtons.Two)
 				.setCallback(logoutCallback)
 				.show();
 	}
@@ -91,7 +91,8 @@ public class MenuGames {
 
 	public void getGameTurnError(String string) {
 		MessageBox.build()
-				.setText(string) // TODO: el sever tiene que enviar comandos, que aca convertimos a texto
+				.setText(string) // TODO: el sever tiene que enviar comandos,
+									// que aca convertimos a texto
 				.setCallback(null)
 				.show();
 	}

@@ -11,12 +11,15 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
 import com.badlogic.gdx.scenes.scene2d.utils.Align;
+import com.crystalclash.renders.helpers.EmblemHelper;
 
 public class GameListItem extends Group {
 	public final String gameId;
 	public int turn;
+	public int emblem;
+	Button btnPlay;
 
-	public GameListItem(String gameId, String playerName, String victories, String turn,
+	public GameListItem(String gameId, String playerName, String victories, String turn, int emblem,
 			String state, Skin skin, EventListener surrenderListener,
 			EventListener playListener) {
 
@@ -31,7 +34,7 @@ public class GameListItem extends Group {
 		float h = bg.getHeight();
 		setSize(w, h);
 
-		Button btnPlay = new Button(state.equals("play") ?
+		btnPlay = new Button(state.equals("play") ?
 				skin.get("playStyle", TextButtonStyle.class) :
 				skin.get("waitStyle", TextButtonStyle.class));
 		if (state.equals("play"))
@@ -50,6 +53,8 @@ public class GameListItem extends Group {
 		labelV.setAlignment(Align.center);
 		addActor(labelV);
 
+		this.emblem = emblem;
+
 		Label labelTurn = new Label(turn, skin, "font", Color.LIGHT_GRAY);
 		labelTurn.setPosition(690, 110);
 		labelTurn.setAlignment(Align.center);
@@ -61,6 +66,13 @@ public class GameListItem extends Group {
 		addActor(buttonSurrender);
 
 		buttonSurrender.addListener(surrenderListener);
+	}
+
+	public void loadEmblem() {
+		Image imgEmblem = new Image(EmblemHelper.getEmblem(emblem));
+		imgEmblem.setPosition(55, 60);
+		imgEmblem.setSize(160, 160);
+		addActor(imgEmblem);
 	}
 
 	public void dispose() {
