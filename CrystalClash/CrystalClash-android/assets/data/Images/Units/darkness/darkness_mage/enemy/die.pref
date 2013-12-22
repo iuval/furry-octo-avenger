@@ -1,6 +1,6 @@
 animation
   sheet: 4, 5
-  handle: 40, 6
+  handle: 50, 35
   total-time: 3.75
   image-count: 19
 images-time

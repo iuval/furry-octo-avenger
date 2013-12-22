@@ -23,6 +23,7 @@ import com.crystalclash.renders.helpers.ui.SuperAnimatedActor;
 
 public class AttackFactory {
 	private WorldController world;
+	private static float ARROW_MOVEMENT_SPEED = 0.150f;
 
 	public AttackFactory(WorldController controller) {
 		world = controller;
@@ -85,9 +86,9 @@ public class AttackFactory {
 		return false;
 	}
 
-	private void softDamage(Unit enemy, float damage) {
-		if (enemy != null && enemy.isAlive()) {
-			enemy.softDamage(damage);
+	private void softDamage(Unit unit, float damage) {
+		if (unit != null && unit.isAlive()) {
+			unit.softDamage(damage);
 		}
 	}
 
@@ -123,8 +124,9 @@ public class AttackFactory {
 				arrow.getWidth() / 2,
 				arrow.getHeight() / 2);
 
-		float speed = CrystalClash.FIGTH_ANIMATION_SPEED / arrowPath.dots.size;
-
+		//float speed = CrystalClash.FIGTH_ANIMATION_SPEED / arrowPath.dots.size;
+		float speed = ARROW_MOVEMENT_SPEED;
+		
 		Vector2 first = arrowPath.dots.get(0).cpy();
 		Vector2 second = arrowPath.dots.get(1).cpy();
 		float angleOrigin = second.sub(first).cpy().angle();
@@ -142,18 +144,24 @@ public class AttackFactory {
 		arrowTimeline.delay(unit.getRender().fightAnim.getAnimationTime());
 
 		// Arrow rotation
-		if (arrowPath.dots.get(0).x < arrowPath.dots.get(arrowPath.dots.size - 1).x) {
-			arrowTimeline.beginSequence();
-			arrowTimeline.push(Tween.to(arrow, ActorAccessor.ROTATION, CrystalClash.FIGTH_ANIMATION_SPEED / 2)
-					.target(0).ease(TweenEquations.easeNone));
-			arrowTimeline.push(Tween.set(arrow, ActorAccessor.ROTATION)
-					.target(360));
-			arrowTimeline.push(Tween.to(arrow, ActorAccessor.ROTATION, CrystalClash.FIGTH_ANIMATION_SPEED / 2)
-					.target(angleTarget)
-					.ease(TweenEquations.easeNone));
-			arrowTimeline.end();
+		if (Math.abs(angleOrigin - angleTarget) > 10) {
+			if (arrowPath.dots.get(0).x < arrowPath.dots.get(arrowPath.dots.size - 1).x) {
+				arrowTimeline.beginSequence();
+				arrowTimeline.push(Tween.to(arrow, ActorAccessor.ROTATION, CrystalClash.FIGTH_ANIMATION_SPEED / 2)
+						.target(0).ease(TweenEquations.easeNone));
+				arrowTimeline.push(Tween.set(arrow, ActorAccessor.ROTATION)
+						.target(360));
+				arrowTimeline.push(Tween.to(arrow, ActorAccessor.ROTATION, CrystalClash.FIGTH_ANIMATION_SPEED / 2)
+						.target(angleTarget)
+						.ease(TweenEquations.easeNone));
+				arrowTimeline.end();
+			} else {
+				arrowTimeline.push(Tween.to(arrow, ActorAccessor.ROTATION, CrystalClash.FIGTH_ANIMATION_SPEED)
+						.target(angleTarget)
+						.ease(TweenEquations.easeNone));
+			}
 		} else {
-			arrowTimeline.push(Tween.to(arrow, ActorAccessor.ROTATION, CrystalClash.FIGTH_ANIMATION_SPEED)
+			arrowTimeline.push(Tween.set(arrow, ActorAccessor.ROTATION)
 					.target(angleTarget)
 					.ease(TweenEquations.easeNone));
 		}
@@ -192,9 +200,12 @@ public class AttackFactory {
 		Unit ally = action.origin.getUnit();
 
 		softDamage(enemy, ally.getDamage());
+		Unit aux;
 		for (int i = 0; i < action.target.neigbours.length; i++) {
 			Cell neig = world.cellGrid[action.target.neigbours[i][0]][action.target.neigbours[i][1]];
-			softDamage(neig.getUnit(), ally.getDamage());
+			aux = neig.getUnit();
+			if(aux != null && aux.getPlayerNumber() != ally.getPlayerNumber())
+				softDamage(aux, ally.getDamage() / 2);
 		}
 	}
 
@@ -203,9 +214,12 @@ public class AttackFactory {
 		Unit ally = action.origin.getUnit();
 
 		damage(enemy, ally.getDamage());
+		Unit aux;
 		for (int i = 0; i < action.target.neigbours.length; i++) {
 			Cell neig = world.cellGrid[action.target.neigbours[i][0]][action.target.neigbours[i][1]];
-			damage(neig.getUnit(), ally.getDamage());
+			aux = neig.getUnit();
+			if(aux != null && aux.getPlayerNumber() != ally.getPlayerNumber())
+				damage(neig.getUnit(), ally.getDamage() / 2);
 		}
 	}
 
@@ -245,18 +259,24 @@ public class AttackFactory {
 		fireBallTimeline.delay(unit.getRender().fightAnim.getAnimationTime());
 
 		// fireBall rotation
-		if (fireBallPath.dots.get(0).x < fireBallPath.dots.get(fireBallPath.dots.size - 1).x) {
-			fireBallTimeline.beginSequence();
-			fireBallTimeline.push(Tween.to(fireBall, ActorAccessor.ROTATION, CrystalClash.FIGTH_ANIMATION_SPEED / 2)
-					.target(0).ease(TweenEquations.easeNone));
-			fireBallTimeline.push(Tween.set(fireBall, ActorAccessor.ROTATION)
-					.target(360));
-			fireBallTimeline.push(Tween.to(fireBall, ActorAccessor.ROTATION, CrystalClash.FIGTH_ANIMATION_SPEED / 2)
-					.target(angleTarget)
-					.ease(TweenEquations.easeNone));
-			fireBallTimeline.end();
+		if (Math.abs(angleOrigin - angleTarget) > 10) {
+			if (fireBallPath.dots.get(0).x < fireBallPath.dots.get(fireBallPath.dots.size - 1).x) {
+				fireBallTimeline.beginSequence();
+				fireBallTimeline.push(Tween.to(fireBall, ActorAccessor.ROTATION, CrystalClash.FIGTH_ANIMATION_SPEED / 2)
+						.target(0).ease(TweenEquations.easeNone));
+				fireBallTimeline.push(Tween.set(fireBall, ActorAccessor.ROTATION)
+						.target(360));
+				fireBallTimeline.push(Tween.to(fireBall, ActorAccessor.ROTATION, CrystalClash.FIGTH_ANIMATION_SPEED / 2)
+						.target(angleTarget)
+						.ease(TweenEquations.easeNone));
+				fireBallTimeline.end();
+			} else {
+				fireBallTimeline.push(Tween.to(fireBall, ActorAccessor.ROTATION, CrystalClash.FIGTH_ANIMATION_SPEED)
+						.target(angleTarget)
+						.ease(TweenEquations.easeNone));
+			}
 		} else {
-			fireBallTimeline.push(Tween.to(fireBall, ActorAccessor.ROTATION, CrystalClash.FIGTH_ANIMATION_SPEED)
+			fireBallTimeline.push(Tween.set(fireBall, ActorAccessor.ROTATION)
 					.target(angleTarget)
 					.ease(TweenEquations.easeNone));
 		}
@@ -288,9 +308,37 @@ public class AttackFactory {
 			}
 		});
 
+		//Center Fire Effect
 		Timeline effectsTimeline = Timeline.createParallel();
+		SuperAnimatedActor centerEffect = new SuperAnimatedActor(ResourceHelper.getUnitResourceSuperAnimation(unit.getName(), "effect"),
+				true, FACING.right);
+		centerEffect.setPosition(0 - centerEffect.getWidth() * 2, 0 - centerEffect.getHeight() * 2);
+		centerEffect.setOrigin(centerEffect.getWidth() / 2, centerEffect.getHeight() / 2);
+		entities.addActor(centerEffect);
+		t.push(Tween.set(centerEffect, ActorAccessor.ALPHA).target(0))
+				.push(Tween.set(centerEffect, ActorAccessor.X).target(action.target.getCenterX()))
+				.push(Tween.set(centerEffect, ActorAccessor.Y).target(action.target.getCenterY()));
+
+		Timeline effectTimeline = Timeline.createSequence();
+		effectTimeline.push(Tween.to(centerEffect, ActorAccessor.ALPHA, CrystalClash.FAST_ANIMATION_SPEED)
+				.target(1).ease(TweenEquations.easeNone));
+		effectTimeline.push(Tween.to(centerEffect, ActorAccessor.ALPHA, CrystalClash.FIGTH_ANIMATION_SPEED)
+				.target(0).ease(TweenEquations.easeNone));
+		effectTimeline.setUserData(new Object[] { centerEffect });
+		effectTimeline.setCallback(new TweenCallback() {
+			@Override
+			public void onEvent(int type, BaseTween<?> source) {
+				SuperAnimatedActor centerEffect = (SuperAnimatedActor) ((Object[]) source.getUserData())[0];
+				centerEffect.remove();
+				centerEffect = null;
+			}
+		});
+		effectsTimeline.push(effectTimeline);
+		
+		//Neigbours Fire Effect
+		SuperAnimatedActor effect ;
 		for (int i = 0; i < action.target.neigbours.length; i++) {
-			SuperAnimatedActor effect = new SuperAnimatedActor(ResourceHelper.getUnitResourceSuperAnimation(unit.getName(), "effect"),
+			effect = new SuperAnimatedActor(ResourceHelper.getUnitResourceSuperAnimation(unit.getName(), "effect"),
 					true, FACING.right);
 			effect.setPosition(0 - effect.getWidth() * 2, 0 - effect.getHeight() * 2);
 			effect.setOrigin(effect.getWidth() / 2, effect.getHeight() / 2);
@@ -300,7 +348,7 @@ public class AttackFactory {
 					.push(Tween.set(effect, ActorAccessor.X).target(neig.getCenterX()))
 					.push(Tween.set(effect, ActorAccessor.Y).target(neig.getCenterY()));
 
-			Timeline effectTimeline = Timeline.createSequence();
+			effectTimeline = Timeline.createSequence();
 			effectTimeline.push(Tween.to(effect, ActorAccessor.ALPHA, CrystalClash.FAST_ANIMATION_SPEED)
 					.target(1).ease(TweenEquations.easeNone));
 			effectTimeline.push(Tween.to(effect, ActorAccessor.ALPHA, CrystalClash.FIGTH_ANIMATION_SPEED)

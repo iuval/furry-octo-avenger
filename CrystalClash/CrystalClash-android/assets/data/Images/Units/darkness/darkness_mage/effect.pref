@@ -1,8 +1,8 @@
 animation
-  sheet: 6, 1
+  sheet: 2, 4
   handle: 104, 58
   total-time: 1.2
-  image-count: 6
+  image-count: 8
 images-time
   0001: 0.2
   0002: 0.2
@@ -10,3 +10,5 @@ images-time
   0004: 0.2
   0005: 0.2
   0006: 0.2
+  0007: 0.2
+  0008: 0.2

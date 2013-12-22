@@ -88,9 +88,6 @@ public class WorldController {
 				y = temp.getInt("y");
 
 				Unit unit = new Unit(child.getString("unit_name"), playerNum, isEnemy, child.getInt("unit_hp"));
-				if (unit.isPlayerNumber(2)) {
-					unit.getRender().setFacing(FACING.left);
-				}
 
 				UnitAction unitA;
 				action = child.getString("action");

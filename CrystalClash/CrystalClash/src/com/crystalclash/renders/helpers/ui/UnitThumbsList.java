@@ -25,8 +25,8 @@ public class UnitThumbsList extends Group {
 	private UnitThumb selectedThumb;
 
 	public UnitThumbsList(final UnitListSelectListener unitThumbListener, final UnitItemSplashListener unitSplashListener) {
-		lblUnitsCount = new Label("", new LabelStyle(ResourceHelper.getBigFont(), Color.WHITE));
-		lblMessage = new Label(I18n.t("unit_list"), new LabelStyle(ResourceHelper.getBigFont(), Color.WHITE));
+		lblUnitsCount = new Label("", new LabelStyle(ResourceHelper.getNormalFont(), Color.WHITE));
+		lblMessage = new Label(I18n.t("unit_list"), new LabelStyle(ResourceHelper.getNormalFont(), Color.WHITE));
 
 		imgTableBg = new Image(ResourceHelper.getTexture("in_game/first_turn/list_background"));
 		addActor(imgTableBg);
@@ -34,8 +34,8 @@ public class UnitThumbsList extends Group {
 		table = new Table();
 		scrollPane = new ScrollPane(table);
 		scrollPane.setPosition(10, 155);
-		lblMessage.setPosition(230, 85);
-		lblUnitsCount.setPosition(275, 50);
+		lblMessage.setPosition(230, 82);
+		lblUnitsCount.setPosition(272, 50);
 		scrollPane.setScrollingDisabled(true, false);
 		scrollPane.setOverscroll(false, true);
 		scrollPane.setSmoothScrolling(true);

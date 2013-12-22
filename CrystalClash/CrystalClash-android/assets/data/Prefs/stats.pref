@@ -20,7 +20,7 @@ earth_tank
   range: 1
   sound_chose_attack: 3
   sound_chose_move: 3
-  sound_chose_defend: 2
+  sound_chose_defend: 3
   sound_place: 3
   sound_select: 3
   sound_attack: 1

@@ -20,6 +20,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.crystalclash.CrystalClash;
 import com.crystalclash.accessors.ActorAccessor;
+import com.crystalclash.audio.AudioManager.SOUND;
 import com.crystalclash.controllers.WorldController;
 import com.crystalclash.entities.Cell;
 import com.crystalclash.entities.Unit;
@@ -443,6 +444,7 @@ public class WorldView extends InputView {
 		Unit u = cell.getUnit();
 		if (!u.isEnemy()) {
 			moveActionsRing(cell);
+			u.getRender().playSFX(SOUND.select);
 		}
 		cell.addState(Cell.SELECTED);
 		showStatsPopup(u);
