@@ -1,151 +1,151 @@
 
 options_bar.png
 format: RGBA8888
-filter: Linear,Linear
+filter: Nearest,Nearest
 repeat: none
 options_bar
   rotate: false
-  xy: 0, 413
+  xy: 2, 407
   size: 930, 64
   orig: 930, 64
   offset: 0, 0
   index: -1
 actions_hud
   rotate: false
-  xy: 0, 114
+  xy: 2, 106
   size: 353, 299
   orig: 353, 299
   offset: 0, 0
   index: -1
-action_defensive_button
+option_more_bar
   rotate: false
-  xy: 0, 0
-  size: 115, 114
-  orig: 115, 114
+  xy: 2, 21
+  size: 95, 83
+  orig: 95, 83
   offset: 0, 0
   index: -1
-action_defensive_button_pressed
+option_more_button
   rotate: false
-  xy: 115, 0
-  size: 115, 114
-  orig: 115, 114
+  xy: 99, 23
+  size: 83, 81
+  orig: 83, 81
+  offset: 0, 0
+  index: -1
+option_more_button_pressed
+  rotate: false
+  xy: 184, 23
+  size: 83, 81
+  orig: 83, 81
   offset: 0, 0
   index: -1
 option_button
   rotate: false
-  xy: 353, 360
-  size: 262, 53
-  orig: 262, 53
-  offset: 0, 0
-  index: -1
-option_button_pressed
-  rotate: false
-  xy: 353, 307
+  xy: 269, 51
   size: 262, 53
   orig: 262, 53
   offset: 0, 0
   index: -1
 option_send_bar
   rotate: false
-  xy: 353, 160
+  xy: 357, 258
   size: 148, 147
   orig: 148, 147
   offset: 0, 0
   index: -1
 action_attack_button
   rotate: false
-  xy: 501, 187
+  xy: 357, 136
   size: 120, 120
   orig: 120, 120
   offset: 0, 0
   index: -1
-exit_button
-  rotate: false
-  xy: 230, 4
-  size: 110, 110
-  orig: 110, 110
-  offset: 0, 0
-  index: -1
-option_more_bar
-  rotate: false
-  xy: 615, 330
-  size: 95, 83
-  orig: 95, 83
-  offset: 0, 0
-  index: -1
 action_attack_button_pressed
   rotate: false
-  xy: 710, 293
+  xy: 479, 136
   size: 120, 120
   orig: 120, 120
   offset: 0, 0
   index: -1
 action_cancel_button
   rotate: false
-  xy: 830, 293
+  xy: 533, 14
   size: 120, 120
   orig: 120, 120
   offset: 0, 0
   index: -1
 action_cancel_button_pressed
   rotate: false
-  xy: 353, 40
+  xy: 507, 285
   size: 120, 120
   orig: 120, 120
   offset: 0, 0
   index: -1
 action_run_button
   rotate: false
-  xy: 473, 40
+  xy: 601, 163
   size: 120, 120
   orig: 120, 120
-  offset: 0, 0
-  index: -1
-option_more_button
-  rotate: false
-  xy: 621, 249
-  size: 83, 81
-  orig: 83, 81
   offset: 0, 0
   index: -1
 action_run_button_pressed
   rotate: false
-  xy: 704, 173
+  xy: 629, 285
   size: 120, 120
   orig: 120, 120
   offset: 0, 0
   index: -1
-option_send_button
+option_button_pressed
   rotate: false
-  xy: 824, 178
-  size: 117, 115
-  orig: 117, 115
+  xy: 723, 230
+  size: 262, 53
+  orig: 262, 53
   offset: 0, 0
   index: -1
-option_more_button_pressed
+option_send_button
   rotate: false
-  xy: 621, 168
-  size: 83, 81
-  orig: 83, 81
+  xy: 751, 290
+  size: 117, 115
+  orig: 117, 115
   offset: 0, 0
   index: -1
 option_send_button_pressed
   rotate: false
-  xy: 593, 53
+  xy: 870, 290
   size: 117, 115
   orig: 117, 115
   offset: 0, 0
   index: -1
+action_defensive_button
+  rotate: false
+  xy: 655, 47
+  size: 115, 114
+  orig: 115, 114
+  offset: 0, 0
+  index: -1
+action_defensive_button_pressed
+  rotate: false
+  xy: 772, 114
+  size: 115, 114
+  orig: 115, 114
+  offset: 0, 0
+  index: -1
+exit_button
+  rotate: false
+  xy: 772, 2
+  size: 110, 110
+  orig: 110, 110
+  offset: 0, 0
+  index: -1
 exit_button_pressed
   rotate: false
-  xy: 710, 63
+  xy: 884, 2
   size: 110, 110
   orig: 110, 110
   offset: 0, 0
   index: -1
 exit_hud
   rotate: false
-  xy: 824, 68
+  xy: 889, 118
   size: 110, 110
   orig: 110, 110
   offset: 0, 0
