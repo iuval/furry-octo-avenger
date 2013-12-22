@@ -77,8 +77,6 @@ public class MenuGamesView extends InputView {
 	private float pullDistance = 0;
 	private float releaseDistance = 0;
 
-	private Image imgEmblem;
-
 	@Override
 	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
 		isPressing = true;
@@ -397,7 +395,6 @@ public class MenuGamesView extends InputView {
 			GameListItem listingItem = new GameListItem(game[0], game[1], game[2], game[3], Integer.parseInt(game[5]), game[4],
 					skin, surrenderListener,
 					playListener);
-			// list.addActorAfter(gamesImage, listingItem);
 			list.addActor(listingItem);
 		}
 		btnNewRandom.setText("New random game");
@@ -474,7 +471,7 @@ public class MenuGamesView extends InputView {
 		} else {
 			if (isTryingToRefresh) {
 				if (showRelease) {
-					loadGameList();
+					loadList(null);
 				}
 				isTryingToRefresh = false;
 			}

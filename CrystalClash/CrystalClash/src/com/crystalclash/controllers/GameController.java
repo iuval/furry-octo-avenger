@@ -27,7 +27,7 @@ public class GameController {
 	public static float UNIT_MAX_STEPS = 0;
 	public static int MAX_UNIT_PER_PLAYER = 0;
 	public static String SERVER_URL = "";
-	public static int emblemCount = 0;
+	public static int EMBLEM_COUNT = 0;
 
 	public static void setUser(User user) {
 		currentUser = user;
@@ -47,7 +47,7 @@ public class GameController {
 			UNIT_MAX_STEPS = Float.parseFloat(shared[2]);
 			MAX_UNIT_PER_PLAYER = Integer.parseInt(shared[3]);
 			SERVER_URL = shared[4];
-			emblemCount = Integer.parseInt(shared[5]);
+			EMBLEM_COUNT = Integer.parseInt(shared[5]);
 
 			dataLoaded = true;
 		}

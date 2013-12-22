@@ -42,7 +42,7 @@ public class EmblemList extends Group {
 			}
 		};
 		
-		for (int i = 0; i < GameController.emblemCount; i++) {
+		for (int i = 0; i < GameController.EMBLEM_COUNT; i++) {
 			if (i % 7 == 0) {
 				table.row();
 			}
