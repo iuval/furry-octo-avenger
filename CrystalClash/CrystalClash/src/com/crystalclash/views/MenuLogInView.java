@@ -36,7 +36,7 @@ public class MenuLogInView extends InputView {
 	private Label lblHeading;
 	private TextField txtEmail;
 	private TextField txtPassword;
-	private TextButton btnSignIn;
+	private TextButton btnLogIn;
 	private TextButton btnSignUp;
 	private TextureRegion txtPopup;
 	private Image imgPopupPanel;
@@ -147,15 +147,14 @@ public class MenuLogInView extends InputView {
 				Gdx.input.setOnscreenKeyboardVisible(false);
 				if (!email.isEmpty() && !password.isEmpty()) {
 					Gdx.input.setOnscreenKeyboardVisible(false);
-					controller.sendSignIn(email, password);
+					controller.sendSignUp(email, password);
 				}
 			}
 		});
 
-		btnSignIn = new TextButton("Sign In", ResourceHelper.getButtonStyle());
-		btnSignIn.setPosition(imgPopupPanel.getWidth() - btnSignUp.getWidth() - 50,
-				50);
-		btnSignIn.addListener(new ClickListener() {
+		btnLogIn = new TextButton("Log In", ResourceHelper.getButtonStyle());
+		btnLogIn.setPosition(imgPopupPanel.getWidth() - btnSignUp.getWidth() - 50, 50);
+		btnLogIn.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
 				String email = txtEmail.getText().trim();
@@ -175,7 +174,7 @@ public class MenuLogInView extends InputView {
 		grpPopUp.addActor(textFieldPassword);
 		grpPopUp.addActor(txtEmail);
 		grpPopUp.addActor(txtPassword);
-		grpPopUp.addActor(btnSignIn);
+		grpPopUp.addActor(btnLogIn);
 		grpPopUp.addActor(btnSignUp);
 
 		grpPopUp.setSize(imgPopupPanel.getWidth(), imgPopupPanel.getHeight());

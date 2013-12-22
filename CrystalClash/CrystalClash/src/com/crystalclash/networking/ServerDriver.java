@@ -26,7 +26,7 @@ public class ServerDriver {
 	private final static String ACTION_GAME_TURN = "game_turn";
 	private final static String UPDATE_PLAYER = "update_player";
 
-	public static void sendSignIn(final String email, final String password) {
+	public static void sendSignUp(final String email, final String password) {
 		Map<String, String> data = new HashMap<String, String>();
 		data.put("email", email);
 		data.put("password", password);
@@ -39,7 +39,7 @@ public class ServerDriver {
 								.ProcessResponce(httpResponse);
 						if (values.getString("value").equals("ok")) {
 							JsonValue data = values.get("data");
-							GameController.signInSuccess(data.getString("id"),
+							GameController.signUpSuccess(data.getString("id"),
 									data.getString("name"),
 									email,
 									password,

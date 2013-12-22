@@ -208,6 +208,10 @@ public class MenuGamesView extends InputView {
 		Label lblUserL = new Label(u.getLostCount() + "", skin, "font", Color.WHITE);
 		lblUserL.setPosition(630, 90);
 		grpProfile.addActor(lblUserL);
+		
+		if (!GameController.isTutorialDone()) {
+			loadTutorial();
+		}
 	}
 
 	public void loadList(GamesLoadCallback callback) {
@@ -236,10 +240,6 @@ public class MenuGamesView extends InputView {
 		addActor(list);
 
 		initSkin();
-
-		if (!GameController.isTutorialDone()) {
-			loadTutorial();
-		}
 	}
 
 	private void loadTutorial() {

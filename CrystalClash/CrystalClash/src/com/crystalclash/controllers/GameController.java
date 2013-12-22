@@ -172,12 +172,12 @@ public class GameController {
 		ServerDriver.sendLogIn(email, password);
 	}
 
-	public static void signIn(String email, String password) {
+	public static void signUp(String email, String password) {
 		MessageBox.build()
 				.setMessage("world_creating_account", BoxButtons.None)
 				.setCallback(null)
 				.show();
-		ServerDriver.sendSignIn(email, password);
+		ServerDriver.sendSignUp(email, password);
 	}
 
 	public static void logInSuccess(String userId, String name, String email, String password, int emblem, int v, int d, int l) {
@@ -189,8 +189,9 @@ public class GameController {
 		GameEngine.getInstance().openMenuGames();
 	}
 
-	public static void signInSuccess(String userId, String name, String email, String password, int emblem, int v, int d, int l) {
+	public static void signUpSuccess(String userId, String name, String email, String password, int emblem, int v, int d, int l) {
 		profileService.retrieveProfile().reset();
+		setTutorialNotDone();
 		logInSuccess(userId, name, email, password, emblem, v, d, l);
 	}
 
