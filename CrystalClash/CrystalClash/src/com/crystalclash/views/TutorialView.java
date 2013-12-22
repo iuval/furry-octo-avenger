@@ -12,12 +12,13 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.ui.Button;
+import com.badlogic.gdx.scenes.scene2d.ui.Button.ButtonStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
 import com.badlogic.gdx.scenes.scene2d.utils.Align;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Array;
@@ -57,7 +58,7 @@ public class TutorialView extends GameView {
 	private Image balloon;
 	private Label lblMessage;
 	private TextButton btnNext;
-	private TextButton btnSkip;
+	private Button btnSkip;
 	private Image imgBtnSkipBackground;
 
 	private Array<String> messages;
@@ -164,10 +165,10 @@ public class TutorialView extends GameView {
 
 		imgBtnSkipBackground = new Image(skin.getRegion("exit_hud"));
 		imgBtnSkipBackground.setPosition(CrystalClash.WIDTH, CrystalClash.HEIGHT - imgBtnSkipBackground.getHeight());
-		TextButtonStyle skipStyle = new TextButtonStyle(
+		ButtonStyle skipStyle = new ButtonStyle(
 				skin.getDrawable("exit_button"),
-				skin.getDrawable("exit_button_pressed"), null, ResourceHelper.getNormalFont());
-		btnSkip = new TextButton("", skipStyle);
+				skin.getDrawable("exit_button_pressed"), null);
+		btnSkip = new Button(skipStyle);
 		btnSkip.setPosition(CrystalClash.WIDTH, CrystalClash.HEIGHT - btnSkip.getHeight());
 		btnSkip.addListener(new ClickListener() {
 			@Override
