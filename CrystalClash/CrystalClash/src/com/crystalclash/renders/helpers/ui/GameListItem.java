@@ -20,7 +20,8 @@ public class GameListItem extends Group {
 	Button btnPlay;
 
 	public GameListItem(String gameId, String playerName, String victories, String turn, int emblemNum,
-			String state, Skin skin, EventListener surrenderListener,
+			String state, boolean surrender,
+			Skin skin, EventListener surrenderListener, EventListener ackSurrenderListener,
 			EventListener playListener) {
 
 		this.gameId = gameId;
@@ -68,8 +69,11 @@ public class GameListItem extends Group {
 		Button buttonSurrender = new Button(skin.get("surrenderStyle", ButtonStyle.class));
 		buttonSurrender.setPosition(35, 260);
 		addActor(buttonSurrender);
-
-		buttonSurrender.addListener(surrenderListener);
+		if (surrender) {
+			buttonSurrender.addListener(ackSurrenderListener);
+		} else {
+			buttonSurrender.addListener(surrenderListener);
+		}
 	}
 
 	public void loadEmblem() {

@@ -49,6 +49,9 @@ public class MenuGamesView extends InputView {
 	private VerticalGroup list;
 	private GameListItem[] gamesList;
 
+	private Label lblUserV;
+	private Label lblUserL;
+
 	private Group grpNewRandom;
 	private Group grpProfile;
 	private Group grpTutorial;
@@ -61,6 +64,7 @@ public class MenuGamesView extends InputView {
 	private Label lblNewRandomText;
 
 	private InputListener surrenderListener;
+	private InputListener ackSurrenderListener;
 	private InputListener playListener;
 	private Skin skin;
 
@@ -276,7 +280,7 @@ public class MenuGamesView extends InputView {
 		GameListItem canPlayItem = null;
 		for (int i = 0, len = games.length; i < len; i++) {
 			listingItem = new GameListItem(games[i][0], games[i][1], games[i][2], games[i][3], Integer.parseInt(games[i][5]), games[i][4],
-					skin, surrenderListener,
+					games[i][6] == "true", skin, surrenderListener, ackSurrenderListener,
 					playListener);
 			gamesList[i] = listingItem;
 
@@ -320,6 +324,7 @@ public class MenuGamesView extends InputView {
 				}
 			}
 		};
+
 		// Listeners
 		surrenderListener = new ClickListener() {
 			@Override
@@ -329,6 +334,13 @@ public class MenuGamesView extends InputView {
 						.setMessage("menu_ganmes_surender", BoxButtons.Two)
 						.setCallback(surrenderCallback)
 						.show();
+			}
+		};
+
+		ackSurrenderListener = new ClickListener() {
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+				controller.surrenderGame(((GameListItem) event.getListenerActor().getParent()).gameId);
 			}
 		};
 
@@ -454,9 +466,11 @@ public class MenuGamesView extends InputView {
 		addActor(refreshMessageRelease);
 	}
 
-	public void removeGameWithId(String id) {
+	public void updateListGameSurrender(String id, int v, int l) {
+		lblUserV.setText(String.valueOf(v));
+		lblUserL.setText(String.valueOf(l));
 		for (int i = 0; i < gamesList.length; i++) {
-			if (gamesList[i].gameId == id) {
+			if (gamesList[i].gameId.equals(id)) {
 				gamesList[i].remove();
 				gamesList[i].dispose();
 			}
@@ -473,7 +487,8 @@ public class MenuGamesView extends InputView {
 	public void enableRandomSuccess(String[] game) {
 		if (game != null) {
 			GameListItem listingItem = new GameListItem(game[0], game[1], game[2], game[3], Integer.parseInt(game[5]), game[4],
-					skin, surrenderListener,
+					false,
+					skin, surrenderListener, ackSurrenderListener,
 					playListener);
 			list.addActor(listingItem);
 		}
