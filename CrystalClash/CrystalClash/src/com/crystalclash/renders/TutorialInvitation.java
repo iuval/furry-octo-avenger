@@ -43,7 +43,7 @@ public class TutorialInvitation extends AnimatedGroup {
 				.repeatYoyo(-1, 0));
 
 		imgBalloon = new Image(ResourceHelper.getTexture("tutorial/message_balloon"));
-		imgBalloon.setPosition(CrystalClash.WIDTH / 3, CrystalClash.HEIGHT + imgBalloon.getHeight());
+		imgBalloon.setPosition(CrystalClash.WIDTH / 3, CrystalClash.HEIGHT * 2 + imgBalloon.getHeight());
 		addActor(imgBalloon);
 
 		lblMessage = new Label("Welcome " + GameController.getUser().getName() +

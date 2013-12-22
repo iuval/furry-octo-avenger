@@ -682,7 +682,7 @@ public class TutorialView extends GameView {
 					}
 				});
 
-		return t.push(moveslayer).push(moveTank)
+		Timeline tutorialStuff = Timeline.createParallel()
 				.push(Tween.to(fireArcher, ActorAccessor.X, CrystalClash.ENTRANCE_ANIMATION_SPEED).target(200))
 				.push(Tween.to(balloon, ActorAccessor.Y, CrystalClash.ENTRANCE_ANIMATION_SPEED).target(0))
 				.push(Tween.to(btnNext, ActorAccessor.Y, CrystalClash.ENTRANCE_ANIMATION_SPEED).target(20))
@@ -703,6 +703,8 @@ public class TutorialView extends GameView {
 						}
 					}
 				});
+		
+		return t.push(moveslayer).push(moveTank).push(tutorialStuff);
 	}
 
 	@Override

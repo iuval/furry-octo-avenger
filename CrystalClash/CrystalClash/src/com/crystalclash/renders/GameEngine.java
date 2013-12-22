@@ -209,7 +209,7 @@ public class GameEngine implements Screen {
 						createWorld(data);
 						menuGamesRender.closed();
 						setState(GameState.InTranstionMenuGamesAndGame);
-						background.pushHide(worldRender.pushEnterAnimation(Timeline.createSequence()))
+						background.pushHide(worldRender.pushEnterAnimation(Timeline.createParallel()))
 								.setCallback(new TweenCallback() {
 									@Override
 									public void onEvent(int type, BaseTween<?> source) {

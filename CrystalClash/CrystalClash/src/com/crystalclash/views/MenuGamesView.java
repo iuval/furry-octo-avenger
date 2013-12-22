@@ -50,12 +50,17 @@ public class MenuGamesView extends InputView {
 
 	private Group grpNewRandom;
 	private Group grpProfile;
+	private Group grpTutorial;
+	private Group grpStory;
 
+	private TextButton btnNewRandom;
+	private TextButton btnPlayTutorial;
+	private TextButton btnViewStory;
+	
 	private InputListener surrenderListener;
 	private InputListener playListener;
 	private Skin skin;
 
-	private TextButton btnNewRandom;
 
 	private TutorialInvitation tutoInv;
 	private TextureRegion txtCcolumn;
@@ -283,6 +288,13 @@ public class MenuGamesView extends InputView {
 			max_list_y += listingItem.getHeight();
 		}
 		list.addActor(grpNewRandom);
+		list.addActor(grpTutorial);
+		list.addActor(grpStory);
+		
+		max_list_y += grpNewRandom.getHeight();
+		max_list_y += grpTutorial.getHeight();
+		max_list_y += grpStory.getHeight();
+		
 		list.addActor(new Image(txtCcolumn));
 
 		GameEngine.hideLoading();
@@ -353,15 +365,96 @@ public class MenuGamesView extends InputView {
 		surrenderStyle.down = skin.getDrawable("surrender_down");
 		skin.add("surrenderStyle", surrenderStyle);
 
+		grpProfile = new Group();
+		Image imgProfile = new Image(ResourceHelper.getTexture("menu/games_list/user_stats_stack"));
+		grpProfile.addActor(imgProfile);
+		grpProfile.setSize(imgProfile.getWidth(), imgProfile.getHeight());
+
+		ButtonStyle soundStyle = new ButtonStyle();
+		soundStyle.up = skin.getDrawable("sound_off_up");
+		soundStyle.down = skin.getDrawable("sound_off_down");
+		soundStyle.checked = skin.getDrawable("sound_on_up");
+		final Button btnSound = new Button(soundStyle);
+		btnSound.setPosition(840, 170);
+		btnSound.setChecked(AudioManager.getVolume() == 0);
+		btnSound.addListener(new ClickListener() {
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+				AudioManager.toogleVolume();
+				btnSound.setChecked(AudioManager.getVolume() == 0);
+			}
+		});
+		grpProfile.addActor(btnSound);
+
+		ButtonStyle logoutStyle = new ButtonStyle();
+		logoutStyle.up = skin.getDrawable("logout_up");
+		logoutStyle.down = skin.getDrawable("logout_down");
+		final Button btnLogout = new Button(logoutStyle);
+		btnLogout.setPosition(840, 70);
+		btnLogout.addListener(new ClickListener() {
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+				System.out.println("LogOut");
+				controller.logOut();
+			}
+		});
+		grpProfile.addActor(btnLogout);
+
+		User u = GameController.getUser();
+
+		Label lblUserName = new Label(u.getName(), skin, "font", Color.WHITE);
+		lblUserName.setPosition(290, 200);
+		lblUserName.setSize(460, 60);
+		lblUserName.setAlignment(Align.center);
+		grpProfile.addActor(lblUserName);
+
+		final Image imgEmblem = new Image(EmblemHelper.getEmblem(u.getEmblem()));
+		imgEmblem.setPosition(55, 90);
+		imgEmblem.setSize(160, 160);
+		grpProfile.addActor(imgEmblem);
+		imgEmblem.addListener(new ClickListener() {
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+				final EmblemList emblemList = new EmblemList();
+				BaseBox box = new BaseBox(emblemList);
+				box.twoButtonsLayout("Save", "Back");
+				box.setCallback(new BoxCallback() {
+					@Override
+					public void onEvent(int type, Object data) {
+						if (type == YES) {
+							GameController.getUser().setEmblem(emblemList.getSelectedEmblem());
+							GameController.getUser().update();
+							imgEmblem.setDrawable(new TextureRegionDrawable(EmblemHelper.getEmblem(emblemList.getSelectedEmblem())));
+						}
+					}
+				});
+				box.show();
+			}
+		});
+
+		Label lblUserD = new Label(u.getDrawCount() + "", skin, "font", Color.WHITE);
+		lblUserD.setPosition(370, 90);
+		grpProfile.addActor(lblUserD);
+
+		Label lblUserV = new Label(u.getVictoryCount() + "", skin, "font", Color.WHITE);
+		lblUserV.setPosition(500, 110);
+		grpProfile.addActor(lblUserV);
+
+		Label lblUserL = new Label(u.getLostCount() + "", skin, "font", Color.WHITE);
+		lblUserL.setPosition(630, 90);
+		grpProfile.addActor(lblUserL);
+
+		
+		TextButtonStyle style = new TextButtonStyle();
+		style.font = skin.getFont("font");
+		
+		//New Random Group
 		grpNewRandom = new Group();
 		Image imgNewRandom = new Image(ResourceHelper.getTexture("menu/games_list/new_battle_stack"));
 		grpNewRandom.addActor(imgNewRandom);
 		grpNewRandom.setSize(imgNewRandom.getWidth(), imgNewRandom.getHeight());
 
-		TextButtonStyle newRandomStyle = new TextButtonStyle();
-		newRandomStyle.font = skin.getFont("font");
-
-		btnNewRandom = new TextButton("New random game", newRandomStyle);
+		btnNewRandom = new TextButton("New random game", style);
 		btnNewRandom.setPosition(400, 180);
 		btnNewRandom.addListener(new ClickListener() {
 			@Override
@@ -371,7 +464,39 @@ public class MenuGamesView extends InputView {
 			}
 		});
 		grpNewRandom.addActor(btnNewRandom);
+		
+		//Play Tutorial Group
+		grpTutorial = new Group();
+		Image imgTutorial = new Image(ResourceHelper.getTexture("menu/games_list/new_battle_stack"));
+		grpTutorial.addActor(imgTutorial);
+		grpTutorial.setSize(imgTutorial.getWidth(), imgTutorial.getHeight());
 
+		btnPlayTutorial = new TextButton("Play Tutorial", style);
+		btnPlayTutorial.setPosition(400, 180);
+		btnPlayTutorial.addListener(new ClickListener() {
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+				GameEngine.getInstance().openTutorial();
+			}
+		});
+		grpTutorial.addActor(btnPlayTutorial);
+		
+		//View Story Group
+		grpStory = new Group();
+		Image imgStory = new Image(ResourceHelper.getTexture("menu/games_list/new_battle_stack"));
+		grpStory.addActor(imgStory);
+		grpStory.setSize(imgStory.getWidth(), imgStory.getHeight());
+
+		btnViewStory = new TextButton("View Story", style);
+		btnViewStory.setPosition(400, 180);
+		btnViewStory.addListener(new ClickListener() {
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+				
+			}
+		});
+		grpStory.addActor(btnViewStory);
+		
 		refreshMessagePull = new Image(ResourceHelper.getTexture("menu/refresh_list/refresh_message_pull"));
 		refreshMessagePull.setVisible(false);
 		addActor(refreshMessagePull);
