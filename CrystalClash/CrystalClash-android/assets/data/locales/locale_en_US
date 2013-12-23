@@ -71,9 +71,11 @@ tutorial_invitation_skip = It's not safe going to the battle field without train
 tutorial_invitation_skip_yes = Skip tutorial
 tutorial_invitation_skip_no = Play tutorial
 
-menu_ganmes_surender = \"The wise warrior avoids the battle.\"\n- Sun Tzu
-menu_ganmes_surender_yes = Surrender
-menu_ganmes_surender_no = Back
+menu_games_surender = \"The wise warrior avoids the battle.\"\n- Sun Tzu
+menu_games_surender_yes = Surrender
+menu_games_surender_no = Back
+menu_games_pull = Pull down to refresh...
+menu_games_release = Release to refresh...
 
 tutorial_leave_start = Are you sure you want to leave?\nWe have just started...
 tutorial_leave_start_yes = Leave

@@ -38,6 +38,7 @@ import com.crystalclash.renders.helpers.ui.EmblemList;
 import com.crystalclash.renders.helpers.ui.GameListItem;
 import com.crystalclash.renders.helpers.ui.GamesLoadCallback;
 import com.crystalclash.renders.helpers.ui.MessageBox;
+import com.crystalclash.util.I18n;
 
 public class MenuGamesView extends InputView {
 	private GamesLoadCallback loadCallback;
@@ -83,8 +84,9 @@ public class MenuGamesView extends InputView {
 	boolean isPressing = false;
 	boolean isOverflowing = false;
 
-	private Image refreshMessagePull;
-	private Image refreshMessageRelease;
+	private Group grpRefresh;
+	private Image imgRefreshArrow;
+	private Label lblRefreshMessage;
 	private boolean isTryingToRefresh = false;
 	private boolean showPullDown = false;
 	private boolean showRelease = false;
@@ -251,7 +253,7 @@ public class MenuGamesView extends InputView {
 			public void clicked(InputEvent event, float x, float y) {
 				MessageBox.build()
 						.setUserData(((GameListItem) event.getListenerActor().getParent()).gameId)
-						.setMessage("menu_ganmes_surender", BoxButtons.Two)
+						.setMessage("menu_games_surender", BoxButtons.Two)
 						.setCallback(surrenderCallback)
 						.show();
 			}
@@ -464,16 +466,22 @@ public class MenuGamesView extends InputView {
 		});
 		grpStory.addActor(btnViewStory);
 
-		refreshMessagePull = new Image(ResourceHelper.getTexture("menu/refresh_list/refresh_message_pull"));
-		refreshMessagePull.setVisible(false);
-		addActor(refreshMessagePull);
-
+		grpRefresh = new Group();
+		grpRefresh.setSize(CrystalClash.WIDTH, 200);
+		grpRefresh.setVisible(false);
+		
+		imgRefreshArrow = new Image(ResourceHelper.getTexture("menu/refresh_list/arrow"));
+		imgRefreshArrow.setOrigin(imgRefreshArrow.getWidth() / 2 , imgRefreshArrow.getHeight() / 2);
+		imgRefreshArrow.setPosition(CrystalClash.WIDTH / 4 - imgRefreshArrow.getWidth() / 2, grpRefresh.getHeight() / 2 - imgRefreshArrow.getHeight() / 2);
+		grpRefresh.addActor(imgRefreshArrow);
+		lblRefreshMessage = new Label(I18n.t("menu_games_pull"), skin, "lblStyle");
+		lblRefreshMessage.setPosition(imgRefreshArrow.getX() + imgRefreshArrow.getWidth() + 100, grpRefresh.getHeight() / 2 - lblRefreshMessage.getHeight() / 2);
+		grpRefresh.addActor(lblRefreshMessage);
+		
+		addActor(grpRefresh);
+		
 		pullDistance = 100;
 		releaseDistance = pullDistance * 2;
-
-		refreshMessageRelease = new Image(ResourceHelper.getTexture("menu/refresh_list/refresh_message_release"));
-		refreshMessageRelease.setVisible(false);
-		addActor(refreshMessageRelease);
 	}
 
 	public void updateListGameSurrender(String id) {
@@ -597,17 +605,17 @@ public class MenuGamesView extends InputView {
 
 		if (isTryingToRefresh) {
 			if (showRelease) {
-				refreshMessageRelease.setY(list.getTop());
-				refreshMessageRelease.setVisible(true);
-				refreshMessagePull.setVisible(false);
+				lblRefreshMessage.setText(I18n.t("menu_games_release"));
+				imgRefreshArrow.setRotation(180);
 			} else if (showPullDown) {
-				refreshMessagePull.setY(list.getTop());
-				refreshMessagePull.setVisible(true);
-				refreshMessageRelease.setVisible(false);
+				lblRefreshMessage.setText(I18n.t("menu_games_pull"));
+				imgRefreshArrow.setRotation(0);
 			}
+			
+			grpRefresh.setY(list.getTop());
+			grpRefresh.setVisible(true);
 		} else {
-			refreshMessagePull.setVisible(false);
-			refreshMessageRelease.setVisible(false);
+			grpRefresh.setVisible(false);
 		}
 	}
 
