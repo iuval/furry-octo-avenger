@@ -51,6 +51,9 @@ public class MenuGamesView extends InputView {
 
 	private Label lblUserV;
 	private Label lblUserL;
+	private Label lblUserD;
+	private Label lblUserName;
+	private Image imgEmblem;
 
 	private Group grpNewRandom;
 	private Group grpProfile;
@@ -134,95 +137,13 @@ public class MenuGamesView extends InputView {
 
 	@Override
 	public void init() {
+		lblUserV.setText(String.valueOf(GameController.getUser().getVictoryCount()));
+		lblUserL.setText(String.valueOf(GameController.getUser().getLostCount()));
+		lblUserD.setText(String.valueOf(GameController.getUser().getDrawCount()));
+		lblUserName.setText(GameController.getUser().getName());
+		imgEmblem.setDrawable(new TextureRegionDrawable(EmblemHelper.getEmblem(GameController.getUser().getEmblem())));
+
 		list.clear();
-
-		grpProfile = new Group();
-		Image imgProfile = new Image(ResourceHelper.getTexture("menu/games_list/user_stats_stack"));
-		grpProfile.addActor(imgProfile);
-		grpProfile.setSize(imgProfile.getWidth(), imgProfile.getHeight());
-
-		ButtonStyle soundStyle = new ButtonStyle();
-		soundStyle.up = skin.getDrawable("sound_off_up");
-		soundStyle.down = skin.getDrawable("sound_off_down");
-		soundStyle.checked = skin.getDrawable("sound_on_up");
-		final Button btnSound = new Button(soundStyle);
-		btnSound.setPosition(840, 170);
-		btnSound.setChecked(AudioManager.getVolume() == 0);
-		btnSound.addListener(new ClickListener() {
-			@Override
-			public void clicked(InputEvent event, float x, float y) {
-				AudioManager.toogleVolume();
-				btnSound.setChecked(AudioManager.getVolume() == 0);
-			}
-		});
-		grpProfile.addActor(btnSound);
-
-		ButtonStyle logoutStyle = new ButtonStyle();
-		logoutStyle.up = skin.getDrawable("logout_up");
-		logoutStyle.down = skin.getDrawable("logout_down");
-		final Button btnLogout = new Button(logoutStyle);
-		btnLogout.setPosition(840, 70);
-		btnLogout.addListener(new ClickListener() {
-			@Override
-			public void clicked(InputEvent event, float x, float y) {
-				System.out.println("LogOut");
-				controller.logOut();
-			}
-		});
-		grpProfile.addActor(btnLogout);
-
-		User u = GameController.getUser();
-
-		Label lblUserName = new Label(u.getName(), skin, "big_font", Color.BLACK);
-		lblUserName.setPosition(290, 215);
-		lblUserName.setSize(460, 60);
-		lblUserName.setAlignment(Align.center);
-		grpProfile.addActor(lblUserName);
-
-		final Image imgEmblem = new Image(EmblemHelper.getEmblem(u.getEmblem()));
-		imgEmblem.setPosition(50, 95);
-		imgEmblem.setSize(160, 160);
-		grpProfile.addActor(imgEmblem);
-		imgEmblem.addListener(new ClickListener() {
-			@Override
-			public void clicked(InputEvent event, float x, float y) {
-				final EmblemList emblemList = new EmblemList();
-				BaseBox box = new BaseBox(emblemList);
-				box.twoButtonsLayout("Save", "Back");
-				box.setCallback(new BoxCallback() {
-					@Override
-					public void onEvent(int type, Object data) {
-						if (type == YES) {
-							GameController.getUser().setEmblem(emblemList.getSelectedEmblem());
-							GameController.getUser().update();
-							imgEmblem.setDrawable(new TextureRegionDrawable(EmblemHelper.getEmblem(emblemList.getSelectedEmblem())));
-						}
-					}
-				});
-				box.show();
-			}
-		});
-
-		lblUserV = new Label(u.getVictoryCount() + "", skin, "big_font", Color.BLACK);
-		lblUserV.setPosition(365, 115);
-		Label lblUserVTittle = new Label("Victories", skin, "small_font", Color.BLACK);
-		lblUserVTittle.setPosition(330, 162);
-		grpProfile.addActor(lblUserV);
-		grpProfile.addActor(lblUserVTittle);
-
-		lblUserL = new Label(u.getLostCount() + "", skin, "big_font", Color.BLACK);
-		lblUserL.setPosition(540, 110);
-		Label lblUserLTittle = new Label("Defeats", skin, "small_font", Color.BLACK);
-		lblUserLTittle.setPosition(505, 158);
-		grpProfile.addActor(lblUserL);
-		grpProfile.addActor(lblUserLTittle);
-
-		Label lblUserD = new Label(u.getDrawCount() + "", skin, "big_font", Color.BLACK);
-		lblUserD.setPosition(675, 110);
-		Label lblUserDTittle = new Label("Draws", skin, "small_font", Color.BLACK);
-		lblUserDTittle.setPosition(655, 158);
-		grpProfile.addActor(lblUserD);
-		grpProfile.addActor(lblUserDTittle);
 
 		if (!GameController.isTutorialDone()) {
 			loadTutorial();
@@ -386,6 +307,94 @@ public class MenuGamesView extends InputView {
 		surrenderStyle.down = skin.getDrawable("surrender_down");
 		skin.add("surrenderStyle", surrenderStyle);
 
+		grpProfile = new Group();
+		Image imgProfile = new Image(ResourceHelper.getTexture("menu/games_list/user_stats_stack"));
+		grpProfile.addActor(imgProfile);
+		grpProfile.setSize(imgProfile.getWidth(), imgProfile.getHeight());
+
+		ButtonStyle soundStyle = new ButtonStyle();
+		soundStyle.up = skin.getDrawable("sound_off_up");
+		soundStyle.down = skin.getDrawable("sound_off_down");
+		soundStyle.checked = skin.getDrawable("sound_on_up");
+		final Button btnSound = new Button(soundStyle);
+		btnSound.setPosition(840, 170);
+		btnSound.setChecked(AudioManager.getVolume() == 0);
+		btnSound.addListener(new ClickListener() {
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+				AudioManager.toogleVolume();
+				btnSound.setChecked(AudioManager.getVolume() == 0);
+			}
+		});
+		grpProfile.addActor(btnSound);
+
+		ButtonStyle logoutStyle = new ButtonStyle();
+		logoutStyle.up = skin.getDrawable("logout_up");
+		logoutStyle.down = skin.getDrawable("logout_down");
+		final Button btnLogout = new Button(logoutStyle);
+		btnLogout.setPosition(840, 70);
+		btnLogout.addListener(new ClickListener() {
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+				System.out.println("LogOut");
+				controller.logOut();
+			}
+		});
+		grpProfile.addActor(btnLogout);
+
+		User u = GameController.getUser();
+
+		lblUserName = new Label(u.getName(), skin, "big_font", Color.BLACK);
+		lblUserName.setPosition(290, 215);
+		lblUserName.setSize(460, 60);
+		lblUserName.setAlignment(Align.center);
+		grpProfile.addActor(lblUserName);
+
+		imgEmblem = new Image(EmblemHelper.getEmblem(u.getEmblem()));
+		imgEmblem.setPosition(50, 95);
+		imgEmblem.setSize(160, 160);
+		grpProfile.addActor(imgEmblem);
+		imgEmblem.addListener(new ClickListener() {
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+				final EmblemList emblemList = new EmblemList();
+				BaseBox box = new BaseBox(emblemList);
+				box.twoButtonsLayout("Save", "Back");
+				box.setCallback(new BoxCallback() {
+					@Override
+					public void onEvent(int type, Object data) {
+						if (type == YES) {
+							GameController.getUser().setEmblem(emblemList.getSelectedEmblem());
+							GameController.getUser().update();
+							imgEmblem.setDrawable(new TextureRegionDrawable(EmblemHelper.getEmblem(emblemList.getSelectedEmblem())));
+						}
+					}
+				});
+				box.show();
+			}
+		});
+
+		lblUserV = new Label(u.getVictoryCount() + "", skin, "big_font", Color.BLACK);
+		lblUserV.setPosition(365, 115);
+		Label lblUserVTittle = new Label("Victories", skin, "small_font", Color.BLACK);
+		lblUserVTittle.setPosition(330, 162);
+		grpProfile.addActor(lblUserV);
+		grpProfile.addActor(lblUserVTittle);
+
+		lblUserL = new Label(u.getLostCount() + "", skin, "big_font", Color.BLACK);
+		lblUserL.setPosition(540, 110);
+		Label lblUserLTittle = new Label("Defeats", skin, "small_font", Color.BLACK);
+		lblUserLTittle.setPosition(505, 158);
+		grpProfile.addActor(lblUserL);
+		grpProfile.addActor(lblUserLTittle);
+
+		lblUserD = new Label(u.getDrawCount() + "", skin, "big_font", Color.BLACK);
+		lblUserD.setPosition(675, 110);
+		Label lblUserDTittle = new Label("Draws", skin, "small_font", Color.BLACK);
+		lblUserDTittle.setPosition(655, 158);
+		grpProfile.addActor(lblUserD);
+		grpProfile.addActor(lblUserDTittle);
+
 		TextButtonStyle btnStyle = new TextButtonStyle();
 		btnStyle.font = skin.getFont("big_font");
 
@@ -465,9 +474,9 @@ public class MenuGamesView extends InputView {
 		addActor(refreshMessageRelease);
 	}
 
-	public void updateListGameSurrender(String id, int v, int l) {
-		lblUserV.setText(String.valueOf(v));
-		lblUserL.setText(String.valueOf(l));
+	public void updateListGameSurrender(String id) {
+		lblUserV.setText(String.valueOf(GameController.getUser().getVictoryCount()));
+		lblUserL.setText(String.valueOf(GameController.getUser().getLostCount()));
 		int itemIndex = -1;
 		for (int i = 0; i < gamesList.length; i++) {
 			if (gamesList[i].gameId.equals(id)) {
@@ -477,7 +486,6 @@ public class MenuGamesView extends InputView {
 		}
 		if (itemIndex != -1) {
 			gamesList[itemIndex].remove();
-			gamesList[itemIndex].dispose();
 		}
 	}
 

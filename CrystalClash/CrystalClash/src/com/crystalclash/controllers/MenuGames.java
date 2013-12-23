@@ -101,7 +101,9 @@ public class MenuGames {
 	}
 
 	public void sendSurrenderSuccess(String gameId, int v, int l) {
-		getRender().updateListGameSurrender(gameId, v, l);
+		GameController.getUser().setVictoryCount(v);
+		GameController.getUser().setLostCount(l);
+		getRender().updateListGameSurrender(gameId);
 	}
 
 	public void sendSurrenderError() {

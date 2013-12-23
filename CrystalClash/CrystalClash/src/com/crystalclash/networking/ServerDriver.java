@@ -209,7 +209,7 @@ public class ServerDriver {
 								.ProcessResponce(httpResponse);
 						if (values.getString("value").equals("ok")) {
 							JsonValue child = values.get("data");
-							MenuGames.getInstance().sendSurrenderSuccess(gameId,
+							GameController.sendSurrenderSuccess(gameId,
 									child.getInt("victory_total"),
 									child.getInt("defeat_total"));
 						} else {
