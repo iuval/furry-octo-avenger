@@ -268,8 +268,8 @@ public class MenuGamesView extends InputView {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
 				GameListItem item = ((GameListItem) event.getListenerActor().getParent());
-				controller.getGameTurn(item.gameId);
 				GameController.setEnemyUser(new User("", "", item.playerName, item.emblem, 0, 0, 0));
+				controller.getGameTurn(item.gameId);
 			}
 		};
 
