@@ -213,7 +213,7 @@ public class MenuGamesView extends InputView {
 				list.addActor(listingItem);
 			} else {
 				if (games[i][4].equals("play")) {
-					list.addActor(listingItem);
+					list.addActorBefore(canPlayItem, listingItem);
 				} else {
 					list.addActorAfter(canPlayItem, listingItem);
 				}
