@@ -7,6 +7,7 @@ import aurelienribon.tweenengine.TweenCallback;
 import aurelienribon.tweenengine.TweenEquations;
 
 import com.badlogic.gdx.Input.Keys;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -15,18 +16,23 @@ import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Button.ButtonStyle;
+import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.crystalclash.CrystalClash;
 import com.crystalclash.accessors.ActorAccessor;
 import com.crystalclash.audio.AudioManager.SOUND;
+import com.crystalclash.controllers.GameController;
 import com.crystalclash.controllers.WorldController;
 import com.crystalclash.entities.Cell;
 import com.crystalclash.entities.Unit;
+import com.crystalclash.entities.User;
 import com.crystalclash.entities.helpers.UnitAction.UnitActionType;
 import com.crystalclash.renders.GameEngine;
 import com.crystalclash.renders.helpers.CellHelper;
+import com.crystalclash.renders.helpers.EmblemHelper;
 import com.crystalclash.renders.helpers.ResourceHelper;
 import com.crystalclash.renders.helpers.UnitHelper;
 import com.crystalclash.renders.helpers.ui.BaseBox.BoxButtons;
@@ -48,17 +54,27 @@ public class WorldView extends InputView {
 	private Image imgBtnOptionsBackground;
 	private Button btnOptions;
 
+	private Group grpPlayer1Details;
+	private Image imgDetails1Bar;
+	private Image imgPlayer1Emblem;
+	private Label lblPlayer1Name;
+	
+	private Group grpPlayer2Details;
+	private Image imgDetails2Bar;
+	private Image imgPlayer2Emblem;
+	private Label lblPlayer2Name;
+	
 	//private Image imgOptionsBackground;
 	//private TextButton btnSurrender;
 	//private TextButton btnBack;
 	//private TextButton btnClear;
 
+	private Group grpActionHud;
 	private Image actionsHud;
 	private Button btnAttack;
 	private Button btnMove;
 	private Button btnDefense;
 	private Button btnUndo;
-	private Group grpActionHud;
 
 	private Image arrow;
 	private Image pointingHand;
@@ -93,7 +109,7 @@ public class WorldView extends InputView {
 	public void initFirstTurn() {
 		gameRender = new SelectUnitsView(world);
 		addActor(gameRender);
-		finishLoad();
+		finishLoad(false);
 		showGameMenuButtons();
 		if (world.player == 1) {
 			statsPopup.setX(CrystalClash.WIDTH * 0.25f - statsPopup.getWidth() / 2);
@@ -105,20 +121,19 @@ public class WorldView extends InputView {
 	public void initNormalTurn() {
 		gameRender = new NormalGameView(world);
 		addActor(gameRender);
-		finishLoad();
 		showGameMenuButtons();
 	}
 
 	public void initTurnAnimations() {
 		gameRender = new TurnAnimationsView(world);
 		addActor(gameRender);
-		finishLoad();
+		finishLoad(true);
 	}
 
 	public void initTutorial() {
 		gameRender = new TutorialView(world);
 		addActor(gameRender);
-		finishLoad();
+		finishLoad(false);
 		showGameMenuButtons();
 	}
 
@@ -148,7 +163,7 @@ public class WorldView extends InputView {
 	public void load() {
 		TextureAtlas atlas = ResourceHelper.getTextureAtlas("in_game/options_bar.pack");
 		Skin skin = new Skin(atlas);
-
+		
 		// Terrain
 		txrTerrain = ResourceHelper.getTexture("in_game/terrain");
 		imgTerrain = new Image(txrTerrain);
@@ -229,7 +244,7 @@ public class WorldView extends InputView {
 //		grpOptions.setSize(imgOptionsBackground.getWidth(), imgOptionsBackground.getHeight());
 //		grpOptions.setPosition(-grpOptions.getWidth(), 0);
 
-		// Btn Send
+		// Grp Send
 		grpSend = new Group();
 		imgBtnSendBackground = new Image(skin.getRegion("option_send_bar"));
 		imgBtnSendBackground.setPosition(0, 0);
@@ -272,10 +287,11 @@ public class WorldView extends InputView {
 		};
 		btnSend.addListener(sendListener);
 		grpSend.addActor(btnSend);
+		
 		grpSend.setSize(imgBtnSendBackground.getWidth(), imgBtnSendBackground.getHeight());
 		grpSend.setPosition(-grpSend.getWidth(), -grpSend.getHeight());
 		
-		// Btn Options
+		// Grp Options
 		grpOptions = new Group();
 		imgBtnOptionsBackground = new Image(skin.getRegion("option_more_bar"));
 		imgBtnOptionsBackground.setPosition(0, 0);
@@ -292,17 +308,20 @@ public class WorldView extends InputView {
 				showOptions();
 			}
 		});
-
 		grpOptions.addActor(btnOptions);
+		
 		grpOptions.setSize(imgBtnOptionsBackground.getWidth(), imgBtnOptionsBackground.getHeight());
 		grpOptions.setPosition(CrystalClash.WIDTH, -grpOptions.getHeight());
-		
 	}
 
-	private void finishLoad() {
+	private void finishLoad(boolean enemyDetails) {
 		TextureAtlas atlas = ResourceHelper.getTextureAtlas("in_game/options_bar.pack");
 		Skin skin = new Skin(atlas);
-
+		skin.add("normal_font", ResourceHelper.getNormalFont());
+		LabelStyle style = new LabelStyle();
+		style.font = skin.getFont("normal_font");
+		skin.add("lblStyle", style);
+		
 		TextureRegion aux = skin.getRegion("actions_hud");
 		actionsHud = new Image(aux);
 
@@ -369,17 +388,79 @@ public class WorldView extends InputView {
 		grpActionHud.setOrigin(actionsHud.getWidth() / 2, actionsHud.getHeight() / 2);
 		grpActionHud.setPosition(CrystalClash.WIDTH / 2 - grpActionHud.getWidth() / 2, CrystalClash.HEIGHT + 50);
 
+		statsPopup = new UnitStatsPopup();
+		addActor(statsPopup);
+
+		// Grp Details
+		grpPlayer1Details = new Group();
+		grpPlayer2Details = new Group();
+		
+		User me = GameController.getUser();
+		User enemy = null;
+		if (world.player == 1) {
+			loadLeftDetailsGrp(skin, me);
+			
+			if(enemyDetails){
+				enemy = GameController.getEnemyUser();
+				loadRightDetailsGrp(skin, enemy);
+				GameController.setEnemyUser(null);
+			}
+		} else {
+			loadRightDetailsGrp(skin, me);
+			
+			if(enemyDetails){
+				enemy = GameController.getEnemyUser();
+				loadLeftDetailsGrp(skin, enemy);
+				GameController.setEnemyUser(null);
+			}
+		}
+				
 		addActor(grpActionHud);
 		addActor(arrow);
 		addActor(pointingHand);
 
 		addActor(grpOptions);
 		addActor(grpSend);
-
-		statsPopup = new UnitStatsPopup();
-		addActor(statsPopup);
+		addActor(grpPlayer1Details);
+		addActor(grpPlayer2Details);
 	}
 
+	private void loadLeftDetailsGrp(Skin skin, User u) {
+		imgDetails1Bar = new Image(skin.getRegion("player_details_bar_left"));
+		imgDetails1Bar.setPosition(0, 0);
+		grpPlayer1Details.addActor(imgDetails1Bar);
+
+		lblPlayer1Name = new Label(u.getName(), skin, "lblStyle");
+		lblPlayer1Name.setPosition(155, 140);
+		grpPlayer1Details.addActor(lblPlayer1Name);
+
+		imgPlayer1Emblem = new Image(EmblemHelper.getEmblem(u.getEmblem()));
+		imgPlayer1Emblem.setSize(115, 115);
+		imgPlayer1Emblem.setPosition(5, 56);
+		grpPlayer1Details.addActor(imgPlayer1Emblem);
+		
+		grpPlayer1Details.setSize(imgDetails1Bar.getWidth(), imgDetails1Bar.getHeight());
+		grpPlayer1Details.setPosition(-grpPlayer1Details.getWidth(), CrystalClash.HEIGHT);
+	}
+
+	private void loadRightDetailsGrp(Skin skin, User u) {
+		imgDetails2Bar = new Image(skin.getRegion("player_details_bar_right"));
+		imgDetails2Bar.setPosition(0, 0);
+		grpPlayer2Details.addActor(imgDetails2Bar);
+
+		lblPlayer2Name = new Label(u.getName(), skin, "lblStyle");
+		lblPlayer2Name.setPosition(80, 140);
+		grpPlayer2Details.addActor(lblPlayer2Name);
+
+		imgPlayer2Emblem = new Image(EmblemHelper.getEmblem(u.getEmblem()));
+		imgPlayer2Emblem.setSize(115, 115);
+		imgPlayer2Emblem.setPosition(397, 56);
+		grpPlayer2Details.addActor(imgPlayer2Emblem);
+		
+		grpPlayer2Details.setSize(imgDetails2Bar.getWidth(), imgDetails2Bar.getHeight());
+		grpPlayer2Details.setPosition(CrystalClash.WIDTH, CrystalClash.HEIGHT);
+	}
+	
 	private void back() {
 		pause();
 		MessageBox.build()
@@ -411,6 +492,14 @@ public class WorldView extends InputView {
 						.target(CrystalClash.WIDTH - grpOptions.getWidth()).ease(TweenEquations.easeOutCirc))
 				.push(Tween.to(grpOptions, ActorAccessor.Y, CrystalClash.FAST_ANIMATION_SPEED)
 						.target(0).ease(TweenEquations.easeOutCirc))
+				.push(Tween.to(grpPlayer1Details, ActorAccessor.X, CrystalClash.FAST_ANIMATION_SPEED)
+						.target(0).ease(TweenEquations.easeOutCirc))
+				.push(Tween.to(grpPlayer1Details, ActorAccessor.Y, CrystalClash.FAST_ANIMATION_SPEED)
+						.target(CrystalClash.HEIGHT - grpPlayer1Details.getHeight()).ease(TweenEquations.easeOutCirc))
+				.push(Tween.to(grpPlayer2Details, ActorAccessor.X, CrystalClash.FAST_ANIMATION_SPEED)
+						.target(CrystalClash.WIDTH - grpPlayer2Details.getWidth()).ease(TweenEquations.easeOutCirc))
+				.push(Tween.to(grpPlayer2Details, ActorAccessor.Y, CrystalClash.FAST_ANIMATION_SPEED)
+						.target(CrystalClash.HEIGHT - grpPlayer2Details.getHeight()).ease(TweenEquations.easeOutCirc))
 				.end();
 	}
 
@@ -424,6 +513,14 @@ public class WorldView extends InputView {
 						.target(CrystalClash.WIDTH))
 				.push(Tween.to(grpOptions, ActorAccessor.Y, CrystalClash.FAST_ANIMATION_SPEED)
 						.target(-grpSend.getHeight()))
+				.push(Tween.to(grpPlayer1Details, ActorAccessor.X, CrystalClash.FAST_ANIMATION_SPEED)
+						.target(-grpPlayer1Details.getWidth()))
+				.push(Tween.to(grpPlayer1Details, ActorAccessor.Y, CrystalClash.FAST_ANIMATION_SPEED)
+						.target(CrystalClash.HEIGHT))
+				.push(Tween.to(grpPlayer2Details, ActorAccessor.X, CrystalClash.FAST_ANIMATION_SPEED)
+						.target(CrystalClash.WIDTH))
+				.push(Tween.to(grpPlayer2Details, ActorAccessor.Y, CrystalClash.FAST_ANIMATION_SPEED)
+						.target(CrystalClash.HEIGHT))
 				.end();
 	}
 

@@ -20,6 +20,7 @@ public class GameController {
 
 	private static boolean dataLoaded = false;
 	private static User currentUser;
+	private static User enemyUser;
 	public static ProfileService profileService = new ProfileService();
 	private static Hashtable<String, int[]> unitValues;
 
@@ -36,6 +37,14 @@ public class GameController {
 
 	public static User getUser() {
 		return currentUser;
+	}
+	
+	public static void setEnemyUser(User user) {
+		enemyUser = user;
+	}
+
+	public static User getEnemyUser() {
+		return enemyUser;
 	}
 
 	public static void loadSharedStats() {

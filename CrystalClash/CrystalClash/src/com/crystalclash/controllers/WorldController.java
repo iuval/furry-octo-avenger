@@ -55,6 +55,7 @@ public class WorldController {
 				render.initTurnAnimations();
 			}
 		} else {
+			this.player = 1;
 			render.initTutorial();
 		}
 	}
