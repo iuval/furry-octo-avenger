@@ -1,7 +1,6 @@
 package com.crystalclash.views;
 
 import java.util.Random;
-import java.util.concurrent.ThreadPoolExecutor;
 
 import aurelienribon.tweenengine.BaseTween;
 import aurelienribon.tweenengine.Timeline;
@@ -41,7 +40,6 @@ import com.crystalclash.renders.UnitRender.STATE;
 import com.crystalclash.renders.attacks.AttackFactory;
 import com.crystalclash.renders.helpers.CellHelper;
 import com.crystalclash.renders.helpers.ResourceHelper;
-import com.sun.corba.se.spi.orbutil.threadpool.ThreadPool;
 
 public class TurnAnimationsView extends GameView {
 
@@ -63,6 +61,8 @@ public class TurnAnimationsView extends GameView {
 	private static TweenManager tweenManager;
 
 	private Image panel;
+	private Image seeBattle;
+	private Image continueBattle;
 	private TextButton btnPlay;
 	private TextButton btnSkip;
 	private Group grpPanel;
@@ -71,6 +71,7 @@ public class TurnAnimationsView extends GameView {
 	private TextureRegion defeatTexture;
 	private TextureRegion drawTexture;
 	private Image gameEndMessage;
+	private Image txrBlackScreen;
 	private TextButton btnBackToMenu;
 
 	private Random rand;
@@ -126,7 +127,8 @@ public class TurnAnimationsView extends GameView {
 		defeatTexture = ResourceHelper.getTexture("turn_animation/messages/banner_defeat");
 		drawTexture = ResourceHelper.getTexture("turn_animation/messages/banner_draw");
 
-		btnBackToMenu = new TextButton("Back to menu", ResourceHelper.getButtonStyle());
+		btnBackToMenu = new TextButton("Back to menu", ResourceHelper.getOuterSmallButtonStyle());
+		btnBackToMenu.setSize(btnBackToMenu.getWidth() * 1.5f, btnBackToMenu.getHeight() * 1.5f);
 		btnBackToMenu.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
@@ -134,8 +136,13 @@ public class TurnAnimationsView extends GameView {
 			}
 		});
 
-		btnPlay = new TextButton("See what happened", ResourceHelper.getOuterButtonStyle());
-		btnPlay.setPosition(panel.getWidth() / 2 - btnPlay.getWidth() / 2, panel.getHeight() / 2);
+		TextureRegion seeBattleTexture = ResourceHelper.getTexture("turn_animation/see_what_happened");
+		seeBattle = new Image(seeBattleTexture);
+		seeBattle.setPosition(panel.getWidth() / 2 - seeBattle.getWidth() / 2, panel.getHeight() / 2 - seeBattle.getHeight() / 3);
+		
+		btnPlay = new TextButton("See what happened", ResourceHelper.getButtonStyle());
+		btnPlay.setSize(btnPlay.getWidth() * 1.5f, btnPlay.getHeight() * 1.5f);
+		btnPlay.setPosition(panel.getWidth() / 2 - btnPlay.getWidth() / 2, seeBattle.getX());
 		btnPlay.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
@@ -143,8 +150,13 @@ public class TurnAnimationsView extends GameView {
 			}
 		});
 
-		btnSkip = new TextButton("Continue", ResourceHelper.getOuterButtonStyle());
-		btnSkip.setPosition(panel.getWidth() / 2 - btnSkip.getWidth() / 2, panel.getHeight() / 2);
+		TextureRegion continueBattleTexture = ResourceHelper.getTexture("turn_animation/continue_to_battle");
+		continueBattle = new Image(continueBattleTexture);
+		continueBattle.setPosition(panel.getWidth() / 2 - continueBattle.getWidth() / 2, panel.getHeight() / 2 - continueBattle.getHeight() / 3);
+		
+		btnSkip = new TextButton("Continue", ResourceHelper.getButtonStyle());
+		btnSkip.setSize(btnPlay.getWidth(), btnPlay.getHeight());
+		btnSkip.setPosition(panel.getWidth() / 2 - btnSkip.getWidth() / 2, continueBattle.getX());
 		btnSkip.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
@@ -154,8 +166,8 @@ public class TurnAnimationsView extends GameView {
 
 		grpPanel = new Group();
 		grpPanel.addActor(panel);
+		grpPanel.addActor(seeBattle);
 		grpPanel.addActor(btnPlay);
-		// grpPanel.addActor(btnSkip);
 
 		entities = new Group();
 		addActor(entities);
@@ -625,23 +637,26 @@ public class TurnAnimationsView extends GameView {
 		}
 		if (world.gameEnded) {
 			grpPanel.remove();
+			txrBlackScreen = new Image(ResourceHelper.getTexture("menu/loading/background"));
+			
+			addActor(txrBlackScreen);
 			addActor(btnBackToMenu);
 			addActor(gameEndMessage);
 
-			gameEndMessage.setPosition(CrystalClash.WIDTH / 2 - gameEndMessage.getWidth() / 2,
-					CrystalClash.HEIGHT);
+			gameEndMessage.setPosition(CrystalClash.WIDTH / 2 - gameEndMessage.getWidth() / 2, CrystalClash.HEIGHT);
 			btnBackToMenu.setPosition(gameEndMessage.getX() + gameEndMessage.getWidth() / 2 - btnBackToMenu.getWidth() / 2,
 					gameEndMessage.getY() + gameEndMessage.getHeight() / 2 - btnBackToMenu.getHeight() / 2);
+			
 			start(Timeline.createSequence()
 					.beginParallel()
+					.push(Tween.set(txrBlackScreen, ActorAccessor.ALPHA).target(0))
+					.push(Tween.to(txrBlackScreen, ActorAccessor.ALPHA, CrystalClash.SLOW_ANIMATION_SPEED).target(1))
 					.push(Tween.to(gameEndMessage, ActorAccessor.Y, CrystalClash.SLOW_ANIMATION_SPEED)
-							.target(CrystalClash.HEIGHT / 2 - gameEndMessage.getHeight() / 2))
+							.target(CrystalClash.HEIGHT / 2 - 120))
 					.push(Tween.to(btnBackToMenu, ActorAccessor.Y, CrystalClash.SLOW_ANIMATION_SPEED)
-							.target(CrystalClash.HEIGHT / 2 - btnBackToMenu.getHeight() / 2))
-					.end()
-					.push(Tween.to(btnBackToMenu, ActorAccessor.Y, CrystalClash.SLOW_ANIMATION_SPEED)
-							.target(CrystalClash.HEIGHT / 2 - gameEndMessage.getHeight() / 2 - btnBackToMenu.getHeight())
-							.ease(TweenEquations.easeOutBounce)));
+							.target(CrystalClash.HEIGHT / 2 - btnBackToMenu.getHeight() - 150)
+							.ease(TweenEquations.easeOutBounce))
+					.end());
 		} else {
 			showPanel();
 		}
@@ -733,7 +748,9 @@ public class TurnAnimationsView extends GameView {
 
 	private void showPanel() {
 		grpPanel.removeActor(btnPlay);
+		grpPanel.removeActor(seeBattle);
 		grpPanel.addActor(btnSkip);
+		grpPanel.addActor(continueBattle);
 
 		start(Timeline.createSequence()
 				.push(Tween.to(grpPanel, ActorAccessor.Y, CrystalClash.NORMAL_ANIMATION_SPEED).target(0)));
@@ -777,10 +794,10 @@ public class TurnAnimationsView extends GameView {
 	@Override
 	public Timeline pushExitAnimation(Timeline t) {
 		if (world.gameEnded) {
-			t.push(Tween.to(btnBackToMenu, ActorAccessor.Y, CrystalClash.NORMAL_ANIMATION_SPEED)
-					.target(CrystalClash.HEIGHT))
-					.push(Tween.to(gameEndMessage, ActorAccessor.Y, CrystalClash.NORMAL_ANIMATION_SPEED)
-							.target(CrystalClash.HEIGHT))
+			t
+			.push(Tween.to(txrBlackScreen, ActorAccessor.ALPHA, CrystalClash.SLOW_ANIMATION_SPEED).target(0))
+			.push(Tween.to(btnBackToMenu, ActorAccessor.Y, CrystalClash.NORMAL_ANIMATION_SPEED).target(CrystalClash.HEIGHT))
+			.push(Tween.to(gameEndMessage, ActorAccessor.Y, CrystalClash.NORMAL_ANIMATION_SPEED).target(CrystalClash.HEIGHT))
 					.setCallback(new TweenCallback() {
 						@Override
 						public void onEvent(int type, BaseTween<?> source) {
@@ -788,8 +805,7 @@ public class TurnAnimationsView extends GameView {
 						}
 					});
 		} else {
-			t.push(Tween.to(grpPanel, ActorAccessor.Y, CrystalClash.NORMAL_ANIMATION_SPEED)
-					.target(CrystalClash.HEIGHT))
+			t.push(Tween.to(grpPanel, ActorAccessor.Y, CrystalClash.NORMAL_ANIMATION_SPEED).target(CrystalClash.HEIGHT))
 					.setCallback(new TweenCallback() {
 						@Override
 						public void onEvent(int type, BaseTween<?> source) {
