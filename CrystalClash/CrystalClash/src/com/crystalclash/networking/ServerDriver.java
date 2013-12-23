@@ -24,7 +24,8 @@ public class ServerDriver {
 	private final static String ACTION_LIST_GAMES = "list_games";
 	private final static String ACTION_ENABLE_RANDOM = "enable_random";
 	private final static String ACTION_GAME_TURN = "game_turn";
-	private final static String UPDATE_PLAYER = "update_player";
+	private final static String ACTION_UPDATE_PLAYER = "update_player";
+	private final static String ACTION_SURRENDER = "surrender";
 
 	public static void sendSignUp(final String email, final String password) {
 		Map<String, String> data = new HashMap<String, String>();
@@ -77,8 +78,8 @@ public class ServerDriver {
 									password,
 									data.getInt("emblem"),
 									data.getInt("victory_total"),
-									data.getInt("defeat_total"),
-									data.getInt("draw_total"));
+									data.getInt("draw_total"),
+									data.getInt("defeat_total"));
 						} else {
 							GameEngine.getInstance().logInError(values.getString("message"));
 						}
@@ -100,7 +101,7 @@ public class ServerDriver {
 								.ProcessResponce(httpResponse);
 						if (values.getString("value").equals("ok")) {
 							JsonValue data = values.get("data");
-							String[][] games = new String[data.size][6];
+							String[][] games = new String[data.size][7];
 							JsonValue child;
 							for (int i = 0; i < games.length; i++) {
 								child = data.get(i);
@@ -110,6 +111,7 @@ public class ServerDriver {
 								games[i][3] = child.getString("turn");
 								games[i][4] = child.getString("state");
 								games[i][5] = child.getString("emblem");
+								games[i][6] = child.getString("surrender");
 							}
 							MenuGames.getInstance().getGamesListSuccess(games);
 						} else {
@@ -138,12 +140,14 @@ public class ServerDriver {
 							JsonValue child = values.get("data");
 							String[] game = null;
 							if (child != null && child.isObject()) {
-								game = new String[5];
+								game = new String[7];
 								game[0] = child.getString("game_id");
 								game[1] = child.getString("name");
 								game[2] = child.getString("victories");
 								game[3] = child.getString("turn");
 								game[4] = child.getString("state");
+								game[5] = child.getString("emblem");
+								game[6] = child.getString("surrender");
 
 							}
 							MenuGames.getInstance().enableRandomSuccess(game);
@@ -191,6 +195,35 @@ public class ServerDriver {
 				});
 	}
 
+	public static void sendSurrender(String playerId, final String gameId) {
+		Map<String, String> data = new HashMap<String, String>();
+		data.put("player_id", playerId);
+		data.put("game_id", gameId);
+
+		System.out.println("Send Surrender-> " + data);
+		Gdx.net.sendHttpRequest(getPost(ACTION_SURRENDER, data),
+				new HttpResponseListener() {
+					@Override
+					public void handleHttpResponse(HttpResponse httpResponse) {
+						JsonValue values = ServerDriver
+								.ProcessResponce(httpResponse);
+						if (values.getString("value").equals("ok")) {
+							JsonValue child = values.get("data");
+							GameController.sendSurrenderSuccess(gameId,
+									child.getInt("victory_total"),
+									child.getInt("defeat_total"));
+						} else {
+							MenuGames.getInstance().sendSurrenderError();
+						}
+					}
+
+					@Override
+					public void failed(Throwable t) {
+						exceptionMessage();
+					}
+				});
+	}
+
 	public static void sendUpdateUser(String id, String name, String email, int emplem) {
 		Map<String, String> data = new HashMap<String, String>();
 		data.put("id", id);
@@ -199,7 +232,7 @@ public class ServerDriver {
 		data.put("emblem", emplem + "");
 
 		System.out.println("Sending-> " + data);
-		Gdx.net.sendHttpRequest(getPost(UPDATE_PLAYER, data),
+		Gdx.net.sendHttpRequest(getPost(ACTION_UPDATE_PLAYER, data),
 				new HttpResponseListener() {
 					@Override
 					public void handleHttpResponse(HttpResponse httpResponse) {

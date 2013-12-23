@@ -6,6 +6,7 @@ import java.util.Hashtable;
 import com.crystalclash.audio.AudioManager.SOUND;
 import com.crystalclash.entities.Unit;
 import com.crystalclash.entities.User;
+import com.crystalclash.enumerators.GameState;
 import com.crystalclash.networking.ServerDriver;
 import com.crystalclash.renders.GameEngine;
 import com.crystalclash.renders.helpers.ui.BaseBox.BoxButtons;
@@ -200,5 +201,16 @@ public class GameController {
 		profileService.persist();
 		currentUser = null;
 		GameEngine.getInstance().openMenuLogIn();
+	}
+
+	public static void sendSurrenderSuccess(String gameId, int v, int l) {
+		GameController.getUser().setVictoryCount(v);
+		GameController.getUser().setLostCount(l);
+
+		if (GameEngine.getState() == GameState.InMenuGames) {
+			MenuGames.getInstance().sendSurrenderSuccess(gameId, v, l);
+		} else if (GameEngine.getState() == GameState.InGame) {
+			GameEngine.getInstance().openMenuGames();
+		}
 	}
 }

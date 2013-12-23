@@ -13,7 +13,6 @@ import com.crystalclash.entities.helpers.PlaceUnitAction;
 import com.crystalclash.entities.helpers.UnitAction;
 import com.crystalclash.networking.ServerDriver;
 import com.crystalclash.renders.GameEngine;
-import com.crystalclash.renders.UnitRender.FACING;
 import com.crystalclash.renders.UnitRender.STATE;
 import com.crystalclash.renders.helpers.CellHelper;
 import com.crystalclash.views.WorldView;
@@ -311,8 +310,7 @@ public class WorldController {
 	}
 
 	public void surrenderCurrentGame() {
-		ServerDriver.sendGameTurn(GameController.getUser().getId(),
-				gameId, "ended", "defeat");
+		ServerDriver.sendSurrender(GameController.getUser().getId(), gameId);
 	}
 
 	public WorldView getRender() {

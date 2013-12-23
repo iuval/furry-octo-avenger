@@ -55,8 +55,7 @@ public class MenuGames {
 	}
 
 	public void surrenderGame(String gameId) {
-		ServerDriver.sendGameTurn(GameController.getUser().getId(),
-				gameId, "ended", "defeat");
+		ServerDriver.sendSurrender(GameController.getUser().getId(), gameId);
 	}
 
 	private BoxCallback logoutCallback = new BoxCallback() {
@@ -99,6 +98,19 @@ public class MenuGames {
 
 	public void sendGameTurnSuccess(String data) {
 		GameEngine.getInstance().openMenuGames();
+	}
+
+	public void sendSurrenderSuccess(String gameId, int v, int l) {
+		GameController.getUser().setVictoryCount(v);
+		GameController.getUser().setLostCount(l);
+		getRender().updateListGameSurrender(gameId);
+	}
+
+	public void sendSurrenderError() {
+		MessageBox.build()
+				.setText("Something went wrong, try later :(")
+				.setCallback(null)
+				.show();
 	}
 
 	public void sendGameTurnError(String message) {

@@ -49,6 +49,12 @@ public class MenuGamesView extends InputView {
 	private VerticalGroup list;
 	private GameListItem[] gamesList;
 
+	private Label lblUserV;
+	private Label lblUserL;
+	private Label lblUserD;
+	private Label lblUserName;
+	private Image imgEmblem;
+
 	private Group grpNewRandom;
 	private Group grpProfile;
 	private Group grpTutorial;
@@ -59,11 +65,11 @@ public class MenuGamesView extends InputView {
 	private TextButton btnViewStory;
 
 	private Label lblNewRandomText;
-	
+
 	private InputListener surrenderListener;
+	private InputListener ackSurrenderListener;
 	private InputListener playListener;
 	private Skin skin;
-
 
 	private TutorialInvitation tutoInv;
 	private TextureRegion txtCcolumn;
@@ -131,7 +137,175 @@ public class MenuGamesView extends InputView {
 
 	@Override
 	public void init() {
+		lblUserV.setText(String.valueOf(GameController.getUser().getVictoryCount()));
+		lblUserL.setText(String.valueOf(GameController.getUser().getLostCount()));
+		lblUserD.setText(String.valueOf(GameController.getUser().getDrawCount()));
+		lblUserName.setText(GameController.getUser().getName());
+		imgEmblem.setDrawable(new TextureRegionDrawable(EmblemHelper.getEmblem(GameController.getUser().getEmblem())));
+
 		list.clear();
+
+		if (!GameController.isTutorialDone()) {
+			loadTutorial();
+		}
+	}
+
+	public void loadGameList(GamesLoadCallback callback) {
+		controller.getGamesList();
+		loadCallback = callback;
+	}
+
+	@Override
+	public Timeline pushEnterAnimation(Timeline t) {
+		AudioManager.playMusic(MUSIC.menu);
+		return t;
+		// .push(Tween.to(this, ActorAccessor.ALPHA,
+		// CrystalClash.NORMAL_ANIMATION_SPEED).target(1));
+	}
+
+	@Override
+	public Timeline pushExitAnimation(Timeline t) {
+		return t;
+		// .push(Tween.to(this, ActorAccessor.ALPHA,
+		// CrystalClash.NORMAL_ANIMATION_SPEED).target(0));
+	}
+
+	private void load() {
+		list = new VerticalGroup();
+		list.setBounds(0, 0, CrystalClash.WIDTH, CrystalClash.HEIGHT);
+		addActor(list);
+
+		initSkin();
+	}
+
+	private void loadTutorial() {
+		tutoInv = new TutorialInvitation();
+		addActor(tutoInv);
+	}
+
+	// SERVER DRIVER CALLBACKS --------------------------------------------
+	public void listGamesSuccess(String[][] games) {
+		list.clear();
+		max_list_y = 0;
+		if (gamesList != null) {
+			for (int i = 0; i < gamesList.length; i++) {
+				gamesList[i].remove();
+			}
+		}
+		list.addActor(grpProfile);
+
+		gamesList = new GameListItem[games.length];
+
+		GameListItem listingItem;
+		GameListItem canPlayItem = null;
+		for (int i = 0, len = games.length; i < len; i++) {
+			listingItem = new GameListItem(games[i][0], games[i][1], games[i][2], games[i][3], Integer.parseInt(games[i][5]), games[i][4],
+					games[i][6].equals("true"), skin, surrenderListener, ackSurrenderListener,
+					playListener);
+			gamesList[i] = listingItem;
+
+			if (canPlayItem == null) {
+				if (games[i][4].equals("play")) {
+					canPlayItem = listingItem;
+				}
+				list.addActor(listingItem);
+			} else {
+				if (games[i][4].equals("play")) {
+					list.addActor(listingItem);
+				} else {
+					list.addActorAfter(canPlayItem, listingItem);
+				}
+			}
+			max_list_y += listingItem.getHeight();
+		}
+		list.addActor(grpNewRandom);
+		list.addActor(grpTutorial);
+		list.addActor(grpStory);
+
+		max_list_y += grpNewRandom.getHeight();
+		max_list_y += grpTutorial.getHeight();
+		max_list_y += grpStory.getHeight();
+
+		list.addActor(new Image(txtCcolumn));
+
+		GameEngine.hideLoading();
+		loadCallback.onFinish();
+	}
+
+	private void initSkin() {
+		txtCcolumn = ResourceHelper.getTexture("menu/games_list/column_stack");
+
+		final BoxCallback surrenderCallback = new BoxCallback() {
+			@Override
+			public void onEvent(int type, Object data) {
+				if (type == BoxCallback.YES) {
+					controller.surrenderGame(data.toString());
+					loadGameList(null);
+				}
+			}
+		};
+
+		// Listeners
+		surrenderListener = new ClickListener() {
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+				MessageBox.build()
+						.setUserData(((GameListItem) event.getListenerActor().getParent()).gameId)
+						.setMessage("menu_ganmes_surender", BoxButtons.Two)
+						.setCallback(surrenderCallback)
+						.show();
+			}
+		};
+
+		ackSurrenderListener = new ClickListener() {
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+				controller.surrenderGame(((GameListItem) event.getListenerActor().getParent()).gameId);
+			}
+		};
+
+		playListener = new ClickListener() {
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+				controller.getGameTurn(((GameListItem) event.getListenerActor().getParent()).gameId);
+			}
+		};
+
+		skin = new Skin();
+		skin.add("small_font", ResourceHelper.getSmallFont());
+		skin.add("big_font", ResourceHelper.getBigFont());
+		skin.add("play_up", ResourceHelper.getTexture("menu/games_list/flag_green"));
+		skin.add("play_down", ResourceHelper.getTexture("menu/games_list/flag_green"));
+		skin.add("wait_up", ResourceHelper.getTexture("menu/games_list/flag_red"));
+		skin.add("wait_down", ResourceHelper.getTexture("menu/games_list/flag_red"));
+		skin.add("surrender_up", ResourceHelper.getTexture("menu/games_list/surrender"));
+		skin.add("surrender_down", ResourceHelper.getTexture("menu/games_list/surrender"));
+		skin.add("sound_off_up", ResourceHelper.getTexture("menu/games_list/sound_off"));
+		skin.add("sound_off_down", ResourceHelper.getTexture("menu/games_list/sound_off_pressed"));
+		skin.add("sound_on_up", ResourceHelper.getTexture("menu/games_list/sound_on"));
+		skin.add("logout_up", ResourceHelper.getTexture("menu/games_list/logout"));
+		skin.add("logout_down", ResourceHelper.getTexture("menu/games_list/logout_pressed"));
+		skin.add("background", ResourceHelper.getTexture("menu/games_list/item_stack"));
+
+		LabelStyle style = new LabelStyle();
+		style.font = skin.getFont("big_font");
+		style.fontColor = Color.BLACK;
+		skin.add("lblStyle", style);
+
+		ButtonStyle playStyle = new ButtonStyle();
+		playStyle.up = skin.getDrawable("play_up");
+		playStyle.down = skin.getDrawable("play_down");
+		skin.add("playStyle", playStyle);
+
+		ButtonStyle waitStyle = new ButtonStyle();
+		waitStyle.up = skin.getDrawable("wait_up");
+		waitStyle.down = skin.getDrawable("wait_down");
+		skin.add("waitStyle", waitStyle);
+
+		ButtonStyle surrenderStyle = new ButtonStyle();
+		surrenderStyle.up = skin.getDrawable("surrender_up");
+		surrenderStyle.down = skin.getDrawable("surrender_down");
+		skin.add("surrenderStyle", surrenderStyle);
 
 		grpProfile = new Group();
 		Image imgProfile = new Image(ResourceHelper.getTexture("menu/games_list/user_stats_stack"));
@@ -170,13 +344,13 @@ public class MenuGamesView extends InputView {
 
 		User u = GameController.getUser();
 
-		Label lblUserName = new Label(u.getName(), skin, "big_font", Color.BLACK);
+		lblUserName = new Label(u.getName(), skin, "big_font", Color.BLACK);
 		lblUserName.setPosition(290, 215);
 		lblUserName.setSize(460, 60);
 		lblUserName.setAlignment(Align.center);
 		grpProfile.addActor(lblUserName);
 
-		final Image imgEmblem = new Image(EmblemHelper.getEmblem(u.getEmblem()));
+		imgEmblem = new Image(EmblemHelper.getEmblem(u.getEmblem()));
 		imgEmblem.setPosition(50, 95);
 		imgEmblem.setSize(160, 160);
 		grpProfile.addActor(imgEmblem);
@@ -200,190 +374,31 @@ public class MenuGamesView extends InputView {
 			}
 		});
 
-		Label lblUserV = new Label(u.getVictoryCount() + "", skin, "big_font", Color.BLACK);
+		lblUserV = new Label(u.getVictoryCount() + "", skin, "big_font", Color.BLACK);
 		lblUserV.setPosition(365, 115);
 		Label lblUserVTittle = new Label("Victories", skin, "small_font", Color.BLACK);
 		lblUserVTittle.setPosition(330, 162);
 		grpProfile.addActor(lblUserV);
 		grpProfile.addActor(lblUserVTittle);
 
-		Label lblUserL = new Label(u.getLostCount() + "", skin, "big_font", Color.BLACK);
+		lblUserL = new Label(u.getLostCount() + "", skin, "big_font", Color.BLACK);
 		lblUserL.setPosition(540, 110);
 		Label lblUserLTittle = new Label("Defeats", skin, "small_font", Color.BLACK);
 		lblUserLTittle.setPosition(505, 158);
 		grpProfile.addActor(lblUserL);
 		grpProfile.addActor(lblUserLTittle);
-		
-		Label lblUserD = new Label(u.getDrawCount() + "", skin, "big_font", Color.BLACK);
+
+		lblUserD = new Label(u.getDrawCount() + "", skin, "big_font", Color.BLACK);
 		lblUserD.setPosition(675, 110);
 		Label lblUserDTittle = new Label("Draws", skin, "small_font", Color.BLACK);
 		lblUserDTittle.setPosition(655, 158);
 		grpProfile.addActor(lblUserD);
 		grpProfile.addActor(lblUserDTittle);
-		
-		if (!GameController.isTutorialDone()) {
-			loadTutorial();
-		}
-	}
 
-	public void loadList(GamesLoadCallback callback) {
-		loadGameList();
-		loadCallback = callback;
-	}
-
-	@Override
-	public Timeline pushEnterAnimation(Timeline t) {
-		AudioManager.playMusic(MUSIC.menu);
-		return t;
-		// .push(Tween.to(this, ActorAccessor.ALPHA,
-		// CrystalClash.NORMAL_ANIMATION_SPEED).target(1));
-	}
-
-	@Override
-	public Timeline pushExitAnimation(Timeline t) {
-		return t;
-		// .push(Tween.to(this, ActorAccessor.ALPHA,
-		// CrystalClash.NORMAL_ANIMATION_SPEED).target(0));
-	}
-
-	private void load() {
-		list = new VerticalGroup();
-		list.setBounds(0, 0, CrystalClash.WIDTH, CrystalClash.HEIGHT);
-		addActor(list);
-
-		initSkin();
-	}
-
-	private void loadTutorial() {
-		tutoInv = new TutorialInvitation();
-		addActor(tutoInv);
-	}
-
-	private void loadGameList() {
-		controller.getGamesList();
-	}
-
-	// SERVER DRIVER CALLBACKS --------------------------------------------
-	public void listGamesSuccess(String[][] games) {
-		list.clear();
-		max_list_y = 0;
-		if (gamesList != null) {
-			for (int i = 0; i < gamesList.length; i++) {
-				gamesList[i].dispose();
-				gamesList[i].remove();
-			}
-		}
-		list.addActor(grpProfile);
-
-		gamesList = new GameListItem[games.length];
-
-		GameListItem listingItem;
-		GameListItem canPlayItem = null;
-		for (int i = 0, len = games.length; i < len; i++) {
-			listingItem = new GameListItem(games[i][0], games[i][1], games[i][2], games[i][3], Integer.parseInt(games[i][5]), games[i][4],
-					skin, surrenderListener,
-					playListener);
-			gamesList[i] = listingItem;
-
-			if (canPlayItem == null) {
-				if (games[i][4].equals("play")) {
-					canPlayItem = listingItem;
-				}
-				list.addActor(listingItem);
-			} else {
-				if (games[i][4].equals("play")) {
-					list.addActor(listingItem);
-				} else {
-					list.addActorAfter(canPlayItem, listingItem);
-				}
-			}
-			max_list_y += listingItem.getHeight();
-		}
-		list.addActor(grpNewRandom);
-		list.addActor(grpTutorial);
-		list.addActor(grpStory);
-		
-		max_list_y += grpNewRandom.getHeight();
-		max_list_y += grpTutorial.getHeight();
-		max_list_y += grpStory.getHeight();
-		
-		list.addActor(new Image(txtCcolumn));
-
-		GameEngine.hideLoading();
-		loadCallback.onFinish();
-	}
-
-	private void initSkin() {
-		txtCcolumn = ResourceHelper.getTexture("menu/games_list/column_stack");
-
-		final BoxCallback surrenderCallback = new BoxCallback() {
-			@Override
-			public void onEvent(int type, Object data) {
-				if (type == BoxCallback.YES) {
-					controller.surrenderGame(data.toString());
-					loadGameList();
-				}
-			}
-		};
-		// Listeners
-		surrenderListener = new ClickListener() {
-			@Override
-			public void clicked(InputEvent event, float x, float y) {
-				MessageBox.build()
-						.setUserData(((GameListItem) event.getListenerActor().getParent()).gameId)
-						.setMessage("menu_ganmes_surender", BoxButtons.Two)
-						.setCallback(surrenderCallback)
-						.show();
-			}
-		};
-
-		playListener = new ClickListener() {
-			@Override
-			public void clicked(InputEvent event, float x, float y) {
-				controller.getGameTurn(((GameListItem) event.getListenerActor().getParent()).gameId);
-			}
-		};
-
-		skin = new Skin();
-		skin.add("small_font", ResourceHelper.getSmallFont());
-		skin.add("big_font", ResourceHelper.getBigFont());
-		skin.add("play_up", ResourceHelper.getTexture("menu/games_list/flag_green"));
-		skin.add("play_down", ResourceHelper.getTexture("menu/games_list/flag_green"));
-		skin.add("wait_up", ResourceHelper.getTexture("menu/games_list/flag_red"));
-		skin.add("wait_down", ResourceHelper.getTexture("menu/games_list/flag_red"));
-		skin.add("surrender_up", ResourceHelper.getTexture("menu/games_list/surrender"));
-		skin.add("surrender_down", ResourceHelper.getTexture("menu/games_list/surrender"));
-		skin.add("sound_off_up", ResourceHelper.getTexture("menu/games_list/sound_off"));
-		skin.add("sound_off_down", ResourceHelper.getTexture("menu/games_list/sound_off_pressed"));
-		skin.add("sound_on_up", ResourceHelper.getTexture("menu/games_list/sound_on"));
-		skin.add("logout_up", ResourceHelper.getTexture("menu/games_list/logout"));
-		skin.add("logout_down", ResourceHelper.getTexture("menu/games_list/logout_pressed"));
-		skin.add("background", ResourceHelper.getTexture("menu/games_list/item_stack"));
-
-		LabelStyle style = new LabelStyle();
-		style.font = skin.getFont("big_font");
-		style.fontColor = Color.BLACK;
-		skin.add("lblStyle", style);
-		
-		ButtonStyle playStyle = new ButtonStyle();
-		playStyle.up = skin.getDrawable("play_up");
-		playStyle.down = skin.getDrawable("play_down");
-		skin.add("playStyle", playStyle);
-
-		ButtonStyle waitStyle = new ButtonStyle();
-		waitStyle.up = skin.getDrawable("wait_up");
-		waitStyle.down = skin.getDrawable("wait_down");
-		skin.add("waitStyle", waitStyle);
-
-		ButtonStyle surrenderStyle = new ButtonStyle();
-		surrenderStyle.up = skin.getDrawable("surrender_up");
-		surrenderStyle.down = skin.getDrawable("surrender_down");
-		skin.add("surrenderStyle", surrenderStyle);
-		
 		TextButtonStyle btnStyle = new TextButtonStyle();
 		btnStyle.font = skin.getFont("big_font");
-		
-		//New Random Group
+
+		// New Random Group
 		grpNewRandom = new Group();
 		Image imgNewRandom = new Image(ResourceHelper.getTexture("menu/games_list/new_battle_stack"));
 		grpNewRandom.addActor(imgNewRandom);
@@ -392,7 +407,7 @@ public class MenuGamesView extends InputView {
 		lblNewRandomText = new Label("New Game", skin, "lblStyle");
 		lblNewRandomText.setPosition(510, 210);
 		grpNewRandom.addActor(lblNewRandomText);
-		
+
 		btnNewRandom = new TextButton("", btnStyle);
 		btnNewRandom.setPosition(253, 28);
 		btnNewRandom.setSize(588, 302);
@@ -404,8 +419,8 @@ public class MenuGamesView extends InputView {
 			}
 		});
 		grpNewRandom.addActor(btnNewRandom);
-		
-		//Play Tutorial Group
+
+		// Play Tutorial Group
 		grpTutorial = new Group();
 		Image imgTutorial = new Image(ResourceHelper.getTexture("menu/games_list/tutorial_stack"));
 		grpTutorial.addActor(imgTutorial);
@@ -414,7 +429,7 @@ public class MenuGamesView extends InputView {
 		Label tutorialText = new Label("Play\nTutorial", skin, "lblStyle");
 		tutorialText.setPosition(360, 140);
 		grpTutorial.addActor(tutorialText);
-		
+
 		btnPlayTutorial = new TextButton("", btnStyle);
 		btnPlayTutorial.setPosition(253, 28);
 		btnPlayTutorial.setSize(588, 302);
@@ -425,8 +440,8 @@ public class MenuGamesView extends InputView {
 			}
 		});
 		grpTutorial.addActor(btnPlayTutorial);
-		
-		//View Story Group
+
+		// View Story Group
 		grpStory = new Group();
 		Image imgStory = new Image(ResourceHelper.getTexture("menu/games_list/story_stack"));
 		grpStory.addActor(imgStory);
@@ -435,18 +450,18 @@ public class MenuGamesView extends InputView {
 		Label storyText = new Label("Learn\nthe Story", skin, "lblStyle");
 		storyText.setPosition(360, 140);
 		grpStory.addActor(storyText);
-		
+
 		btnViewStory = new TextButton("", btnStyle);
 		btnViewStory.setPosition(253, 28);
 		btnViewStory.setSize(588, 302);
 		btnViewStory.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
-				
+
 			}
 		});
 		grpStory.addActor(btnViewStory);
-		
+
 		refreshMessagePull = new Image(ResourceHelper.getTexture("menu/refresh_list/refresh_message_pull"));
 		refreshMessagePull.setVisible(false);
 		addActor(refreshMessagePull);
@@ -459,6 +474,21 @@ public class MenuGamesView extends InputView {
 		addActor(refreshMessageRelease);
 	}
 
+	public void updateListGameSurrender(String id) {
+		lblUserV.setText(String.valueOf(GameController.getUser().getVictoryCount()));
+		lblUserL.setText(String.valueOf(GameController.getUser().getLostCount()));
+		int itemIndex = -1;
+		for (int i = 0; i < gamesList.length; i++) {
+			if (gamesList[i].gameId.equals(id)) {
+				itemIndex = i;
+				break;
+			}
+		}
+		if (itemIndex != -1) {
+			gamesList[itemIndex].remove();
+		}
+	}
+
 	public void listGamesError(String message) {
 		MessageBox.build()
 				.setText(message)
@@ -469,7 +499,8 @@ public class MenuGamesView extends InputView {
 	public void enableRandomSuccess(String[] game) {
 		if (game != null) {
 			GameListItem listingItem = new GameListItem(game[0], game[1], game[2], game[3], Integer.parseInt(game[5]), game[4],
-					skin, surrenderListener,
+					false,
+					skin, surrenderListener, ackSurrenderListener,
 					playListener);
 			list.addActor(listingItem);
 		}
@@ -517,7 +548,6 @@ public class MenuGamesView extends InputView {
 		for (int i = 0; i < gamesList.length; i++) {
 			gamesList[i].loadEmblem();
 		}
-
 	}
 
 	@Override
@@ -551,7 +581,7 @@ public class MenuGamesView extends InputView {
 		} else {
 			if (isTryingToRefresh) {
 				if (showRelease) {
-					loadList(new GamesLoadCallback() {
+					loadGameList(new GamesLoadCallback() {
 
 						@Override
 						public void onFinish() {

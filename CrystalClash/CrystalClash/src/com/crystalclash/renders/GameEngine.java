@@ -292,7 +292,7 @@ public class GameEngine implements Screen {
 						menuGamesRender = MenuGames.getInstance().getRender();
 					}
 					menuGamesRender.init();
-					menuGamesRender.loadList(new GamesLoadCallback() {
+					menuGamesRender.loadGameList(new GamesLoadCallback() {
 						@Override
 						public void onFinish() {
 							setState(GameState.InTranstionSplashAndMenuGames);
@@ -319,7 +319,7 @@ public class GameEngine implements Screen {
 						menuGamesRender = MenuGames.getInstance().getRender();
 					}
 					menuGamesRender.init();
-					menuGamesRender.loadList(new GamesLoadCallback() {
+					menuGamesRender.loadGameList(new GamesLoadCallback() {
 						@Override
 						public void onFinish() {
 							setState(GameState.InTranstionMenuLogInAndMenuGames);
@@ -367,7 +367,7 @@ public class GameEngine implements Screen {
 								menuGamesRender = MenuGames.getInstance().getRender();
 							}
 							menuGamesRender.init();
-							menuGamesRender.loadList(new GamesLoadCallback() {
+							menuGamesRender.loadGameList(new GamesLoadCallback() {
 								@Override
 								public void onFinish() {
 									setState(GameState.InTranstionMenuGamesAndGame);

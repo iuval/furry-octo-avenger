@@ -54,6 +54,18 @@ public class User {
 		return lostCount;
 	}
 
+	public void setVictoryCount(int victoryCount) {
+		this.victoryCount = victoryCount;
+	}
+
+	public void setDrawCount(int drawCount) {
+		this.drawCount = drawCount;
+	}
+
+	public void setLostCount(int lostCount) {
+		this.lostCount = lostCount;
+	}
+
 	public void update() {
 		ServerDriver.sendUpdateUser(id, name, email, emblem);
 	}
