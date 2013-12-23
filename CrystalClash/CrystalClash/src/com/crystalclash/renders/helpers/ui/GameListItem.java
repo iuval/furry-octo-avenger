@@ -37,9 +37,13 @@ public class GameListItem extends Group {
 		float h = bg.getHeight();
 		setSize(w, h);
 
-		btnPlay = new Button((!surrender && state.equals("play")) ?
-				skin.get("playStyle", ButtonStyle.class) :
-				skin.get("waitStyle", ButtonStyle.class));
+		ButtonStyle style = skin.get("waitStyle", ButtonStyle.class);
+		if(surrender)
+			style = skin.get("surrendedStyle", ButtonStyle.class);
+		else if(state.equals("play"))
+			style = skin.get("playStyle", ButtonStyle.class);
+		
+		btnPlay = new Button(style);
 		if (!surrender && state.equals("play"))
 			btnPlay.addListener(playListener);
 		btnPlay.setPosition(850, 0);

@@ -279,11 +279,9 @@ public class MenuGamesView extends InputView {
 		skin.add("small_font", ResourceHelper.getSmallFont());
 		skin.add("big_font", ResourceHelper.getBigFont());
 		skin.add("play_up", ResourceHelper.getTexture("menu/games_list/flag_green"));
-		skin.add("play_down", ResourceHelper.getTexture("menu/games_list/flag_green"));
 		skin.add("wait_up", ResourceHelper.getTexture("menu/games_list/flag_red"));
-		skin.add("wait_down", ResourceHelper.getTexture("menu/games_list/flag_red"));
+		skin.add("surrended_up", ResourceHelper.getTexture("menu/games_list/flag_surrended"));
 		skin.add("surrender_up", ResourceHelper.getTexture("menu/games_list/surrender"));
-		skin.add("surrender_down", ResourceHelper.getTexture("menu/games_list/surrender"));
 		skin.add("sound_off_up", ResourceHelper.getTexture("menu/games_list/sound_off"));
 		skin.add("sound_off_down", ResourceHelper.getTexture("menu/games_list/sound_off_pressed"));
 		skin.add("sound_on_up", ResourceHelper.getTexture("menu/games_list/sound_on"));
@@ -298,17 +296,22 @@ public class MenuGamesView extends InputView {
 
 		ButtonStyle playStyle = new ButtonStyle();
 		playStyle.up = skin.getDrawable("play_up");
-		playStyle.down = skin.getDrawable("play_down");
+		playStyle.down = skin.getDrawable("play_up");
 		skin.add("playStyle", playStyle);
 
 		ButtonStyle waitStyle = new ButtonStyle();
 		waitStyle.up = skin.getDrawable("wait_up");
-		waitStyle.down = skin.getDrawable("wait_down");
+		waitStyle.down = skin.getDrawable("wait_up");
 		skin.add("waitStyle", waitStyle);
+		
+		ButtonStyle surrendedStyle = new ButtonStyle();
+		surrendedStyle.up = skin.getDrawable("surrended_up");
+		surrendedStyle.down = skin.getDrawable("surrended_up");
+		skin.add("surrendedStyle", surrendedStyle);
 
 		ButtonStyle surrenderStyle = new ButtonStyle();
 		surrenderStyle.up = skin.getDrawable("surrender_up");
-		surrenderStyle.down = skin.getDrawable("surrender_down");
+		surrenderStyle.down = skin.getDrawable("surrender_up");
 		skin.add("surrenderStyle", surrenderStyle);
 
 		grpProfile = new Group();
