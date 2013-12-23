@@ -56,6 +56,7 @@ public class WorldController {
 			}
 		} else {
 			this.player = 1;
+			this.gameTurn = 1;
 			render.initTutorial();
 		}
 	}

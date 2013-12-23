@@ -33,6 +33,7 @@ import com.crystalclash.entities.Unit;
 import com.crystalclash.entities.User;
 import com.crystalclash.entities.helpers.UnitAction.UnitActionType;
 import com.crystalclash.renders.GameEngine;
+import com.crystalclash.renders.UnitRender.FACING;
 import com.crystalclash.renders.helpers.CellHelper;
 import com.crystalclash.renders.helpers.EmblemHelper;
 import com.crystalclash.renders.helpers.ResourceHelper;
@@ -40,6 +41,7 @@ import com.crystalclash.renders.helpers.UnitHelper;
 import com.crystalclash.renders.helpers.ui.BaseBox.BoxButtons;
 import com.crystalclash.renders.helpers.ui.BoxCallback;
 import com.crystalclash.renders.helpers.ui.MessageBox;
+import com.crystalclash.renders.helpers.ui.SuperAnimatedActor;
 import com.crystalclash.renders.helpers.ui.UnitStatsPopup;
 import com.crystalclash.util.I18n;
 
@@ -66,6 +68,8 @@ public class WorldView extends InputView {
 	private Image imgDetails2Bar;
 	private Image imgPlayer2Emblem;
 	private Label lblPlayer2Name;
+	
+	private SuperAnimatedActor banner;
 	
 	private Group grpPopupMenu;
 	private Image imgPopupBackground;
@@ -433,20 +437,27 @@ public class WorldView extends InputView {
 		
 		User me = GameController.getUser();
 		User enemy = null;
+		
+		boolean addBannerPlayer1 = true;
+		if (world.gameTurn % 2 == 0)
+			addBannerPlayer1 = false;
+		
+		banner = new SuperAnimatedActor(ResourceHelper.getSuperAnimation("in_game/moves_first"), true, FACING.right);
+		
 		if (world.player == 1) {
-			loadLeftDetailsGrp(skin, me);
+			loadLeftDetailsGrp(skin, me, addBannerPlayer1);
 			
 			if(enemyDetails){
 				enemy = GameController.getEnemyUser();
-				loadRightDetailsGrp(skin, enemy);
+				loadRightDetailsGrp(skin, enemy, !addBannerPlayer1);
 				GameController.setEnemyUser(null);
 			}
 		} else {
-			loadRightDetailsGrp(skin, me);
+			loadRightDetailsGrp(skin, me, !addBannerPlayer1);
 			
 			if(enemyDetails){
 				enemy = GameController.getEnemyUser();
-				loadLeftDetailsGrp(skin, enemy);
+				loadLeftDetailsGrp(skin, enemy, addBannerPlayer1);
 				GameController.setEnemyUser(null);
 			}
 		}
@@ -463,7 +474,7 @@ public class WorldView extends InputView {
 		addActor(grpPopupMenu);
 	}
 
-	private void loadLeftDetailsGrp(Skin skin, User u) {
+	private void loadLeftDetailsGrp(Skin skin, User u, boolean addBanner) {
 		imgDetails1Bar = new Image(skin.getRegion("player_details_bar_left"));
 		imgDetails1Bar.setPosition(0, 0);
 		grpPlayer1Details.addActor(imgDetails1Bar);
@@ -477,11 +488,16 @@ public class WorldView extends InputView {
 		imgPlayer1Emblem.setPosition(5, 56);
 		grpPlayer1Details.addActor(imgPlayer1Emblem);
 		
+		if(addBanner){
+			banner.setPosition(45, -75);
+			grpPlayer1Details.addActor(banner);
+		}
+		
 		grpPlayer1Details.setSize(imgDetails1Bar.getWidth(), imgDetails1Bar.getHeight());
 		grpPlayer1Details.setPosition(-grpPlayer1Details.getWidth(), CrystalClash.HEIGHT);
 	}
 
-	private void loadRightDetailsGrp(Skin skin, User u) {
+	private void loadRightDetailsGrp(Skin skin, User u, boolean addBanner) {
 		imgDetails2Bar = new Image(skin.getRegion("player_details_bar_right"));
 		imgDetails2Bar.setPosition(0, 0);
 		grpPlayer2Details.addActor(imgDetails2Bar);
@@ -494,6 +510,11 @@ public class WorldView extends InputView {
 		imgPlayer2Emblem.setSize(115, 115);
 		imgPlayer2Emblem.setPosition(397, 56);
 		grpPlayer2Details.addActor(imgPlayer2Emblem);
+		
+		if(addBanner){
+			banner.setPosition(415, -75);
+			grpPlayer2Details.addActor(banner);
+		}
 		
 		grpPlayer2Details.setSize(imgDetails2Bar.getWidth(), imgDetails2Bar.getHeight());
 		grpPlayer2Details.setPosition(CrystalClash.WIDTH, CrystalClash.HEIGHT);
