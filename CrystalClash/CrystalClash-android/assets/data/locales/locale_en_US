@@ -41,6 +41,9 @@ world_back_to_menu = If we leave now Commander,\ntroops will lose the given form
 world_back_to_menu_yes = Leave
 world_back_to_menu_no = Stay
 world_clear_moves = Clear Moves
+world_sound_on = Sound: ON
+world_sound_off = Sound: OFF
+world_back_to_game = Back to game
 
 world_send = Comander!\nTroops are ready and waiting for battle!\nJust say the word
 world_send_yes = Send

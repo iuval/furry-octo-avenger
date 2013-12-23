@@ -7,7 +7,6 @@ import aurelienribon.tweenengine.TweenCallback;
 import aurelienribon.tweenengine.TweenEquations;
 
 import com.badlogic.gdx.Input.Keys;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -16,13 +15,16 @@ import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Button.ButtonStyle;
-import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.crystalclash.CrystalClash;
 import com.crystalclash.accessors.ActorAccessor;
+import com.crystalclash.audio.AudioManager;
 import com.crystalclash.audio.AudioManager.SOUND;
 import com.crystalclash.controllers.GameController;
 import com.crystalclash.controllers.WorldController;
@@ -39,6 +41,7 @@ import com.crystalclash.renders.helpers.ui.BaseBox.BoxButtons;
 import com.crystalclash.renders.helpers.ui.BoxCallback;
 import com.crystalclash.renders.helpers.ui.MessageBox;
 import com.crystalclash.renders.helpers.ui.UnitStatsPopup;
+import com.crystalclash.util.I18n;
 
 public class WorldView extends InputView {
 	public static CellHelper cellHelper;
@@ -64,10 +67,15 @@ public class WorldView extends InputView {
 	private Image imgPlayer2Emblem;
 	private Label lblPlayer2Name;
 	
-	//private Image imgOptionsBackground;
-	//private TextButton btnSurrender;
-	//private TextButton btnBack;
-	//private TextButton btnClear;
+	private Group grpPopupMenu;
+	private Image imgPopupBackground;
+	private Image txrBlackScreen;
+	private TextButton btnSound;
+	private TextButton btnClear;
+	private TextButton btnSurrender;
+	private TextButton btnBackToGame;
+	private TextButton btnBackToMenu;
+	private boolean popupMenuVisible;
 
 	private Group grpActionHud;
 	private Image actionsHud;
@@ -169,81 +177,109 @@ public class WorldView extends InputView {
 		imgTerrain = new Image(txrTerrain);
 		imgTerrain.setSize(CrystalClash.WIDTH, CrystalClash.HEIGHT);
 
-		// Options bar
-//		TextButtonStyle optionsStyle = new TextButtonStyle(
-//				skin.getDrawable("option_button"),
-//				skin.getDrawable("option_button_pressed"), null, ResourceHelper.getNormalBorderFont());
-//
-//		grpOptions = new Group();
-//		imgOptionsBackground = new Image(skin.getRegion("options_bar"));
-//		imgOptionsBackground.setPosition(0, 0);
-//		grpOptions.addActor(imgOptionsBackground);
-//
-//		btnSurrender = new TextButton(I18n.t("world_surrender_btn"), optionsStyle);
-//		btnSurrender.setPosition(75, 5);
-//		final BoxCallback leaveCallback = new BoxCallback() {
-//			@Override
-//			public void onEvent(int type, Object data) {
-//				if (type == BoxCallback.YES) {
-//					GameEngine.showLoading();
-//					world.surrenderCurrentGame();
-//				} else {
-//					MessageBox.build().hide();
-//					setReadInput(true);
-//					resume();
-//				}
-//			}
-//		};
-//		btnSurrender.addListener(new ClickListener() {
-//			@Override
-//			public void clicked(InputEvent event, float x, float y) {
-//				pause();
-//				setReadInput(false);
-//				MessageBox.build()
-//						.setMessage("world_surrender", BoxButtons.Two)
-//						.setHideOnAction(false)
-//						.setCallback(leaveCallback)
-//						.show();
-//			}
-//		});
-//		grpOptions.addActor(btnSurrender);
-//
-//		backCallback = new BoxCallback() {
-//			@Override
-//			public void onEvent(int type, Object data) {
-//				if (type == BoxCallback.YES) {
-//					GameEngine.showLoading();
-//					world.leaveGame();
-//				} else {
-//					MessageBox.build().hide();
-//					setReadInput(true);
-//					resume();
-//				}
-//			}
-//		};
-//		btnBack = new TextButton(I18n.t("world_back_to_menu_btn"), optionsStyle);
-//		btnBack.setPosition(btnSurrender.getX() + btnSurrender.getWidth() + 2, 5);
-//		btnBack.addListener(new ClickListener() {
-//			@Override
-//			public void clicked(InputEvent event, float x, float y) {
-//				setReadInput(false);
-//				back();
-//			}
-//		});
-//		grpOptions.addActor(btnBack);
-//
-//		btnClear = new TextButton(I18n.t("world_clear_moves"), optionsStyle);
-//		btnClear.setPosition(btnBack.getX() + btnBack.getWidth() + 2, 5);
-//		btnClear.addListener(new ClickListener() {
-//			@Override
-//			public void clicked(InputEvent event, float x, float y) {
-//				gameRender.clearAllChanges();
-//			}
-//		});
-//		grpOptions.addActor(btnClear);
-//		grpOptions.setSize(imgOptionsBackground.getWidth(), imgOptionsBackground.getHeight());
-//		grpOptions.setPosition(-grpOptions.getWidth(), 0);
+		// Grp PopupMenu
+		popupMenuVisible = false;
+		grpPopupMenu = new Group();
+		imgPopupBackground = new Image(ResourceHelper.getTexture("in_game/normal_game_popup"));
+		imgPopupBackground.setPosition(0, 0);
+		grpPopupMenu.addActor(imgPopupBackground);
 
+		txrBlackScreen = new Image(ResourceHelper.getTexture("menu/loading/background"));
+		txrBlackScreen.setPosition(0, -txrBlackScreen.getHeight());
+		txrBlackScreen.addListener(new ClickListener() {
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+			}
+		});
+
+		TextButtonStyle style = ResourceHelper.getButtonStyle();
+		
+		btnSound = new TextButton(AudioManager.getVolume() == 0 ? I18n.t("world_sound_off") : I18n.t("world_sound_on"), style);
+		btnSound.setPosition(imgPopupBackground.getWidth() / 2 - btnSound.getWidth() / 2, imgPopupBackground.getTop() - btnSound.getHeight() - 100);
+		btnSound.addListener(new ClickListener() {
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+				AudioManager.toogleVolume();
+				btnSound.setText(AudioManager.getVolume() == 0 ? I18n.t("world_sound_off") : I18n.t("world_sound_on"));
+			}
+		});
+		grpPopupMenu.addActor(btnSound);
+		
+		btnClear = new TextButton(I18n.t("world_clear_moves"), style);
+		btnClear.setPosition(imgPopupBackground.getWidth() / 2 - btnClear.getWidth() / 2, btnSound.getY() - 100);
+		btnClear.addListener(new ClickListener() {
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+				gameRender.clearAllChanges();
+				hideOptions();
+			}
+		});
+		grpPopupMenu.addActor(btnClear);
+		
+		btnSurrender = new TextButton(I18n.t("world_surrender_btn"), style);
+		btnSurrender.setPosition(imgPopupBackground.getWidth() / 2 - btnSurrender.getWidth() / 2, btnClear.getY() - 100);
+		final BoxCallback leaveCallback = new BoxCallback() {
+			@Override
+			public void onEvent(int type, Object data) {
+				if (type == BoxCallback.YES) {
+					GameEngine.showLoading();
+					world.surrenderCurrentGame();
+				} else {
+					MessageBox.build().hide();
+					resume();
+				}
+			}
+		};
+		btnSurrender.addListener(new ClickListener() {
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+				pause();
+				setReadInput(false);
+				MessageBox.build()
+						.setMessage("world_surrender", BoxButtons.Two)
+						.setHideOnAction(false)
+						.setCallback(leaveCallback)
+						.show();
+			}
+		});
+		grpPopupMenu.addActor(btnSurrender);
+
+		btnBackToGame = new TextButton(I18n.t("world_back_to_game"), style);
+		btnBackToGame.setPosition(imgPopupBackground.getWidth() / 2 - btnBackToGame.getWidth() / 2, btnSurrender.getY() - 190);
+		btnBackToGame.addListener(new ClickListener() {
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+				hideOptions();
+			}
+		});
+		grpPopupMenu.addActor(btnBackToGame);
+		
+		btnBackToMenu = new TextButton(I18n.t("world_back_to_menu_btn"), style);
+		btnBackToMenu.setPosition(imgPopupBackground.getWidth() / 2 - btnBackToMenu.getWidth() / 2, btnBackToGame.getY() - 100);
+		backCallback = new BoxCallback() {
+			@Override
+			public void onEvent(int type, Object data) {
+				if (type == BoxCallback.YES) {
+					GameEngine.showLoading();
+					world.leaveGame();
+				} else {
+					MessageBox.build().hide();
+					resume();
+				}
+			}
+		};
+		btnBackToMenu.addListener(new ClickListener() {
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+				setReadInput(false);
+				back();
+			}
+		});
+		grpPopupMenu.addActor(btnBackToMenu);
+		
+		grpPopupMenu.setSize(imgPopupBackground.getWidth(), imgPopupBackground.getHeight());
+		grpPopupMenu.setPosition(CrystalClash.WIDTH / 2 - grpPopupMenu.getWidth() / 2, -grpPopupMenu.getHeight());
+		
 		// Grp Send
 		grpSend = new Group();
 		imgBtnSendBackground = new Image(skin.getRegion("option_send_bar"));
@@ -423,6 +459,8 @@ public class WorldView extends InputView {
 		addActor(grpSend);
 		addActor(grpPlayer1Details);
 		addActor(grpPlayer2Details);
+		addActor(txrBlackScreen);
+		addActor(grpPopupMenu);
 	}
 
 	private void loadLeftDetailsGrp(Skin skin, User u) {
@@ -471,11 +509,24 @@ public class WorldView extends InputView {
 	}
 
 	private void showOptions() {
-		//Mostrar Menu PopUp
+		popupMenuVisible = true;
+		setReadInput(false);
+		GameEngine.start(pushHideGameMenuButtons(Timeline.createParallel()
+				.push(Tween.set(txrBlackScreen, ActorAccessor.ALPHA).target(0))
+				.push(Tween.set(txrBlackScreen, ActorAccessor.Y).target(0))
+				.push(Tween.to(txrBlackScreen, ActorAccessor.ALPHA, CrystalClash.FAST_ANIMATION_SPEED).target(1))
+				.push(Tween.to(grpPopupMenu, ActorAccessor.Y, CrystalClash.FAST_ANIMATION_SPEED)
+						.target(CrystalClash.HEIGHT / 2 - grpPopupMenu.getHeight() / 2).ease(TweenEquations.easeNone))));
 	}
 
 	private void hideOptions() {
-		//Sacar Menu PopUp
+		popupMenuVisible = false;
+		setReadInput(true);
+		GameEngine.start(pushShowGameMenuButtons(Timeline.createParallel()
+				.push(Tween.to(txrBlackScreen, ActorAccessor.ALPHA, CrystalClash.FAST_ANIMATION_SPEED).target(0))
+				.push(Tween.to(grpPopupMenu, ActorAccessor.Y, CrystalClash.FAST_ANIMATION_SPEED)
+						.target(-grpPopupMenu.getHeight()).ease(TweenEquations.easeNone))
+				.push(Tween.set(txrBlackScreen, ActorAccessor.Y).target(-txrBlackScreen.getHeight()))));
 	}
 
 	public void showGameMenuButtons() {
@@ -791,6 +842,7 @@ public class WorldView extends InputView {
 	}
 
 	public Timeline pushExitAnimation(Timeline t) {
+		hideOptions();
 		t.beginSequence();
 		pushHideGameMenuButtons(t)
 				.push(Tween.to(grpActionHud, ActorAccessor.Y, CrystalClash.NORMAL_ANIMATION_SPEED)
@@ -820,7 +872,8 @@ public class WorldView extends InputView {
 	}
 
 	public void resume() {
-		setReadInput(true);
+		if(!popupMenuVisible)
+			setReadInput(true);
 		gameRender.resume();
 	}
 
