@@ -20,12 +20,12 @@ public class CellHelper {
 
 	TextureRegion none;
 	TextureRegion able_to_attack;
+	TextureRegion not_able_to_attack;
 	TextureRegion able_to_move;
 	TextureRegion able_to_place;
 
 	TextureRegion attack_target_center;
 	TextureRegion attack_target_radius;
-	TextureRegion path;
 
 	TextureRegion selected;
 
@@ -35,10 +35,11 @@ public class CellHelper {
 
 		none = skin.getRegion("none");
 		able_to_attack = skin.getRegion("able_to_attack");
+		not_able_to_attack = skin.getRegion("not_able_to_attack");
 		able_to_move = skin.getRegion("able_to_move");
 		able_to_place = skin.getRegion("able_to_move");
-		attack_target_center = skin.getRegion("selected");// skin.getRegion("attack_target_center");
-		attack_target_radius = skin.getRegion("selected");// skin.getRegion("attack_target_center");
+		attack_target_center = skin.getRegion("attack_target_center");// skin.getRegion("attack_target_center");
+		attack_target_radius = skin.getRegion("attack_target_center");// skin.getRegion("attack_target_center");
 		selected = skin.getRegion("selected");
 	}
 
@@ -47,8 +48,6 @@ public class CellHelper {
 			batch.draw(able_to_move, cell.getX(), cell.getY());
 		} else if (cell.hasState(Cell.ABLE_TO_ATTACK)) {
 			batch.draw(able_to_attack, cell.getX(), cell.getY());
-		} else if (cell.hasState(Cell.ABLE_TO_MOVE)) {
-			batch.draw(able_to_move, cell.getX(), cell.getY());
 		} else if (cell.hasState(Cell.ABLE_TO_PLACE)) {
 			batch.draw(able_to_place, cell.getX(), cell.getY());
 		} else {
@@ -56,7 +55,7 @@ public class CellHelper {
 		}
 
 		if (cell.hasState(Cell.NOT_ABLE_TO_ATTACK)) {
-			batch.draw(selected, cell.getX(), cell.getY());
+			batch.draw(not_able_to_attack, cell.getX(), cell.getY());
 		}
 		if (cell.hasState(Cell.ATTACK_TARGET_CENTER)) {
 			batch.draw(attack_target_center, cell.getX(), cell.getY());
