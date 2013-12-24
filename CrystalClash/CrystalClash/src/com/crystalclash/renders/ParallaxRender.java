@@ -30,7 +30,7 @@ public class ParallaxRender extends Group {
 		rand = new Random();
 		levels = new Array<ParallaxLevel>();
 		setBounds(0, -854, 1280, 1708);
-		addLevel(new BackgroundParallaxLevel(ResourceHelper.getTexture("menu/background"), -427, 0.01f, 0.01f));
+		addLevel(new BackgroundParallaxLevel(ResourceHelper.getTexture("menu/background"), 0, 0, 0.01f));
 		setColor(getColor().r, getColor().g, getColor().b, 0);
 	}
 
