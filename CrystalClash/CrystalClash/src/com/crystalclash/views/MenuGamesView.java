@@ -38,6 +38,7 @@ import com.crystalclash.renders.helpers.ui.EmblemList;
 import com.crystalclash.renders.helpers.ui.GameListItem;
 import com.crystalclash.renders.helpers.ui.GamesLoadCallback;
 import com.crystalclash.renders.helpers.ui.MessageBox;
+import com.crystalclash.util.I18n;
 
 public class MenuGamesView extends InputView {
 	private GamesLoadCallback loadCallback;
@@ -83,8 +84,9 @@ public class MenuGamesView extends InputView {
 	boolean isPressing = false;
 	boolean isOverflowing = false;
 
-	private Image refreshMessagePull;
-	private Image refreshMessageRelease;
+	private Group grpRefresh;
+	private Image imgRefreshArrow;
+	private Label lblRefreshMessage;
 	private boolean isTryingToRefresh = false;
 	private boolean showPullDown = false;
 	private boolean showRelease = false;
@@ -211,7 +213,7 @@ public class MenuGamesView extends InputView {
 				list.addActor(listingItem);
 			} else {
 				if (games[i][4].equals("play")) {
-					list.addActor(listingItem);
+					list.addActorBefore(canPlayItem, listingItem);
 				} else {
 					list.addActorAfter(canPlayItem, listingItem);
 				}
@@ -251,7 +253,7 @@ public class MenuGamesView extends InputView {
 			public void clicked(InputEvent event, float x, float y) {
 				MessageBox.build()
 						.setUserData(((GameListItem) event.getListenerActor().getParent()).gameId)
-						.setMessage("menu_ganmes_surender", BoxButtons.Two)
+						.setMessage("menu_games_surender", BoxButtons.Two)
 						.setCallback(surrenderCallback)
 						.show();
 			}
@@ -267,7 +269,9 @@ public class MenuGamesView extends InputView {
 		playListener = new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
-				controller.getGameTurn(((GameListItem) event.getListenerActor().getParent()).gameId);
+				GameListItem item = ((GameListItem) event.getListenerActor().getParent());
+				GameController.setEnemyUser(new User("", "", item.playerName, item.emblem, 0, 0, 0));
+				controller.getGameTurn(item.gameId);
 			}
 		};
 
@@ -275,11 +279,9 @@ public class MenuGamesView extends InputView {
 		skin.add("small_font", ResourceHelper.getSmallFont());
 		skin.add("big_font", ResourceHelper.getBigFont());
 		skin.add("play_up", ResourceHelper.getTexture("menu/games_list/flag_green"));
-		skin.add("play_down", ResourceHelper.getTexture("menu/games_list/flag_green"));
 		skin.add("wait_up", ResourceHelper.getTexture("menu/games_list/flag_red"));
-		skin.add("wait_down", ResourceHelper.getTexture("menu/games_list/flag_red"));
+		skin.add("surrended_up", ResourceHelper.getTexture("menu/games_list/flag_surrended"));
 		skin.add("surrender_up", ResourceHelper.getTexture("menu/games_list/surrender"));
-		skin.add("surrender_down", ResourceHelper.getTexture("menu/games_list/surrender"));
 		skin.add("sound_off_up", ResourceHelper.getTexture("menu/games_list/sound_off"));
 		skin.add("sound_off_down", ResourceHelper.getTexture("menu/games_list/sound_off_pressed"));
 		skin.add("sound_on_up", ResourceHelper.getTexture("menu/games_list/sound_on"));
@@ -294,17 +296,22 @@ public class MenuGamesView extends InputView {
 
 		ButtonStyle playStyle = new ButtonStyle();
 		playStyle.up = skin.getDrawable("play_up");
-		playStyle.down = skin.getDrawable("play_down");
+		playStyle.down = skin.getDrawable("play_up");
 		skin.add("playStyle", playStyle);
 
 		ButtonStyle waitStyle = new ButtonStyle();
 		waitStyle.up = skin.getDrawable("wait_up");
-		waitStyle.down = skin.getDrawable("wait_down");
+		waitStyle.down = skin.getDrawable("wait_up");
 		skin.add("waitStyle", waitStyle);
+		
+		ButtonStyle surrendedStyle = new ButtonStyle();
+		surrendedStyle.up = skin.getDrawable("surrended_up");
+		surrendedStyle.down = skin.getDrawable("surrended_up");
+		skin.add("surrendedStyle", surrendedStyle);
 
 		ButtonStyle surrenderStyle = new ButtonStyle();
 		surrenderStyle.up = skin.getDrawable("surrender_up");
-		surrenderStyle.down = skin.getDrawable("surrender_down");
+		surrenderStyle.down = skin.getDrawable("surrender_up");
 		skin.add("surrenderStyle", surrenderStyle);
 
 		grpProfile = new Group();
@@ -462,16 +469,22 @@ public class MenuGamesView extends InputView {
 		});
 		grpStory.addActor(btnViewStory);
 
-		refreshMessagePull = new Image(ResourceHelper.getTexture("menu/refresh_list/refresh_message_pull"));
-		refreshMessagePull.setVisible(false);
-		addActor(refreshMessagePull);
-
+		grpRefresh = new Group();
+		grpRefresh.setSize(CrystalClash.WIDTH, 200);
+		grpRefresh.setVisible(false);
+		
+		imgRefreshArrow = new Image(ResourceHelper.getTexture("menu/refresh_list/arrow"));
+		imgRefreshArrow.setOrigin(imgRefreshArrow.getWidth() / 2 , imgRefreshArrow.getHeight() / 2);
+		imgRefreshArrow.setPosition(CrystalClash.WIDTH / 4 - imgRefreshArrow.getWidth() / 2, grpRefresh.getHeight() / 2 - imgRefreshArrow.getHeight() / 2);
+		grpRefresh.addActor(imgRefreshArrow);
+		lblRefreshMessage = new Label(I18n.t("menu_games_pull"), skin, "lblStyle");
+		lblRefreshMessage.setPosition(imgRefreshArrow.getX() + imgRefreshArrow.getWidth() + 100, grpRefresh.getHeight() / 2 - lblRefreshMessage.getHeight() / 2);
+		grpRefresh.addActor(lblRefreshMessage);
+		
+		addActor(grpRefresh);
+		
 		pullDistance = 100;
 		releaseDistance = pullDistance * 2;
-
-		refreshMessageRelease = new Image(ResourceHelper.getTexture("menu/refresh_list/refresh_message_release"));
-		refreshMessageRelease.setVisible(false);
-		addActor(refreshMessageRelease);
 	}
 
 	public void updateListGameSurrender(String id) {
@@ -595,17 +608,17 @@ public class MenuGamesView extends InputView {
 
 		if (isTryingToRefresh) {
 			if (showRelease) {
-				refreshMessageRelease.setY(list.getTop());
-				refreshMessageRelease.setVisible(true);
-				refreshMessagePull.setVisible(false);
+				lblRefreshMessage.setText(I18n.t("menu_games_release"));
+				imgRefreshArrow.setRotation(180);
 			} else if (showPullDown) {
-				refreshMessagePull.setY(list.getTop());
-				refreshMessagePull.setVisible(true);
-				refreshMessageRelease.setVisible(false);
+				lblRefreshMessage.setText(I18n.t("menu_games_pull"));
+				imgRefreshArrow.setRotation(0);
 			}
+			
+			grpRefresh.setY(list.getTop());
+			grpRefresh.setVisible(true);
 		} else {
-			refreshMessagePull.setVisible(false);
-			refreshMessageRelease.setVisible(false);
+			grpRefresh.setVisible(false);
 		}
 	}
 

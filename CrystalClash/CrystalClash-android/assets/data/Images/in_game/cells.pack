@@ -17,24 +17,31 @@ able_to_move
   orig: 116, 136
   offset: 0, 0
   index: -1
-none
+attack_target_center
   rotate: false
   xy: 238, 2
   size: 116, 136
   orig: 116, 136
   offset: 0, 0
   index: -1
-selected
+none
   rotate: false
   xy: 356, 2
   size: 116, 136
   orig: 116, 136
   offset: 0, 0
   index: -1
-attack_objective
+not_able_to_attack
   rotate: false
-  xy: 474, 32
-  size: 122, 106
-  orig: 122, 106
+  xy: 474, 2
+  size: 116, 136
+  orig: 116, 136
+  offset: 0, 0
+  index: -1
+selected
+  rotate: false
+  xy: 592, 2
+  size: 116, 136
+  orig: 116, 136
   offset: 0, 0
   index: -1

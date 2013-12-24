@@ -16,6 +16,7 @@ public class GameListItem extends Group {
 	public final String gameId;
 	public int turn;
 	public int emblem;
+	public String playerName;
 	Button btnPlay;
 
 	public GameListItem(String gameId, String playerName, String victories, String turn, int emblemNum,
@@ -25,6 +26,8 @@ public class GameListItem extends Group {
 
 		this.gameId = gameId;
 		this.turn = Integer.parseInt(turn);
+		this.emblem = emblemNum;
+		this.playerName = playerName;
 
 		Image bg = new Image(skin.get("background", TextureRegion.class));
 		bg.setPosition(0, 0);
@@ -34,9 +37,13 @@ public class GameListItem extends Group {
 		float h = bg.getHeight();
 		setSize(w, h);
 
-		btnPlay = new Button((!surrender && state.equals("play")) ?
-				skin.get("playStyle", ButtonStyle.class) :
-				skin.get("waitStyle", ButtonStyle.class));
+		ButtonStyle style = skin.get("waitStyle", ButtonStyle.class);
+		if(surrender)
+			style = skin.get("surrendedStyle", ButtonStyle.class);
+		else if(state.equals("play"))
+			style = skin.get("playStyle", ButtonStyle.class);
+		
+		btnPlay = new Button(style);
 		if (!surrender && state.equals("play"))
 			btnPlay.addListener(playListener);
 		btnPlay.setPosition(850, 0);
@@ -54,8 +61,6 @@ public class GameListItem extends Group {
 		labelVTittle.setPosition(390, 148);
 		addActor(labelV);
 		addActor(labelVTittle);
-
-		this.emblem = emblemNum;
 
 		Label labelTurn = new Label(turn, skin, "big_font", Color.BLACK);
 		labelTurn.setPosition(615, 110);
