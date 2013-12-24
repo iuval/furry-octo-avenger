@@ -137,6 +137,7 @@ public class SelectUnitsView extends GameView {
 			selectedUnit = cell.getUnit();
 			if (selectedUnit != null) {
 				unitList.desSelect();
+				GameEngine.start(world.getRender().pushHideGameMenuButtons(Timeline.createParallel()));
 				world.getRender().showStatsPopupFirstTurn(selectedUnit.getName());
 				cell.removeUnit();
 				changeUnitsCountBy(-1);
