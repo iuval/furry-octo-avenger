@@ -196,28 +196,31 @@ public class TutorialView extends GameView {
 
 		PathManager.load();
 
+		//Load icons hud
 		imgAttackIcon = new Image(skin.getRegion("action_attack_button"));
 		imgMoveIcon = new Image(skin.getRegion("action_run_button"));
 		imgDefendIcon = new Image(skin.getRegion("action_defensive_button"));
 		imgUndoIcon = new Image(skin.getRegion("action_cancel_button"));
-
+		
+		//Position and scaling icons hud
 		imgAttackIcon.scale(-0.5f);
 		imgMoveIcon.scale(-0.5f);
 		imgDefendIcon.scale(-0.5f);
 		imgUndoIcon.scale(-0.5f);
-		imgAttackIcon.setPosition(740, 205);
-		imgMoveIcon.setPosition(900, 205);
-		imgDefendIcon.setPosition(740, 135);
-		imgUndoIcon.setPosition(900, 135);
+		imgAttackIcon.setPosition(835, 157);
+		imgMoveIcon.setPosition(985, 157);
+		imgDefendIcon.setPosition(835, 70);
+		imgUndoIcon.setPosition(985, 70);
 
+		//Load icons attack, life & speed
 		atlas = ResourceHelper.getTextureAtlas("in_game/unit_stats_popup/unit_stats_popup.pack");
 		imgLifeIcon = new Image(atlas.findRegion("icon_life"));
 		imgDamageIcon = new Image(atlas.findRegion("icon_attack"));
 		imgMobilityIcon = new Image(atlas.findRegion("icon_speed"));
 
-		imgDamageIcon.setPosition(740, 230);
-		imgLifeIcon.setPosition(900, 230);
-		imgMobilityIcon.setPosition(770, 175);
+		imgDamageIcon.setPosition(845, 205);
+		imgLifeIcon.setPosition(970, 205);
+		imgMobilityIcon.setPosition(845, 115);
 
 		entities = new Group();
 		addActor(entities);
@@ -695,7 +698,7 @@ public class TutorialView extends GameView {
 					@Override
 					public void onEvent(int type, BaseTween<?> source) {
 						if (type == COMPLETE) {
-							lblMessage.setPosition(balloon.getX() + 145, balloon.getTop() - 100);
+							lblMessage.setPosition(balloon.getX() + 250, balloon.getTop() - 80);
 							lblMessage.setText(messages.get(messageIndex));
 
 							btnNext.setDisabled(false);
