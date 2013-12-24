@@ -76,7 +76,7 @@ public class TurnAnimationsView extends GameView {
 
 	private Random rand;
 	Timeline mainTimeline = Timeline.createSequence();
-	
+
 	private Thread thread;
 
 	public TurnAnimationsView(WorldController world) {
@@ -113,10 +113,10 @@ public class TurnAnimationsView extends GameView {
 		GameController.loadSharedStats();
 		AudioManager.loadTurnAnimationSFX();
 		thread = new Thread(new Runnable() {
-			   @Override
-			   public void run() {
-					AudioManager.loadNormalGameSFX();
-			   };
+			@Override
+			public void run() {
+				AudioManager.loadNormalGameSFX();
+			};
 		});
 		thread.start();
 
@@ -139,7 +139,7 @@ public class TurnAnimationsView extends GameView {
 		TextureRegion seeBattleTexture = ResourceHelper.getTexture("turn_animation/see_what_happened");
 		seeBattle = new Image(seeBattleTexture);
 		seeBattle.setPosition(panel.getWidth() / 2 - seeBattle.getWidth() / 2, panel.getHeight() / 2 - seeBattle.getHeight() / 3);
-		
+
 		btnPlay = new TextButton("See what happened", ResourceHelper.getButtonStyle());
 		btnPlay.setSize(btnPlay.getWidth() * 1.5f, btnPlay.getHeight() * 1.5f);
 		btnPlay.setPosition(panel.getWidth() / 2 - btnPlay.getWidth() / 2, seeBattle.getX());
@@ -153,7 +153,7 @@ public class TurnAnimationsView extends GameView {
 		TextureRegion continueBattleTexture = ResourceHelper.getTexture("turn_animation/continue_to_battle");
 		continueBattle = new Image(continueBattleTexture);
 		continueBattle.setPosition(panel.getWidth() / 2 - continueBattle.getWidth() / 2, panel.getHeight() / 2 - continueBattle.getHeight() / 3);
-		
+
 		btnSkip = new TextButton("Continue", ResourceHelper.getButtonStyle());
 		btnSkip.setSize(btnPlay.getWidth(), btnPlay.getHeight());
 		btnSkip.setPosition(panel.getWidth() / 2 - btnSkip.getWidth() / 2, continueBattle.getX());
@@ -178,6 +178,7 @@ public class TurnAnimationsView extends GameView {
 	}
 
 	private void play() {
+		GameEngine.start(world.getRender().pushShowPlayerDetails(Timeline.createParallel()));
 		hidePanel();
 		start(mainTimeline);
 	}
@@ -638,7 +639,7 @@ public class TurnAnimationsView extends GameView {
 		if (world.gameEnded) {
 			grpPanel.remove();
 			txrBlackScreen = new Image(ResourceHelper.getTexture("menu/loading/background"));
-			
+
 			addActor(txrBlackScreen);
 			addActor(btnBackToMenu);
 			addActor(gameEndMessage);
@@ -646,7 +647,7 @@ public class TurnAnimationsView extends GameView {
 			gameEndMessage.setPosition(CrystalClash.WIDTH / 2 - gameEndMessage.getWidth() / 2, CrystalClash.HEIGHT);
 			btnBackToMenu.setPosition(gameEndMessage.getX() + gameEndMessage.getWidth() / 2 - btnBackToMenu.getWidth() / 2,
 					gameEndMessage.getY() + gameEndMessage.getHeight() / 2 - btnBackToMenu.getHeight() / 2);
-			
+
 			start(Timeline.createSequence()
 					.beginParallel()
 					.push(Tween.set(txrBlackScreen, ActorAccessor.ALPHA).target(0))
@@ -795,9 +796,9 @@ public class TurnAnimationsView extends GameView {
 	public Timeline pushExitAnimation(Timeline t) {
 		if (world.gameEnded) {
 			t
-			.push(Tween.to(txrBlackScreen, ActorAccessor.ALPHA, CrystalClash.SLOW_ANIMATION_SPEED).target(0))
-			.push(Tween.to(btnBackToMenu, ActorAccessor.Y, CrystalClash.NORMAL_ANIMATION_SPEED).target(CrystalClash.HEIGHT))
-			.push(Tween.to(gameEndMessage, ActorAccessor.Y, CrystalClash.NORMAL_ANIMATION_SPEED).target(CrystalClash.HEIGHT))
+					.push(Tween.to(txrBlackScreen, ActorAccessor.ALPHA, CrystalClash.SLOW_ANIMATION_SPEED).target(0))
+					.push(Tween.to(btnBackToMenu, ActorAccessor.Y, CrystalClash.NORMAL_ANIMATION_SPEED).target(CrystalClash.HEIGHT))
+					.push(Tween.to(gameEndMessage, ActorAccessor.Y, CrystalClash.NORMAL_ANIMATION_SPEED).target(CrystalClash.HEIGHT))
 					.setCallback(new TweenCallback() {
 						@Override
 						public void onEvent(int type, BaseTween<?> source) {
