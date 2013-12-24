@@ -21,6 +21,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
+import com.badlogic.gdx.scenes.scene2d.utils.Align;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.crystalclash.CrystalClash;
 import com.crystalclash.accessors.ActorAccessor;
@@ -480,7 +481,9 @@ public class WorldView extends InputView {
 		grpPlayer1Details.addActor(imgDetails1Bar);
 
 		lblPlayer1Name = new Label(u.getName(), skin, "lblStyle");
-		lblPlayer1Name.setPosition(155, 140);
+		lblPlayer1Name.setPosition(135, 140);
+		lblPlayer1Name.setSize(328, 32);
+		lblPlayer1Name.setAlignment(Align.center);
 		grpPlayer1Details.addActor(lblPlayer1Name);
 
 		imgPlayer1Emblem = new Image(EmblemHelper.getEmblem(u.getEmblem()));
@@ -503,7 +506,9 @@ public class WorldView extends InputView {
 		grpPlayer2Details.addActor(imgDetails2Bar);
 
 		lblPlayer2Name = new Label(u.getName(), skin, "lblStyle");
-		lblPlayer2Name.setPosition(80, 140);
+		lblPlayer2Name.setPosition(60, 140);
+		lblPlayer2Name.setSize(328, 32);
+		lblPlayer2Name.setAlignment(Align.center);
 		grpPlayer2Details.addActor(lblPlayer2Name);
 
 		imgPlayer2Emblem = new Image(EmblemHelper.getEmblem(u.getEmblem()));
