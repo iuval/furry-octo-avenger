@@ -139,10 +139,11 @@ public class TutorialView extends GameView {
 		balloon.setPosition(160 + fireArcher.getWidth() * 0.45f, -balloon.getHeight());
 
 		lblMessage = new Label("", new LabelStyle(ResourceHelper.getNormalFont(), Color.BLACK));
-		lblMessage.setAlignment(Align.top | Align.left);
+		lblMessage.setAlignment(Align.center | Align.top);
+		lblMessage.setSize(600, 338);
 
 		btnNext = new TextButton("Next", ResourceHelper.getNextButtonStyle());
-		btnNext.setPosition(CrystalClash.WIDTH - btnNext.getWidth() - 20, -balloon.getHeight() - btnNext.getHeight());
+		btnNext.setPosition(CrystalClash.WIDTH - btnNext.getWidth() - 120, -balloon.getHeight() - btnNext.getHeight());
 		btnNext.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
@@ -196,31 +197,31 @@ public class TutorialView extends GameView {
 
 		PathManager.load();
 
-		//Load icons hud
+		// Load icons hud
 		imgAttackIcon = new Image(skin.getRegion("action_attack_button"));
 		imgMoveIcon = new Image(skin.getRegion("action_run_button"));
 		imgDefendIcon = new Image(skin.getRegion("action_defensive_button"));
 		imgUndoIcon = new Image(skin.getRegion("action_cancel_button"));
-		
-		//Position and scaling icons hud
+
+		// Position and scaling icons hud
 		imgAttackIcon.scale(-0.5f);
 		imgMoveIcon.scale(-0.5f);
 		imgDefendIcon.scale(-0.5f);
 		imgUndoIcon.scale(-0.5f);
-		imgAttackIcon.setPosition(835, 157);
-		imgMoveIcon.setPosition(985, 157);
-		imgDefendIcon.setPosition(835, 70);
-		imgUndoIcon.setPosition(985, 70);
+		imgAttackIcon.setPosition(755, 157);
+		imgMoveIcon.setPosition(905, 157);
+		imgDefendIcon.setPosition(755, 70);
+		imgUndoIcon.setPosition(905, 70);
 
-		//Load icons attack, life & speed
+		// Load icons attack, life & speed
 		atlas = ResourceHelper.getTextureAtlas("in_game/unit_stats_popup/unit_stats_popup.pack");
 		imgLifeIcon = new Image(atlas.findRegion("icon_life"));
 		imgDamageIcon = new Image(atlas.findRegion("icon_attack"));
 		imgMobilityIcon = new Image(atlas.findRegion("icon_speed"));
 
-		imgDamageIcon.setPosition(845, 205);
-		imgLifeIcon.setPosition(970, 205);
-		imgMobilityIcon.setPosition(845, 115);
+		imgDamageIcon.setPosition(795, 205);
+		imgLifeIcon.setPosition(920, 205);
+		imgMobilityIcon.setPosition(855, 115);
 
 		entities = new Group();
 		addActor(entities);
@@ -698,7 +699,7 @@ public class TutorialView extends GameView {
 					@Override
 					public void onEvent(int type, BaseTween<?> source) {
 						if (type == COMPLETE) {
-							lblMessage.setPosition(balloon.getX() + 250, balloon.getTop() - 80);
+							lblMessage.setPosition(balloon.getX(), balloon.getY());
 							lblMessage.setText(messages.get(messageIndex));
 
 							btnNext.setDisabled(false);
@@ -707,7 +708,7 @@ public class TutorialView extends GameView {
 						}
 					}
 				});
-		
+
 		return t.push(moveslayer).push(moveTank).push(tutorialStuff);
 	}
 
@@ -717,14 +718,14 @@ public class TutorialView extends GameView {
 		world.getRender().hideArrow();
 		world.getRender().hideActionsRing();
 		world.getRender().hideStatsPopup();
-		
+
 		Timeline tutorialStuff = Timeline.createParallel()
 				.push(Tween.to(fireArcher, ActorAccessor.X, CrystalClash.ENTRANCE_ANIMATION_SPEED).target(-fireArcher.getWidth() * 2))
 				.push(Tween.to(balloon, ActorAccessor.Y, CrystalClash.ENTRANCE_ANIMATION_SPEED).target(-balloon.getWidth() * 2))
 				.push(Tween.to(btnNext, ActorAccessor.Y, CrystalClash.ENTRANCE_ANIMATION_SPEED).target(-balloon.getWidth() * 2))
 				.push(Tween.to(imgBtnSkipBackground, ActorAccessor.X, CrystalClash.ENTRANCE_ANIMATION_SPEED).target(CrystalClash.WIDTH))
 				.push(Tween.to(btnSkip, ActorAccessor.X, CrystalClash.ENTRANCE_ANIMATION_SPEED).target(CrystalClash.WIDTH));
-		
+
 		return t.push(tutorialStuff);
 	}
 
