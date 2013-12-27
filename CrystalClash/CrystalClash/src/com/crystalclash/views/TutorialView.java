@@ -382,7 +382,7 @@ public class TutorialView extends GameView {
 			break;
 		case 14:
 			world.getRender().setBlockButtons(false);
-			world.getRender().moveHand(0, 125);
+			world.getRender().moveHand(25, 185);
 			hideNext();
 			break;
 		case 15:
@@ -410,7 +410,7 @@ public class TutorialView extends GameView {
 			break;
 		case 24:
 			world.getRender().setBlockButtons(false);
-			world.getRender().moveHand(0, 125);
+			world.getRender().moveHand(25, 185);
 			hideNext();
 			break;
 		case 25:
