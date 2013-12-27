@@ -1158,8 +1158,10 @@ public class TutorialView extends GameView {
 					public void onEvent(int type, BaseTween<?> source) {
 						if (type == COMPLETE) {
 							AudioManager.playEndSound(GAME_END_SFX.victory);
-							Image endGameMessage = new Image(ResourceHelper.getTexture("turn_animation/messages/banner_victory"));
-							TextButton btnBackToMenu = new TextButton("Back to menu", ResourceHelper.getButtonStyle());
+							Image gameEndMessage = new Image(ResourceHelper.getTexture("turn_animation/messages/banner_victory"));
+							Image txrBlackScreen = new Image(ResourceHelper.getTexture("menu/loading/background"));
+							TextButton btnBackToMenu = new TextButton(I18n.t("world_back_to_game"), ResourceHelper.getOuterSmallButtonStyle());
+							btnBackToMenu.setSize(btnBackToMenu.getWidth() * 1.5f, btnBackToMenu.getHeight() * 1.5f);
 							btnBackToMenu.addListener(new ClickListener() {
 								@Override
 								public void clicked(InputEvent event, float x, float y) {
@@ -1168,24 +1170,26 @@ public class TutorialView extends GameView {
 									GameEngine.getInstance().openMenuGames();
 								}
 							});
-							endGameMessage.setPosition(CrystalClash.WIDTH / 2 - endGameMessage.getWidth() / 2,
-									CrystalClash.HEIGHT);
-							btnBackToMenu.setPosition(endGameMessage.getX() + endGameMessage.getWidth() / 2 - btnBackToMenu.getWidth() / 2,
-									endGameMessage.getY() + endGameMessage.getHeight() / 2 - btnBackToMenu.getHeight() / 2);
+							
+							gameEndMessage.setPosition(CrystalClash.WIDTH / 2 - gameEndMessage.getWidth() / 2, CrystalClash.HEIGHT);
+							btnBackToMenu.setPosition(gameEndMessage.getX() + gameEndMessage.getWidth() / 2 - btnBackToMenu.getWidth() / 2,
+									gameEndMessage.getY() + gameEndMessage.getHeight() / 2 - btnBackToMenu.getHeight() / 2);
 
 							addActor(btnBackToMenu);
-							addActor(endGameMessage);
+							addActor(txrBlackScreen);
+							addActor(gameEndMessage);
 
 							Timeline.createSequence()
 									.beginParallel()
-									.push(Tween.to(endGameMessage, ActorAccessor.Y, CrystalClash.SLOW_ANIMATION_SPEED)
-											.target(CrystalClash.HEIGHT / 2 - endGameMessage.getHeight() / 2))
+									.push(Tween.set(txrBlackScreen, ActorAccessor.ALPHA).target(0))
+									.push(Tween.to(txrBlackScreen, ActorAccessor.ALPHA, CrystalClash.SLOW_ANIMATION_SPEED).target(1))
+									.push(Tween.to(gameEndMessage, ActorAccessor.Y, CrystalClash.SLOW_ANIMATION_SPEED)
+											.target(CrystalClash.HEIGHT / 2 - 120))
 									.push(Tween.to(btnBackToMenu, ActorAccessor.Y, CrystalClash.SLOW_ANIMATION_SPEED)
-											.target(CrystalClash.HEIGHT / 2 - btnBackToMenu.getHeight() / 2))
+											.target(CrystalClash.HEIGHT / 2 - btnBackToMenu.getHeight() - 150)
+											.ease(TweenEquations.easeOutBounce))
 									.end()
-									.push(Tween.to(btnBackToMenu, ActorAccessor.Y, CrystalClash.SLOW_ANIMATION_SPEED)
-											.target(CrystalClash.HEIGHT / 2 - endGameMessage.getHeight() / 2 - btnBackToMenu.getHeight())
-											.ease(TweenEquations.easeOutBounce)).start(tweenManager);
+									.start(tweenManager);
 						}
 					}
 				}).start(tweenManager);

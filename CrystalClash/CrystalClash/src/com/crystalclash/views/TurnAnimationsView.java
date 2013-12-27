@@ -40,6 +40,7 @@ import com.crystalclash.renders.UnitRender.STATE;
 import com.crystalclash.renders.attacks.AttackFactory;
 import com.crystalclash.renders.helpers.CellHelper;
 import com.crystalclash.renders.helpers.ResourceHelper;
+import com.crystalclash.util.I18n;
 
 public class TurnAnimationsView extends GameView {
 
@@ -127,7 +128,7 @@ public class TurnAnimationsView extends GameView {
 		defeatTexture = ResourceHelper.getTexture("turn_animation/messages/banner_defeat");
 		drawTexture = ResourceHelper.getTexture("turn_animation/messages/banner_draw");
 
-		btnBackToMenu = new TextButton("Back to menu", ResourceHelper.getOuterSmallButtonStyle());
+		btnBackToMenu = new TextButton(I18n.t("world_back_to_game"), ResourceHelper.getOuterSmallButtonStyle());
 		btnBackToMenu.setSize(btnBackToMenu.getWidth() * 1.5f, btnBackToMenu.getHeight() * 1.5f);
 		btnBackToMenu.addListener(new ClickListener() {
 			@Override
