@@ -1,6 +1,5 @@
 package com.crystalclash.views;
 
-
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.crystalclash.controllers.WorldController;
 
@@ -14,6 +13,17 @@ public abstract class GameView extends BaseView {
 	public abstract boolean canSend();
 
 	public abstract void onSend();
+
+	public void onExit() {
+	}
+
+	public String getExitMessage() {
+		return "world_back_to_menu";
+	}
+
+	public boolean getShowSurrenderOption() {
+		return true;
+	}
 
 	public abstract void clearAllChanges();
 

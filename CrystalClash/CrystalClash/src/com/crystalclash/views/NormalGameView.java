@@ -82,7 +82,7 @@ public class NormalGameView extends GameView {
 	@Override
 	public void onDefendAction() {
 		selectedUnit.getRender().playSFX(SOUND.chose_defend);
-		
+
 		setUnitAction(new DefendUnitAction());
 		unitAction.origin = selectedCell;
 		defensiveUnits.add(selectedUnit);

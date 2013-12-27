@@ -12,8 +12,6 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.ui.Button;
-import com.badlogic.gdx.scenes.scene2d.ui.Button.ButtonStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
@@ -43,9 +41,6 @@ import com.crystalclash.renders.attacks.AttackFactory;
 import com.crystalclash.renders.helpers.CellHelper;
 import com.crystalclash.renders.helpers.PathManager;
 import com.crystalclash.renders.helpers.ResourceHelper;
-import com.crystalclash.renders.helpers.ui.BaseBox.BoxButtons;
-import com.crystalclash.renders.helpers.ui.BoxCallback;
-import com.crystalclash.renders.helpers.ui.MessageBox;
 import com.crystalclash.util.I18n;
 
 public class TutorialView extends GameView {
@@ -58,8 +53,6 @@ public class TutorialView extends GameView {
 	private Image balloon;
 	private Label lblMessage;
 	private TextButton btnNext;
-	private Button btnSkip;
-	private Image imgBtnSkipBackground;
 
 	private Array<String> messages;
 	private int messageIndex;
@@ -103,7 +96,6 @@ public class TutorialView extends GameView {
 		world.getRender().setBlockButtons(true);
 
 		btnNext.setDisabled(true);
-		btnSkip.setDisabled(true);
 		actionRingVisible = false;
 		blockButtons = true;
 
@@ -151,49 +143,11 @@ public class TutorialView extends GameView {
 					next();
 			}
 		});
-		final BoxCallback confirmation = new BoxCallback() {
-			@Override
-			public void onEvent(int type, Object data) {
-				if (type == BoxCallback.YES) {
-					GameEngine.showLoading();
-					GameEngine.getInstance().openMenuGames();
-					GameController.setTutorialDone();
-				} else {
-					MessageBox.build().hide();
-				}
-			}
-		};
-
-		imgBtnSkipBackground = new Image(skin.getRegion("exit_hud"));
-		imgBtnSkipBackground.setPosition(CrystalClash.WIDTH, CrystalClash.HEIGHT - imgBtnSkipBackground.getHeight());
-		ButtonStyle skipStyle = new ButtonStyle(
-				skin.getDrawable("exit_button"),
-				skin.getDrawable("exit_button_pressed"), null);
-		btnSkip = new Button(skipStyle);
-		btnSkip.setPosition(CrystalClash.WIDTH, CrystalClash.HEIGHT - btnSkip.getHeight());
-		btnSkip.addListener(new ClickListener() {
-			@Override
-			public void clicked(InputEvent event, float x, float y) {
-				MessageBox msg = MessageBox.build();
-				if (messageIndex < messages.size / 2)
-					msg.setMessage("tutorial_leave_start", BoxButtons.Two);
-				if (messageIndex < messages.size - 8)
-					msg.setMessage("tutorial_leave_middle", BoxButtons.Two);
-				else
-					msg.setMessage("tutorial_leave_end", BoxButtons.Two);
-
-				msg.setCallback(confirmation)
-						.setHideOnAction(false)
-						.show();
-			}
-		});
 
 		addActor(fireArcher);
 		addActor(balloon);
 		addActor(lblMessage);
 		addActor(btnNext);
-		addActor(imgBtnSkipBackground);
-		addActor(btnSkip);
 
 		PathManager.load();
 
@@ -694,9 +648,6 @@ public class TutorialView extends GameView {
 				.push(Tween.to(fireArcher, ActorAccessor.X, CrystalClash.ENTRANCE_ANIMATION_SPEED).target(200))
 				.push(Tween.to(balloon, ActorAccessor.Y, CrystalClash.ENTRANCE_ANIMATION_SPEED).target(0))
 				.push(Tween.to(btnNext, ActorAccessor.Y, CrystalClash.ENTRANCE_ANIMATION_SPEED).target(20))
-				.push(Tween.to(imgBtnSkipBackground, ActorAccessor.X, CrystalClash.ENTRANCE_ANIMATION_SPEED).target(
-						CrystalClash.WIDTH - imgBtnSkipBackground.getWidth()))
-				.push(Tween.to(btnSkip, ActorAccessor.X, CrystalClash.ENTRANCE_ANIMATION_SPEED).target(CrystalClash.WIDTH - btnSkip.getWidth()))
 				.setCallbackTriggers(TweenCallback.COMPLETE)
 				.setCallback(new TweenCallback() {
 					@Override
@@ -706,7 +657,6 @@ public class TutorialView extends GameView {
 							lblMessage.setText(messages.get(messageIndex));
 
 							btnNext.setDisabled(false);
-							btnSkip.setDisabled(false);
 							blockButtons = false;
 						}
 					}
@@ -725,9 +675,7 @@ public class TutorialView extends GameView {
 		Timeline tutorialStuff = Timeline.createParallel()
 				.push(Tween.to(fireArcher, ActorAccessor.X, CrystalClash.ENTRANCE_ANIMATION_SPEED).target(-fireArcher.getWidth() * 2))
 				.push(Tween.to(balloon, ActorAccessor.Y, CrystalClash.ENTRANCE_ANIMATION_SPEED).target(-balloon.getWidth() * 2))
-				.push(Tween.to(btnNext, ActorAccessor.Y, CrystalClash.ENTRANCE_ANIMATION_SPEED).target(-balloon.getWidth() * 2))
-				.push(Tween.to(imgBtnSkipBackground, ActorAccessor.X, CrystalClash.ENTRANCE_ANIMATION_SPEED).target(CrystalClash.WIDTH))
-				.push(Tween.to(btnSkip, ActorAccessor.X, CrystalClash.ENTRANCE_ANIMATION_SPEED).target(CrystalClash.WIDTH));
+				.push(Tween.to(btnNext, ActorAccessor.Y, CrystalClash.ENTRANCE_ANIMATION_SPEED).target(-balloon.getWidth() * 2));
 
 		return t.push(tutorialStuff);
 	}
@@ -1283,5 +1231,26 @@ public class TutorialView extends GameView {
 	public void dispose() {
 		// TODO Auto-generated method stub
 
+	}
+
+	@Override
+	public void onExit() {
+		GameController.setTutorialDone();
+	}
+
+	@Override
+	public String getExitMessage() {
+		if (messageIndex < messages.size / 2)
+			return "tutorial_leave_start";
+		if (messageIndex < messages.size - 8)
+			return "tutorial_leave_middle";
+		else
+			return "tutorial_leave_end";
+
+	}
+
+	@Override
+	public boolean getShowSurrenderOption() {
+		return false;
 	}
 }

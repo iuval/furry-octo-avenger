@@ -121,7 +121,7 @@ public class SelectUnitsView extends GameView {
 	}
 
 	private void updateUnitsCountLabel() {
-		unitList.setUnitCountText(unitCount + " " + I18n.t("unit_list_count") + " "+ GameController.MAX_UNIT_PER_PLAYER);
+		unitList.setUnitCountText(unitCount + " " + I18n.t("unit_list_count") + " " + GameController.MAX_UNIT_PER_PLAYER);
 	}
 
 	@Override

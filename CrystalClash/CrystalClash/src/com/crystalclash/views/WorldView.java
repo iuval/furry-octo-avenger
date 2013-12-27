@@ -122,7 +122,7 @@ public class WorldView extends InputView {
 	public void initFirstTurn() {
 		gameRender = new SelectUnitsView(world);
 		addActor(gameRender);
-		finishLoad(false);
+		loadGameHud(false);
 		showGameMenuButtons();
 		if (world.player == 1) {
 			statsPopup.setX(CrystalClash.WIDTH * 0.25f - statsPopup.getWidth() / 2);
@@ -140,13 +140,13 @@ public class WorldView extends InputView {
 	public void initTurnAnimations() {
 		gameRender = new TurnAnimationsView(world);
 		addActor(gameRender);
-		finishLoad(true);
+		loadGameHud(true);
 	}
 
 	public void initTutorial() {
 		gameRender = new TutorialView(world);
 		addActor(gameRender);
-		finishLoad(false);
+		loadGameHud(false);
 		showGameMenuButtons();
 	}
 
@@ -196,94 +196,6 @@ public class WorldView extends InputView {
 			public void clicked(InputEvent event, float x, float y) {
 			}
 		});
-
-		TextButtonStyle style = ResourceHelper.getButtonStyle();
-
-		btnSound = new TextButton(AudioManager.getVolume() == 0 ? I18n.t("world_sound_off") : I18n.t("world_sound_on"), style);
-		btnSound.setPosition(imgPopupBackground.getWidth() / 2 - btnSound.getWidth() / 2, imgPopupBackground.getTop() - btnSound.getHeight() - 100);
-		btnSound.addListener(new ClickListener() {
-			@Override
-			public void clicked(InputEvent event, float x, float y) {
-				AudioManager.toogleVolume();
-				btnSound.setText(AudioManager.getVolume() == 0 ? I18n.t("world_sound_off") : I18n.t("world_sound_on"));
-			}
-		});
-		grpPopupMenu.addActor(btnSound);
-
-		btnClear = new TextButton(I18n.t("world_clear_moves"), style);
-		btnClear.setPosition(imgPopupBackground.getWidth() / 2 - btnClear.getWidth() / 2, btnSound.getY() - 100);
-		btnClear.addListener(new ClickListener() {
-			@Override
-			public void clicked(InputEvent event, float x, float y) {
-				gameRender.clearAllChanges();
-				hideOptions();
-			}
-		});
-		grpPopupMenu.addActor(btnClear);
-
-		btnSurrender = new TextButton(I18n.t("world_surrender_btn"), style);
-		btnSurrender.setPosition(imgPopupBackground.getWidth() / 2 - btnSurrender.getWidth() / 2, btnClear.getY() - 100);
-		final BoxCallback leaveCallback = new BoxCallback() {
-			@Override
-			public void onEvent(int type, Object data) {
-				if (type == BoxCallback.YES) {
-					GameEngine.showLoading();
-					world.surrenderCurrentGame();
-				} else {
-					MessageBox.build().hide();
-					resume();
-				}
-			}
-		};
-		btnSurrender.addListener(new ClickListener() {
-			@Override
-			public void clicked(InputEvent event, float x, float y) {
-				pause();
-				setReadInput(false);
-				MessageBox.build()
-						.setMessage("world_surrender", BoxButtons.Two)
-						.setHideOnAction(false)
-						.setCallback(leaveCallback)
-						.show();
-			}
-		});
-		grpPopupMenu.addActor(btnSurrender);
-
-		btnBackToGame = new TextButton(I18n.t("world_back_to_game"), style);
-		btnBackToGame.setPosition(imgPopupBackground.getWidth() / 2 - btnBackToGame.getWidth() / 2, btnSurrender.getY() - 190);
-		btnBackToGame.addListener(new ClickListener() {
-			@Override
-			public void clicked(InputEvent event, float x, float y) {
-				hideOptions();
-			}
-		});
-		grpPopupMenu.addActor(btnBackToGame);
-
-		btnBackToMenu = new TextButton(I18n.t("world_back_to_menu_btn"), style);
-		btnBackToMenu.setPosition(imgPopupBackground.getWidth() / 2 - btnBackToMenu.getWidth() / 2, btnBackToGame.getY() - 100);
-		backCallback = new BoxCallback() {
-			@Override
-			public void onEvent(int type, Object data) {
-				if (type == BoxCallback.YES) {
-					GameEngine.showLoading();
-					world.leaveGame();
-				} else {
-					MessageBox.build().hide();
-					resume();
-				}
-			}
-		};
-		btnBackToMenu.addListener(new ClickListener() {
-			@Override
-			public void clicked(InputEvent event, float x, float y) {
-				setReadInput(false);
-				back();
-			}
-		});
-		grpPopupMenu.addActor(btnBackToMenu);
-
-		grpPopupMenu.setSize(imgPopupBackground.getWidth(), imgPopupBackground.getHeight());
-		grpPopupMenu.setPosition(CrystalClash.WIDTH / 2 - grpPopupMenu.getWidth() / 2, -grpPopupMenu.getHeight());
 
 		// Grp Send
 		grpSend = new Group();
@@ -355,7 +267,101 @@ public class WorldView extends InputView {
 		grpOptions.setPosition(CrystalClash.WIDTH, -grpOptions.getHeight());
 	}
 
-	private void finishLoad(boolean enemyDetails) {
+	private void loadMenu() {
+		TextButtonStyle style = ResourceHelper.getButtonStyle();
+
+		btnSound = new TextButton(AudioManager.getVolume() == 0 ? I18n.t("world_sound_off") : I18n.t("world_sound_on"), style);
+		btnSound.setPosition(imgPopupBackground.getWidth() / 2 - btnSound.getWidth() / 2, imgPopupBackground.getTop() - btnSound.getHeight() - 100);
+		btnSound.addListener(new ClickListener() {
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+				AudioManager.toogleVolume();
+				btnSound.setText(AudioManager.getVolume() == 0 ? I18n.t("world_sound_off") : I18n.t("world_sound_on"));
+			}
+		});
+		grpPopupMenu.addActor(btnSound);
+
+		btnClear = new TextButton(I18n.t("world_clear_moves"), style);
+		btnClear.setPosition(imgPopupBackground.getWidth() / 2 - btnClear.getWidth() / 2, btnSound.getY() - 100);
+		btnClear.addListener(new ClickListener() {
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+				gameRender.clearAllChanges();
+				hideOptions();
+			}
+		});
+		grpPopupMenu.addActor(btnClear);
+
+		if (gameRender.getShowSurrenderOption()) {
+			btnSurrender = new TextButton(I18n.t("world_surrender_btn"), style);
+			btnSurrender.setPosition(imgPopupBackground.getWidth() / 2 - btnSurrender.getWidth() / 2, btnClear.getY() - 100);
+			final BoxCallback leaveCallback = new BoxCallback() {
+				@Override
+				public void onEvent(int type, Object data) {
+					if (type == BoxCallback.YES) {
+						GameEngine.showLoading();
+						world.surrenderCurrentGame();
+					} else {
+						MessageBox.build().hide();
+						resume();
+					}
+				}
+			};
+			btnSurrender.addListener(new ClickListener() {
+				@Override
+				public void clicked(InputEvent event, float x, float y) {
+					pause();
+					setReadInput(false);
+					MessageBox.build()
+							.setMessage("world_surrender", BoxButtons.Two)
+							.setHideOnAction(false)
+							.setCallback(leaveCallback)
+							.show();
+				}
+			});
+			grpPopupMenu.addActor(btnSurrender);
+		}
+
+		btnBackToGame = new TextButton(I18n.t("world_back_to_game"), style);
+		btnBackToGame.setPosition(imgPopupBackground.getWidth() / 2 - btnBackToGame.getWidth() / 2, btnClear.getY() - 290);
+		btnBackToGame.addListener(new ClickListener() {
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+				hideOptions();
+			}
+		});
+		grpPopupMenu.addActor(btnBackToGame);
+
+		btnBackToMenu = new TextButton(I18n.t("world_back_to_menu_btn"), style);
+		btnBackToMenu.setPosition(imgPopupBackground.getWidth() / 2 - btnBackToMenu.getWidth() / 2, btnBackToGame.getY() - 100);
+		backCallback = new BoxCallback() {
+			@Override
+			public void onEvent(int type, Object data) {
+				if (type == BoxCallback.YES) {
+					GameEngine.showLoading();
+					gameRender.onExit();
+					world.leaveGame();
+				} else {
+					MessageBox.build().hide();
+					resume();
+				}
+			}
+		};
+		btnBackToMenu.addListener(new ClickListener() {
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+				setReadInput(false);
+				back();
+			}
+		});
+		grpPopupMenu.addActor(btnBackToMenu);
+
+		grpPopupMenu.setSize(imgPopupBackground.getWidth(), imgPopupBackground.getHeight());
+		grpPopupMenu.setPosition(CrystalClash.WIDTH / 2 - grpPopupMenu.getWidth() / 2, -grpPopupMenu.getHeight());
+
+	}
+
+	private void loadGameHud(boolean enemyDetails) {
 		TextureAtlas atlas = ResourceHelper.getTextureAtlas("in_game/options_bar.pack");
 		Skin skin = new Skin(atlas);
 		skin.add("normal_font", ResourceHelper.getNormalFont());
@@ -473,6 +479,8 @@ public class WorldView extends InputView {
 		addActor(grpPlayer2Details);
 		addActor(txrBlackScreen);
 		addActor(grpPopupMenu);
+		
+		loadMenu();
 	}
 
 	private void loadLeftDetailsGrp(Skin skin, User u, boolean addBanner) {
@@ -528,7 +536,7 @@ public class WorldView extends InputView {
 	private void back() {
 		pause();
 		MessageBox.build()
-				.setMessage("world_back_to_menu", BoxButtons.Two)
+				.setMessage(gameRender.getExitMessage(), BoxButtons.Two)
 				.setCallback(backCallback)
 				.setHideOnAction(false)
 				.show();
