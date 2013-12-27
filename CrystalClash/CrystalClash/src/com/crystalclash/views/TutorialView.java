@@ -404,13 +404,6 @@ public class TutorialView extends GameView {
 		Timeline.createSequence()
 				.push(Tween.to(btnNext, ActorAccessor.Y, CrystalClash.NORMAL_ANIMATION_SPEED)
 						.target(20)).start(tweenManager);
-
-		btnNext.rotate(-10f);
-		Timeline.createParallel()
-				.push(Tween.to(btnNext, ActorAccessor.ROTATION, CrystalClash.SLOW_ANIMATION_SPEED)
-						.target(20f)
-						.repeatYoyo(5, 0))
-				.repeat(-1, 2f).start(tweenManager);
 	}
 
 	@Override
