@@ -20,9 +20,11 @@ import com.crystalclash.entities.Unit;
 import com.crystalclash.renders.GameEngine;
 import com.crystalclash.renders.UnitRender.FACING;
 import com.crystalclash.renders.helpers.ResourceHelper;
+import com.crystalclash.renders.helpers.ui.MessageBox;
 import com.crystalclash.renders.helpers.ui.UnitItemSplashListener;
 import com.crystalclash.renders.helpers.ui.UnitListSelectListener;
 import com.crystalclash.renders.helpers.ui.UnitThumbsList;
+import com.crystalclash.renders.helpers.ui.BaseBox.BoxButtons;
 import com.crystalclash.util.I18n;
 
 public class SelectUnitsView extends GameView {
@@ -217,12 +219,19 @@ public class SelectUnitsView extends GameView {
 
 	@Override
 	public boolean canSend() {
-		// TODO Auto-generated method stub
-		return true;
+		if(unitCount == 0)
+			return false;
+		else
+			return true;
 	}
 
 	@Override
 	public void onSend() {
+		MessageBox.build()
+			.setMessage("select_units_send", BoxButtons.One)
+			.setCallback(null)
+			.setHideOnAction(true)
+			.show();
 	}
 
 	@Override

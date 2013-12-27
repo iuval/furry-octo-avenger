@@ -89,3 +89,6 @@ tutorial_leave_end_no = Stay
 
 unit_list = Units placed
 unit_list_count = of
+
+select_units_send = You can not start a battle without units...
+select_units_send_ok = Ok
