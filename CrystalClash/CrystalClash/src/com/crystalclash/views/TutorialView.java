@@ -287,9 +287,10 @@ public class TutorialView extends GameView {
 
 		slayerMove = new MoveUnitAction();
 		slayerMove.origin = world.cellAt(300, 700);
+
 		slayerMove.moves.add(world.cellAtByGrid(1, 3));
-		slayerMove.moves.add(world.cellAtByGrid(1, 4));
-		slayerMove.moves.add(world.cellAtByGrid(2, 4));
+		slayerMove.moves.add(world.cellAtByGrid(2, 3));
+		slayerMove.moves.add(world.cellAtByGrid(3, 3));
 		slayerMove.moves.add(world.cellAtByGrid(3, 4));
 		slayerMove.moves.add(world.cellAtByGrid(4, 4));
 	}
@@ -364,8 +365,9 @@ public class TutorialView extends GameView {
 			break;
 		case 9:
 			world.getRender().moveArrow(695, CrystalClash.HEIGHT - 230);
-			world.cellAtByGrid(1, 4).addState(Cell.ABLE_TO_MOVE);
-			world.cellAtByGrid(2, 4).addState(Cell.ABLE_TO_MOVE);
+			world.cellAtByGrid(1, 3).addState(Cell.ABLE_TO_MOVE);
+			world.cellAtByGrid(2, 3).addState(Cell.ABLE_TO_MOVE);
+			world.cellAtByGrid(3, 3).addState(Cell.ABLE_TO_MOVE);
 			world.cellAtByGrid(3, 4).addState(Cell.ABLE_TO_MOVE);
 			world.cellAtByGrid(4, 4).addState(Cell.ABLE_TO_MOVE);
 			showNext();
@@ -466,129 +468,130 @@ public class TutorialView extends GameView {
 	public boolean touchDown(float x, float y, int pointer, int button) {
 		Cell cell = world.cellAt(x, y);
 		if (cell != null) {
-			Unit u = cell.getUnit();
-			if (u != null) {
-				if (!u.isEnemy()) {
-					switch (messageIndex) {
-					case 3:
-						if (!actionRingVisible) {
-							actionRingVisible = true;
-							world.getRender().selectUnitInCell(cell);
-							world.getRender().hideHand();
-							next();
-						}
-						break;
-					case 8:
-						if (!actionRingVisible) {
-							actionRingVisible = true;
-							world.getRender().selectUnitInCell(cell);
-							world.getRender().moveHand(370, CrystalClash.HEIGHT - 240);
-						}
-						break;
-					case 18:
-						if (u.equals(slayer)) {
-							if (!actionRingVisible) {
-								actionRingVisible = true;
-								world.getRender().selectUnitInCell(cell);
-								world.getRender().moveHand(540, CrystalClash.HEIGHT / 2 + 110);
-							}
-						}
-						break;
-					case 20:
-						if (u.equals(archer)) {
-							if (!actionRingVisible) {
-								actionRingVisible = true;
-								world.getRender().selectUnitInCell(cell);
-								world.getRender().moveHand(375, CrystalClash.HEIGHT / 2 + 185);
-							}
-						}
-						break;
-					case 26:
-					case 32:
-						boolean canShow = (u.equals(archer) && !archerAttacked) || (u.equals(slayer) && !slayerAttacked);
-						if (!actionInProgress && canShow && !u.equals(selectedUnit)) {
-							selectedUnit = u;
-							if (!actionRingVisible) {
-								actionRingVisible = true;
-								world.getRender().selectUnitInCell(cell);
-							}
-						}
-						break;
-					}
-				} else {
-					if (cell.hasState(Cell.ABLE_TO_ATTACK)) {
-						switch (messageIndex) {
-						case 21:
-							cell.removeState(Cell.ABLE_TO_ATTACK);
 
-							PathRender p = paths.createOrResetPath(archer, PathRender.TYPE.ATTACK);
-							PathManager.addArc(p,
-									world.cellAtByGrid(3, 3).getCenterX(),
-									world.cellAtByGrid(3, 3).getCenterY(),
-									cell.getCenterX(),
-									cell.getCenterY(),
+			switch (messageIndex) {
+			case 10:
+				if (cell.hasState(Cell.ABLE_TO_MOVE)) {
+					if (!cell.hasState(Cell.MOVE_TARGET)) {
+						cell.addState(Cell.MOVE_TARGET);
+						PathRender p = paths.getOrCreatePath(slayer, PathRender.TYPE.MOVE);
+
+						for (; slayerMove.moves.get(movePathIndex) != cell; movePathIndex++) {
+							PathManager.addLine(p,
+									slayerMove.moves.get(movePathIndex).getCenterX(),
+									slayerMove.moves.get(movePathIndex).getCenterY(),
+									slayerMove.moves.get(movePathIndex + 1).getCenterX(),
+									slayerMove.moves.get(movePathIndex + 1).getCenterY(),
 									PathRender.DOT_CENTER_X,
 									PathRender.DOT_CENTER_Y);
+						}
 
-							world.getRender().setBlockButtons(false);
+						if (movePathIndex == slayerMove.moves.size - 1) {
+							world.getRender().hideArrow();
 							next();
+						}
+					}
+				}
+				break;
+			default: {
+				Unit u = cell.getUnit();
+				if (u != null) {
+					if (!u.isEnemy()) {
+						switch (messageIndex) {
+						case 3:
+							if (!actionRingVisible) {
+								actionRingVisible = true;
+								world.getRender().selectUnitInCell(cell);
+								world.getRender().hideHand();
+								next();
+							}
+							break;
+						case 8:
+							if (!actionRingVisible) {
+								actionRingVisible = true;
+								world.getRender().selectUnitInCell(cell);
+								world.getRender().moveHand(370, CrystalClash.HEIGHT - 240);
+							}
+							break;
+						case 18:
+							if (u.equals(slayer)) {
+								if (!actionRingVisible) {
+									actionRingVisible = true;
+									world.getRender().selectUnitInCell(cell);
+									world.getRender().moveHand(540, CrystalClash.HEIGHT / 2 + 110);
+								}
+							}
+							break;
+						case 20:
+							if (u.equals(archer)) {
+								if (!actionRingVisible) {
+									actionRingVisible = true;
+									world.getRender().selectUnitInCell(cell);
+									world.getRender().moveHand(375, CrystalClash.HEIGHT / 2 + 185);
+								}
+							}
 							break;
 						case 26:
 						case 32:
-							cell.removeState(Cell.ABLE_TO_ATTACK);
+							boolean canShow = (u.equals(archer) && !archerAttacked) || (u.equals(slayer) && !slayerAttacked);
+							if (!actionInProgress && canShow && !u.equals(selectedUnit)) {
+								selectedUnit = u;
+								if (!actionRingVisible) {
+									actionRingVisible = true;
+									world.getRender().selectUnitInCell(cell);
+								}
+							}
+							break;
+						}
+					} else {
+						if (cell.hasState(Cell.ABLE_TO_ATTACK)) {
+							switch (messageIndex) {
+							case 21:
+								cell.removeState(Cell.ABLE_TO_ATTACK);
 
-							if (selectedUnit.equals(archer) && !archerAttacked) {
-								PathRender archerA = paths.createOrResetPath(archer, PathRender.TYPE.ATTACK);
-								PathManager.addArc(archerA,
+								PathRender p = paths.createOrResetPath(archer, PathRender.TYPE.ATTACK);
+								PathManager.addArc(p,
 										world.cellAtByGrid(3, 3).getCenterX(),
 										world.cellAtByGrid(3, 3).getCenterY(),
 										cell.getCenterX(),
 										cell.getCenterY(),
 										PathRender.DOT_CENTER_X,
 										PathRender.DOT_CENTER_Y);
-							} else if (selectedUnit.equals(slayer) && !slayerAttacked) {
-								PathRender slayerA = paths.createOrResetPath(slayer, PathRender.TYPE.ATTACK);
-								PathManager.addLine(slayerA,
-										world.cellAtByGrid(4, 4).getCenterX(),
-										world.cellAtByGrid(4, 4).getCenterY(),
-										cell.getCenterX(),
-										cell.getCenterY(),
-										PathRender.DOT_CENTER_X,
-										PathRender.DOT_CENTER_Y);
-							}
 
-							world.getRender().setBlockButtons(false);
-							break;
-						}
-					}
-				}
-			} else {
-				if (cell.hasState(Cell.ABLE_TO_MOVE)) {
-					switch (messageIndex) {
-					case 10:
-						if (!cell.hasState(Cell.MOVE_TARGET)) {
-							cell.addState(Cell.MOVE_TARGET);
-							PathRender p = paths.getOrCreatePath(slayer, PathRender.TYPE.MOVE);
-
-							for (int i = movePathIndex; i < cell.getGridPosition().getX(); i++) {
-								PathManager.addLine(p,
-										slayerMove.moves.get(i).getCenterX(),
-										slayerMove.moves.get(i).getCenterY(),
-										slayerMove.moves.get(i + 1).getCenterX(),
-										slayerMove.moves.get(i + 1).getCenterY(),
-										PathRender.DOT_CENTER_X,
-										PathRender.DOT_CENTER_Y);
-							}
-							movePathIndex = cell.getGridPosition().getX() - 1;
-
-							if (movePathIndex == 3) {
-								world.getRender().hideArrow();
+								world.getRender().setBlockButtons(false);
 								next();
+								break;
+							case 26:
+							case 32:
+								cell.removeState(Cell.ABLE_TO_ATTACK);
+
+								if (selectedUnit.equals(archer) && !archerAttacked) {
+									PathRender archerA = paths.createOrResetPath(archer, PathRender.TYPE.ATTACK);
+									PathManager.addArc(archerA,
+											world.cellAtByGrid(3, 3).getCenterX(),
+											world.cellAtByGrid(3, 3).getCenterY(),
+											cell.getCenterX(),
+											cell.getCenterY(),
+											PathRender.DOT_CENTER_X,
+											PathRender.DOT_CENTER_Y);
+								} else if (selectedUnit.equals(slayer) && !slayerAttacked) {
+									PathRender slayerA = paths.createOrResetPath(slayer, PathRender.TYPE.ATTACK);
+									PathManager.addLine(slayerA,
+											world.cellAtByGrid(4, 4).getCenterX(),
+											world.cellAtByGrid(4, 4).getCenterY(),
+											cell.getCenterX(),
+											cell.getCenterY(),
+											PathRender.DOT_CENTER_X,
+											PathRender.DOT_CENTER_Y);
+								}
+
+								world.getRender().setBlockButtons(false);
+								break;
 							}
 						}
-						break;
 					}
 				}
+			}
 			}
 		} else {
 			switch (messageIndex) {
@@ -740,14 +743,12 @@ public class TutorialView extends GameView {
 		switch (messageIndex) {
 		case 14:
 			world.getRender().hideHand();
-			world.cellAtByGrid(1, 4).removeState(Cell.ABLE_TO_MOVE);
-			world.cellAtByGrid(2, 4).removeState(Cell.ABLE_TO_MOVE);
-			world.cellAtByGrid(3, 4).removeState(Cell.ABLE_TO_MOVE);
-			world.cellAtByGrid(4, 4).removeState(Cell.ABLE_TO_MOVE);
-			world.cellAtByGrid(1, 4).removeState(Cell.MOVE_TARGET);
-			world.cellAtByGrid(2, 4).removeState(Cell.MOVE_TARGET);
-			world.cellAtByGrid(3, 4).removeState(Cell.MOVE_TARGET);
-			world.cellAtByGrid(4, 4).removeState(Cell.MOVE_TARGET);
+
+			world.cellAtByGrid(1, 3).removeState(Cell.ABLE_TO_MOVE | Cell.MOVE_TARGET);
+			world.cellAtByGrid(2, 3).removeState(Cell.ABLE_TO_MOVE | Cell.MOVE_TARGET);
+			world.cellAtByGrid(3, 3).removeState(Cell.ABLE_TO_MOVE | Cell.MOVE_TARGET);
+			world.cellAtByGrid(3, 4).removeState(Cell.ABLE_TO_MOVE | Cell.MOVE_TARGET);
+			world.cellAtByGrid(4, 4).removeState(Cell.ABLE_TO_MOVE | Cell.MOVE_TARGET);
 			paths.removePath(slayer);
 			playAnimation1();
 			world.getRender().setBlockButtons(true);
@@ -847,14 +848,14 @@ public class TutorialView extends GameView {
 		Timeline slayerM = Timeline.createSequence()
 				.beginParallel()
 				.push(Tween.to(slayer, UnitAccessor.X, CrystalClash.WALK_ANIMATION_SPEED)
-						.target(CellHelper.getUnitX(world.cellAtByGrid(1, 4))).ease(TweenEquations.easeNone))
+						.target(CellHelper.getUnitX(world.cellAtByGrid(2, 3))).ease(TweenEquations.easeNone))
 				.push(Tween.to(slayer, UnitAccessor.Y, CrystalClash.WALK_ANIMATION_SPEED)
-						.target(CellHelper.getUnitY(world.cellAtByGrid(1, 4))).ease(TweenEquations.easeNone))
+						.target(CellHelper.getUnitY(world.cellAtByGrid(2, 3))).ease(TweenEquations.easeNone))
 				.end().beginParallel()
 				.push(Tween.to(slayer, UnitAccessor.X, CrystalClash.WALK_ANIMATION_SPEED)
-						.target(CellHelper.getUnitX(world.cellAtByGrid(2, 4))).ease(TweenEquations.easeNone))
+						.target(CellHelper.getUnitX(world.cellAtByGrid(3, 3))).ease(TweenEquations.easeNone))
 				.push(Tween.to(slayer, UnitAccessor.Y, CrystalClash.WALK_ANIMATION_SPEED)
-						.target(CellHelper.getUnitY(world.cellAtByGrid(2, 4))).ease(TweenEquations.easeNone))
+						.target(CellHelper.getUnitY(world.cellAtByGrid(3, 3))).ease(TweenEquations.easeNone))
 				.end().beginParallel()
 				.push(Tween.to(slayer, UnitAccessor.X, CrystalClash.WALK_ANIMATION_SPEED)
 						.target(CellHelper.getUnitX(world.cellAtByGrid(3, 4))).ease(TweenEquations.easeNone))
