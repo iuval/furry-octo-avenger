@@ -640,6 +640,7 @@ public class TurnAnimationsView extends GameView {
 		if (world.gameEnded) {
 			grpPanel.remove();
 			txrBlackScreen = new Image(ResourceHelper.getTexture("menu/loading/background"));
+			txrBlackScreen.setColor(txrBlackScreen.getColor().r, txrBlackScreen.getColor().g, txrBlackScreen.getColor().b, 0);
 
 			addActor(txrBlackScreen);
 			addActor(btnBackToMenu);
@@ -650,7 +651,6 @@ public class TurnAnimationsView extends GameView {
 					gameEndMessage.getY() + gameEndMessage.getHeight() / 2 - btnBackToMenu.getHeight() / 2);
 
 			start(Timeline.createParallel()
-					.push(Tween.set(txrBlackScreen, ActorAccessor.ALPHA).target(0))
 					.push(Tween.to(txrBlackScreen, ActorAccessor.ALPHA, CrystalClash.SLOW_ANIMATION_SPEED).target(1))
 					.push(Tween.to(gameEndMessage, ActorAccessor.Y, CrystalClash.SLOW_ANIMATION_SPEED)
 							.target(CrystalClash.HEIGHT / 2 - 120))

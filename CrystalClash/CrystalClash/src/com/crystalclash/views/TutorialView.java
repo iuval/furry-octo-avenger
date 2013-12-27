@@ -176,9 +176,9 @@ public class TutorialView extends GameView {
 		imgDamageIcon = new Image(atlas.findRegion("icon_attack"));
 		imgMobilityIcon = new Image(atlas.findRegion("icon_speed"));
 
-		imgDamageIcon.setPosition(795, 205);
-		imgLifeIcon.setPosition(920, 205);
-		imgMobilityIcon.setPosition(855, 115);
+		imgDamageIcon.setPosition(770, 205);
+		imgLifeIcon.setPosition(895, 205);
+		imgMobilityIcon.setPosition(830, 115);
 
 		entities = new Group();
 		addActor(entities);
@@ -186,6 +186,7 @@ public class TutorialView extends GameView {
 		//Load End Game Stuff
 		gameEndMessage = new Image(ResourceHelper.getTexture("turn_animation/messages/banner_victory"));
 		txrBlackScreen = new Image(ResourceHelper.getTexture("menu/loading/background"));
+		txrBlackScreen.setColor(txrBlackScreen.getColor().r, txrBlackScreen.getColor().g, txrBlackScreen.getColor().b, 0);
 		btnBackToMenu = new TextButton(I18n.t("world_back_to_game"), ResourceHelper.getOuterSmallButtonStyle());
 		btnBackToMenu.setSize(btnBackToMenu.getWidth() * 1.5f, btnBackToMenu.getHeight() * 1.5f);
 		btnBackToMenu.addListener(new ClickListener() {
@@ -1189,7 +1190,6 @@ public class TutorialView extends GameView {
 							
 							GameEngine.start(world.getRender().pushHideGameMenuButtons(Timeline.createParallel()));
 							Timeline.createParallel()
-									.push(Tween.set(txrBlackScreen, ActorAccessor.ALPHA).target(0))
 									.push(Tween.to(txrBlackScreen, ActorAccessor.ALPHA, CrystalClash.SLOW_ANIMATION_SPEED).target(1))
 									.push(Tween.to(gameEndMessage, ActorAccessor.Y, CrystalClash.SLOW_ANIMATION_SPEED)
 											.target(CrystalClash.HEIGHT / 2 - 120))
