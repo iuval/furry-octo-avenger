@@ -80,6 +80,10 @@ public class TutorialView extends GameView {
 	private Image imgLifeIcon;
 	private Image imgDamageIcon;
 	private Image imgMobilityIcon;
+	
+	private Image gameEndMessage;
+	private Image txrBlackScreen;
+	private TextButton btnBackToMenu;
 
 	public TutorialView(WorldController world) {
 		super(world);
@@ -112,7 +116,6 @@ public class TutorialView extends GameView {
 		AudioManager.loadTutorialSFX();
 		TextureAtlas atlas = ResourceHelper.getTextureAtlas("in_game/options_bar.pack");
 		Skin skin = new Skin(atlas);
-
 		tweenManager = new TweenManager();
 
 		fireArcher = new Image(ResourceHelper.getTexture("tutorial/fire_archer"));
@@ -179,6 +182,24 @@ public class TutorialView extends GameView {
 
 		entities = new Group();
 		addActor(entities);
+		
+		//Load End Game Stuff
+		gameEndMessage = new Image(ResourceHelper.getTexture("turn_animation/messages/banner_victory"));
+		txrBlackScreen = new Image(ResourceHelper.getTexture("menu/loading/background"));
+		btnBackToMenu = new TextButton(I18n.t("world_back_to_game"), ResourceHelper.getOuterSmallButtonStyle());
+		btnBackToMenu.setSize(btnBackToMenu.getWidth() * 1.5f, btnBackToMenu.getHeight() * 1.5f);
+		btnBackToMenu.addListener(new ClickListener() {
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+				GameController.setTutorialDone();
+				GameEngine.showLoading();
+				GameEngine.getInstance().openMenuGames();
+			}
+		});
+		
+		gameEndMessage.setPosition(CrystalClash.WIDTH / 2 - gameEndMessage.getWidth() / 2, CrystalClash.HEIGHT);
+		btnBackToMenu.setPosition(gameEndMessage.getX() + gameEndMessage.getWidth() / 2 - btnBackToMenu.getWidth() / 2,
+				gameEndMessage.getY() + gameEndMessage.getHeight() / 2 - btnBackToMenu.getHeight() / 2);
 	}
 
 	private void readTutorialScript() {
@@ -250,23 +271,24 @@ public class TutorialView extends GameView {
 	}
 
 	private void next() {
-		if (messageIndex < 32)
-			messageIndex++;
+		messageIndex++;
 
-		if (messageIndex + 1 < messages.size) {
-			lblMessage.setText(messages.get(messageIndex));
-		} else {
-			lblMessage.setText("");
-			blockButtons = true;
-			btnNext.setDisabled(true);
-			Timeline.createParallel()
-					.push(Tween.to(fireArcher, ActorAccessor.X, CrystalClash.SLOW_ANIMATION_SPEED).target(-fireArcher.getWidth()))
-					.push(Tween.to(balloon, ActorAccessor.Y, CrystalClash.SLOW_ANIMATION_SPEED).target(-balloon.getHeight()))
-					.push(Tween.to(lblMessage, ActorAccessor.Y, CrystalClash.SLOW_ANIMATION_SPEED).target(-balloon.getHeight()))
-					.push(Tween.to(btnNext, ActorAccessor.Y, CrystalClash.SLOW_ANIMATION_SPEED).target(-btnNext.getHeight()))
-					.start(tweenManager);
+		if (messageIndex <= 32) {
+			if (messageIndex + 1 < messages.size) {
+				lblMessage.setText(messages.get(messageIndex));
+			} else {
+				lblMessage.setText("");
+				blockButtons = true;
+				btnNext.setDisabled(true);
+				Timeline.createParallel()
+						.push(Tween.to(fireArcher, ActorAccessor.X, CrystalClash.SLOW_ANIMATION_SPEED).target(-fireArcher.getWidth()))
+						.push(Tween.to(balloon, ActorAccessor.Y, CrystalClash.SLOW_ANIMATION_SPEED).target(-balloon.getHeight()))
+						.push(Tween.to(lblMessage, ActorAccessor.Y, CrystalClash.SLOW_ANIMATION_SPEED).target(-balloon.getHeight()))
+						.push(Tween.to(btnNext, ActorAccessor.Y, CrystalClash.SLOW_ANIMATION_SPEED).target(-btnNext.getHeight()))
+						.start(tweenManager);
+			}
+			action();
 		}
-		action();
 	}
 
 	private void action() {
@@ -415,7 +437,6 @@ public class TutorialView extends GameView {
 	public boolean touchDown(float x, float y, int pointer, int button) {
 		Cell cell = world.cellAt(x, y);
 		if (cell != null) {
-
 			switch (messageIndex) {
 			case 10:
 				if (cell.hasState(Cell.ABLE_TO_MOVE)) {
@@ -556,11 +577,11 @@ public class TutorialView extends GameView {
 				world.getRender().setBlockButtons(true);
 				break;
 			case 26:
-				if (selectedUnit.equals(archer)) {
+				if (selectedUnit != null && selectedUnit.equals(archer)) {
 					archerAttacked = true;
 					archer.getRender().playSFX(SOUND.chose_attack);
 					world.getRender().deselectUnitInCell(world.cellAtByGrid(3, 3));
-				} else if (selectedUnit.equals(slayer)) {
+				} else if (selectedUnit != null && selectedUnit.equals(slayer)) {
 					slayerAttacked = true;
 					slayer.getRender().playSFX(SOUND.chose_attack);
 					world.getRender().deselectUnitInCell(world.cellAtByGrid(4, 4));
@@ -572,11 +593,11 @@ public class TutorialView extends GameView {
 				}
 				break;
 			case 32:
-				if (selectedUnit.equals(archer)) {
+				if (selectedUnit != null && selectedUnit.equals(archer)) {
 					archerAttacked = true;
 					archer.getRender().playSFX(SOUND.chose_attack);
 					world.getRender().deselectUnitInCell(world.cellAtByGrid(3, 3));
-				} else if (selectedUnit.equals(slayer)) {
+				} else if (selectedUnit != null && selectedUnit.equals(slayer)) {
 					slayerAttacked = true;
 					slayer.getRender().playSFX(SOUND.chose_attack);
 					world.getRender().deselectUnitInCell(world.cellAtByGrid(4, 4));
@@ -668,7 +689,10 @@ public class TutorialView extends GameView {
 		Timeline tutorialStuff = Timeline.createParallel()
 				.push(Tween.to(fireArcher, ActorAccessor.X, CrystalClash.ENTRANCE_ANIMATION_SPEED).target(-fireArcher.getWidth() * 2))
 				.push(Tween.to(balloon, ActorAccessor.Y, CrystalClash.ENTRANCE_ANIMATION_SPEED).target(-balloon.getWidth() * 2))
-				.push(Tween.to(btnNext, ActorAccessor.Y, CrystalClash.ENTRANCE_ANIMATION_SPEED).target(-balloon.getWidth() * 2));
+				.push(Tween.to(btnNext, ActorAccessor.Y, CrystalClash.ENTRANCE_ANIMATION_SPEED).target(-balloon.getWidth() * 2))
+				.push(Tween.to(txrBlackScreen, ActorAccessor.ALPHA, CrystalClash.SLOW_ANIMATION_SPEED).target(0))
+				.push(Tween.to(btnBackToMenu, ActorAccessor.Y, CrystalClash.NORMAL_ANIMATION_SPEED).target(CrystalClash.HEIGHT + gameEndMessage.getHeight()))
+				.push(Tween.to(gameEndMessage, ActorAccessor.Y, CrystalClash.NORMAL_ANIMATION_SPEED).target(CrystalClash.HEIGHT + gameEndMessage.getHeight()));
 
 		return t.push(tutorialStuff);
 	}
@@ -713,6 +737,7 @@ public class TutorialView extends GameView {
 				paths.removePath(slayer);
 				paths.removePath(archer);
 				world.getRender().setBlockButtons(true);
+				next();
 				playAnimation5();
 			}
 			break;
@@ -1158,29 +1183,12 @@ public class TutorialView extends GameView {
 					public void onEvent(int type, BaseTween<?> source) {
 						if (type == COMPLETE) {
 							AudioManager.playEndSound(GAME_END_SFX.victory);
-							Image gameEndMessage = new Image(ResourceHelper.getTexture("turn_animation/messages/banner_victory"));
-							Image txrBlackScreen = new Image(ResourceHelper.getTexture("menu/loading/background"));
-							TextButton btnBackToMenu = new TextButton(I18n.t("world_back_to_game"), ResourceHelper.getOuterSmallButtonStyle());
-							btnBackToMenu.setSize(btnBackToMenu.getWidth() * 1.5f, btnBackToMenu.getHeight() * 1.5f);
-							btnBackToMenu.addListener(new ClickListener() {
-								@Override
-								public void clicked(InputEvent event, float x, float y) {
-									GameController.setTutorialDone();
-									GameEngine.showLoading();
-									GameEngine.getInstance().openMenuGames();
-								}
-							});
-							
-							gameEndMessage.setPosition(CrystalClash.WIDTH / 2 - gameEndMessage.getWidth() / 2, CrystalClash.HEIGHT);
-							btnBackToMenu.setPosition(gameEndMessage.getX() + gameEndMessage.getWidth() / 2 - btnBackToMenu.getWidth() / 2,
-									gameEndMessage.getY() + gameEndMessage.getHeight() / 2 - btnBackToMenu.getHeight() / 2);
-
-							addActor(btnBackToMenu);
 							addActor(txrBlackScreen);
+							addActor(btnBackToMenu);
 							addActor(gameEndMessage);
-
-							Timeline.createSequence()
-									.beginParallel()
+							
+							GameEngine.start(world.getRender().pushHideGameMenuButtons(Timeline.createParallel()));
+							Timeline.createParallel()
 									.push(Tween.set(txrBlackScreen, ActorAccessor.ALPHA).target(0))
 									.push(Tween.to(txrBlackScreen, ActorAccessor.ALPHA, CrystalClash.SLOW_ANIMATION_SPEED).target(1))
 									.push(Tween.to(gameEndMessage, ActorAccessor.Y, CrystalClash.SLOW_ANIMATION_SPEED)
@@ -1188,7 +1196,6 @@ public class TutorialView extends GameView {
 									.push(Tween.to(btnBackToMenu, ActorAccessor.Y, CrystalClash.SLOW_ANIMATION_SPEED)
 											.target(CrystalClash.HEIGHT / 2 - btnBackToMenu.getHeight() - 150)
 											.ease(TweenEquations.easeOutBounce))
-									.end()
 									.start(tweenManager);
 						}
 					}

@@ -649,16 +649,14 @@ public class TurnAnimationsView extends GameView {
 			btnBackToMenu.setPosition(gameEndMessage.getX() + gameEndMessage.getWidth() / 2 - btnBackToMenu.getWidth() / 2,
 					gameEndMessage.getY() + gameEndMessage.getHeight() / 2 - btnBackToMenu.getHeight() / 2);
 
-			start(Timeline.createSequence()
-					.beginParallel()
+			start(Timeline.createParallel()
 					.push(Tween.set(txrBlackScreen, ActorAccessor.ALPHA).target(0))
 					.push(Tween.to(txrBlackScreen, ActorAccessor.ALPHA, CrystalClash.SLOW_ANIMATION_SPEED).target(1))
 					.push(Tween.to(gameEndMessage, ActorAccessor.Y, CrystalClash.SLOW_ANIMATION_SPEED)
 							.target(CrystalClash.HEIGHT / 2 - 120))
 					.push(Tween.to(btnBackToMenu, ActorAccessor.Y, CrystalClash.SLOW_ANIMATION_SPEED)
 							.target(CrystalClash.HEIGHT / 2 - btnBackToMenu.getHeight() - 150)
-							.ease(TweenEquations.easeOutBounce))
-					.end());
+							.ease(TweenEquations.easeOutBounce)));
 		} else {
 			showPanel();
 		}
@@ -796,11 +794,10 @@ public class TurnAnimationsView extends GameView {
 	@Override
 	public Timeline pushExitAnimation(Timeline t) {
 		if (world.gameEnded) {
-			t
-					.push(Tween.to(txrBlackScreen, ActorAccessor.ALPHA, CrystalClash.SLOW_ANIMATION_SPEED).target(0))
-					.push(Tween.to(btnBackToMenu, ActorAccessor.Y, CrystalClash.NORMAL_ANIMATION_SPEED).target(CrystalClash.HEIGHT))
-					.push(Tween.to(gameEndMessage, ActorAccessor.Y, CrystalClash.NORMAL_ANIMATION_SPEED).target(CrystalClash.HEIGHT))
-					.setCallback(new TweenCallback() {
+			t.push(Tween.to(txrBlackScreen, ActorAccessor.ALPHA, CrystalClash.SLOW_ANIMATION_SPEED).target(0))
+			.push(Tween.to(btnBackToMenu, ActorAccessor.Y, CrystalClash.NORMAL_ANIMATION_SPEED).target(CrystalClash.HEIGHT + gameEndMessage.getHeight()))
+			.push(Tween.to(gameEndMessage, ActorAccessor.Y, CrystalClash.NORMAL_ANIMATION_SPEED).target(CrystalClash.HEIGHT + gameEndMessage.getHeight()))
+			.setCallback(new TweenCallback() {
 						@Override
 						public void onEvent(int type, BaseTween<?> source) {
 							world.initNormalTurn();
