@@ -12,8 +12,6 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.ui.Button;
-import com.badlogic.gdx.scenes.scene2d.ui.Button.ButtonStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
@@ -43,9 +41,6 @@ import com.crystalclash.renders.attacks.AttackFactory;
 import com.crystalclash.renders.helpers.CellHelper;
 import com.crystalclash.renders.helpers.PathManager;
 import com.crystalclash.renders.helpers.ResourceHelper;
-import com.crystalclash.renders.helpers.ui.BaseBox.BoxButtons;
-import com.crystalclash.renders.helpers.ui.BoxCallback;
-import com.crystalclash.renders.helpers.ui.MessageBox;
 import com.crystalclash.util.I18n;
 
 public class TutorialView extends GameView {
@@ -58,8 +53,6 @@ public class TutorialView extends GameView {
 	private Image balloon;
 	private Label lblMessage;
 	private TextButton btnNext;
-	private Button btnSkip;
-	private Image imgBtnSkipBackground;
 
 	private Array<String> messages;
 	private int messageIndex;
@@ -87,6 +80,10 @@ public class TutorialView extends GameView {
 	private Image imgLifeIcon;
 	private Image imgDamageIcon;
 	private Image imgMobilityIcon;
+	
+	private Image gameEndMessage;
+	private Image txrBlackScreen;
+	private TextButton btnBackToMenu;
 
 	public TutorialView(WorldController world) {
 		super(world);
@@ -103,7 +100,6 @@ public class TutorialView extends GameView {
 		world.getRender().setBlockButtons(true);
 
 		btnNext.setDisabled(true);
-		btnSkip.setDisabled(true);
 		actionRingVisible = false;
 		blockButtons = true;
 
@@ -120,7 +116,6 @@ public class TutorialView extends GameView {
 		AudioManager.loadTutorialSFX();
 		TextureAtlas atlas = ResourceHelper.getTextureAtlas("in_game/options_bar.pack");
 		Skin skin = new Skin(atlas);
-
 		tweenManager = new TweenManager();
 
 		fireArcher = new Image(ResourceHelper.getTexture("tutorial/fire_archer"));
@@ -139,10 +134,11 @@ public class TutorialView extends GameView {
 		balloon.setPosition(160 + fireArcher.getWidth() * 0.45f, -balloon.getHeight());
 
 		lblMessage = new Label("", new LabelStyle(ResourceHelper.getNormalFont(), Color.BLACK));
-		lblMessage.setAlignment(Align.top | Align.left);
+		lblMessage.setAlignment(Align.center | Align.top);
+		lblMessage.setSize(600, 338);
 
 		btnNext = new TextButton("Next", ResourceHelper.getNextButtonStyle());
-		btnNext.setPosition(CrystalClash.WIDTH - btnNext.getWidth() - 20, -balloon.getHeight() - btnNext.getHeight());
+		btnNext.setPosition(CrystalClash.WIDTH - btnNext.getWidth() - 120, -balloon.getHeight() - btnNext.getHeight());
 		btnNext.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
@@ -150,77 +146,61 @@ public class TutorialView extends GameView {
 					next();
 			}
 		});
-		final BoxCallback confirmation = new BoxCallback() {
-			@Override
-			public void onEvent(int type, Object data) {
-				if (type == BoxCallback.YES) {
-					GameEngine.showLoading();
-					GameEngine.getInstance().openMenuGames();
-					GameController.setTutorialDone();
-				} else {
-					MessageBox.build().hide();
-				}
-			}
-		};
-
-		imgBtnSkipBackground = new Image(skin.getRegion("exit_hud"));
-		imgBtnSkipBackground.setPosition(CrystalClash.WIDTH, CrystalClash.HEIGHT - imgBtnSkipBackground.getHeight());
-		ButtonStyle skipStyle = new ButtonStyle(
-				skin.getDrawable("exit_button"),
-				skin.getDrawable("exit_button_pressed"), null);
-		btnSkip = new Button(skipStyle);
-		btnSkip.setPosition(CrystalClash.WIDTH, CrystalClash.HEIGHT - btnSkip.getHeight());
-		btnSkip.addListener(new ClickListener() {
-			@Override
-			public void clicked(InputEvent event, float x, float y) {
-				MessageBox msg = MessageBox.build();
-				if (messageIndex < messages.size / 2)
-					msg.setMessage("tutorial_leave_start", BoxButtons.Two);
-				if (messageIndex < messages.size - 8)
-					msg.setMessage("tutorial_leave_middle", BoxButtons.Two);
-				else
-					msg.setMessage("tutorial_leave_end", BoxButtons.Two);
-
-				msg.setCallback(confirmation)
-						.setHideOnAction(false)
-						.show();
-			}
-		});
 
 		addActor(fireArcher);
 		addActor(balloon);
 		addActor(lblMessage);
 		addActor(btnNext);
-		addActor(imgBtnSkipBackground);
-		addActor(btnSkip);
 
 		PathManager.load();
 
+		// Load icons hud
 		imgAttackIcon = new Image(skin.getRegion("action_attack_button"));
 		imgMoveIcon = new Image(skin.getRegion("action_run_button"));
 		imgDefendIcon = new Image(skin.getRegion("action_defensive_button"));
 		imgUndoIcon = new Image(skin.getRegion("action_cancel_button"));
 
+		// Position and scaling icons hud
 		imgAttackIcon.scale(-0.5f);
 		imgMoveIcon.scale(-0.5f);
 		imgDefendIcon.scale(-0.5f);
 		imgUndoIcon.scale(-0.5f);
-		imgAttackIcon.setPosition(740, 205);
-		imgMoveIcon.setPosition(900, 205);
-		imgDefendIcon.setPosition(740, 135);
-		imgUndoIcon.setPosition(900, 135);
+		imgAttackIcon.setPosition(755, 157);
+		imgMoveIcon.setPosition(905, 157);
+		imgDefendIcon.setPosition(755, 70);
+		imgUndoIcon.setPosition(905, 70);
 
+		// Load icons attack, life & speed
 		atlas = ResourceHelper.getTextureAtlas("in_game/unit_stats_popup/unit_stats_popup.pack");
 		imgLifeIcon = new Image(atlas.findRegion("icon_life"));
 		imgDamageIcon = new Image(atlas.findRegion("icon_attack"));
 		imgMobilityIcon = new Image(atlas.findRegion("icon_speed"));
 
-		imgDamageIcon.setPosition(740, 230);
-		imgLifeIcon.setPosition(900, 230);
-		imgMobilityIcon.setPosition(770, 175);
+		imgDamageIcon.setPosition(770, 205);
+		imgLifeIcon.setPosition(895, 205);
+		imgMobilityIcon.setPosition(830, 115);
 
 		entities = new Group();
 		addActor(entities);
+		
+		//Load End Game Stuff
+		gameEndMessage = new Image(ResourceHelper.getTexture("turn_animation/messages/banner_victory"));
+		txrBlackScreen = new Image(ResourceHelper.getTexture("menu/loading/background"));
+		txrBlackScreen.setColor(txrBlackScreen.getColor().r, txrBlackScreen.getColor().g, txrBlackScreen.getColor().b, 0);
+		btnBackToMenu = new TextButton(I18n.t("world_back_to_game"), ResourceHelper.getOuterSmallButtonStyle());
+		btnBackToMenu.setSize(btnBackToMenu.getWidth() * 1.5f, btnBackToMenu.getHeight() * 1.5f);
+		btnBackToMenu.addListener(new ClickListener() {
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+				GameController.setTutorialDone();
+				GameEngine.showLoading();
+				GameEngine.getInstance().openMenuGames();
+			}
+		});
+		
+		gameEndMessage.setPosition(CrystalClash.WIDTH / 2 - gameEndMessage.getWidth() / 2, CrystalClash.HEIGHT);
+		btnBackToMenu.setPosition(gameEndMessage.getX() + gameEndMessage.getWidth() / 2 - btnBackToMenu.getWidth() / 2,
+				gameEndMessage.getY() + gameEndMessage.getHeight() / 2 - btnBackToMenu.getHeight() / 2);
 	}
 
 	private void readTutorialScript() {
@@ -283,31 +263,33 @@ public class TutorialView extends GameView {
 
 		slayerMove = new MoveUnitAction();
 		slayerMove.origin = world.cellAt(300, 700);
+
 		slayerMove.moves.add(world.cellAtByGrid(1, 3));
-		slayerMove.moves.add(world.cellAtByGrid(1, 4));
-		slayerMove.moves.add(world.cellAtByGrid(2, 4));
+		slayerMove.moves.add(world.cellAtByGrid(2, 3));
+		slayerMove.moves.add(world.cellAtByGrid(3, 3));
 		slayerMove.moves.add(world.cellAtByGrid(3, 4));
 		slayerMove.moves.add(world.cellAtByGrid(4, 4));
 	}
 
 	private void next() {
-		if (messageIndex < 32)
-			messageIndex++;
+		messageIndex++;
 
-		if (messageIndex + 1 < messages.size) {
-			lblMessage.setText(messages.get(messageIndex));
-		} else {
-			lblMessage.setText("");
-			blockButtons = true;
-			btnNext.setDisabled(true);
-			Timeline.createParallel()
-					.push(Tween.to(fireArcher, ActorAccessor.X, CrystalClash.SLOW_ANIMATION_SPEED).target(-fireArcher.getWidth()))
-					.push(Tween.to(balloon, ActorAccessor.Y, CrystalClash.SLOW_ANIMATION_SPEED).target(-balloon.getHeight()))
-					.push(Tween.to(lblMessage, ActorAccessor.Y, CrystalClash.SLOW_ANIMATION_SPEED).target(-balloon.getHeight()))
-					.push(Tween.to(btnNext, ActorAccessor.Y, CrystalClash.SLOW_ANIMATION_SPEED).target(-btnNext.getHeight()))
-					.start(tweenManager);
+		if (messageIndex <= 32) {
+			if (messageIndex + 1 < messages.size) {
+				lblMessage.setText(messages.get(messageIndex));
+			} else {
+				lblMessage.setText("");
+				blockButtons = true;
+				btnNext.setDisabled(true);
+				Timeline.createParallel()
+						.push(Tween.to(fireArcher, ActorAccessor.X, CrystalClash.SLOW_ANIMATION_SPEED).target(-fireArcher.getWidth()))
+						.push(Tween.to(balloon, ActorAccessor.Y, CrystalClash.SLOW_ANIMATION_SPEED).target(-balloon.getHeight()))
+						.push(Tween.to(lblMessage, ActorAccessor.Y, CrystalClash.SLOW_ANIMATION_SPEED).target(-balloon.getHeight()))
+						.push(Tween.to(btnNext, ActorAccessor.Y, CrystalClash.SLOW_ANIMATION_SPEED).target(-btnNext.getHeight()))
+						.start(tweenManager);
+			}
+			action();
 		}
-		action();
 	}
 
 	private void action() {
@@ -360,8 +342,9 @@ public class TutorialView extends GameView {
 			break;
 		case 9:
 			world.getRender().moveArrow(695, CrystalClash.HEIGHT - 230);
-			world.cellAtByGrid(1, 4).addState(Cell.ABLE_TO_MOVE);
-			world.cellAtByGrid(2, 4).addState(Cell.ABLE_TO_MOVE);
+			world.cellAtByGrid(1, 3).addState(Cell.ABLE_TO_MOVE);
+			world.cellAtByGrid(2, 3).addState(Cell.ABLE_TO_MOVE);
+			world.cellAtByGrid(3, 3).addState(Cell.ABLE_TO_MOVE);
 			world.cellAtByGrid(3, 4).addState(Cell.ABLE_TO_MOVE);
 			world.cellAtByGrid(4, 4).addState(Cell.ABLE_TO_MOVE);
 			showNext();
@@ -376,7 +359,7 @@ public class TutorialView extends GameView {
 			break;
 		case 14:
 			world.getRender().setBlockButtons(false);
-			world.getRender().moveHand(0, 125);
+			world.getRender().moveHand(25, 185);
 			hideNext();
 			break;
 		case 15:
@@ -404,7 +387,7 @@ public class TutorialView extends GameView {
 			break;
 		case 24:
 			world.getRender().setBlockButtons(false);
-			world.getRender().moveHand(0, 125);
+			world.getRender().moveHand(25, 185);
 			hideNext();
 			break;
 		case 25:
@@ -444,13 +427,6 @@ public class TutorialView extends GameView {
 		Timeline.createSequence()
 				.push(Tween.to(btnNext, ActorAccessor.Y, CrystalClash.NORMAL_ANIMATION_SPEED)
 						.target(20)).start(tweenManager);
-
-		btnNext.rotate(-10f);
-		Timeline.createParallel()
-				.push(Tween.to(btnNext, ActorAccessor.ROTATION, CrystalClash.SLOW_ANIMATION_SPEED)
-						.target(20f)
-						.repeatYoyo(5, 0))
-				.repeat(-1, 2f).start(tweenManager);
 	}
 
 	@Override
@@ -462,129 +438,129 @@ public class TutorialView extends GameView {
 	public boolean touchDown(float x, float y, int pointer, int button) {
 		Cell cell = world.cellAt(x, y);
 		if (cell != null) {
-			Unit u = cell.getUnit();
-			if (u != null) {
-				if (!u.isEnemy()) {
-					switch (messageIndex) {
-					case 3:
-						if (!actionRingVisible) {
-							actionRingVisible = true;
-							world.getRender().selectUnitInCell(cell);
-							world.getRender().hideHand();
-							next();
-						}
-						break;
-					case 8:
-						if (!actionRingVisible) {
-							actionRingVisible = true;
-							world.getRender().selectUnitInCell(cell);
-							world.getRender().moveHand(370, CrystalClash.HEIGHT - 240);
-						}
-						break;
-					case 18:
-						if (u.equals(slayer)) {
-							if (!actionRingVisible) {
-								actionRingVisible = true;
-								world.getRender().selectUnitInCell(cell);
-								world.getRender().moveHand(540, CrystalClash.HEIGHT / 2 + 110);
-							}
-						}
-						break;
-					case 20:
-						if (u.equals(archer)) {
-							if (!actionRingVisible) {
-								actionRingVisible = true;
-								world.getRender().selectUnitInCell(cell);
-								world.getRender().moveHand(375, CrystalClash.HEIGHT / 2 + 185);
-							}
-						}
-						break;
-					case 26:
-					case 32:
-						boolean canShow = (u.equals(archer) && !archerAttacked) || (u.equals(slayer) && !slayerAttacked);
-						if (!actionInProgress && canShow && !u.equals(selectedUnit)) {
-							selectedUnit = u;
-							if (!actionRingVisible) {
-								actionRingVisible = true;
-								world.getRender().selectUnitInCell(cell);
-							}
-						}
-						break;
-					}
-				} else {
-					if (cell.hasState(Cell.ABLE_TO_ATTACK)) {
-						switch (messageIndex) {
-						case 21:
-							cell.removeState(Cell.ABLE_TO_ATTACK);
+			switch (messageIndex) {
+			case 10:
+				if (cell.hasState(Cell.ABLE_TO_MOVE)) {
+					if (!cell.hasState(Cell.MOVE_TARGET)) {
+						cell.addState(Cell.MOVE_TARGET);
+						PathRender p = paths.getOrCreatePath(slayer, PathRender.TYPE.MOVE);
 
-							PathRender p = paths.createOrResetPath(archer, PathRender.TYPE.ATTACK);
-							PathManager.addArc(p,
-									world.cellAtByGrid(3, 3).getCenterX(),
-									world.cellAtByGrid(3, 3).getCenterY(),
-									cell.getCenterX(),
-									cell.getCenterY(),
+						for (; slayerMove.moves.get(movePathIndex) != cell; movePathIndex++) {
+							PathManager.addLine(p,
+									slayerMove.moves.get(movePathIndex).getCenterX(),
+									slayerMove.moves.get(movePathIndex).getCenterY(),
+									slayerMove.moves.get(movePathIndex + 1).getCenterX(),
+									slayerMove.moves.get(movePathIndex + 1).getCenterY(),
 									PathRender.DOT_CENTER_X,
 									PathRender.DOT_CENTER_Y);
+						}
 
-							world.getRender().setBlockButtons(false);
+						if (movePathIndex == slayerMove.moves.size - 1) {
+							world.getRender().hideArrow();
 							next();
+						}
+					}
+				}
+				break;
+			default: {
+				Unit u = cell.getUnit();
+				if (u != null) {
+					if (!u.isEnemy()) {
+						switch (messageIndex) {
+						case 3:
+							if (!actionRingVisible) {
+								actionRingVisible = true;
+								world.getRender().selectUnitInCell(cell);
+								world.getRender().hideHand();
+								next();
+							}
+							break;
+						case 8:
+							if (!actionRingVisible) {
+								actionRingVisible = true;
+								world.getRender().selectUnitInCell(cell);
+								world.getRender().moveHand(370, CrystalClash.HEIGHT - 240);
+							}
+							break;
+						case 18:
+							if (u.equals(slayer)) {
+								if (!actionRingVisible) {
+									actionRingVisible = true;
+									world.getRender().selectUnitInCell(cell);
+									world.getRender().moveHand(540, CrystalClash.HEIGHT / 2 + 110);
+								}
+							}
+							break;
+						case 20:
+							if (u.equals(archer)) {
+								if (!actionRingVisible) {
+									actionRingVisible = true;
+									world.getRender().selectUnitInCell(cell);
+									world.getRender().moveHand(375, CrystalClash.HEIGHT / 2 + 185);
+								}
+							}
 							break;
 						case 26:
 						case 32:
-							cell.removeState(Cell.ABLE_TO_ATTACK);
+							boolean canShow = (u.equals(archer) && !archerAttacked) || (u.equals(slayer) && !slayerAttacked);
+							if (!actionInProgress && canShow && !u.equals(selectedUnit)) {
+								selectedUnit = u;
+								if (!actionRingVisible) {
+									actionRingVisible = true;
+									world.getRender().selectUnitInCell(cell);
+								}
+							}
+							break;
+						}
+					} else {
+						if (cell.hasState(Cell.ABLE_TO_ATTACK)) {
+							switch (messageIndex) {
+							case 21:
+								cell.removeState(Cell.ABLE_TO_ATTACK);
 
-							if (selectedUnit.equals(archer) && !archerAttacked) {
-								PathRender archerA = paths.createOrResetPath(archer, PathRender.TYPE.ATTACK);
-								PathManager.addArc(archerA,
+								PathRender p = paths.createOrResetPath(archer, PathRender.TYPE.ATTACK);
+								PathManager.addArc(p,
 										world.cellAtByGrid(3, 3).getCenterX(),
 										world.cellAtByGrid(3, 3).getCenterY(),
 										cell.getCenterX(),
 										cell.getCenterY(),
 										PathRender.DOT_CENTER_X,
 										PathRender.DOT_CENTER_Y);
-							} else if (selectedUnit.equals(slayer) && !slayerAttacked) {
-								PathRender slayerA = paths.createOrResetPath(slayer, PathRender.TYPE.ATTACK);
-								PathManager.addLine(slayerA,
-										world.cellAtByGrid(4, 4).getCenterX(),
-										world.cellAtByGrid(4, 4).getCenterY(),
-										cell.getCenterX(),
-										cell.getCenterY(),
-										PathRender.DOT_CENTER_X,
-										PathRender.DOT_CENTER_Y);
-							}
 
-							world.getRender().setBlockButtons(false);
-							break;
-						}
-					}
-				}
-			} else {
-				if (cell.hasState(Cell.ABLE_TO_MOVE)) {
-					switch (messageIndex) {
-					case 10:
-						if (!cell.hasState(Cell.MOVE_TARGET)) {
-							cell.addState(Cell.MOVE_TARGET);
-							PathRender p = paths.getOrCreatePath(slayer, PathRender.TYPE.MOVE);
-
-							for (int i = movePathIndex; i < cell.getGridPosition().getX(); i++) {
-								PathManager.addLine(p,
-										slayerMove.moves.get(i).getCenterX(),
-										slayerMove.moves.get(i).getCenterY(),
-										slayerMove.moves.get(i + 1).getCenterX(),
-										slayerMove.moves.get(i + 1).getCenterY(),
-										PathRender.DOT_CENTER_X,
-										PathRender.DOT_CENTER_Y);
-							}
-							movePathIndex = cell.getGridPosition().getX() - 1;
-
-							if (movePathIndex == 3) {
-								world.getRender().hideArrow();
+								world.getRender().setBlockButtons(false);
 								next();
+								break;
+							case 26:
+							case 32:
+								cell.removeState(Cell.ABLE_TO_ATTACK);
+
+								if (selectedUnit.equals(archer) && !archerAttacked) {
+									PathRender archerA = paths.createOrResetPath(archer, PathRender.TYPE.ATTACK);
+									PathManager.addArc(archerA,
+											world.cellAtByGrid(3, 3).getCenterX(),
+											world.cellAtByGrid(3, 3).getCenterY(),
+											cell.getCenterX(),
+											cell.getCenterY(),
+											PathRender.DOT_CENTER_X,
+											PathRender.DOT_CENTER_Y);
+								} else if (selectedUnit.equals(slayer) && !slayerAttacked) {
+									PathRender slayerA = paths.createOrResetPath(slayer, PathRender.TYPE.ATTACK);
+									PathManager.addLine(slayerA,
+											world.cellAtByGrid(4, 4).getCenterX(),
+											world.cellAtByGrid(4, 4).getCenterY(),
+											cell.getCenterX(),
+											cell.getCenterY(),
+											PathRender.DOT_CENTER_X,
+											PathRender.DOT_CENTER_Y);
+								}
+
+								world.getRender().setBlockButtons(false);
+								break;
 							}
 						}
-						break;
 					}
 				}
+			}
 			}
 		} else {
 			switch (messageIndex) {
@@ -602,11 +578,11 @@ public class TutorialView extends GameView {
 				world.getRender().setBlockButtons(true);
 				break;
 			case 26:
-				if (selectedUnit.equals(archer)) {
+				if (selectedUnit != null && selectedUnit.equals(archer)) {
 					archerAttacked = true;
 					archer.getRender().playSFX(SOUND.chose_attack);
 					world.getRender().deselectUnitInCell(world.cellAtByGrid(3, 3));
-				} else if (selectedUnit.equals(slayer)) {
+				} else if (selectedUnit != null && selectedUnit.equals(slayer)) {
 					slayerAttacked = true;
 					slayer.getRender().playSFX(SOUND.chose_attack);
 					world.getRender().deselectUnitInCell(world.cellAtByGrid(4, 4));
@@ -618,11 +594,11 @@ public class TutorialView extends GameView {
 				}
 				break;
 			case 32:
-				if (selectedUnit.equals(archer)) {
+				if (selectedUnit != null && selectedUnit.equals(archer)) {
 					archerAttacked = true;
 					archer.getRender().playSFX(SOUND.chose_attack);
 					world.getRender().deselectUnitInCell(world.cellAtByGrid(3, 3));
-				} else if (selectedUnit.equals(slayer)) {
+				} else if (selectedUnit != null && selectedUnit.equals(slayer)) {
 					slayerAttacked = true;
 					slayer.getRender().playSFX(SOUND.chose_attack);
 					world.getRender().deselectUnitInCell(world.cellAtByGrid(4, 4));
@@ -687,24 +663,20 @@ public class TutorialView extends GameView {
 				.push(Tween.to(fireArcher, ActorAccessor.X, CrystalClash.ENTRANCE_ANIMATION_SPEED).target(200))
 				.push(Tween.to(balloon, ActorAccessor.Y, CrystalClash.ENTRANCE_ANIMATION_SPEED).target(0))
 				.push(Tween.to(btnNext, ActorAccessor.Y, CrystalClash.ENTRANCE_ANIMATION_SPEED).target(20))
-				.push(Tween.to(imgBtnSkipBackground, ActorAccessor.X, CrystalClash.ENTRANCE_ANIMATION_SPEED).target(
-						CrystalClash.WIDTH - imgBtnSkipBackground.getWidth()))
-				.push(Tween.to(btnSkip, ActorAccessor.X, CrystalClash.ENTRANCE_ANIMATION_SPEED).target(CrystalClash.WIDTH - btnSkip.getWidth()))
 				.setCallbackTriggers(TweenCallback.COMPLETE)
 				.setCallback(new TweenCallback() {
 					@Override
 					public void onEvent(int type, BaseTween<?> source) {
 						if (type == COMPLETE) {
-							lblMessage.setPosition(balloon.getX() + 145, balloon.getTop() - 100);
+							lblMessage.setPosition(balloon.getX(), balloon.getY());
 							lblMessage.setText(messages.get(messageIndex));
 
 							btnNext.setDisabled(false);
-							btnSkip.setDisabled(false);
 							blockButtons = false;
 						}
 					}
 				});
-		
+
 		return t.push(moveslayer).push(moveTank).push(tutorialStuff);
 	}
 
@@ -714,14 +686,15 @@ public class TutorialView extends GameView {
 		world.getRender().hideArrow();
 		world.getRender().hideActionsRing();
 		world.getRender().hideStatsPopup();
-		
+
 		Timeline tutorialStuff = Timeline.createParallel()
 				.push(Tween.to(fireArcher, ActorAccessor.X, CrystalClash.ENTRANCE_ANIMATION_SPEED).target(-fireArcher.getWidth() * 2))
 				.push(Tween.to(balloon, ActorAccessor.Y, CrystalClash.ENTRANCE_ANIMATION_SPEED).target(-balloon.getWidth() * 2))
 				.push(Tween.to(btnNext, ActorAccessor.Y, CrystalClash.ENTRANCE_ANIMATION_SPEED).target(-balloon.getWidth() * 2))
-				.push(Tween.to(imgBtnSkipBackground, ActorAccessor.X, CrystalClash.ENTRANCE_ANIMATION_SPEED).target(CrystalClash.WIDTH))
-				.push(Tween.to(btnSkip, ActorAccessor.X, CrystalClash.ENTRANCE_ANIMATION_SPEED).target(CrystalClash.WIDTH));
-		
+				.push(Tween.to(txrBlackScreen, ActorAccessor.ALPHA, CrystalClash.SLOW_ANIMATION_SPEED).target(0))
+				.push(Tween.to(btnBackToMenu, ActorAccessor.Y, CrystalClash.NORMAL_ANIMATION_SPEED).target(CrystalClash.HEIGHT + gameEndMessage.getHeight()))
+				.push(Tween.to(gameEndMessage, ActorAccessor.Y, CrystalClash.NORMAL_ANIMATION_SPEED).target(CrystalClash.HEIGHT + gameEndMessage.getHeight()));
+
 		return t.push(tutorialStuff);
 	}
 
@@ -736,14 +709,12 @@ public class TutorialView extends GameView {
 		switch (messageIndex) {
 		case 14:
 			world.getRender().hideHand();
-			world.cellAtByGrid(1, 4).removeState(Cell.ABLE_TO_MOVE);
-			world.cellAtByGrid(2, 4).removeState(Cell.ABLE_TO_MOVE);
-			world.cellAtByGrid(3, 4).removeState(Cell.ABLE_TO_MOVE);
-			world.cellAtByGrid(4, 4).removeState(Cell.ABLE_TO_MOVE);
-			world.cellAtByGrid(1, 4).removeState(Cell.MOVE_TARGET);
-			world.cellAtByGrid(2, 4).removeState(Cell.MOVE_TARGET);
-			world.cellAtByGrid(3, 4).removeState(Cell.MOVE_TARGET);
-			world.cellAtByGrid(4, 4).removeState(Cell.MOVE_TARGET);
+
+			world.cellAtByGrid(1, 3).removeState(Cell.ABLE_TO_MOVE | Cell.MOVE_TARGET);
+			world.cellAtByGrid(2, 3).removeState(Cell.ABLE_TO_MOVE | Cell.MOVE_TARGET);
+			world.cellAtByGrid(3, 3).removeState(Cell.ABLE_TO_MOVE | Cell.MOVE_TARGET);
+			world.cellAtByGrid(3, 4).removeState(Cell.ABLE_TO_MOVE | Cell.MOVE_TARGET);
+			world.cellAtByGrid(4, 4).removeState(Cell.ABLE_TO_MOVE | Cell.MOVE_TARGET);
 			paths.removePath(slayer);
 			playAnimation1();
 			world.getRender().setBlockButtons(true);
@@ -767,6 +738,7 @@ public class TutorialView extends GameView {
 				paths.removePath(slayer);
 				paths.removePath(archer);
 				world.getRender().setBlockButtons(true);
+				next();
 				playAnimation5();
 			}
 			break;
@@ -843,14 +815,14 @@ public class TutorialView extends GameView {
 		Timeline slayerM = Timeline.createSequence()
 				.beginParallel()
 				.push(Tween.to(slayer, UnitAccessor.X, CrystalClash.WALK_ANIMATION_SPEED)
-						.target(CellHelper.getUnitX(world.cellAtByGrid(1, 4))).ease(TweenEquations.easeNone))
+						.target(CellHelper.getUnitX(world.cellAtByGrid(2, 3))).ease(TweenEquations.easeNone))
 				.push(Tween.to(slayer, UnitAccessor.Y, CrystalClash.WALK_ANIMATION_SPEED)
-						.target(CellHelper.getUnitY(world.cellAtByGrid(1, 4))).ease(TweenEquations.easeNone))
+						.target(CellHelper.getUnitY(world.cellAtByGrid(2, 3))).ease(TweenEquations.easeNone))
 				.end().beginParallel()
 				.push(Tween.to(slayer, UnitAccessor.X, CrystalClash.WALK_ANIMATION_SPEED)
-						.target(CellHelper.getUnitX(world.cellAtByGrid(2, 4))).ease(TweenEquations.easeNone))
+						.target(CellHelper.getUnitX(world.cellAtByGrid(3, 3))).ease(TweenEquations.easeNone))
 				.push(Tween.to(slayer, UnitAccessor.Y, CrystalClash.WALK_ANIMATION_SPEED)
-						.target(CellHelper.getUnitY(world.cellAtByGrid(2, 4))).ease(TweenEquations.easeNone))
+						.target(CellHelper.getUnitY(world.cellAtByGrid(3, 3))).ease(TweenEquations.easeNone))
 				.end().beginParallel()
 				.push(Tween.to(slayer, UnitAccessor.X, CrystalClash.WALK_ANIMATION_SPEED)
 						.target(CellHelper.getUnitX(world.cellAtByGrid(3, 4))).ease(TweenEquations.easeNone))
@@ -1212,34 +1184,19 @@ public class TutorialView extends GameView {
 					public void onEvent(int type, BaseTween<?> source) {
 						if (type == COMPLETE) {
 							AudioManager.playEndSound(GAME_END_SFX.victory);
-							Image endGameMessage = new Image(ResourceHelper.getTexture("turn_animation/messages/banner_victory"));
-							TextButton btnBackToMenu = new TextButton("Back to menu", ResourceHelper.getButtonStyle());
-							btnBackToMenu.addListener(new ClickListener() {
-								@Override
-								public void clicked(InputEvent event, float x, float y) {
-									GameController.setTutorialDone();
-									GameEngine.showLoading();
-									GameEngine.getInstance().openMenuGames();
-								}
-							});
-							endGameMessage.setPosition(CrystalClash.WIDTH / 2 - endGameMessage.getWidth() / 2,
-									CrystalClash.HEIGHT);
-							btnBackToMenu.setPosition(endGameMessage.getX() + endGameMessage.getWidth() / 2 - btnBackToMenu.getWidth() / 2,
-									endGameMessage.getY() + endGameMessage.getHeight() / 2 - btnBackToMenu.getHeight() / 2);
-
+							addActor(txrBlackScreen);
 							addActor(btnBackToMenu);
-							addActor(endGameMessage);
-
-							Timeline.createSequence()
-									.beginParallel()
-									.push(Tween.to(endGameMessage, ActorAccessor.Y, CrystalClash.SLOW_ANIMATION_SPEED)
-											.target(CrystalClash.HEIGHT / 2 - endGameMessage.getHeight() / 2))
+							addActor(gameEndMessage);
+							
+							GameEngine.start(world.getRender().pushHideGameMenuButtons(Timeline.createParallel()));
+							Timeline.createParallel()
+									.push(Tween.to(txrBlackScreen, ActorAccessor.ALPHA, CrystalClash.SLOW_ANIMATION_SPEED).target(1))
+									.push(Tween.to(gameEndMessage, ActorAccessor.Y, CrystalClash.SLOW_ANIMATION_SPEED)
+											.target(CrystalClash.HEIGHT / 2 - 120))
 									.push(Tween.to(btnBackToMenu, ActorAccessor.Y, CrystalClash.SLOW_ANIMATION_SPEED)
-											.target(CrystalClash.HEIGHT / 2 - btnBackToMenu.getHeight() / 2))
-									.end()
-									.push(Tween.to(btnBackToMenu, ActorAccessor.Y, CrystalClash.SLOW_ANIMATION_SPEED)
-											.target(CrystalClash.HEIGHT / 2 - endGameMessage.getHeight() / 2 - btnBackToMenu.getHeight())
-											.ease(TweenEquations.easeOutBounce)).start(tweenManager);
+											.target(CrystalClash.HEIGHT / 2 - btnBackToMenu.getHeight() - 150)
+											.ease(TweenEquations.easeOutBounce))
+									.start(tweenManager);
 						}
 					}
 				}).start(tweenManager);
@@ -1278,5 +1235,26 @@ public class TutorialView extends GameView {
 	public void dispose() {
 		// TODO Auto-generated method stub
 
+	}
+
+	@Override
+	public void onExit() {
+		GameController.setTutorialDone();
+	}
+
+	@Override
+	public String getExitMessage() {
+		if (messageIndex < messages.size / 2)
+			return "tutorial_leave_start";
+		if (messageIndex < messages.size - 8)
+			return "tutorial_leave_middle";
+		else
+			return "tutorial_leave_end";
+
+	}
+
+	@Override
+	public boolean getShowSurrenderOption() {
+		return false;
 	}
 }

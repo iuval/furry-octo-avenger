@@ -204,3 +204,6 @@ pruebas.CrystalClash.GwtDefinition
 /CrystalClash/CrystalClash-android/assets/data/Images/Menu/Loading/Thumbs.db
 
 Thumbs.db
+
+.gwt-log
+R.java

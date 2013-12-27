@@ -40,6 +40,7 @@ import com.crystalclash.renders.UnitRender.STATE;
 import com.crystalclash.renders.attacks.AttackFactory;
 import com.crystalclash.renders.helpers.CellHelper;
 import com.crystalclash.renders.helpers.ResourceHelper;
+import com.crystalclash.util.I18n;
 
 public class TurnAnimationsView extends GameView {
 
@@ -127,7 +128,7 @@ public class TurnAnimationsView extends GameView {
 		defeatTexture = ResourceHelper.getTexture("turn_animation/messages/banner_defeat");
 		drawTexture = ResourceHelper.getTexture("turn_animation/messages/banner_draw");
 
-		btnBackToMenu = new TextButton("Back to menu", ResourceHelper.getOuterSmallButtonStyle());
+		btnBackToMenu = new TextButton(I18n.t("world_back_to_game"), ResourceHelper.getOuterSmallButtonStyle());
 		btnBackToMenu.setSize(btnBackToMenu.getWidth() * 1.5f, btnBackToMenu.getHeight() * 1.5f);
 		btnBackToMenu.addListener(new ClickListener() {
 			@Override
@@ -639,6 +640,7 @@ public class TurnAnimationsView extends GameView {
 		if (world.gameEnded) {
 			grpPanel.remove();
 			txrBlackScreen = new Image(ResourceHelper.getTexture("menu/loading/background"));
+			txrBlackScreen.setColor(txrBlackScreen.getColor().r, txrBlackScreen.getColor().g, txrBlackScreen.getColor().b, 0);
 
 			addActor(txrBlackScreen);
 			addActor(btnBackToMenu);
@@ -648,16 +650,13 @@ public class TurnAnimationsView extends GameView {
 			btnBackToMenu.setPosition(gameEndMessage.getX() + gameEndMessage.getWidth() / 2 - btnBackToMenu.getWidth() / 2,
 					gameEndMessage.getY() + gameEndMessage.getHeight() / 2 - btnBackToMenu.getHeight() / 2);
 
-			start(Timeline.createSequence()
-					.beginParallel()
-					.push(Tween.set(txrBlackScreen, ActorAccessor.ALPHA).target(0))
+			start(Timeline.createParallel()
 					.push(Tween.to(txrBlackScreen, ActorAccessor.ALPHA, CrystalClash.SLOW_ANIMATION_SPEED).target(1))
 					.push(Tween.to(gameEndMessage, ActorAccessor.Y, CrystalClash.SLOW_ANIMATION_SPEED)
 							.target(CrystalClash.HEIGHT / 2 - 120))
 					.push(Tween.to(btnBackToMenu, ActorAccessor.Y, CrystalClash.SLOW_ANIMATION_SPEED)
 							.target(CrystalClash.HEIGHT / 2 - btnBackToMenu.getHeight() - 150)
-							.ease(TweenEquations.easeOutBounce))
-					.end());
+							.ease(TweenEquations.easeOutBounce)));
 		} else {
 			showPanel();
 		}
@@ -795,11 +794,10 @@ public class TurnAnimationsView extends GameView {
 	@Override
 	public Timeline pushExitAnimation(Timeline t) {
 		if (world.gameEnded) {
-			t
-					.push(Tween.to(txrBlackScreen, ActorAccessor.ALPHA, CrystalClash.SLOW_ANIMATION_SPEED).target(0))
-					.push(Tween.to(btnBackToMenu, ActorAccessor.Y, CrystalClash.NORMAL_ANIMATION_SPEED).target(CrystalClash.HEIGHT))
-					.push(Tween.to(gameEndMessage, ActorAccessor.Y, CrystalClash.NORMAL_ANIMATION_SPEED).target(CrystalClash.HEIGHT))
-					.setCallback(new TweenCallback() {
+			t.push(Tween.to(txrBlackScreen, ActorAccessor.ALPHA, CrystalClash.SLOW_ANIMATION_SPEED).target(0))
+			.push(Tween.to(btnBackToMenu, ActorAccessor.Y, CrystalClash.NORMAL_ANIMATION_SPEED).target(CrystalClash.HEIGHT + gameEndMessage.getHeight()))
+			.push(Tween.to(gameEndMessage, ActorAccessor.Y, CrystalClash.NORMAL_ANIMATION_SPEED).target(CrystalClash.HEIGHT + gameEndMessage.getHeight()))
+			.setCallback(new TweenCallback() {
 						@Override
 						public void onEvent(int type, BaseTween<?> source) {
 							world.initNormalTurn();
