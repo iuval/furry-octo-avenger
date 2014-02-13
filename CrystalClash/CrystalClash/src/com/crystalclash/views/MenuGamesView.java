@@ -473,7 +473,7 @@ public class MenuGamesView extends InputView {
 		btnViewStory.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
-
+				GameEngine.getInstance().viewStory();
 			}
 		});
 		grpStory.addActor(btnViewStory);
