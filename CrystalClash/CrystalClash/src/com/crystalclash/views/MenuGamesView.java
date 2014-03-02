@@ -39,6 +39,7 @@ import com.crystalclash.renders.helpers.ui.BaseBox.BoxButtons;
 import com.crystalclash.renders.helpers.ui.BoxCallback;
 import com.crystalclash.renders.helpers.ui.GameListItem;
 import com.crystalclash.renders.helpers.ui.GamesLoadCallback;
+import com.crystalclash.renders.helpers.ui.InformationList;
 import com.crystalclash.renders.helpers.ui.MessageBox;
 import com.crystalclash.renders.helpers.ui.UpdateProfile;
 import com.crystalclash.util.I18n;
@@ -98,6 +99,7 @@ public class MenuGamesView extends InputView {
 	private boolean showRelease = false;
 	private float pullDistance = 0;
 	private float releaseDistance = 0;
+
 
 	public MenuGamesView(MenuGames menu) {
 		this.controller = menu;
@@ -253,6 +255,7 @@ public class MenuGamesView extends InputView {
 
 		skin = new Skin();
 		skin.add("small_font", ResourceHelper.getSmallFont());
+		skin.add("normal_font", ResourceHelper.getNormalFont());
 		skin.add("big_font", ResourceHelper.getBigFont());
 		skin.add("play_up", ResourceHelper.getTexture("menu/games_list/flag_green"));
 		skin.add("wait_up", ResourceHelper.getTexture("menu/games_list/flag_red"));
@@ -414,6 +417,20 @@ public class MenuGamesView extends InputView {
 		TextButtonStyle btnStyle = new TextButtonStyle();
 		btnStyle.font = skin.getFont("big_font");
 
+		Image info = new Image(ResourceHelper.getTexture("menu/games_list/information"));
+		info.setPosition(725, 215);
+		info.setSize(50, 50);
+		grpProfile.addActor(info);
+		info.addListener(new ClickListener() {
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+				InformationList information = new InformationList(skin);
+				BaseBox box = new BaseBox(information);
+				box.oneButtonsLayout("Back");
+				box.show();
+			}
+		});
+		
 		// New Random Group
 		grpNewRandom = new Group();
 		Image imgNewRandom = new Image(ResourceHelper.getTexture("menu/games_list/new_battle_stack"));

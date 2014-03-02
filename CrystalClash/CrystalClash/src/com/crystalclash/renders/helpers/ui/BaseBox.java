@@ -104,8 +104,8 @@ public class BaseBox extends AnimatedGroup {
 
 		btnNo.remove();
 
-		widget.setSize(getWidth() - 100, getHeight() - 150);
-		widget.setPosition(50, 100);
+		widget.setSize(getWidth() - 70, getHeight() - 200);
+		widget.setPosition(35, 150);
 		return this;
 	}
 
