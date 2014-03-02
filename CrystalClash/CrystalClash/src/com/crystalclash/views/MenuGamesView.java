@@ -75,9 +75,12 @@ public class MenuGamesView extends InputView {
 	private TutorialInvitation tutoInv;
 	private TextureRegion txtCcolumn;
 
+	float new_y = 0f;
+	float last_touch_down_y_temp = 0f;
 	float last_touch_down_y = 0f;
+	float list_origin_y_diff = 0f;
 	float y_move_speed = 0f;
-	float y_move_accel = 0.95f;
+	float y_move_accel = 0.90f;
 	float max_list_y = 0f;
 	float min_list_y = 0f;
 	float min_list_over_y = -400f;
@@ -92,37 +95,6 @@ public class MenuGamesView extends InputView {
 	private boolean showRelease = false;
 	private float pullDistance = 0;
 	private float releaseDistance = 0;
-
-	@Override
-	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-		isPressing = true;
-		last_touch_down_y = screenY;
-		return super.touchDown(screenX, screenY, pointer, button);
-	}
-
-	@Override
-	public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-		isPressing = false;
-		return super.touchUp(screenX, screenY, pointer, button);
-	}
-
-	public boolean touchDragged(int x, int y, int pointer) {
-		moveList(y);
-		return false;
-	}
-
-	private void moveList(int touch_y) {
-		y_move_speed += (last_touch_down_y - touch_y) * 10;
-		last_touch_down_y = touch_y;
-		if (y_move_speed > 2000)
-			y_move_speed = 2000;
-		if (y_move_speed < -2000)
-			y_move_speed = -2000;
-	}
-
-	private boolean yOutOfLimit(float y) {
-		return (y < min_list_over_y || y > max_list_y);
-	}
 
 	public MenuGamesView(MenuGames menu) {
 		this.controller = menu;
@@ -303,7 +275,7 @@ public class MenuGamesView extends InputView {
 		waitStyle.up = skin.getDrawable("wait_up");
 		waitStyle.down = skin.getDrawable("wait_up");
 		skin.add("waitStyle", waitStyle);
-		
+
 		ButtonStyle surrendedStyle = new ButtonStyle();
 		surrendedStyle.up = skin.getDrawable("surrended_up");
 		surrendedStyle.down = skin.getDrawable("surrended_up");
@@ -472,17 +444,18 @@ public class MenuGamesView extends InputView {
 		grpRefresh = new Group();
 		grpRefresh.setSize(CrystalClash.WIDTH, 200);
 		grpRefresh.setVisible(false);
-		
+
 		imgRefreshArrow = new Image(ResourceHelper.getTexture("menu/refresh_list/arrow"));
-		imgRefreshArrow.setOrigin(imgRefreshArrow.getWidth() / 2 , imgRefreshArrow.getHeight() / 2);
+		imgRefreshArrow.setOrigin(imgRefreshArrow.getWidth() / 2, imgRefreshArrow.getHeight() / 2);
 		imgRefreshArrow.setPosition(CrystalClash.WIDTH / 4 - imgRefreshArrow.getWidth() / 2, grpRefresh.getHeight() / 2 - imgRefreshArrow.getHeight() / 2);
 		grpRefresh.addActor(imgRefreshArrow);
 		lblRefreshMessage = new Label(I18n.t("menu_games_pull"), skin, "lblStyle");
-		lblRefreshMessage.setPosition(imgRefreshArrow.getX() + imgRefreshArrow.getWidth() + 100, grpRefresh.getHeight() / 2 - lblRefreshMessage.getHeight() / 2);
+		lblRefreshMessage
+				.setPosition(imgRefreshArrow.getX() + imgRefreshArrow.getWidth() + 100, grpRefresh.getHeight() / 2 - lblRefreshMessage.getHeight() / 2);
 		grpRefresh.addActor(lblRefreshMessage);
-		
+
 		addActor(grpRefresh);
-		
+
 		pullDistance = 100;
 		releaseDistance = pullDistance * 2;
 	}
@@ -574,6 +547,32 @@ public class MenuGamesView extends InputView {
 		super.act(delta);
 	}
 
+	@Override
+	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+		isPressing = true;
+		last_touch_down_y = GameEngine.getRealPosition(screenX, screenY).y;
+		list_origin_y_diff = last_touch_down_y - list.getY();
+		System.out.println("DOIWN -> tpuch: " + last_touch_down_y + " diff: " + list_origin_y_diff);
+		return super.touchDown(screenX, screenY, pointer, button);
+	}
+
+	@Override
+	public boolean touchUp(int screenX, int screenY, int pointer, int button) {
+		isPressing = false;
+		return super.touchUp(screenX, screenY, pointer, button);
+	}
+
+	public boolean touchDragged(int x, int y, int pointer) {
+		last_touch_down_y_temp = GameEngine.getRealPosition(x, y).y;
+		y_move_speed += (last_touch_down_y_temp - last_touch_down_y) * 10;
+		last_touch_down_y = last_touch_down_y_temp;
+		return false;
+	}
+
+	private boolean yOutOfLimit(float y) {
+		return (y < min_list_over_y || y > max_list_y);
+	}
+
 	private void updateRefresh() {
 		if (isPressing) {
 			if (!isTryingToRefresh && list.getY() < -pullDistance) {
@@ -614,7 +613,7 @@ public class MenuGamesView extends InputView {
 				lblRefreshMessage.setText(I18n.t("menu_games_pull"));
 				imgRefreshArrow.setRotation(0);
 			}
-			
+
 			grpRefresh.setY(list.getTop());
 			grpRefresh.setVisible(true);
 		} else {
@@ -623,18 +622,19 @@ public class MenuGamesView extends InputView {
 	}
 
 	private void updateList(float delta) {
-		if (list.getY() < min_list_y) {
-			if (!isPressing) {
-				y_move_speed = (min_list_y - list.getY()) * 10;
+		if (isPressing) {
+			new_y = last_touch_down_y - list_origin_y_diff;
+		} else {
+			if (Math.abs(y_move_speed) != 0) {
+				new_y = list.getY() + y_move_speed * delta;
 			}
 		}
+		updateListSpeed();
+		if (!yOutOfLimit(new_y))
+			list.setY(new_y);
 
-		if (Math.abs(y_move_speed) > 0.5f) {
-			float new_y = list.getY() + y_move_speed * delta;
-			updateListSpeed();
-			if (!yOutOfLimit(new_y))
-				list.setY(new_y);
-		}
+		if (new_y < 0)
+			y_move_speed = -new_y * 10;
 	}
 
 	private void updateListSpeed() {
