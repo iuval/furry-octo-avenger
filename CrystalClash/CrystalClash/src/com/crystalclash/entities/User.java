@@ -70,4 +70,8 @@ public class User {
 		ServerDriver.sendUpdateUser(id, name, email, emblem);
 	}
 
+	public void setName(String newName) {
+		name = newName;
+	}
+
 }

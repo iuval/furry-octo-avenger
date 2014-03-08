@@ -34,6 +34,7 @@ import com.crystalclash.renders.helpers.ResourceHelper;
 import com.crystalclash.renders.helpers.ui.BaseBox;
 import com.crystalclash.renders.helpers.ui.BaseBox.BoxButtons;
 import com.crystalclash.renders.helpers.ui.BoxCallback;
+import com.crystalclash.renders.helpers.ui.ChangeName;
 import com.crystalclash.renders.helpers.ui.EmblemList;
 import com.crystalclash.renders.helpers.ui.GameListItem;
 import com.crystalclash.renders.helpers.ui.GamesLoadCallback;
@@ -327,6 +328,25 @@ public class MenuGamesView extends InputView {
 		lblUserName.setPosition(290, 215);
 		lblUserName.setSize(460, 60);
 		lblUserName.setAlignment(Align.center);
+		lblUserName.addListener(new ClickListener() {
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+				final ChangeName changeName = new ChangeName();
+				BaseBox box = new BaseBox(changeName);
+				box.twoButtonsLayout("Save", "Back");
+				box.setCallback(new BoxCallback() {
+					@Override
+					public void onEvent(int type, Object data) {
+						if (type == YES) {
+							GameController.getUser().setName(changeName.getNewName());
+							GameController.getUser().update();
+							lblUserName.setText(changeName.getNewName());
+						}
+					}
+				});
+				box.show();
+			}
+		});
 		grpProfile.addActor(lblUserName);
 
 		imgEmblem = new Image(EmblemHelper.getEmblem(u.getEmblem()));
