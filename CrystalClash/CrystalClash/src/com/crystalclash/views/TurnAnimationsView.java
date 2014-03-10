@@ -65,6 +65,7 @@ public class TurnAnimationsView extends GameView {
 	private Image seeBattle;
 	private Image continueBattle;
 	private TextButton btnPlay;
+	private TextButton btnReplay;
 	private TextButton btnSkip;
 	private Group grpPanel;
 
@@ -76,7 +77,7 @@ public class TurnAnimationsView extends GameView {
 	private TextButton btnBackToMenu;
 
 	private Random rand;
-	Timeline mainTimeline = Timeline.createSequence();
+	private Timeline mainTimeline = Timeline.createSequence();
 
 	private Thread thread;
 
@@ -150,6 +151,17 @@ public class TurnAnimationsView extends GameView {
 				play();
 			}
 		});
+		
+		btnReplay = new TextButton("See it again", ResourceHelper.getButtonStyle());
+		btnReplay.setSize(btnPlay.getWidth(), btnPlay.getHeight());
+		btnReplay.setPosition(panel.getWidth() / 4 - btnReplay.getWidth() / 2 + 100, seeBattle.getX());
+		btnReplay.addListener(new ClickListener() {
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+				hidePanel();
+				mainTimeline.resume();
+			}
+		});
 
 		TextureRegion continueBattleTexture = ResourceHelper.getTexture("turn_animation/continue_to_battle");
 		continueBattle = new Image(continueBattleTexture);
@@ -157,10 +169,11 @@ public class TurnAnimationsView extends GameView {
 
 		btnSkip = new TextButton("Continue", ResourceHelper.getButtonStyle());
 		btnSkip.setSize(btnPlay.getWidth(), btnPlay.getHeight());
-		btnSkip.setPosition(panel.getWidth() / 2 - btnSkip.getWidth() / 2, continueBattle.getX());
+		btnSkip.setPosition(panel.getWidth() / 4 * 3 - btnSkip.getWidth() / 2 - 100, continueBattle.getX());
 		btnSkip.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
+				world.removeAllDeadUnits();
 				start(pushExitAnimation(Timeline.createParallel()));
 			}
 		});
@@ -181,7 +194,7 @@ public class TurnAnimationsView extends GameView {
 	private void play() {
 		GameEngine.start(world.getRender().pushShowPlayerDetails(Timeline.createParallel()));
 		hidePanel();
-		start(mainTimeline);
+		start(mainTimeline.repeat(Tween.INFINITY, 0.1f));
 	}
 
 	private void setFirstTurnAnimation() {
@@ -623,7 +636,6 @@ public class TurnAnimationsView extends GameView {
 	}
 
 	private void endTurnAnimations() {
-		world.removeAllDeadUnits();
 		if (world.allysCount == 0 && world.enemiesCount > 0) {
 			world.gameEnded = true;
 			gameEndMessage = new Image(defeatTexture);
@@ -728,9 +740,11 @@ public class TurnAnimationsView extends GameView {
 		pushDefensiveShileds(mainTimeline, false);
 		pushDeaths(mainTimeline);
 
+		mainTimeline.setCallbackTriggers(TweenCallback.END);
 		mainTimeline.setCallback(new TweenCallback() {
 			@Override
 			public void onEvent(int type, BaseTween<?> source) {
+				mainTimeline.pause();
 				endTurnAnimations();
 			}
 		});
@@ -750,6 +764,7 @@ public class TurnAnimationsView extends GameView {
 		grpPanel.removeActor(btnPlay);
 		grpPanel.removeActor(seeBattle);
 		grpPanel.addActor(btnSkip);
+		grpPanel.addActor(btnReplay);
 		grpPanel.addActor(continueBattle);
 
 		start(Timeline.createSequence()
