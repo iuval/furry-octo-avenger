@@ -31,10 +31,10 @@ public class BaseBox extends AnimatedGroup {
 
 	private BoxCallback callback;
 
-	public BaseBox(Actor widget) {
+	public BaseBox(Actor widget, float w, float h) {
 		this.widget = widget;
-		setSize(800, CrystalClash.HEIGHT / 2);
-		setPosition(CrystalClash.WIDTH / 2 - 400, CrystalClash.HEIGHT + getHeight());
+		setSize(w, h);
+		setPosition((CrystalClash.WIDTH - w) / 2, 0);
 
 		imgWindowBackground = new Image(ResourceHelper.getTexture("menu/message_box_background"));
 		imgWindowBackground.setSize(getWidth(), getHeight());
@@ -45,8 +45,7 @@ public class BaseBox extends AnimatedGroup {
 		btnYes.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
-				callCallback(BoxCallback.YES);
-				if (hideOnAction)
+				if (callCallback(BoxCallback.YES) && hideOnAction)
 					hide();
 			}
 		});
@@ -55,12 +54,15 @@ public class BaseBox extends AnimatedGroup {
 		btnNo.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
-				callCallback(BoxCallback.NO);
-				if (hideOnAction)
+				if (callCallback(BoxCallback.NO) && hideOnAction)
 					hide();
 			}
 		});
 		addActor(widget);
+	}
+
+	public BaseBox(Actor widget) {
+		this(widget, 800, CrystalClash.HEIGHT / 2);
 	}
 
 	public BaseBox setCallback(BoxCallback callback) {
@@ -90,7 +92,7 @@ public class BaseBox extends AnimatedGroup {
 		addActor(btnNo);
 
 		widget.setSize(getWidth() - 70, getHeight() - 200);
-		widget.setPosition(35, 150);
+		widget.setPosition(35, 100);
 		return this;
 	}
 
@@ -128,15 +130,16 @@ public class BaseBox extends AnimatedGroup {
 		visible = false;
 	}
 
-	protected void callCallback(int type) {
+	protected boolean callCallback(int type) {
 		if (callback != null)
-			callback.onEvent(type, userData);
+			return callback.onEvent(type, userData);
+		return true;
 	}
 
 	@Override
 	public Timeline pushEnterAnimation(Timeline t) {
 		return t.push(Tween.to(this, ActorAccessor.Y, CrystalClash.NORMAL_ANIMATION_SPEED)
-				.target(CrystalClash.HEIGHT / 4));
+				.target(((CrystalClash.HEIGHT - getHeight()) / 2)));
 	}
 
 	@Override

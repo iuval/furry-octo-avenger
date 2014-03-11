@@ -1,12 +1,11 @@
 package com.crystalclash.entities;
 
-import com.crystalclash.networking.ServerDriver;
-
 public class User {
 
 	private String id;
 	private String email;
 	private String name;
+	private String pass;
 	private int emblem = 0;
 	private int victoryCount = 0;
 	private int drawCount = 0;
@@ -17,6 +16,7 @@ public class User {
 		this.email = email;
 		this.name = name;
 		this.emblem = emblem;
+		this.pass = "";
 		victoryCount = v;
 		drawCount = d;
 		lostCount = l;
@@ -66,8 +66,16 @@ public class User {
 		this.lostCount = lostCount;
 	}
 
-	public void update() {
-		ServerDriver.sendUpdateUser(id, name, email, emblem);
+	public void setPassword(String password) {
+		this.pass = password;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	public String getPass() {
+		return this.pass;
 	}
 
 }

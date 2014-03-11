@@ -61,9 +61,10 @@ public class MenuGames {
 	private BoxCallback logoutCallback = new BoxCallback() {
 
 		@Override
-		public void onEvent(int type, Object data) {
+		public boolean onEvent(int type, Object data) {
 			if (type == YES)
 				GameController.logOut();
+			return true;
 		}
 	};
 

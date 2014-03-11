@@ -27,10 +27,11 @@ public class ServerDriver {
 	private final static String ACTION_UPDATE_PLAYER = "update_player";
 	private final static String ACTION_SURRENDER = "surrender";
 
-	public static void sendSignUp(final String email, final String password) {
+	public static void sendSignUp(final String email, final String password, final String userName) {
 		Map<String, String> data = new HashMap<String, String>();
 		data.put("email", email);
 		data.put("password", password);
+		data.put("name", userName);
 
 		Gdx.net.sendHttpRequest(getPost(ACTION_SIGN_IN, data),
 				new HttpResponseListener() {
@@ -41,7 +42,7 @@ public class ServerDriver {
 						if (values.getString("value").equals("ok")) {
 							JsonValue data = values.get("data");
 							GameController.signUpSuccess(data.getString("id"),
-									data.getString("name"),
+									userName,
 									email,
 									password,
 									data.getInt("emblem"),
@@ -224,11 +225,11 @@ public class ServerDriver {
 				});
 	}
 
-	public static void sendUpdateUser(String id, String name, String email, int emplem) {
+	public static void sendUpdateUser(String id, String email, String pass, int emplem) {
 		Map<String, String> data = new HashMap<String, String>();
 		data.put("id", id);
-		data.put("name", name);
 		data.put("email", email);
+		data.put("password", pass);
 		data.put("emblem", emplem + "");
 
 		System.out.println("Sending-> " + data);

@@ -48,9 +48,9 @@ public class MenuLogIn {
 				.show();
 	}
 
-	public void sendSignUp(String email, String password) {
+	public void sendSignUp(String email, String password, String userName) {
 		this.email = email;
 		this.password = password;
-		GameController.signUp(email, password);
+		GameController.signUp(email, password, userName);
 	}
 }

@@ -2,6 +2,7 @@ package com.crystalclash.views;
 
 import aurelienribon.tweenengine.Timeline;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -25,6 +26,8 @@ import com.crystalclash.audio.AudioManager;
 import com.crystalclash.audio.AudioManager.MUSIC;
 import com.crystalclash.controllers.GameController;
 import com.crystalclash.controllers.MenuGames;
+import com.crystalclash.controllers.validators.EmailValidator;
+import com.crystalclash.controllers.validators.PasswordValidator;
 import com.crystalclash.entities.User;
 import com.crystalclash.renders.GameEngine;
 import com.crystalclash.renders.ParallaxRender;
@@ -34,10 +37,10 @@ import com.crystalclash.renders.helpers.ResourceHelper;
 import com.crystalclash.renders.helpers.ui.BaseBox;
 import com.crystalclash.renders.helpers.ui.BaseBox.BoxButtons;
 import com.crystalclash.renders.helpers.ui.BoxCallback;
-import com.crystalclash.renders.helpers.ui.EmblemList;
 import com.crystalclash.renders.helpers.ui.GameListItem;
 import com.crystalclash.renders.helpers.ui.GamesLoadCallback;
 import com.crystalclash.renders.helpers.ui.MessageBox;
+import com.crystalclash.renders.helpers.ui.UpdateProfile;
 import com.crystalclash.util.I18n;
 
 public class MenuGamesView extends InputView {
@@ -211,11 +214,12 @@ public class MenuGamesView extends InputView {
 
 		final BoxCallback surrenderCallback = new BoxCallback() {
 			@Override
-			public void onEvent(int type, Object data) {
+			public boolean onEvent(int type, Object data) {
 				if (type == BoxCallback.YES) {
 					controller.surrenderGame(data.toString());
 					loadGameList(null);
 				}
+				return true;
 			}
 		};
 
@@ -336,17 +340,50 @@ public class MenuGamesView extends InputView {
 		imgEmblem.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
-				final EmblemList emblemList = new EmblemList();
-				BaseBox box = new BaseBox(emblemList);
+				final UpdateProfile updateProfile = new UpdateProfile();
+				final BaseBox box = new BaseBox(updateProfile, 800, 800);
 				box.twoButtonsLayout("Save", "Back");
 				box.setCallback(new BoxCallback() {
 					@Override
-					public void onEvent(int type, Object data) {
+					public boolean onEvent(int type, Object data) {
+						Gdx.input.setOnscreenKeyboardVisible(false);
 						if (type == YES) {
-							GameController.getUser().setEmblem(emblemList.getSelectedEmblem());
-							GameController.getUser().update();
-							imgEmblem.setDrawable(new TextureRegionDrawable(EmblemHelper.getEmblem(emblemList.getSelectedEmblem())));
+							String pass = updateProfile.getNewPass();
+							String email = updateProfile.getNewEmail().trim();
+							if (!pass.isEmpty() && !PasswordValidator.isValid(pass)) {
+								MessageBox.build()
+										.setMessage("game_engine_invalid_password_error", BoxButtons.One)
+										.setCallback(new BoxCallback() {
+											@Override
+											public boolean onEvent(int type, Object data) {
+												box.show();
+												return false;
+											}
+										})
+										.show();
+								return false;
+							} else if (email.isEmpty() || ((email != GameController.getUser().getEmail()) && !EmailValidator.isValid(email))) {
+								MessageBox.build()
+										.setMessage("game_engine_invalid_email_error", BoxButtons.One)
+										.setCallback(new BoxCallback() {
+											@Override
+											public boolean onEvent(int type, Object data) {
+												box.show();
+												return false;
+											}
+										})
+										.show();
+								return false;
+							} else {
+								GameController.getUser().setEmblem(updateProfile.getSelectedEmblem());
+								GameController.getUser().setEmail(email);
+								if (pass != null)
+									GameController.getUser().setPassword(pass);
+								GameController.updateUserProfile();
+								imgEmblem.setDrawable(new TextureRegionDrawable(EmblemHelper.getEmblem(updateProfile.getSelectedEmblem())));
+							}
 						}
+						return true;
 					}
 				});
 				box.show();

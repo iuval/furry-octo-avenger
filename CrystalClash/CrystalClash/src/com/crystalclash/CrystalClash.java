@@ -1,6 +1,5 @@
 package com.crystalclash;
 
-
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.FPSLogger;
@@ -13,7 +12,7 @@ public class CrystalClash extends Game {
 	private FPSLogger fpsLogger;
 
 	public static final String TITLE = "Crystal Clash";
-	public static final String VERSION = "0.1";
+	public static final String VERSION = "0.2";
 	public static final boolean DEBUG = false;
 
 	public static float REALLY_SLOW_ANIMATION_SPEED = 2.0f;
