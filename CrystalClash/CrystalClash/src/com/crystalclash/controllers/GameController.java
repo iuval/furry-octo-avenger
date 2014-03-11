@@ -38,7 +38,7 @@ public class GameController {
 	public static User getUser() {
 		return currentUser;
 	}
-	
+
 	public static void setEnemyUser(User user) {
 		enemyUser = user;
 	}
@@ -182,12 +182,12 @@ public class GameController {
 		ServerDriver.sendLogIn(email, password);
 	}
 
-	public static void signUp(String email, String password) {
+	public static void signUp(String email, String password, String userName) {
 		MessageBox.build()
 				.setMessage("world_creating_account", BoxButtons.None)
 				.setCallback(null)
 				.show();
-		ServerDriver.sendSignUp(email, password);
+		ServerDriver.sendSignUp(email, password, userName);
 	}
 
 	public static void logInSuccess(String userId, String name, String email, String password, int emblem, int v, int d, int l) {
@@ -203,6 +203,17 @@ public class GameController {
 		profileService.retrieveProfile().reset();
 		setTutorialNotDone();
 		logInSuccess(userId, name, email, password, emblem, v, d, l);
+	}
+
+	public static void updateUserProfile() {
+		ServerDriver.sendUpdateUser(currentUser.getId(),
+				currentUser.getEmail(),
+				currentUser.getPass(),
+				currentUser.getEmblem());
+		Profile p = profileService.retrieveProfile();
+		p.setUserEmail(currentUser.getEmail());
+		p.setUserPassword(currentUser.getPass());
+		GameController.saveProfile();
 	}
 
 	public static void logOut() {

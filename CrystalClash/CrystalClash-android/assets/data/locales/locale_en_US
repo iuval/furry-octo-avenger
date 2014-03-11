@@ -59,10 +59,14 @@ menu_games_log_out_no = Back
 server_error = Something went wrong, but I think we will survive. You should go play outside, get some sun and stuff. Try later.
 server_error_ok = LOL ok :p
 
-game_engine_sign_up_error = Sign up failed, user already in use.
+game_engine_sign_up_error = Sign up failed, email already in use.
 game_engine_sign_up_error_ok = Ok
 game_engine_sign_in_error = Log in failed...\nAre you trying to login with your ex's account to lose all their games?
 game_engine_sign_in_error_ok = :D
+game_engine_invalid_email_error = That email is invalid.\nYou're a bit drunk, aren't you?
+game_engine_invalid_email_error_ok = (^-^)/
+game_engine_invalid_password_error = That password is too easy!\nI know you can do better...\nUse from 8 to 16 numbers and letters
+game_engine_invalid_password_error_ok = ("-_-)
 game_engine_user_back = You are back!! Hurray!!
 game_engine_user_back_ok = Let's get them
 game_engine_loading = Loading...
@@ -92,3 +96,10 @@ unit_list_count = of
 
 select_units_send = You cannot start a battle without units...
 select_units_send_ok = Ok
+
+profile_name = How do they call you in this lands?
+profile_name_placeholder = Type your player name
+profile_email = Email
+profile_email_placeholder = Type your email
+profile_password = Password
+profile_password_placeholder = Type your pass

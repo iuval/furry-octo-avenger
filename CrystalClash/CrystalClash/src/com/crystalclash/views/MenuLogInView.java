@@ -21,10 +21,17 @@ import com.crystalclash.CrystalClash;
 import com.crystalclash.accessors.ActorAccessor;
 import com.crystalclash.controllers.GameController;
 import com.crystalclash.controllers.MenuLogIn;
+import com.crystalclash.controllers.validators.EmailValidator;
+import com.crystalclash.controllers.validators.PasswordValidator;
 import com.crystalclash.enumerators.StringWriting;
 import com.crystalclash.renders.GameEngine;
 import com.crystalclash.renders.helpers.ResourceHelper;
+import com.crystalclash.renders.helpers.ui.BaseBox;
+import com.crystalclash.renders.helpers.ui.BaseBox.BoxButtons;
+import com.crystalclash.renders.helpers.ui.BoxCallback;
 import com.crystalclash.renders.helpers.ui.MessageBox;
+import com.crystalclash.renders.helpers.ui.SetUserName;
+import com.crystalclash.util.I18n;
 import com.crystalclash.util.Profile;
 
 public class MenuLogInView extends InputView {
@@ -110,7 +117,7 @@ public class MenuLogInView extends InputView {
 		textFieldStyle.fontColor = Color.WHITE;
 		textFieldStyle.cursor = textFieldSkin.getDrawable("textFieldCursor");
 		txtEmail = new TextField(prof.getUserEmail(), textFieldStyle);
-		txtEmail.setMessageText("Enter your Email...");
+		txtEmail.setMessageText(I18n.t("profile_email_placeholder"));
 		txtEmail.setMaxLength(30);
 		txtEmail.setSize(700, 50);
 		txtEmail.setPosition(textFieldEmail.getX() + 10, textFieldEmail.getY());
@@ -123,8 +130,8 @@ public class MenuLogInView extends InputView {
 		});
 
 		txtPassword = new TextField(prof.getUserPassword(), textFieldStyle);
-		txtPassword.setMessageText("Enter your User Name...");
-		txtPassword.setMaxLength(30);
+		txtPassword.setMessageText(I18n.t("profile_password_placeholder"));
+		txtPassword.setMaxLength(16);
 		txtPassword.setSize(700, 50);
 		txtPassword.setPosition(textFieldPassword.getX() + 10, textFieldPassword.getY());
 		txtPassword.setPasswordCharacter('*');
@@ -142,12 +149,40 @@ public class MenuLogInView extends InputView {
 		btnSignUp.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
-				String email = txtEmail.getText().trim();
-				String password = txtPassword.getText().trim();
+				final String email = txtEmail.getText().trim();
+				final String password = txtPassword.getText().trim();
 				Gdx.input.setOnscreenKeyboardVisible(false);
 				if (!email.isEmpty() && !password.isEmpty()) {
-					Gdx.input.setOnscreenKeyboardVisible(false);
-					controller.sendSignUp(email, password);
+					if (!PasswordValidator.isValid(password)) {
+						MessageBox.build()
+								.setMessage("game_engine_invalid_password_error", BoxButtons.One)
+								.setCallback(null)
+								.show();
+					} else if (!EmailValidator.isValid(email)) {
+						MessageBox.build()
+								.setMessage("game_engine_invalid_email_error", BoxButtons.One)
+								.setCallback(null)
+								.show();
+					} else {
+						final SetUserName setUserName = new SetUserName();
+						final BaseBox box = new BaseBox(setUserName);
+						box.twoButtonsLayout("Create", "Back");
+						box.setCallback(new BoxCallback() {
+							@Override
+							public boolean onEvent(int type, Object data) {
+								Gdx.input.setOnscreenKeyboardVisible(false);
+								if (type == YES) {
+									String userName = setUserName.getUserName();
+									if (!userName.isEmpty()) {
+										controller.sendSignUp(email, password,userName);
+									}
+									return false;
+								}
+								return true;
+							}
+						});
+						box.show();
+					}
 				}
 			}
 		});

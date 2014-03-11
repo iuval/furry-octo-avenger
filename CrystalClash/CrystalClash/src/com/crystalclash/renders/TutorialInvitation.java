@@ -64,7 +64,7 @@ public class TutorialInvitation extends AnimatedGroup {
 
 		final BoxCallback confirmation = new BoxCallback() {
 			@Override
-			public void onEvent(int type, Object data) {
+			public boolean onEvent(int type, Object data) {
 				if (type == BoxCallback.YES) {
 					GameController.setTutorialDone();
 					GameEngine.start(BlackOverlay.build().hide(Timeline.createParallel()));
@@ -73,6 +73,7 @@ public class TutorialInvitation extends AnimatedGroup {
 					lblMessage.setText("");
 					GameEngine.getInstance().openTutorial();
 				}
+				return true;
 			}
 		};
 		btnSkipTutorial = new TextButton("No, thx", ResourceHelper.getOuterSmallButtonStyle());

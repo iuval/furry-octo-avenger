@@ -210,7 +210,7 @@ public class WorldView extends InputView {
 		btnSend.setPosition(0, 0);
 		final BoxCallback sendTurnCallback = new BoxCallback() {
 			@Override
-			public void onEvent(int type, Object data) {
+			public boolean onEvent(int type, Object data) {
 				if (type == BoxCallback.YES) {
 					GameEngine.showLoading();
 					world.sendTurn();
@@ -219,6 +219,7 @@ public class WorldView extends InputView {
 					MessageBox.build().hide();
 					setReadInput(true);
 				}
+				return true;
 			}
 		};
 		ClickListener sendListener = new ClickListener() {
@@ -297,7 +298,7 @@ public class WorldView extends InputView {
 			btnSurrender.setPosition(imgPopupBackground.getWidth() / 2 - btnSurrender.getWidth() / 2, btnClear.getY() - 100);
 			final BoxCallback leaveCallback = new BoxCallback() {
 				@Override
-				public void onEvent(int type, Object data) {
+				public boolean onEvent(int type, Object data) {
 					if (type == BoxCallback.YES) {
 						GameEngine.showLoading();
 						world.surrenderCurrentGame();
@@ -305,6 +306,7 @@ public class WorldView extends InputView {
 						MessageBox.build().hide();
 						resume();
 					}
+					return true;
 				}
 			};
 			btnSurrender.addListener(new ClickListener() {
@@ -336,7 +338,7 @@ public class WorldView extends InputView {
 		btnBackToMenu.setPosition(imgPopupBackground.getWidth() / 2 - btnBackToMenu.getWidth() / 2, btnBackToGame.getY() - 100);
 		backCallback = new BoxCallback() {
 			@Override
-			public void onEvent(int type, Object data) {
+			public boolean onEvent(int type, Object data) {
 				if (type == BoxCallback.YES) {
 					GameEngine.showLoading();
 					gameRender.onExit();
@@ -345,6 +347,7 @@ public class WorldView extends InputView {
 					MessageBox.build().hide();
 					resume();
 				}
+				return true;
 			}
 		};
 		btnBackToMenu.addListener(new ClickListener() {
@@ -479,7 +482,7 @@ public class WorldView extends InputView {
 		addActor(grpPlayer2Details);
 		addActor(txrBlackScreen);
 		addActor(grpPopupMenu);
-		
+
 		loadMenu();
 	}
 

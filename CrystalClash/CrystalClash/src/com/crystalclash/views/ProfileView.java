@@ -16,7 +16,7 @@ import com.crystalclash.controllers.GameController;
 import com.crystalclash.entities.User;
 import com.crystalclash.renders.GameEngine;
 import com.crystalclash.renders.helpers.ResourceHelper;
-import com.crystalclash.renders.helpers.ui.EmblemList;
+import com.crystalclash.renders.helpers.ui.UpdateProfile;
 
 public class ProfileView extends InputView {
 	private static ProfileView instance;
@@ -27,7 +27,7 @@ public class ProfileView extends InputView {
 	private Label lblLoses;
 	private TextButton btnSave;
 
-	private EmblemList list;
+	private UpdateProfile list;
 
 	private ProfileView() {
 		load();
@@ -70,7 +70,7 @@ public class ProfileView extends InputView {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
 				GameController.getUser().setEmblem(list.getSelectedEmblem());
-				GameController.getUser().update();
+				GameController.updateUserProfile();
 			}
 		});
 		addActor(btnSave);
@@ -82,7 +82,7 @@ public class ProfileView extends InputView {
 		lblName.setPosition(30, CrystalClash.HEIGHT - 30);
 		addActor(lblName);
 
-		list = new EmblemList();
+		list = new UpdateProfile();
 		list.setPosition(-640, 0);
 		addActor(list);
 	}

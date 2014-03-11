@@ -461,8 +461,9 @@ public class GameEngine implements Screen {
 					.setMessage("game_engine_user_back", BoxButtons.One)
 					.setCallback(new BoxCallback() {
 						@Override
-						public void onEvent(int type, Object data) {
+						public boolean onEvent(int type, Object data) {
 							worldRender.resume();
+							return true;
 						}
 					})
 					.show();
