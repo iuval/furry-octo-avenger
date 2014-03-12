@@ -206,22 +206,18 @@ public class NormalGameView extends GameView {
 		Cell neigbourCell = null;
 		for (int i = 0; i < cells.length; i++) {
 			neigbourCell = world.cellAtByGrid(cells[i][0], cells[i][1]);
-			if (!neigbourCell.hasState(Cell.MOVE_TARGET | Cell.ATTACK_TARGET_CENTER)) {
-				unit = neigbourCell.getUnit();
-				if (hide) {
-					neigbourCell.removeState(Cell.ABLE_TO_ATTACK | Cell.NOT_ABLE_TO_ATTACK);
-				} else {
-					if (onlyCellsWithUnit) {
-						if (unit != null && unit.isEnemy()) {
-							neigbourCell.addState(Cell.ABLE_TO_ATTACK);
-						} else {
-							neigbourCell.addState(Cell.NOT_ABLE_TO_ATTACK);
-						}
+			if (hide) {
+				neigbourCell.removeState(Cell.ABLE_TO_ATTACK | Cell.NOT_ABLE_TO_ATTACK);
+			} else {
+				if (onlyCellsWithUnit) {
+					unit = neigbourCell.getUnit();
+					if (unit != null && unit.isEnemy()) {
+						neigbourCell.addState(Cell.ABLE_TO_ATTACK);
 					} else {
-						if (unit == null || unit.isEnemy()) {
-							neigbourCell.addState(Cell.ABLE_TO_ATTACK);
-						}
+						neigbourCell.addState(Cell.NOT_ABLE_TO_ATTACK);
 					}
+				} else {
+					neigbourCell.addState(Cell.ABLE_TO_ATTACK);
 				}
 			}
 			if (range > 1)
