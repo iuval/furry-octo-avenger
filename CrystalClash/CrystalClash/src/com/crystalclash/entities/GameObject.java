@@ -23,8 +23,16 @@ public class GameObject {
 		return position.y;
 	}
 
-	public void setGrisPosition(int x, int y) {
+	public void setGridPosition(int x, int y) {
 		gridPos.setX(x);
+		gridPos.setY(y);
+	}
+
+	public void setGridPositionX(int x) {
+		gridPos.setX(x);
+	}
+
+	public void setGridPositionY(int y) {
 		gridPos.setY(y);
 	}
 
@@ -42,9 +50,9 @@ public class GameObject {
 
 	@Override
 	public boolean equals(Object obj) {
-		if(obj == null)
+		if (obj == null)
 			return false;
-					
+
 		return this.gridPos == ((GameObject) obj).getGridPosition();
 	}
 }

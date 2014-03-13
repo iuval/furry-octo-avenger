@@ -94,18 +94,20 @@ public class AttackFactory {
 
 	// FireArcher
 	private void doFireArcherSoftDamage(AttackUnitAction action) {
-		Unit enemy = action.target.getUnit();
+		Unit targetUnit = action.target.getUnit();
 		Unit ally = action.origin.getUnit();
-		if (enemy != null && enemy.isAlive()) {
-			enemy.softDamage(ally.getDamage());
+		if (targetUnit != null) {
+			System.out.println("Movio: " + targetUnit.getName() + " a:[" + action.target.getGridPosition().getX() + ", "
+					+ action.target.getGridPosition().getY() + "]");
 		}
+		softDamage(targetUnit, ally.getDamage());
 	}
 
 	private boolean doFireArcherDamage(AttackUnitAction action) {
-		Unit enemy = action.target.getUnit();
+		Unit targetUnit = action.target.getUnit();
 		Unit ally = action.origin.getUnit();
 
-		return damage(enemy, ally.getDamage());
+		return damage(targetUnit, ally.getDamage());
 	}
 
 	private void pushFireArcherAttack(Timeline t, AttackUnitAction action, Group entities) {
@@ -123,103 +125,106 @@ public class AttackFactory {
 				action.target.getCenterX(), action.target.getCenterY() + 30,
 				arrow.getWidth() / 2,
 				arrow.getHeight() / 2);
+		if (arrowPath.dots.size > 1) {
 
-		//float speed = CrystalClash.FIGTH_ANIMATION_SPEED / arrowPath.dots.size;
-		float speed = ARROW_MOVEMENT_SPEED;
-		
-		Vector2 first = arrowPath.dots.get(0).cpy();
-		Vector2 second = arrowPath.dots.get(1).cpy();
-		float angleOrigin = second.sub(first).cpy().angle();
+			// float speed = CrystalClash.FIGTH_ANIMATION_SPEED /
+			// arrowPath.dots.size;
+			float speed = ARROW_MOVEMENT_SPEED;
 
-		t.push(Tween.set(arrow, ActorAccessor.ALPHA).target(0))
-				.push(Tween.set(arrow, ActorAccessor.X).target(arrowPath.dots.get(0).x))
-				.push(Tween.set(arrow, ActorAccessor.Y).target(arrowPath.dots.get(0).y))
-				.push(Tween.set(arrow, ActorAccessor.ROTATION).target(angleOrigin));
+			Vector2 first = arrowPath.dots.get(0).cpy();
+			Vector2 second = arrowPath.dots.get(1).cpy();
+			float angleOrigin = second.sub(first).cpy().angle();
 
-		Vector2 prelast = arrowPath.dots.get(arrowPath.dots.size - 2).cpy();
-		Vector2 last = arrowPath.dots.get(arrowPath.dots.size - 1).cpy();
-		float angleTarget = last.sub(prelast).angle();
+			t.push(Tween.set(arrow, ActorAccessor.ALPHA).target(0))
+					.push(Tween.set(arrow, ActorAccessor.X).target(arrowPath.dots.get(0).x))
+					.push(Tween.set(arrow, ActorAccessor.Y).target(arrowPath.dots.get(0).y))
+					.push(Tween.set(arrow, ActorAccessor.ROTATION).target(angleOrigin));
 
-		Timeline arrowTimeline = Timeline.createParallel();
-		arrowTimeline.delay(unit.getRender().fightAnim.getAnimationTime());
+			Vector2 prelast = arrowPath.dots.get(arrowPath.dots.size - 2).cpy();
+			Vector2 last = arrowPath.dots.get(arrowPath.dots.size - 1).cpy();
+			float angleTarget = last.sub(prelast).angle();
 
-		// Arrow rotation
-		if (Math.abs(angleOrigin - angleTarget) > 10) {
-			if (arrowPath.dots.get(0).x < arrowPath.dots.get(arrowPath.dots.size - 1).x) {
-				arrowTimeline.beginSequence();
-				arrowTimeline.push(Tween.to(arrow, ActorAccessor.ROTATION, CrystalClash.FIGTH_ANIMATION_SPEED / 2)
-						.target(0).ease(TweenEquations.easeNone));
-				arrowTimeline.push(Tween.set(arrow, ActorAccessor.ROTATION)
-						.target(360));
-				arrowTimeline.push(Tween.to(arrow, ActorAccessor.ROTATION, CrystalClash.FIGTH_ANIMATION_SPEED / 2)
-						.target(angleTarget)
-						.ease(TweenEquations.easeNone));
-				arrowTimeline.end();
+			Timeline arrowTimeline = Timeline.createParallel();
+			arrowTimeline.delay(unit.getRender().fightAnim.getAnimationTime());
+
+			// Arrow rotation
+			if (Math.abs(angleOrigin - angleTarget) > 10) {
+				if (arrowPath.dots.get(0).x < arrowPath.dots.get(arrowPath.dots.size - 1).x) {
+					arrowTimeline.beginSequence();
+					arrowTimeline.push(Tween.to(arrow, ActorAccessor.ROTATION, CrystalClash.FIGTH_ANIMATION_SPEED / 2)
+							.target(0).ease(TweenEquations.easeNone));
+					arrowTimeline.push(Tween.set(arrow, ActorAccessor.ROTATION)
+							.target(360));
+					arrowTimeline.push(Tween.to(arrow, ActorAccessor.ROTATION, CrystalClash.FIGTH_ANIMATION_SPEED / 2)
+							.target(angleTarget)
+							.ease(TweenEquations.easeNone));
+					arrowTimeline.end();
+				} else {
+					arrowTimeline.push(Tween.to(arrow, ActorAccessor.ROTATION, CrystalClash.FIGTH_ANIMATION_SPEED)
+							.target(angleTarget)
+							.ease(TweenEquations.easeNone));
+				}
 			} else {
-				arrowTimeline.push(Tween.to(arrow, ActorAccessor.ROTATION, CrystalClash.FIGTH_ANIMATION_SPEED)
+				arrowTimeline.push(Tween.set(arrow, ActorAccessor.ROTATION)
 						.target(angleTarget)
 						.ease(TweenEquations.easeNone));
 			}
-		} else {
-			arrowTimeline.push(Tween.set(arrow, ActorAccessor.ROTATION)
-					.target(angleTarget)
-					.ease(TweenEquations.easeNone));
-		}
 
-		// Arrow alpha
-		arrowTimeline.push(Tween.to(arrow, ActorAccessor.ALPHA, CrystalClash.FAST_ANIMATION_SPEED)
-				.target(1).ease(TweenEquations.easeNone));
+			// Arrow alpha
+			arrowTimeline.push(Tween.to(arrow, ActorAccessor.ALPHA, CrystalClash.FAST_ANIMATION_SPEED)
+					.target(1).ease(TweenEquations.easeNone));
 
-		// Arrow movement
-		arrowTimeline.beginSequence();
-		for (int i = 1; i < arrowPath.dots.size; i++) {
-			arrowTimeline.beginParallel();
-			Vector2 v = arrowPath.dots.get(i);
-			arrowTimeline.push(Tween.to(arrow, ActorAccessor.X, speed)
-					.target(v.x).ease(TweenEquations.easeNone));
-			arrowTimeline.push(Tween.to(arrow, ActorAccessor.Y, speed)
-					.target(v.y).ease(TweenEquations.easeNone));
-			arrowTimeline.end();
-		}
-		arrowTimeline.end();
-
-		arrowTimeline.setUserData(new Object[] { arrow });
-		arrowTimeline.setCallback(new TweenCallback() {
-			@Override
-			public void onEvent(int type, BaseTween<?> source) {
-				Image arrow = (Image) ((Object[]) source.getUserData())[0];
-				arrow.remove();
+			// Arrow movement
+			arrowTimeline.beginSequence();
+			for (int i = 1; i < arrowPath.dots.size; i++) {
+				arrowTimeline.beginParallel();
+				Vector2 v = arrowPath.dots.get(i);
+				arrowTimeline.push(Tween.to(arrow, ActorAccessor.X, speed)
+						.target(v.x).ease(TweenEquations.easeNone));
+				arrowTimeline.push(Tween.to(arrow, ActorAccessor.Y, speed)
+						.target(v.y).ease(TweenEquations.easeNone));
+				arrowTimeline.end();
 			}
-		});
-		t.push(arrowTimeline);
+			arrowTimeline.end();
+
+			arrowTimeline.setUserData(new Object[] { arrow });
+			arrowTimeline.setCallback(new TweenCallback() {
+				@Override
+				public void onEvent(int type, BaseTween<?> source) {
+					Image arrow = (Image) ((Object[]) source.getUserData())[0];
+					arrow.remove();
+				}
+			});
+			t.push(arrowTimeline);
+		}
 	}
 
 	// DarkessMage
 	private void doDarkessMageSoftDamage(AttackUnitAction action) {
-		Unit enemy = action.target.getUnit();
+		Unit targerUnit = action.target.getUnit();
 		Unit ally = action.origin.getUnit();
 
-		softDamage(enemy, ally.getDamage());
+		softDamage(targerUnit, ally.getDamage());
 		Unit aux;
 		for (int i = 0; i < action.target.neigbours.length; i++) {
 			Cell neig = world.cellGrid[action.target.neigbours[i][0]][action.target.neigbours[i][1]];
 			aux = neig.getUnit();
-			if(aux != null && aux.getPlayerNumber() != ally.getPlayerNumber())
+			if (aux != null)
 				softDamage(aux, ally.getDamage() / 2);
 		}
 	}
 
 	private void doDarkessMageDamage(AttackUnitAction action) {
-		Unit enemy = action.target.getUnit();
+		Unit targerUnit = action.target.getUnit();
 		Unit ally = action.origin.getUnit();
 
-		damage(enemy, ally.getDamage());
+		damage(targerUnit, ally.getDamage());
 		Unit aux;
 		for (int i = 0; i < action.target.neigbours.length; i++) {
 			Cell neig = world.cellGrid[action.target.neigbours[i][0]][action.target.neigbours[i][1]];
 			aux = neig.getUnit();
-			if(aux != null && aux.getPlayerNumber() != ally.getPlayerNumber())
-				damage(neig.getUnit(), ally.getDamage() / 2);
+			if (aux != null)
+				damage(aux, ally.getDamage() / 2);
 		}
 	}
 
@@ -308,7 +313,7 @@ public class AttackFactory {
 			}
 		});
 
-		//Center Fire Effect
+		// Center Fire Effect
 		Timeline effectsTimeline = Timeline.createParallel();
 		SuperAnimatedActor centerEffect = new SuperAnimatedActor(ResourceHelper.getUnitResourceSuperAnimation(unit.getName(), "effect"),
 				true, FACING.right);
@@ -334,9 +339,9 @@ public class AttackFactory {
 			}
 		});
 		effectsTimeline.push(effectTimeline);
-		
-		//Neigbours Fire Effect
-		SuperAnimatedActor effect ;
+
+		// Neigbours Fire Effect
+		SuperAnimatedActor effect;
 		for (int i = 0; i < action.target.neigbours.length; i++) {
 			effect = new SuperAnimatedActor(ResourceHelper.getUnitResourceSuperAnimation(unit.getName(), "effect"),
 					true, FACING.right);

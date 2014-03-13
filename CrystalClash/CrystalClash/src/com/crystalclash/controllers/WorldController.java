@@ -170,7 +170,7 @@ public class WorldController {
 					c.neigbours[i] = temp.get(i);
 				}
 				c.setPosition(cellsLeft + xoffset + (v * deltaX), cellsBot + (h * deltaY));
-				c.setGrisPosition(v, h);
+				c.setGridPosition(v, h);
 
 				cellGrid[v][h] = c;
 			}
@@ -182,6 +182,14 @@ public class WorldController {
 		this.cellGrid = new Cell[gridW][gridH];
 
 		createMap();
+	}
+
+	public boolean softAddUnit(Unit unit, int x, int y) {
+		if (inCellsGrid(x, y)) {
+			cellGrid[x][y].softPlaceUnit(unit);
+			return true;
+		}
+		return false;
 	}
 
 	public boolean addUnit(Unit unit, int x, int y) {

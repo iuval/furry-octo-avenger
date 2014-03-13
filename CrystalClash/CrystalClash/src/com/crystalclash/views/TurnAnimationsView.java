@@ -202,6 +202,8 @@ public class TurnAnimationsView extends GameView {
 		for (int i = 0; i < units.size; i++) {
 			u = units.get(i);
 			t.push(Tween.set(u, UnitAccessor.HP).target(u.getHP()));
+			t.push(Tween.set(u, UnitAccessor.GRID_POS_X).target(u.getOriginGridPosX()));
+			t.push(Tween.set(u, UnitAccessor.GRID_POS_Y).target(u.getOriginGridPosY()));
 		}
 	}
 
@@ -479,6 +481,12 @@ public class TurnAnimationsView extends GameView {
 					}
 				}
 			}
+			// Sets position to calculate ranged damage
+			world.softAddUnit(action.origin.getUnit(), cellToAlly.getGridPosition().getX(), cellToAlly.getGridPosition().getY());
+
+			System.out.println("Movio: " + action.origin.getUnit().getName() + " a:[" + cellToAlly.getGridPosition().getX() + ", "
+					+ cellToAlly.getGridPosition().getY() + "]");
+
 			if (conflict) {
 				walkTimeline.setCallbackTriggers(TweenCallback.BEGIN);
 			} else {
@@ -519,7 +527,6 @@ public class TurnAnimationsView extends GameView {
 				+ cellFrom.getGridPosition().getY();
 		String coordsTo = cellTo.getGridPosition().getX() + ","
 				+ cellTo.getGridPosition().getY();
-		System.out.println("step:[" + coordsFrom + "]-->[" + coordsTo + "]");
 	}
 
 	private Timeline pushRangedAttackUnits(Timeline t) {
@@ -795,9 +802,11 @@ public class TurnAnimationsView extends GameView {
 	public Timeline pushExitAnimation(Timeline t) {
 		if (world.gameEnded) {
 			t.push(Tween.to(txrBlackScreen, ActorAccessor.ALPHA, CrystalClash.SLOW_ANIMATION_SPEED).target(0))
-			.push(Tween.to(btnBackToMenu, ActorAccessor.Y, CrystalClash.NORMAL_ANIMATION_SPEED).target(CrystalClash.HEIGHT + gameEndMessage.getHeight()))
-			.push(Tween.to(gameEndMessage, ActorAccessor.Y, CrystalClash.NORMAL_ANIMATION_SPEED).target(CrystalClash.HEIGHT + gameEndMessage.getHeight()))
-			.setCallback(new TweenCallback() {
+					.push(Tween.to(btnBackToMenu, ActorAccessor.Y, CrystalClash.NORMAL_ANIMATION_SPEED)
+							.target(CrystalClash.HEIGHT + gameEndMessage.getHeight()))
+					.push(Tween.to(gameEndMessage, ActorAccessor.Y, CrystalClash.NORMAL_ANIMATION_SPEED).target(
+							CrystalClash.HEIGHT + gameEndMessage.getHeight()))
+					.setCallback(new TweenCallback() {
 						@Override
 						public void onEvent(int type, BaseTween<?> source) {
 							world.initNormalTurn();

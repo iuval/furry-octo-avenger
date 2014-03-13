@@ -7,7 +7,7 @@ import com.crystalclash.renders.UnitRender.FACING;
 
 public class UnitAccessor implements TweenAccessor<Unit> {
 
-	public static final int X = 0, Y = 1, HP = 2;
+	public static final int X = 0, Y = 1, HP = 2, GRID_POS_X = 3, GRID_POS_Y = 4;
 
 	@Override
 	public int getValues(Unit target, int tweenType, float[] returnValues) {
@@ -20,6 +20,12 @@ public class UnitAccessor implements TweenAccessor<Unit> {
 			return 1;
 		case HP:
 			returnValues[0] = target.getHP();
+			return 1;
+		case GRID_POS_X:
+			returnValues[0] = target.getGridPosition().getX();
+			return 1;
+		case GRID_POS_Y:
+			returnValues[0] = target.getGridPosition().getY();
 			return 1;
 		default:
 			assert false;
@@ -43,6 +49,13 @@ public class UnitAccessor implements TweenAccessor<Unit> {
 			break;
 		case HP:
 			target.setHPsoft((int) newValues[0]);
+			break;
+		case GRID_POS_X:
+			target.setGridPositionX((int) newValues[0]);
+			break;
+		case GRID_POS_Y:
+			target.setGridPositionY((int) newValues[0]);
+			;
 			break;
 		default:
 			assert false;
