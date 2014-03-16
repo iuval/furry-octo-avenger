@@ -40,6 +40,7 @@ import com.crystalclash.renders.UnitRender.STATE;
 import com.crystalclash.renders.attacks.AttackFactory;
 import com.crystalclash.renders.helpers.CellHelper;
 import com.crystalclash.renders.helpers.ResourceHelper;
+import com.crystalclash.renders.particle_system.ParticleSystem;
 import com.crystalclash.util.I18n;
 
 public class TurnAnimationsView extends GameView {
@@ -56,6 +57,7 @@ public class TurnAnimationsView extends GameView {
 	private Array<DefendUnitAction> player1Defend;
 	private Array<DefendUnitAction> player2Defend;
 
+	private ParticleSystem numbers;
 	private AttackFactory attacks;
 	private Group entities;
 
@@ -95,7 +97,8 @@ public class TurnAnimationsView extends GameView {
 		player1Defend = new Array<DefendUnitAction>();
 		player2Defend = new Array<DefendUnitAction>();
 
-		attacks = new AttackFactory(world);
+		numbers = new ParticleSystem();
+		attacks = new AttackFactory(world, numbers);
 
 		rand = new Random();
 
@@ -326,7 +329,7 @@ public class TurnAnimationsView extends GameView {
 					if (type == TweenCallback.COMPLETE) {
 						Unit enemy = action.target.getUnit();
 
-						if (action.origin.getUnit().getX() > enemy.getX()) {
+						if (unit.getX() > enemy.getX()) {
 							unit.getRender().setFacing(FACING.left);
 						} else {
 							unit.getRender().setFacing(FACING.right);
@@ -334,7 +337,6 @@ public class TurnAnimationsView extends GameView {
 
 						attacks.doMeleeDamage(enemy, unit);
 						unit.getRender().setState(STATE.fighting);
-
 					} else if (type == TweenCallback.BEGIN) {
 						unit.getRender().setState(STATE.walking);
 					}
@@ -585,7 +587,6 @@ public class TurnAnimationsView extends GameView {
 					AttackUnitAction action = (AttackUnitAction) (((Object[]) source.getUserData())[0]);
 					Unit unit = action.origin.getUnit();
 
-					attacks.doRangedDamage(action);
 					unit.getRender().setState(STATE.idle);
 					action.target.state = Cell.NONE;
 
@@ -770,6 +771,7 @@ public class TurnAnimationsView extends GameView {
 
 	@Override
 	public void renderInTheFront(float dt, SpriteBatch batch) {
+		numbers.update(dt, batch);
 	}
 
 	@Override

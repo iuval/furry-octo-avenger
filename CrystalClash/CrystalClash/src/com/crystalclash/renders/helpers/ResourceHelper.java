@@ -3,6 +3,7 @@ package com.crystalclash.renders.helpers;
 import java.util.Hashtable;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
@@ -26,6 +27,7 @@ public class ResourceHelper {
 	private static BitmapFont bigFont;
 	private static BitmapFont normalFont;
 	private static BitmapFont smallFont;
+	private static BitmapFont damageFont;
 
 	private static TextButtonStyle buttonStyle;
 	private static TextButtonStyle outerButtonStyle;
@@ -50,7 +52,12 @@ public class ResourceHelper {
 		smallBorderFont = new BitmapFont(Gdx.files.internal("data/fonts/crystal_clash_border.fnt"), false);
 		smallBorderFont.getRegion().getTexture().setFilter(TextureFilter.Linear, TextureFilter.Linear);
 		smallBorderFont.setScale(1.1f);
-		
+
+		damageFont = new BitmapFont(Gdx.files.internal("data/fonts/crystal_clash_border.fnt"), false);
+		damageFont.getRegion().getTexture().setFilter(TextureFilter.Linear, TextureFilter.Linear);
+		damageFont.setColor(Color.RED);
+		damageFont.setScale(1.6f);
+
 		bigFont = new BitmapFont(Gdx.files.internal("data/fonts/crystal_clash.fnt"), false);
 		bigFont.getRegion().getTexture().setFilter(TextureFilter.Linear, TextureFilter.Linear);
 		bigFont.setScale(1.7f);
@@ -60,7 +67,7 @@ public class ResourceHelper {
 		smallFont = new BitmapFont(Gdx.files.internal("data/fonts/crystal_clash.fnt"), false);
 		smallFont.getRegion().getTexture().setFilter(TextureFilter.Linear, TextureFilter.Linear);
 		smallFont.setScale(1.1f);
-		
+
 		buttonStyle = new TextButtonStyle(
 				skin.getDrawable("button_orange"),
 				skin.getDrawable("button_orange_pressed"), null, normalBorderFont);
@@ -172,13 +179,17 @@ public class ResourceHelper {
 	public static BitmapFont getSmallBorderFont() {
 		return smallBorderFont;
 	}
-	
+
 	public static BitmapFont getBigFont() {
 		return bigFont;
 	}
 
 	public static BitmapFont getNormalFont() {
 		return normalFont;
+	}
+
+	public static BitmapFont getDamageFont() {
+		return damageFont;
 	}
 
 	public static BitmapFont getSmallFont() {
