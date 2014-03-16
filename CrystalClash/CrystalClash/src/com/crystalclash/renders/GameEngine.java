@@ -419,6 +419,10 @@ public class GameEngine implements Screen {
 	public void openTutorial() {
 		openGame(null);
 	}
+	
+	public void viewStory() {
+		Gdx.net.openURI("https://www.youtube.com/embed/Jw941ZV06q4?rel=0&autoplay=1");
+	}
 
 	public void singUpError(String message) {
 		MessageBox.build()

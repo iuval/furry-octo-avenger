@@ -132,6 +132,7 @@ public class MenuLogInView extends InputView {
 		txtPassword = new TextField(prof.getUserPassword(), textFieldStyle);
 		txtPassword.setMessageText(I18n.t("profile_password_placeholder"));
 		txtPassword.setMaxLength(16);
+		txtPassword.setMessageText(I18n.t("menu_log_in_label_pass"));
 		txtPassword.setSize(700, 50);
 		txtPassword.setPosition(textFieldPassword.getX() + 10, textFieldPassword.getY());
 		txtPassword.setPasswordCharacter('*');

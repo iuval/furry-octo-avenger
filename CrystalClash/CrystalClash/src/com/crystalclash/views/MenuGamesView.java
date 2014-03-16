@@ -39,6 +39,7 @@ import com.crystalclash.renders.helpers.ui.BaseBox.BoxButtons;
 import com.crystalclash.renders.helpers.ui.BoxCallback;
 import com.crystalclash.renders.helpers.ui.GameListItem;
 import com.crystalclash.renders.helpers.ui.GamesLoadCallback;
+import com.crystalclash.renders.helpers.ui.InformationList;
 import com.crystalclash.renders.helpers.ui.MessageBox;
 import com.crystalclash.renders.helpers.ui.UpdateProfile;
 import com.crystalclash.util.I18n;
@@ -89,6 +90,8 @@ public class MenuGamesView extends InputView {
 	float min_list_over_y = -400f;
 	boolean isPressing = false;
 	boolean isOverflowing = false;
+
+	boolean infoVisible = false;
 
 	private Group grpRefresh;
 	private Image imgRefreshArrow;
@@ -253,6 +256,7 @@ public class MenuGamesView extends InputView {
 
 		skin = new Skin();
 		skin.add("small_font", ResourceHelper.getSmallFont());
+		skin.add("normal_font", ResourceHelper.getNormalFont());
 		skin.add("big_font", ResourceHelper.getBigFont());
 		skin.add("play_up", ResourceHelper.getTexture("menu/games_list/flag_green"));
 		skin.add("wait_up", ResourceHelper.getTexture("menu/games_list/flag_red"));
@@ -414,6 +418,28 @@ public class MenuGamesView extends InputView {
 		TextButtonStyle btnStyle = new TextButtonStyle();
 		btnStyle.font = skin.getFont("big_font");
 
+		Image info = new Image(ResourceHelper.getTexture("menu/games_list/information"));
+		info.setPosition(725, 215);
+		info.setSize(50, 50);
+		grpProfile.addActor(info);
+		info.addListener(new ClickListener() {
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+				infoVisible = true;
+				InformationList information = new InformationList(skin);
+				BaseBox box = new BaseBox(information);
+				box.oneButtonsLayout("Back");
+				box.setCallback(new BoxCallback() {
+					@Override
+					public boolean onEvent(int type, Object data) {
+						infoVisible = false;
+						return true;
+					}
+				});
+				box.show();
+			}
+		});
+
 		// New Random Group
 		grpNewRandom = new Group();
 		Image imgNewRandom = new Image(ResourceHelper.getTexture("menu/games_list/new_battle_stack"));
@@ -473,7 +499,7 @@ public class MenuGamesView extends InputView {
 		btnViewStory.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
-
+				GameEngine.getInstance().viewStory();
 			}
 		});
 		grpStory.addActor(btnViewStory);
@@ -586,23 +612,29 @@ public class MenuGamesView extends InputView {
 
 	@Override
 	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-		isPressing = true;
-		last_touch_down_y = GameEngine.getRealPosition(screenX, screenY).y;
-		list_origin_y_diff = last_touch_down_y - list.getY();
-		System.out.println("DOIWN -> tpuch: " + last_touch_down_y + " diff: " + list_origin_y_diff);
+		if (!infoVisible) {
+			isPressing = true;
+			last_touch_down_y = GameEngine.getRealPosition(screenX, screenY).y;
+			list_origin_y_diff = last_touch_down_y - list.getY();
+			System.out.println("DOIWN -> tpuch: " + last_touch_down_y + " diff: " + list_origin_y_diff);
+		}
 		return super.touchDown(screenX, screenY, pointer, button);
 	}
 
 	@Override
 	public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-		isPressing = false;
+		if (!infoVisible) {
+			isPressing = false;
+		}
 		return super.touchUp(screenX, screenY, pointer, button);
 	}
 
 	public boolean touchDragged(int x, int y, int pointer) {
-		last_touch_down_y_temp = GameEngine.getRealPosition(x, y).y;
-		y_move_speed += (last_touch_down_y_temp - last_touch_down_y) * 10;
-		last_touch_down_y = last_touch_down_y_temp;
+		if (!infoVisible) {
+			last_touch_down_y_temp = GameEngine.getRealPosition(x, y).y;
+			y_move_speed += (last_touch_down_y_temp - last_touch_down_y) * 10;
+			last_touch_down_y = last_touch_down_y_temp;
+		}
 		return false;
 	}
 
@@ -611,72 +643,78 @@ public class MenuGamesView extends InputView {
 	}
 
 	private void updateRefresh() {
-		if (isPressing) {
-			if (!isTryingToRefresh && list.getY() < -pullDistance) {
-				showPullDown = true;
-				showRelease = false;
-				isTryingToRefresh = true;
-			} else if (isTryingToRefresh && list.getY() < -releaseDistance) {
-				showPullDown = false;
-				showRelease = true;
-			} else if (isTryingToRefresh && list.getY() > -releaseDistance) {
-				if (isTryingToRefresh && list.getY() > -pullDistance) {
-					isTryingToRefresh = false;
-				} else {
+		if (!infoVisible) {
+			if (isPressing) {
+				if (!isTryingToRefresh && list.getY() < -pullDistance) {
 					showPullDown = true;
 					showRelease = false;
+					isTryingToRefresh = true;
+				} else if (isTryingToRefresh && list.getY() < -releaseDistance) {
+					showPullDown = false;
+					showRelease = true;
+				} else if (isTryingToRefresh && list.getY() > -releaseDistance) {
+					if (isTryingToRefresh && list.getY() > -pullDistance) {
+						isTryingToRefresh = false;
+					} else {
+						showPullDown = true;
+						showRelease = false;
+					}
+				}
+			} else {
+				if (isTryingToRefresh) {
+					if (showRelease) {
+						loadGameList(new GamesLoadCallback() {
+
+							@Override
+							public void onFinish() {
+								updateEmblems();
+							}
+						});
+					}
+					isTryingToRefresh = false;
 				}
 			}
-		} else {
+
 			if (isTryingToRefresh) {
 				if (showRelease) {
-					loadGameList(new GamesLoadCallback() {
-
-						@Override
-						public void onFinish() {
-							updateEmblems();
-						}
-					});
+					lblRefreshMessage.setText(I18n.t("menu_games_release"));
+					imgRefreshArrow.setRotation(180);
+				} else if (showPullDown) {
+					lblRefreshMessage.setText(I18n.t("menu_games_pull"));
+					imgRefreshArrow.setRotation(0);
 				}
-				isTryingToRefresh = false;
-			}
-		}
 
-		if (isTryingToRefresh) {
-			if (showRelease) {
-				lblRefreshMessage.setText(I18n.t("menu_games_release"));
-				imgRefreshArrow.setRotation(180);
-			} else if (showPullDown) {
-				lblRefreshMessage.setText(I18n.t("menu_games_pull"));
-				imgRefreshArrow.setRotation(0);
+				grpRefresh.setY(list.getTop());
+				grpRefresh.setVisible(true);
+			} else {
+				grpRefresh.setVisible(false);
 			}
-
-			grpRefresh.setY(list.getTop());
-			grpRefresh.setVisible(true);
-		} else {
-			grpRefresh.setVisible(false);
 		}
 	}
 
 	private void updateList(float delta) {
-		if (isPressing) {
-			new_y = last_touch_down_y - list_origin_y_diff;
-		} else {
-			if (Math.abs(y_move_speed) != 0) {
-				new_y = list.getY() + y_move_speed * delta;
+		if (!infoVisible) {
+			if (isPressing) {
+				new_y = last_touch_down_y - list_origin_y_diff;
+			} else {
+				if (Math.abs(y_move_speed) != 0) {
+					new_y = list.getY() + y_move_speed * delta;
+				}
 			}
-		}
-		updateListSpeed();
-		if (!yOutOfLimit(new_y))
-			list.setY(new_y);
+			updateListSpeed();
+			if (!yOutOfLimit(new_y))
+				list.setY(new_y);
 
-		if (new_y < 0)
-			y_move_speed = -new_y * 10;
+			if (new_y < 0)
+				y_move_speed = -new_y * 10;
+		}
 	}
 
 	private void updateListSpeed() {
-		y_move_speed *= y_move_accel;
-		if (Math.abs(y_move_speed) <= 0.5)
-			y_move_speed = 0;
+		if (!infoVisible) {
+			y_move_speed *= y_move_accel;
+			if (Math.abs(y_move_speed) <= 0.5)
+				y_move_speed = 0;
+		}
 	}
 }
