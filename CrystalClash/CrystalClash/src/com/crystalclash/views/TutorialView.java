@@ -41,11 +41,13 @@ import com.crystalclash.renders.attacks.AttackFactory;
 import com.crystalclash.renders.helpers.CellHelper;
 import com.crystalclash.renders.helpers.PathManager;
 import com.crystalclash.renders.helpers.ResourceHelper;
+import com.crystalclash.renders.particle_system.ParticleSystem;
 import com.crystalclash.util.I18n;
 
 public class TutorialView extends GameView {
 
 	private static TweenManager tweenManager;
+	private ParticleSystem numbers;
 	private AttackFactory attacks;
 	private Group entities;
 
@@ -80,7 +82,7 @@ public class TutorialView extends GameView {
 	private Image imgLifeIcon;
 	private Image imgDamageIcon;
 	private Image imgMobilityIcon;
-	
+
 	private Image gameEndMessage;
 	private Image txrBlackScreen;
 	private TextButton btnBackToMenu;
@@ -89,7 +91,8 @@ public class TutorialView extends GameView {
 		super(world);
 		messageIndex = 0;
 		movePathIndex = 0;
-		attacks = new AttackFactory(world);
+		numbers = new ParticleSystem();
+		attacks = new AttackFactory(world, numbers);
 
 		load();
 		readTutorialScript();
@@ -182,8 +185,8 @@ public class TutorialView extends GameView {
 
 		entities = new Group();
 		addActor(entities);
-		
-		//Load End Game Stuff
+
+		// Load End Game Stuff
 		gameEndMessage = new Image(ResourceHelper.getTexture("turn_animation/messages/banner_victory"));
 		txrBlackScreen = new Image(ResourceHelper.getTexture("menu/loading/background"));
 		txrBlackScreen.setColor(txrBlackScreen.getColor().r, txrBlackScreen.getColor().g, txrBlackScreen.getColor().b, 0);
@@ -197,7 +200,7 @@ public class TutorialView extends GameView {
 				GameEngine.getInstance().openMenuGames();
 			}
 		});
-		
+
 		gameEndMessage.setPosition(CrystalClash.WIDTH / 2 - gameEndMessage.getWidth() / 2, CrystalClash.HEIGHT);
 		btnBackToMenu.setPosition(gameEndMessage.getX() + gameEndMessage.getWidth() / 2 - btnBackToMenu.getWidth() / 2,
 				gameEndMessage.getY() + gameEndMessage.getHeight() / 2 - btnBackToMenu.getHeight() / 2);
@@ -253,6 +256,7 @@ public class TutorialView extends GameView {
 		tank = new Unit("earth_tank", true);
 		tank.getRender().setFacing(FACING.left);
 		world.addUnit(tank, 900, 500);
+		tank.setTotalHP(660);
 		tank.setPosition(CrystalClash.WIDTH + 100, 354);
 		tank.getRender().setState(STATE.walking);
 
@@ -445,7 +449,8 @@ public class TutorialView extends GameView {
 						cell.addState(Cell.MOVE_TARGET);
 						PathRender p = paths.getOrCreatePath(slayer, PathRender.TYPE.MOVE);
 
-						for (; slayerMove.moves.get(movePathIndex) != cell; movePathIndex++) {
+						for (; movePathIndex < slayerMove.moves.size - 1 &&
+								slayerMove.moves.get(movePathIndex) != cell; movePathIndex++) {
 							PathManager.addLine(p,
 									slayerMove.moves.get(movePathIndex).getCenterX(),
 									slayerMove.moves.get(movePathIndex).getCenterY(),
@@ -914,8 +919,8 @@ public class TutorialView extends GameView {
 			@Override
 			public void onEvent(int type, BaseTween<?> source) {
 				if (type == TweenCallback.COMPLETE) {
+					attacks.doMeleeDamage(slayer, tank);
 					tank.getRender().setState(STATE.fighting);
-					slayer.damage(tank.getDamage());
 				} else if (type == TweenCallback.BEGIN) {
 					tank.getRender().setState(STATE.walking);
 				}
@@ -965,7 +970,6 @@ public class TutorialView extends GameView {
 		archerAttStop.setCallback(new TweenCallback() {
 			@Override
 			public void onEvent(int type, BaseTween<?> source) {
-				tank.damage(200);
 				archer.getRender().setState(STATE.idle);
 				world.cellAtByGrid(5, 3).state = Cell.NONE;
 			}
@@ -999,8 +1003,8 @@ public class TutorialView extends GameView {
 			@Override
 			public void onEvent(int type, BaseTween<?> source) {
 				if (type == TweenCallback.COMPLETE) {
+					attacks.doMeleeDamage(tank, slayer);
 					slayer.getRender().setState(STATE.fighting);
-					tank.damage(200);
 				} else if (type == TweenCallback.BEGIN) {
 					slayer.getRender().setState(STATE.walking);
 				}
@@ -1103,8 +1107,8 @@ public class TutorialView extends GameView {
 			@Override
 			public void onEvent(int type, BaseTween<?> source) {
 				if (type == TweenCallback.COMPLETE) {
+					attacks.doMeleeDamage(tank, slayer);
 					slayer.getRender().setState(STATE.fighting);
-					tank.damage(200);
 				} else if (type == TweenCallback.BEGIN) {
 					slayer.getRender().setState(STATE.walking);
 				}
@@ -1154,7 +1158,6 @@ public class TutorialView extends GameView {
 		archerAttStop.setCallback(new TweenCallback() {
 			@Override
 			public void onEvent(int type, BaseTween<?> source) {
-				tank.damage(200);
 				archer.getRender().setState(STATE.idle);
 				world.cellAtByGrid(4, 3).state = Cell.NONE;
 			}
@@ -1187,7 +1190,7 @@ public class TutorialView extends GameView {
 							addActor(txrBlackScreen);
 							addActor(btnBackToMenu);
 							addActor(gameEndMessage);
-							
+
 							GameEngine.start(world.getRender().pushHideGameMenuButtons(Timeline.createParallel()));
 							Timeline.createParallel()
 									.push(Tween.to(txrBlackScreen, ActorAccessor.ALPHA, CrystalClash.SLOW_ANIMATION_SPEED).target(1))
@@ -1211,6 +1214,7 @@ public class TutorialView extends GameView {
 	@Override
 	public void renderInTheFront(float dt, SpriteBatch batch) {
 		paths.render(batch, dt, PathRender.TYPE.ATTACK);
+		numbers.update(dt, batch);
 	}
 
 	@Override

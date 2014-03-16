@@ -1,5 +1,7 @@
 package com.crystalclash.renders.attacks;
 
+import java.util.Random;
+
 import aurelienribon.tweenengine.BaseTween;
 import aurelienribon.tweenengine.Timeline;
 import aurelienribon.tweenengine.Tween;
@@ -19,14 +21,21 @@ import com.crystalclash.entities.helpers.AttackUnitAction;
 import com.crystalclash.renders.UnitRender.FACING;
 import com.crystalclash.renders.helpers.PathManager;
 import com.crystalclash.renders.helpers.ResourceHelper;
+import com.crystalclash.renders.helpers.UnitHelper;
 import com.crystalclash.renders.helpers.ui.SuperAnimatedActor;
+import com.crystalclash.renders.particle_system.ParticleSystem;
+import com.crystalclash.renders.particle_system.particles.JumpingNumber;
 
 public class AttackFactory {
 	private WorldController world;
+	private ParticleSystem numbers;
 	private static float ARROW_MOVEMENT_SPEED = 0.150f;
+	private Random rand;
 
-	public AttackFactory(WorldController controller) {
+	public AttackFactory(WorldController controller, ParticleSystem particles) {
 		world = controller;
+		this.numbers = particles;
+		rand = new Random();
 	}
 
 	public void pushAttack(Timeline t, AttackUnitAction action, Group entities) {
@@ -35,6 +44,16 @@ public class AttackFactory {
 			pushFireArcherAttack(t, action, entities);
 		if (unitName.equals("darkness_mage"))
 			pushDarkessMageAttack(t, action, entities);
+	}
+
+	private void addJumpingNumber(Unit unit, float damage) {
+		float vx = 1f + rand.nextFloat();
+		if (rand.nextBoolean())
+			vx *= -1;
+		numbers.addParticle(new JumpingNumber(Float.toString(damage),
+				unit.getX(),
+				unit.getY() + UnitHelper.HEIGHT,
+				vx, 2f + rand.nextFloat(), 1f));
 	}
 
 	public void doSoftRangedDamage(AttackUnitAction action) {
@@ -52,16 +71,7 @@ public class AttackFactory {
 	}
 
 	public void doMeleeDamage(Unit enemy, Unit player) {
-		if (enemy != null && enemy.isAlive()) {
-			enemy.damage(player.getDamage());
-
-			if (!enemy.isAlive()) {
-				if (enemy.isEnemy())
-					world.enemiesCount--;
-				else
-					world.allysCount--;
-			}
-		}
+		damage(enemy, player.getDamage());
 	}
 
 	public void doRangedDamage(AttackUnitAction action) {
@@ -81,6 +91,7 @@ public class AttackFactory {
 				else
 					world.allysCount--;
 			}
+			addJumpingNumber(unit, damage);
 			return true;
 		}
 		return false;
@@ -110,7 +121,7 @@ public class AttackFactory {
 		return damage(targetUnit, ally.getDamage());
 	}
 
-	private void pushFireArcherAttack(Timeline t, AttackUnitAction action, Group entities) {
+	private void pushFireArcherAttack(Timeline t, final AttackUnitAction action, Group entities) {
 		Unit unit = action.origin.getUnit();
 
 		Image arrow = new Image(ResourceHelper.getUnitResourceTexture(unit.getName(), "projectile"));
@@ -193,6 +204,8 @@ public class AttackFactory {
 				public void onEvent(int type, BaseTween<?> source) {
 					Image arrow = (Image) ((Object[]) source.getUserData())[0];
 					arrow.remove();
+
+					doRangedDamage(action);
 				}
 			});
 			t.push(arrowTimeline);
@@ -228,7 +241,7 @@ public class AttackFactory {
 		}
 	}
 
-	private void pushDarkessMageAttack(Timeline t, AttackUnitAction action, Group entities) {
+	private void pushDarkessMageAttack(Timeline t, final AttackUnitAction action, Group entities) {
 		Unit unit = action.origin.getUnit();
 
 		Image fireBall = new Image(ResourceHelper.getUnitResourceTexture(unit.getName(), "projectile"));
@@ -330,12 +343,17 @@ public class AttackFactory {
 		effectTimeline.push(Tween.to(centerEffect, ActorAccessor.ALPHA, CrystalClash.FIGTH_ANIMATION_SPEED)
 				.target(0).ease(TweenEquations.easeNone));
 		effectTimeline.setUserData(new Object[] { centerEffect });
+		effectTimeline.setCallbackTriggers(TweenCallback.BEGIN | TweenCallback.COMPLETE);
 		effectTimeline.setCallback(new TweenCallback() {
 			@Override
 			public void onEvent(int type, BaseTween<?> source) {
-				SuperAnimatedActor centerEffect = (SuperAnimatedActor) ((Object[]) source.getUserData())[0];
-				centerEffect.remove();
-				centerEffect = null;
+				if (type == TweenCallback.COMPLETE) {
+					SuperAnimatedActor centerEffect = (SuperAnimatedActor) ((Object[]) source.getUserData())[0];
+					centerEffect.remove();
+					centerEffect = null;
+				} else if (type == TweenCallback.BEGIN) {
+					doRangedDamage(action);
+				}
 			}
 		});
 		effectsTimeline.push(effectTimeline);
@@ -359,12 +377,17 @@ public class AttackFactory {
 			effectTimeline.push(Tween.to(effect, ActorAccessor.ALPHA, CrystalClash.FIGTH_ANIMATION_SPEED)
 					.target(0).ease(TweenEquations.easeNone));
 			effectTimeline.setUserData(new Object[] { effect });
+			effectTimeline.setCallbackTriggers(TweenCallback.BEGIN | TweenCallback.COMPLETE);
 			effectTimeline.setCallback(new TweenCallback() {
 				@Override
 				public void onEvent(int type, BaseTween<?> source) {
-					SuperAnimatedActor effect = (SuperAnimatedActor) ((Object[]) source.getUserData())[0];
-					effect.remove();
-					effect = null;
+					if (type == TweenCallback.COMPLETE) {
+						SuperAnimatedActor effect = (SuperAnimatedActor) ((Object[]) source.getUserData())[0];
+						effect.remove();
+						effect = null;
+					} else if (type == TweenCallback.BEGIN) {
+						doRangedDamage(action);
+					}
 				}
 			});
 			effectsTimeline.push(effectTimeline);
