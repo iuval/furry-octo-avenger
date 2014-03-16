@@ -106,12 +106,13 @@ public class Unit extends GameObject {
 		hitPoints -= damage;
 	}
 
-	public void damage(float damage) {
+	public float damage(float damage) {
 		if (inDefensePosition)
 			damage /= 2;
 
 		hitPoints -= damage;
 		getRender().updateHp();
+		return damage;
 	}
 
 	public boolean isEnemy() {

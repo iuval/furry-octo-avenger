@@ -84,14 +84,13 @@ public class AttackFactory {
 
 	private boolean damage(Unit unit, float damage) {
 		if (unit != null && unit.isAlive()) {
-			unit.damage(damage);
+			addJumpingNumber(unit, unit.damage(damage));
 			if (!unit.isAlive()) {
 				if (unit.isEnemy())
 					world.enemiesCount--;
 				else
 					world.allysCount--;
 			}
-			addJumpingNumber(unit, damage);
 			return true;
 		}
 		return false;
