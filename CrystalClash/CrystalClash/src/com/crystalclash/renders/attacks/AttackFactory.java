@@ -210,7 +210,7 @@ public class AttackFactory {
 			Cell neig = world.cellGrid[action.target.neigbours[i][0]][action.target.neigbours[i][1]];
 			aux = neig.getUnit();
 			if (aux != null)
-				softDamage(aux, ally.getDamage() / 2);
+				softDamage(aux, ally.getDamage() / 3);
 		}
 	}
 
@@ -224,7 +224,7 @@ public class AttackFactory {
 			Cell neig = world.cellGrid[action.target.neigbours[i][0]][action.target.neigbours[i][1]];
 			aux = neig.getUnit();
 			if (aux != null)
-				damage(aux, ally.getDamage() / 2);
+				damage(aux, ally.getDamage() / 3);
 		}
 	}
 
