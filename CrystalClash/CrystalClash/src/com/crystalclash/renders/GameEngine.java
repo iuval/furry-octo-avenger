@@ -421,7 +421,7 @@ public class GameEngine implements Screen {
 	}
 	
 	public void viewStory() {
-		Gdx.net.openURI("http://www.youtube.com");
+		Gdx.net.openURI("https://www.youtube.com/watch?v=Jw941ZV06q4");
 	}
 
 	public void singUpError(String message) {
