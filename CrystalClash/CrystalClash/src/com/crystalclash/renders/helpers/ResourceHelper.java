@@ -56,7 +56,7 @@ public class ResourceHelper {
 		damageFont = new BitmapFont(Gdx.files.internal("data/fonts/crystal_clash_border.fnt"), false);
 		damageFont.getRegion().getTexture().setFilter(TextureFilter.Linear, TextureFilter.Linear);
 		damageFont.setColor(Color.RED);
-		damageFont.setScale(1.6f);
+		damageFont.setScale(1.3f);
 
 		bigFont = new BitmapFont(Gdx.files.internal("data/fonts/crystal_clash.fnt"), false);
 		bigFont.getRegion().getTexture().setFilter(TextureFilter.Linear, TextureFilter.Linear);
