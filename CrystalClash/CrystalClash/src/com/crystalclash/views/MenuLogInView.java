@@ -270,6 +270,7 @@ public class MenuLogInView extends InputView {
 
 		if (keycode == Keys.BACK) {
 			adjustToKeyboard(false);
+			GameEngine.back();
 		}
 		return true;
 	}
