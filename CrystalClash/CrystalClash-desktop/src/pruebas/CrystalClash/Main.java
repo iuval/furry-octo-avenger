@@ -11,6 +11,7 @@ public class Main {
 		cfg.useGL20 = true;
 		cfg.width = 800;
 		cfg.height = 530;
+		cfg.resizable = false;
 		
 		new LwjglApplication(new CrystalClash(), cfg);
 	}
