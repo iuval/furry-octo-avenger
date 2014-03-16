@@ -16,7 +16,7 @@ public class CloudParallaxLevel extends ParallaxLevel {
 		image_1.setX(0);
 		image_2 = new Image(t);
 		addActor(image_2);
-		image_2.setX(CrystalClash.WIDTH);
+		image_2.setX(CrystalClash.WIDTH - 1);
 		side_speed = sideSpeed;
 	}
 
@@ -24,11 +24,11 @@ public class CloudParallaxLevel extends ParallaxLevel {
 	public void update(float dy) {
 		image_1.setX(image_1.getX() + side_speed);
 		if (image_1.getX() <= -CrystalClash.WIDTH) {
-			image_1.setX(CrystalClash.WIDTH);
+			image_1.setX(CrystalClash.WIDTH - 1);
 		}
 		image_2.setX(image_2.getX() + side_speed);
 		if (image_2.getX() <= -CrystalClash.WIDTH) {
-			image_2.setX(CrystalClash.WIDTH);
+			image_2.setX(CrystalClash.WIDTH - 1);
 		}
 		setY(base_y + dy * vspeed);
 	}
