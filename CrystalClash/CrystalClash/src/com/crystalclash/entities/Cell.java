@@ -60,6 +60,10 @@ public class Cell extends GameObject {
 		return render;
 	}
 
+	public void softPlaceUnit(Unit unit) {
+		this.unit = unit;
+	}
+
 	public void placeUnit(Unit unit) {
 		setUnit(unit);
 		action = new PlaceUnitAction();

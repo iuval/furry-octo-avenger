@@ -23,6 +23,8 @@ public class Unit extends GameObject {
 	private int damage;
 	private int speed;
 	private int range;
+	private int originGridPosX;
+	private int originGridPosY;
 
 	private String unitName;
 	private boolean enemy;
@@ -144,7 +146,27 @@ public class Unit extends GameObject {
 	public int getPlayerNumber() {
 		return this.playerNumber;
 	}
-	
+
+	public void move(GridPos target) {
+		this.setGridPosition(target.getX(), target.getY());
+	}
+
+	public void setOriginGridPosX(int x) {
+		this.originGridPosX = x;
+	}
+
+	public void setOriginGridPosY(int y) {
+		this.originGridPosY = y;
+	}
+
+	public int getOriginGridPosX() {
+		return originGridPosX;
+	}
+
+	public int getOriginGridPosY() {
+		return originGridPosY;
+	}
+
 	public boolean isPlayerNumber(int num) {
 		return this.playerNumber == num;
 	}
