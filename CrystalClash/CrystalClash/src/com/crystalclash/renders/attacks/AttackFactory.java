@@ -342,17 +342,12 @@ public class AttackFactory {
 		effectTimeline.push(Tween.to(centerEffect, ActorAccessor.ALPHA, CrystalClash.FIGTH_ANIMATION_SPEED)
 				.target(0).ease(TweenEquations.easeNone));
 		effectTimeline.setUserData(new Object[] { centerEffect });
-		effectTimeline.setCallbackTriggers(TweenCallback.BEGIN | TweenCallback.COMPLETE);
 		effectTimeline.setCallback(new TweenCallback() {
 			@Override
 			public void onEvent(int type, BaseTween<?> source) {
-				if (type == TweenCallback.COMPLETE) {
-					SuperAnimatedActor centerEffect = (SuperAnimatedActor) ((Object[]) source.getUserData())[0];
-					centerEffect.remove();
-					centerEffect = null;
-				} else if (type == TweenCallback.BEGIN) {
-					doRangedDamage(action);
-				}
+				SuperAnimatedActor centerEffect = (SuperAnimatedActor) ((Object[]) source.getUserData())[0];
+				centerEffect.remove();
+				centerEffect = null;
 			}
 		});
 		effectsTimeline.push(effectTimeline);
@@ -376,21 +371,25 @@ public class AttackFactory {
 			effectTimeline.push(Tween.to(effect, ActorAccessor.ALPHA, CrystalClash.FIGTH_ANIMATION_SPEED)
 					.target(0).ease(TweenEquations.easeNone));
 			effectTimeline.setUserData(new Object[] { effect });
-			effectTimeline.setCallbackTriggers(TweenCallback.BEGIN | TweenCallback.COMPLETE);
 			effectTimeline.setCallback(new TweenCallback() {
 				@Override
 				public void onEvent(int type, BaseTween<?> source) {
-					if (type == TweenCallback.COMPLETE) {
-						SuperAnimatedActor effect = (SuperAnimatedActor) ((Object[]) source.getUserData())[0];
-						effect.remove();
-						effect = null;
-					} else if (type == TweenCallback.BEGIN) {
-						doRangedDamage(action);
-					}
+					SuperAnimatedActor effect = (SuperAnimatedActor) ((Object[]) source.getUserData())[0];
+					effect.remove();
+					effect = null;
 				}
 			});
 			effectsTimeline.push(effectTimeline);
 		}
+		effectsTimeline.setCallbackTriggers(TweenCallback.BEGIN);
+		effectsTimeline.setCallback(new TweenCallback() {
+			@Override
+			public void onEvent(int type, BaseTween<?> source) {
+				if (type == TweenCallback.BEGIN) {
+					doRangedDamage(action);
+				}
+			}
+		});
 
 		t.beginSequence();
 		t.push(fireBallTimeline);
