@@ -148,4 +148,8 @@ public class BaseBox extends AnimatedGroup {
 				.target(CrystalClash.HEIGHT + getHeight()));
 	}
 
+	public boolean visible() {
+		return visible;
+	}
+
 }

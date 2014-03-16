@@ -538,11 +538,15 @@ public class WorldView extends InputView {
 
 	private void back() {
 		pause();
-		MessageBox.build()
-				.setMessage(gameRender.getExitMessage(), BoxButtons.Two)
-				.setCallback(backCallback)
-				.setHideOnAction(false)
-				.show();
+		if (MessageBox.build().visible()) {
+			MessageBox.build().hide();
+		} else {
+			MessageBox.build()
+					.setMessage(gameRender.getExitMessage(), BoxButtons.Two)
+					.setCallback(backCallback)
+					.setHideOnAction(false)
+					.show();
+		}
 	}
 
 	private void showOptions() {

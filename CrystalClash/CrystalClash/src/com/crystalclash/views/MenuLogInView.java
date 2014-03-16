@@ -175,7 +175,7 @@ public class MenuLogInView extends InputView {
 								if (type == YES) {
 									String userName = setUserName.getUserName();
 									if (!userName.isEmpty()) {
-										controller.sendSignUp(email, password,userName);
+										controller.sendSignUp(email, password, userName);
 									}
 									return false;
 								}
@@ -270,7 +270,7 @@ public class MenuLogInView extends InputView {
 		}
 
 		if (keycode == Keys.BACK) {
-			adjustToKeyboard(false);
+			GameEngine.back();
 		}
 		return true;
 	}

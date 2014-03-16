@@ -20,4 +20,5 @@ public abstract class BaseView extends Group {
 	public abstract void closed();
 
 	public abstract void dispose();
+
 }

@@ -567,9 +567,8 @@ public class MenuGamesView extends InputView {
 	// INPUT PROCESSOR--------------------------------------------
 	@Override
 	public boolean keyDown(int keycode) {
-		if (keycode == Keys.BACK) {
-			controller.logOut();
-		}
+		if (keycode == Keys.BACK)
+			GameEngine.back();
 		return true;
 	}
 

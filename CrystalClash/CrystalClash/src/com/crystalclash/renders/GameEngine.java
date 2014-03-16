@@ -419,7 +419,7 @@ public class GameEngine implements Screen {
 	public void openTutorial() {
 		openGame(null);
 	}
-	
+
 	public void viewStory() {
 		Gdx.net.openURI("https://www.youtube.com/embed/Jw941ZV06q4?rel=0&autoplay=1");
 	}
@@ -507,5 +507,12 @@ public class GameEngine implements Screen {
 
 	public static void kill(Object o) {
 		tweenManager.killTarget(o);
+	}
+
+	public static void back() {
+		if (MessageBox.build().visible())
+			MessageBox.build().hide();
+		else
+			Gdx.app.exit();
 	}
 }
