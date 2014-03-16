@@ -256,6 +256,7 @@ public class TutorialView extends GameView {
 		tank = new Unit("earth_tank", true);
 		tank.getRender().setFacing(FACING.left);
 		world.addUnit(tank, 900, 500);
+		tank.setTotalHP(660);
 		tank.setPosition(CrystalClash.WIDTH + 100, 354);
 		tank.getRender().setState(STATE.walking);
 
