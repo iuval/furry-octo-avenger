@@ -31,6 +31,8 @@ public class GameController {
 	public static String SERVER_URL = "";
 	public static int EMBLEM_COUNT = 0;
 
+	public static boolean waitingLogin = true;
+
 	public static void setUser(User user) {
 		currentUser = user;
 	}
@@ -179,7 +181,18 @@ public class GameController {
 				.setMessage("game_authenticating", BoxButtons.None)
 				.setCallback(null)
 				.show();
+		waitingLogin = true;
 		ServerDriver.sendLogIn(email, password);
+
+		while (waitingLogin) {
+			GameEngine.getInstance().openMenuGames();
+			try {
+				Thread.sleep(100);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 	}
 
 	public static void signUp(String email, String password, String userName) {
@@ -196,7 +209,8 @@ public class GameController {
 		p.setUserPassword(password);
 		GameController.saveProfile();
 		setUser(new User(userId, email, name, emblem, v, d, l));
-		GameEngine.getInstance().openMenuGames();
+
+		waitingLogin = false;
 	}
 
 	public static void signUpSuccess(String userId, String name, String email, String password, int emblem, int v, int d, int l) {

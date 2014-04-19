@@ -1237,8 +1237,7 @@ public class TutorialView extends GameView {
 
 	@Override
 	public void dispose() {
-		// TODO Auto-generated method stub
-
+		
 	}
 
 	@Override

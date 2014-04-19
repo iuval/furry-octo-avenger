@@ -99,7 +99,6 @@ public class GameEngine implements Screen {
 	}
 
 	private void loadInSplash() {
-		GameController.loadSharedStats();
 		I18n.load();
 
 		stage.addActor(BlackOverlay.build());
@@ -111,6 +110,8 @@ public class GameEngine implements Screen {
 	}
 
 	private void load() {
+		GameController.loadSharedStats();
+
 		ResourceHelper.slowLoad();
 
 		background = ParallaxRender.getInstance();
@@ -460,6 +461,7 @@ public class GameEngine implements Screen {
 
 	@Override
 	public void resume() {
+		ResourceHelper.resume();
 		if (state == GameState.InGame) {
 			MessageBox.build()
 					.setMessage("game_engine_user_back", BoxButtons.One)

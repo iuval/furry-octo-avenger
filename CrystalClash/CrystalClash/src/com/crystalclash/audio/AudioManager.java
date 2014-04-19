@@ -14,22 +14,22 @@ import com.badlogic.gdx.audio.Sound;
 import com.crystalclash.accessors.MusicAccessor;
 import com.crystalclash.controllers.GameController;
 import com.crystalclash.renders.GameEngine;
-import com.crystalclash.util.FileUtil;
+import com.crystalclash.renders.helpers.ResourceHelper;
 
 public class AudioManager {
 
 	public enum MUSIC {
 		menu, tutorial, in_game, select_units, animations
 	}
-	
+
 	public enum SOUND {
 		chose_attack, chose_move, chose_defend, place, select, attack
 	}
-	
+
 	public enum GAME_END_SFX {
 		victory, defeat, draw
 	}
-	
+
 	private static Hashtable<String, Sound> soundMap;
 	private static float volume;
 
@@ -42,22 +42,26 @@ public class AudioManager {
 		soundMap = new Hashtable<String, Sound>();
 	}
 
+	public static void loadMusic(String name) {
+		ResourceHelper.loadMusic(String.format("data/audio/music/%s.mp3", name));
+	}
+
 	public static Music getMusic(String path) {
-		Music m = FileUtil.getMusic(path);
+		Music m = ResourceHelper.getMusic(path);
 		return m;
 	}
 
 	public static Sound getUnitSFX(String unitName, String file) {
 		String path = String.format("%s/%s", unitName, file);
 		return soundMap.get(path);
-		
-//		if (soundMap.containsKey(path)) {
-//			return soundMap.get(path);
-//		} else {
-//			Sound s = FileUtil.getUnitSFX(unitName, file);
-//			soundMap.put(path, s);
-//			return s;
-//		}
+
+		// if (soundMap.containsKey(path)) {
+		// return soundMap.get(path);
+		// } else {
+		// Sound s = ResourceHelper.getUnitSFX(unitName, file);
+		// soundMap.put(path, s);
+		// return s;
+		// }
 	}
 
 	public static void playMusic(MUSIC music) {
@@ -82,7 +86,7 @@ public class AudioManager {
 		}
 		return ret;
 	}
-	
+
 	public static void playEndSound(GAME_END_SFX sound) {
 		soundMap.get(sound.toString()).play(volume);
 	}
@@ -128,7 +132,7 @@ public class AudioManager {
 				.setCallback(new TweenCallback() {
 					@Override
 					public void onEvent(int type, BaseTween<?> source) {
-						if(type == TweenCallback.COMPLETE){
+						if (type == TweenCallback.COMPLETE) {
 							playing.stop();
 							fadeIn(name);
 						}
@@ -151,61 +155,61 @@ public class AudioManager {
 		int count = GameController.getUnitSoundCount("fire_archer", SOUND.select);
 		for (int i = 0; i < count; i++) {
 			file = String.format("%s_%s", SOUND.select, i);
-			s = FileUtil.getUnitSFX("fire_archer", file);
+			s = ResourceHelper.getUnitSFX("fire_archer", file);
 			soundMap.put(String.format("%s/%s", "fire_archer", file), s);
 		}
 
 		count = GameController.getUnitSoundCount("fire_archer", SOUND.chose_attack);
 		for (int i = 0; i < count; i++) {
 			file = String.format("%s_%s", SOUND.chose_attack, i);
-			s = FileUtil.getUnitSFX("fire_archer", file);
+			s = ResourceHelper.getUnitSFX("fire_archer", file);
 			soundMap.put(String.format("%s/%s", "fire_archer", file), s);
 		}
 
 		count = GameController.getUnitSoundCount("wind_slayer", SOUND.select);
 		for (int i = 0; i < count; i++) {
 			file = String.format("%s_%s", SOUND.select, i);
-			s = FileUtil.getUnitSFX("wind_slayer", file);
+			s = ResourceHelper.getUnitSFX("wind_slayer", file);
 			soundMap.put(String.format("%s/%s", "wind_slayer", file), s);
 		}
 
 		count = GameController.getUnitSoundCount("wind_slayer", SOUND.chose_attack);
 		for (int i = 0; i < count; i++) {
 			file = String.format("%s_%s", SOUND.chose_attack, i);
-			s = FileUtil.getUnitSFX("wind_slayer", file);
+			s = ResourceHelper.getUnitSFX("wind_slayer", file);
 			soundMap.put(String.format("%s/%s", "wind_slayer", file), s);
 		}
 
 		count = GameController.getUnitSoundCount("wind_slayer", SOUND.chose_defend);
 		for (int i = 0; i < count; i++) {
 			file = String.format("%s_%s", SOUND.chose_defend, i);
-			s = FileUtil.getUnitSFX("wind_slayer", file);
+			s = ResourceHelper.getUnitSFX("wind_slayer", file);
 			soundMap.put(String.format("%s/%s", "wind_slayer", file), s);
 		}
 
 		count = GameController.getUnitSoundCount("wind_slayer", SOUND.chose_move);
 		for (int i = 0; i < count; i++) {
 			file = String.format("%s_%s", SOUND.chose_move, i);
-			s = FileUtil.getUnitSFX("wind_slayer", file);
+			s = ResourceHelper.getUnitSFX("wind_slayer", file);
 			soundMap.put(String.format("%s/%s", "wind_slayer", file), s);
 		}
-		
-		s = FileUtil.getSound(GAME_END_SFX.victory.toString());
+
+		s = ResourceHelper.getSound(GAME_END_SFX.victory.toString());
 		soundMap.put(GAME_END_SFX.victory.toString(), s);
-		
+
 		file = SOUND.attack.toString() + "_0";
-		s = FileUtil.getUnitSFX("fire_archer", file);
+		s = ResourceHelper.getUnitSFX("fire_archer", file);
 		soundMap.put(String.format("%s/%s", "fire_archer", file), s);
-		
+
 		file = SOUND.attack.toString() + "_0";
-		s = FileUtil.getUnitSFX("wind_slayer", file);
+		s = ResourceHelper.getUnitSFX("wind_slayer", file);
 		soundMap.put(String.format("%s/%s", "wind_slayer", file), s);
-		
+
 		file = SOUND.attack.toString() + "_0";
-		s = FileUtil.getUnitSFX("earth_tank", file);
+		s = ResourceHelper.getUnitSFX("earth_tank", file);
 		soundMap.put(String.format("%s/%s", "earth_tank", file), s);
 	}
-	
+
 	public static void loadFirstTurnSFX() {
 		Enumeration<String> unit_names = GameController.getUnitNames();
 		String unitName;
@@ -213,37 +217,38 @@ public class AudioManager {
 		Sound s;
 		while (unit_names.hasMoreElements()) {
 			unitName = unit_names.nextElement();
-			
+
 			int count = GameController.getUnitSoundCount(unitName, SOUND.place);
-			for (int i = 0; i < count; i++){
+			for (int i = 0; i < count; i++) {
 				file = String.format("%s_%s", SOUND.place, i);
-				s = FileUtil.getUnitSFX(unitName, file);
+				s = ResourceHelper.getUnitSFX(unitName, file);
 				soundMap.put(String.format("%s/%s", unitName, file), s);
 			}
 		}
 	}
 
 	public static void loadTurnAnimationSFX() {
-		Sound s = FileUtil.getSound(GAME_END_SFX.victory.toString());
+		Sound s = ResourceHelper.getSound(GAME_END_SFX.victory.toString());
 		soundMap.put(GAME_END_SFX.victory.toString(), s);
-		
-		s = FileUtil.getSound(GAME_END_SFX.draw.toString());
+
+		s = ResourceHelper.getSound(GAME_END_SFX.draw.toString());
 		soundMap.put(GAME_END_SFX.draw.toString(), s);
-		
-		s = FileUtil.getSound(GAME_END_SFX.defeat.toString());
+
+		s = ResourceHelper.getSound(GAME_END_SFX.defeat.toString());
 		soundMap.put(GAME_END_SFX.defeat.toString(), s);
-		
+
 		Enumeration<String> unit_names = GameController.getUnitNames();
 		String unitName;
 		String file = SOUND.attack.toString() + "_0";
 		while (unit_names.hasMoreElements()) {
 			unitName = unit_names.nextElement();
-			s = FileUtil.getUnitSFX(unitName, file);
+			s = ResourceHelper.getUnitSFX(unitName, file);
 			soundMap.put(String.format("%s/%s", unitName, file), s);
 		}
 	}
 
-	// TODO:Falta controlar que solo cargue los de las unidades que tenes en el campo.
+	// TODO:Falta controlar que solo cargue los de las unidades que tenes en el
+	// campo.
 	public static void loadNormalGameSFX() {
 		Enumeration<String> unit_names = GameController.getUnitNames();
 		String unitName;
@@ -251,32 +256,32 @@ public class AudioManager {
 		Sound s;
 		while (unit_names.hasMoreElements()) {
 			unitName = unit_names.nextElement();
-			
+
 			int count = GameController.getUnitSoundCount(unitName, SOUND.select);
-			for (int i = 0; i < count; i++){
+			for (int i = 0; i < count; i++) {
 				file = String.format("%s_%s", SOUND.select, i);
-				s = FileUtil.getUnitSFX(unitName, file);
+				s = ResourceHelper.getUnitSFX(unitName, file);
 				soundMap.put(String.format("%s/%s", unitName, file), s);
 			}
-			
+
 			count = GameController.getUnitSoundCount(unitName, SOUND.chose_attack);
-			for (int i = 0; i < count; i++){
+			for (int i = 0; i < count; i++) {
 				file = String.format("%s_%s", SOUND.chose_attack, i);
-				s = FileUtil.getUnitSFX(unitName, file);
+				s = ResourceHelper.getUnitSFX(unitName, file);
 				soundMap.put(String.format("%s/%s", unitName, file), s);
 			}
-			
+
 			count = GameController.getUnitSoundCount(unitName, SOUND.chose_defend);
-			for (int i = 0; i < count; i++){
+			for (int i = 0; i < count; i++) {
 				file = String.format("%s_%s", SOUND.chose_defend, i);
-				s = FileUtil.getUnitSFX(unitName, file);
+				s = ResourceHelper.getUnitSFX(unitName, file);
 				soundMap.put(String.format("%s/%s", unitName, file), s);
 			}
-			
+
 			count = GameController.getUnitSoundCount(unitName, SOUND.chose_move);
-			for (int i = 0; i < count; i++){
+			for (int i = 0; i < count; i++) {
 				file = String.format("%s_%s", SOUND.chose_move, i);
-				s = FileUtil.getUnitSFX(unitName, file);
+				s = ResourceHelper.getUnitSFX(unitName, file);
 				soundMap.put(String.format("%s/%s", unitName, file), s);
 			}
 		}

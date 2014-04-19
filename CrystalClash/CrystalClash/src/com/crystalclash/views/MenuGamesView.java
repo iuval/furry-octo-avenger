@@ -213,6 +213,27 @@ public class MenuGamesView extends InputView {
 	}
 
 	private void initSkin() {
+		ResourceHelper.loadTexture("menu/games_list/column_stack");
+		ResourceHelper.loadTexture("menu/games_list/flag_green");
+		ResourceHelper.loadTexture("menu/games_list/flag_red");
+		ResourceHelper.loadTexture("menu/games_list/flag_surrended");
+		ResourceHelper.loadTexture("menu/games_list/surrender");
+		ResourceHelper.loadTexture("menu/games_list/sound_off");
+		ResourceHelper.loadTexture("menu/games_list/sound_off_pressed");
+		ResourceHelper.loadTexture("menu/games_list/sound_on");
+		ResourceHelper.loadTexture("menu/games_list/logout");
+		ResourceHelper.loadTexture("menu/games_list/logout_pressed");
+		ResourceHelper.loadTexture("menu/games_list/item_stack");
+		ResourceHelper.loadTexture("menu/games_list/user_stats_stack");
+		ResourceHelper.loadTexture("menu/games_list/new_battle_stack");
+		ResourceHelper.loadTexture("menu/games_list/information");
+		ResourceHelper.loadTexture("menu/games_list/tutorial_stack");
+		ResourceHelper.loadTexture("menu/games_list/story_stack");
+		ResourceHelper.loadTexture("menu/refresh_list/arrow");
+		AudioManager.loadMusic(MUSIC.menu.toString());
+
+		ResourceHelper.finishLoading();
+
 		txtCcolumn = ResourceHelper.getTexture("menu/games_list/column_stack");
 
 		final BoxCallback surrenderCallback = new BoxCallback() {

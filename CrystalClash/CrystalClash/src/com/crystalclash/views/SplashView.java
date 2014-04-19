@@ -21,8 +21,8 @@ public class SplashView extends BaseView {
 	}
 
 	private void load() {
-		crystalTexture = ResourceHelper.getTexture("splash/splash_crystal", false);
-		nameTexture = ResourceHelper.getTexture("splash/splash_name", false);
+		crystalTexture = ResourceHelper.getTexture("splash/splash_crystal");
+		nameTexture = ResourceHelper.getTexture("splash/splash_name");
 
 		crystal = new Image(crystalTexture);
 		addActor(crystal);

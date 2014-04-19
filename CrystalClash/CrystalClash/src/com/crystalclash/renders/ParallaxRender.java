@@ -27,15 +27,26 @@ public class ParallaxRender extends Group {
 	}
 
 	private ParallaxRender() {
+		ResourceHelper.loadTexture("menu/background");
+
 		rand = new Random();
 		levels = new Array<ParallaxLevel>();
 		setBounds(0, -854, 1280, 1708);
+
+		ResourceHelper.finishLoading();
+
 		addLevel(new BackgroundParallaxLevel(ResourceHelper.getTexture("menu/background"), 0, 0, 0.01f));
 		setColor(getColor().r, getColor().g, getColor().b, 0);
 	}
 
 	public void loadLogIn() {
 		if (!logInLoaded) {
+			ResourceHelper.loadTexture("menu/nimbus1");
+			ResourceHelper.loadTexture("menu/nimbus2");
+			ResourceHelper.loadTexture("menu/nimbus3");
+
+			ResourceHelper.finishLoading();
+
 			addLevel(new NimbusParallaxLevel(ResourceHelper.getTexture("menu/nimbus1"), 1400, -rand.nextInt((int) (CrystalClash.WIDTH + 500)), -0.6f, 0.1f));
 			addLevel(new NimbusParallaxLevel(ResourceHelper.getTexture("menu/nimbus2"), 1200, -rand.nextInt((int) (CrystalClash.WIDTH + 500)), -1f, 0.2f));
 			addLevel(new NimbusParallaxLevel(ResourceHelper.getTexture("menu/nimbus3"), 1000, -rand.nextInt((int) (CrystalClash.WIDTH + 500)), -2f, 0.15f));
@@ -45,6 +56,14 @@ public class ParallaxRender extends Group {
 
 	public void loadGamesList() {
 		if (!gmesListLoaded) {
+			ResourceHelper.loadTexture("menu/nimbus4");
+			ResourceHelper.loadTexture("menu/nimbus5");
+			ResourceHelper.loadTexture("menu/level1");
+			ResourceHelper.loadTexture("menu/level2");
+			ResourceHelper.loadTexture("menu/level3");
+
+			ResourceHelper.finishLoading();
+
 			addLevel(new CloudParallaxLevel(ResourceHelper.getTexture("menu/level1"), -427, 0, -0.1f, 0.05f));
 			addLevel(new CloudParallaxLevel(ResourceHelper.getTexture("menu/level2"), -427, 0, -0.3f, 0.09f));
 			addLevel(new CloudParallaxLevel(ResourceHelper.getTexture("menu/level3"), -427, 0, -0.5f, 0.12f));

@@ -35,7 +35,6 @@ public class BaseBox extends AnimatedGroup {
 		this.widget = widget;
 		setSize(w, h);
 		setPosition((CrystalClash.WIDTH - w) / 2, 0);
-
 		imgWindowBackground = new Image(ResourceHelper.getTexture("menu/message_box_background"));
 		imgWindowBackground.setSize(getWidth(), getHeight());
 		imgWindowBackground.setPosition(0, 0);

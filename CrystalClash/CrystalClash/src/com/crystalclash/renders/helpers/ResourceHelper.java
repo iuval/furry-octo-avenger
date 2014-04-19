@@ -2,8 +2,11 @@ package com.crystalclash.renders.helpers;
 
 import java.util.Hashtable;
 
-import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
@@ -11,12 +14,12 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
 import com.crystalclash.controllers.GameController;
-import com.crystalclash.util.FileUtil;
 import com.crystalclash.util.SuperAnimation;
+import com.crystalclash.util.UnitAnimPrefReader;
+import com.crystalclash.util.UnitAnimPrefReader.UnitPrefReaderData;
 
 public class ResourceHelper {
-	private static Hashtable<String, TextureRegion> texturesMap;
-	private static Hashtable<String, TextureAtlas> textureAtlasMap;
+	private static AssetManager manager;
 	private static Hashtable<String, SuperAnimation> superAnimationsMap;
 
 	private static TextureAtlas atlas;
@@ -35,36 +38,47 @@ public class ResourceHelper {
 	private static TextButtonStyle nextButtonStyle;
 
 	public static void fastLoad() {
-		texturesMap = new Hashtable<String, TextureRegion>();
-		textureAtlasMap = new Hashtable<String, TextureAtlas>();
+		manager = new AssetManager();
 		superAnimationsMap = new Hashtable<String, SuperAnimation>();
 	}
 
+	public static void resume() {
+		Texture.setAssetManager(manager);
+	}
+
+	public static void finishLoading() {
+		manager.finishLoading();
+	}
+
 	public static void slowLoad() {
-		atlas = getTextureAtlas("buttons/buttons.pack", false);
+		loadBasicTextures();
+
+		finishLoading();
+
+		atlas = getTextureAtlas("buttons/buttons");
 		skin = new Skin(atlas);
-		bigBorderFont = new BitmapFont(Gdx.files.internal("data/fonts/crystal_clash_border.fnt"), false);
+		bigBorderFont = manager.get("data/fonts/crystal_clash_border.fnt");
 		bigBorderFont.getRegion().getTexture().setFilter(TextureFilter.Linear, TextureFilter.Linear);
 		bigBorderFont.setScale(1.7f);
-		normalBorderFont = new BitmapFont(Gdx.files.internal("data/fonts/crystal_clash_border.fnt"), false);
+		normalBorderFont = manager.get("data/fonts/crystal_clash_border.fnt");
 		normalBorderFont.getRegion().getTexture().setFilter(TextureFilter.Linear, TextureFilter.Linear);
 		normalBorderFont.setScale(1.4f);
-		smallBorderFont = new BitmapFont(Gdx.files.internal("data/fonts/crystal_clash_border.fnt"), false);
+		smallBorderFont = manager.get("data/fonts/crystal_clash_border.fnt");
 		smallBorderFont.getRegion().getTexture().setFilter(TextureFilter.Linear, TextureFilter.Linear);
 		smallBorderFont.setScale(1.1f);
 
-		damageFont = new BitmapFont(Gdx.files.internal("data/fonts/crystal_clash_border.fnt"), false);
+		damageFont = manager.get("data/fonts/crystal_clash_border.fnt");
 		damageFont.getRegion().getTexture().setFilter(TextureFilter.Linear, TextureFilter.Linear);
 		damageFont.setColor(Color.RED);
 		damageFont.setScale(1.3f);
 
-		bigFont = new BitmapFont(Gdx.files.internal("data/fonts/crystal_clash.fnt"), false);
+		bigFont = manager.get("data/fonts/crystal_clash.fnt");
 		bigFont.getRegion().getTexture().setFilter(TextureFilter.Linear, TextureFilter.Linear);
 		bigFont.setScale(1.7f);
-		normalFont = new BitmapFont(Gdx.files.internal("data/fonts/crystal_clash.fnt"), false);
+		normalFont = manager.get("data/fonts/crystal_clash.fnt");
 		normalFont.getRegion().getTexture().setFilter(TextureFilter.Linear, TextureFilter.Linear);
 		normalFont.setScale(1.4f);
-		smallFont = new BitmapFont(Gdx.files.internal("data/fonts/crystal_clash.fnt"), false);
+		smallFont = manager.get("data/fonts/crystal_clash.fnt");
 		smallFont.getRegion().getTexture().setFilter(TextureFilter.Linear, TextureFilter.Linear);
 		smallFont.setScale(1.1f);
 
@@ -85,22 +99,86 @@ public class ResourceHelper {
 				skin.getDrawable("next_button_pressed"), null, normalBorderFont);
 	}
 
+	private static void loadBasicTextures() {
+		loadTextureAtlas("buttons/buttons");
+
+		manager.load("data/fonts/crystal_clash_border.fnt", BitmapFont.class);
+		manager.load("data/fonts/crystal_clash.fnt", BitmapFont.class);
+
+		loadTexture("splash/splash_crystal");
+		loadTexture("splash/splash_name");
+		loadTexture("menu/message_box_background");
+		loadTexture("menu/loading/background");
+
+		EmblemHelper.loadEmblems();
+	}
+
 	public static TextureRegion getTexture(String path) {
-		if (texturesMap.containsKey(path)) {
-			return texturesMap.get(path);
+		TextureRegion t = new TextureRegion(manager.get(String.format("data/images/%s.png", path), Texture.class));
+		t.getTexture().setFilter(TextureFilter.Linear, TextureFilter.Linear);
+		return t;
+	}
+
+	public static SuperAnimation getSuperAnimation(String path) {
+		if (superAnimationsMap.containsKey(path)) {
+			return superAnimationsMap.get(path).clone();
 		} else {
-			TextureRegion t = FileUtil.getTexture(String.format("data/images/%s.png", path));
-			texturesMap.put(path, t);
-			return t;
+			String base_file_name = String.format("data/images/%s", path);
+			UnitPrefReaderData data = UnitAnimPrefReader.load(base_file_name + ".pref");
+
+			TextureRegion sheet = getTexture(base_file_name + ".png");
+			TextureRegion[][] tmp = sheet.split(sheet.getRegionWidth()
+					/ data.cols, sheet.getRegionHeight() / data.rows);
+			TextureRegion[] frames = new TextureRegion[data.image_count];
+
+			int index = 0;
+			for (int i = 0; i < data.rows; i++) {
+				for (int j = 0; j < data.cols; j++) {
+					if (index < data.image_count) {
+						frames[index++] = tmp[i][j];
+					}
+				}
+			}
+
+			SuperAnimation anim = new SuperAnimation(data.total_time, data.image_times, frames);
+			anim.handle_x = data.handle_x;
+			anim.handle_y = data.handle_y;
+
+			superAnimationsMap.put(path, anim);
+			return anim;
 		}
 	}
 
-	public static TextureRegion getTexture(String path, boolean persistent) {
-		if (persistent) {
-			return getTexture(path);
-		} else {
-			return FileUtil.getTexture(String.format("data/images/%s.png", path));
-		}
+	public static Music getMusic(String path) {
+		return manager.get(path);
+	}
+
+	public static Sound getUnitSFX(String unitName, String file) {
+		return manager.get(String.format("data/audio/units/%s/%s/%s.mp3", GameController.getUnitElement(unitName), unitName, file));
+	}
+
+	public static Sound getSound(String file) {
+		return manager.get(String.format("data/audio/sfx/%s.mp3", file));
+	}
+
+	public static void loadMusic(String path) {
+		manager.load(path, Music.class);
+	}
+
+	public static void loadUnitSFX(String unitName, String file) {
+		manager.load(String.format("data/audio/units/%s/%s/%s.mp3", GameController.getUnitElement(unitName), unitName, file), Sound.class);
+	}
+
+	public static void loadSound(String file) {
+		manager.load(String.format("data/audio/sfx/%s.mp3", file), Sound.class);
+	}
+
+	public static void loadTexture(String path) {
+		manager.load(String.format("data/images/%s.png", path), Texture.class);
+	}
+
+	public static void loadTextureAtlas(String path) {
+		manager.load(String.format("data/images/%s.pack", path), TextureAtlas.class);
 	}
 
 	public static TextureRegion getUnitResourceTexture(String unitName, String resource) {
@@ -114,21 +192,7 @@ public class ResourceHelper {
 	}
 
 	public static TextureAtlas getTextureAtlas(String path) {
-		if (textureAtlasMap.containsKey(path)) {
-			return textureAtlasMap.get(path);
-		} else {
-			TextureAtlas t = new TextureAtlas(String.format("data/images/%s", path));
-			textureAtlasMap.put(path, t);
-			return t;
-		}
-	}
-
-	public static TextureAtlas getTextureAtlas(String path, boolean persistent) {
-		if (persistent) {
-			return getTextureAtlas(path);
-		} else {
-			return new TextureAtlas(String.format("data/images/%s", path));
-		}
+		return manager.get(String.format("data/images/%s.pack", path));
 	}
 
 	public static SuperAnimation getUnitSuperAnimation(String unitName, String action, boolean isEnemy) {
@@ -152,16 +216,6 @@ public class ResourceHelper {
 
 	public static TextureRegion getUnitElementIcon(String unitName) {
 		return getElementIcon(GameController.getUnitElement(unitName));
-	}
-
-	public static SuperAnimation getSuperAnimation(String path) {
-		if (superAnimationsMap.containsKey(path)) {
-			return superAnimationsMap.get(path).clone();
-		} else {
-			SuperAnimation s = FileUtil.getSuperAnimation(String.format("data/images/%s", path));
-			superAnimationsMap.put(path, s);
-			return s;
-		}
 	}
 
 	public static Skin getCommonButtonsSkin() {
